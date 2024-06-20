@@ -327,12 +327,148 @@ Svolgimento: una soluzione corrisponde a uno zero di $f(x) = x - \cos x$. Questa
 
 \section{Convergenza lineare di un metodo iterativo}
 
-In questa sezione vediamo un modo di definire quanto velocemente converge un metodo numerico come quelli che abbiamo visto. Partiamo con un esempio che mostra cosa succede in un caso reale, in Figura~\ref{fig:iterativi}.
-
+In questa sezione vediamo un modo di definire quanto velocemente converge un metodo numerico come quelli che abbiamo visto; 
+questo è importante in modo da poter confrontare metodi diversi. Abbiamo una successione di approssimazioni $x_n$ di una certa soluzione esatta $\alpha$, ognuna calcolata da quella precedente. La successione si dice \emph{convergente} se l'errore $e_n := \abs{x_n - \alpha}$ tende a $0$. Partiamo con un esempio che mostra cosa succede in un caso reale; in Figura~\ref{fig:iterativi} abbiamo considerato diversi metodi iterativi per risolvere l'equazione $x^3-2 = 0$, e abbiamo tracciato per ognuno di essi un grafico dell'errore $e_n$ rispetto a $n$.
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
-    \begin{axis}[width=\textwidth, ymode = log, xlabel={iterazione}, ylabel={errore (in scala logaritmica)}, legend style={at={(0.5,-0.15)},anchor=north}]
+        \begin{axis}[width=0.7\textwidth, xlabel={iterazione}, ylabel={errore (in scala lineare)}]
+
+            \addplot+[x=it, y=e] table{
+                it e
+           1.0000e+00   2.5992e-01
+           2.0000e+00   4.9008e-01
+           3.0000e+00   2.3298e-01
+           4.0000e+00   3.0730e-02
+           5.0000e+00   2.8083e-02
+           6.0000e+00   2.0157e-02
+           7.0000e+00   1.7687e-02
+           8.0000e+00   1.3288e-02
+           9.0000e+00   1.1349e-02
+           1.0000e+01   8.7614e-03
+           1.1000e+01   7.3487e-03
+           1.2000e+01   5.7697e-03
+           1.3000e+01   4.7814e-03
+           1.4000e+01   3.7945e-03
+           1.5000e+01   3.1195e-03
+           1.6000e+01   2.4928e-03
+           1.7000e+01   2.0385e-03
+           1.8000e+01   1.6362e-03
+           1.9000e+01   1.3334e-03
+           2.0000e+01   1.0734e-03
+           2.1000e+01   8.7269e-04
+           2.2000e+01   7.0387e-04
+           2.3000e+01   5.7139e-04
+           2.4000e+01   4.6143e-04
+           2.5000e+01   3.7421e-04
+           2.6000e+01   3.0244e-04
+           2.7000e+01   2.4511e-04
+           2.8000e+01   1.9821e-04
+           2.9000e+01   1.6057e-04
+           3.0000e+01   1.2989e-04
+           3.1000e+01   1.0519e-04
+           3.2000e+01   8.5111e-05
+           3.3000e+01   6.8917e-05
+           3.4000e+01   5.5769e-05
+           3.5000e+01   4.5153e-05
+           3.6000e+01   3.6542e-05
+           3.7000e+01   2.9583e-05
+           3.8000e+01   2.3943e-05
+           3.9000e+01   1.9383e-05
+           4.0000e+01   1.5688e-05
+           4.1000e+01   1.2700e-05
+           4.2000e+01   1.0279e-05
+           4.3000e+01   8.3208e-06
+           4.4000e+01   6.7350e-06
+           4.5000e+01   5.4518e-06
+           4.6000e+01   4.4129e-06
+            };
+    
+            \addplot+[x=it, y=e] table{
+                it e
+                   1.0000e+00   2.5992e-01
+           2.0000e+00   2.4008e-01
+           3.0000e+00   9.9210e-03
+           4.0000e+00   1.1508e-01
+           5.0000e+00   5.2579e-02
+           6.0000e+00   2.1329e-02
+           7.0000e+00   5.7040e-03
+           8.0000e+00   2.1085e-03
+           9.0000e+00   1.7977e-03
+           1.0000e+01   1.5542e-04
+           1.1000e+01   8.2114e-04
+           1.2000e+01   3.3286e-04
+           1.3000e+01   8.8716e-05
+           1.4000e+01   3.3355e-05
+           1.5000e+01   2.7681e-05
+           1.6000e+01   2.8370e-06
+           1.7000e+01   1.2422e-05
+           1.8000e+01   4.7924e-06
+           1.9000e+01   9.7769e-07
+           2.0000e+01   9.2966e-07
+           2.1000e+01   2.4019e-08
+           2.2000e+01   4.5282e-07
+           2.3000e+01   2.1440e-07
+           2.4000e+01   9.5191e-08
+           2.5000e+01   3.5586e-08
+           2.6000e+01   5.7836e-09
+           2.7000e+01   9.1175e-09
+           2.8000e+01   1.6670e-09
+           2.9000e+01   2.0583e-09
+           3.0000e+01   1.9569e-10
+           3.1000e+01   7.3564e-10
+           3.2000e+01   2.6998e-10
+           3.3000e+01   3.7145e-11
+           3.4000e+01   7.9271e-11
+           3.5000e+01   2.1063e-11
+           3.6000e+01   8.0409e-12
+           3.7000e+01   6.5110e-12
+           3.8000e+01   7.6494e-13
+           3.9000e+01   2.8730e-12
+           4.0000e+01   1.0540e-12
+           4.1000e+01   1.4455e-13
+           4.2000e+01   3.1020e-13
+            };
+        
+            \addplot+[x=it, y=e] table{
+                it e
+           1.0000e+00   7.4008e-01
+           2.0000e+00   7.5992e-01
+           3.0000e+00   2.9117e-01
+           4.0000e+00   1.8458e-02
+           5.0000e+00   3.1969e-03
+           6.0000e+00   6.1883e-04
+           7.0000e+00   1.1756e-04
+           8.0000e+00   2.2414e-05
+           9.0000e+00   4.2705e-06
+           1.0000e+01   8.1376e-07
+           1.1000e+01   1.5506e-07
+           1.2000e+01   2.9547e-08
+           1.3000e+01   5.6302e-09
+           1.4000e+01   1.0728e-09
+           1.5000e+01   2.0443e-10
+           1.6000e+01   3.8955e-11
+           1.7000e+01   7.4227e-12  
+           1.8000e+01   1.4144e-12
+           1.9000e+01   2.6956e-13
+           2.0000e+01   5.1292e-14
+            };
+            
+            \addplot+[x=it, y=e] table{
+                it e
+           1.0000e+00   7.4008e-01
+           2.0000e+00   2.4008e-01
+           3.0000e+00   3.6375e-02
+           4.0000e+00   1.0112e-03
+           5.0000e+00   8.1067e-07
+           6.0000e+00   5.2158e-13
+           7.0000e+00            0
+            };
+        \end{axis}
+    \end{tikzpicture}
+    
+    \begin{tikzpicture}
+    \begin{axis}[width=0.7\textwidth, ymode = log, xlabel={iterazione}, ylabel={errore (in scala logaritmica)}, legend style={at={(0.5,-0.15)},anchor=north}]
 
         \addplot+[x=it, y=e] table{
             it e
@@ -470,27 +606,29 @@ In questa sezione vediamo un modo di definire quanto velocemente converge un met
     \end{center}
 \caption{Convergenza di diversi metodi iterativi per trovare uno zero di $f(x) = x^3-2$.} \label{fig:iterativi}
 \end{figure}
-Notare che abbiamo usato una \emph{scala logaritmica} sull'asse delle $y$: con una scala lineare, non si riesce a vedere praticamente nulla già al di sotto di $10^{-2}$, è tutto schiacciato sullo zero.
+La prima osservazione importante è che è utile usare una \emph{scala logaritmica} sull'asse delle $y$, come nel grafico in basso: con una scala lineare, non si riesce a valutare la velocità di convergenza dei metodi se non nelle primissime iterazioni, perché poi è tutto schiacciato sullo zero.
 
-\paragraph{Convergenza lineare} Abbiamo una successione di approssimazioni $x_n$ di una certa soluzione esatta $\alpha$, ognuna calcolata da quella precedente. La successione si dice \emph{convergente} se l'errore $e_n := \abs{x_n - \alpha}$ tende a $0$. Ma quanto velocemente? L'esempio più semplice è quello in cui $e_n$ si comporta come una successione geometrica:
+La seconda osservazione che possiamo fare è che nel secondo grafico i punti sono approssimativamente allineati secondo una retta. Vediamo perché questo succede.
+
+\paragraph{Convergenza lineare} L'esempio più semplice che possiamo fare è quello in cui $e_n$ è una successione geometrica:
 \[
 e_0 = a,\, e_1 = ar,\, e_2 = ar^2,\, e_3 = ar^3, \dots
 \]
-Ad ogni passo, l'errore precedente viene moltiplicato per $r$. Ovviamente serve $r < 1$ per avere convergenza. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{n+1} - \log e_n = \log r < 0$.
+Ad ogni passo, l'errore precedente viene moltiplicato per $r$. Ovviamente dobbiamo chiedere che $r < 1$, altrimenti $e_n$ non converge a $0$. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{n+1} - \log e_n = \log r < 0$.
 
-Molti metodi hanno un comportamento simile al limite, quindi introduciamo una definizione che formalizza questo comportamento. Diciamo che un metodo iterativo \emph{converge linearmente} (o ha \emph{ordine di convergenza $1$}) quando
+Molti metodi hanno un comportamento simile a questo al limite, quindi introduciamo una definizione che formalizza questo comportamento. Diciamo che un metodo iterativo \emph{converge linearmente} (o ha \emph{ordine di convergenza $1$}) quando
 \begin{equation} \label{tassoconv}
     \lim_{n \to \infty }\frac{e_{n+1}}{e_n} = r \in (0,1).    
 \end{equation}
-Questo vuol dire che ``sufficientemente avanti'' la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
+Questo vuol dire che per $n$ sufficientemente grande (c'è un limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
 
-La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza} (in inglese \emph{convergence rate}), o più informalmente spesso si usa \emph{velocità di convergenza}.
+La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza} (in inglese \emph{convergence rate}), o più informalmente spesso si usa \emph{velocità di convergenza}; difatti più piccolo è $r$, più ripida è la retta di coefficiente angolare $\log r$.
 
-\paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il conto fatto nell'equazione~\eqref{fpindu2}, abbiamo
+\paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
 \[
 \lim_{n \to \infty} \frac{\abs{x_{n+1} - \alpha}}{\abs{x_n - \alpha}} = \lim_{n\to\infty} \abs{\Phi'(\xi_n)} = \abs{\Phi'(\alpha)} \in [0,1).
 \]
-L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi anche $\xi_n \to \alpha$. Inoltre abbimo usato di nuovo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per calcolare il limite.
+L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre abbiamo usato di nuovo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per calcolare il limite.
 
 Quindi la convergenza è \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$, allora punti successivi tendono ad essere allineati in verticale, e la successione va a zero più velocemente di qualunque retta sul grafico in scala logaritmica. Questo fenomeno succede per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
@@ -591,17 +729,18 @@ Il comportamento che si osserva tipicamente dal metodo di Newton è un certo per
 
 \paragraph{Ordine di convergenza di un metodo iterativo}
 
-Diciamo invece che si ha \emph{convergenza superlineare} quando il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$, quindi il grafico diventa più ripido di qualsiasi retta.
+Diciamo invece che si ha \emph{convergenza superlineare} quando il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$, e il grafico diventa più ripido di qualsiasi retta.
 
-Per confrontare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: dato un $p > 1$, diciamo che un metodo ha \emph{ordine di convergenza $p$} se vale
+In particolare, fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. In altre parole, un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
+
+Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: diciamo che un metodo iterativo dato un $p > 1$, diciamo che un metodo iterativo ha \emph{ordine di convergenza $p$} se vale
 \[
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = r \in (0,\infty).
+\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in (0,\infty).
 \]
-Notare che non abbiamo più il requisito $r<1$ che c'era quando $p=1$: la convergenza è superlineare anche quando $r>1$, a patto che esso sia un limite finito. Difatti, se un metodo ha ordine di convergenza $p>1$ allora vale
+Notare che non stiamo chiedendo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere un metodo con convergenza superlineare. Difatti, se un metodo ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
 \begin{equation} \label{almeno}
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n} = \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} \cdot \lim_{n \to \infty } e_n^{p-1} = r \cdot 0 = 0,
+\lim_{n \to \infty }\frac{e_{n+1}}{e_n} = \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} \cdot \lim_{n \to \infty } e_n^{p-1} = s \cdot 0 = 0.
 \end{equation}
-quindi esso converge (al limite) più velocemente di tutti i metodi con convergenza lineare.
 
 \paragraph{Esempio} La successione $x_n = 3\cdot 10^{-2^n}$ converge a $0$ con ordine di convergenza $2$: difatti si ha
 \[
@@ -611,16 +750,16 @@ I primi elementi della successione sono $x_0 = 3\cdot 10^{-1}$, $x_1 = 3\cdot 10
 
 Diciamo che un metodo numerico converge con ordine \emph{almeno $p$} se vale
 \[
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = r \in [0,\infty).
+\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in [0,\infty).
 \]
-Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $r$. Notare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dalle parole che abbiamo usato: se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto è analoga alla~\eqref{almeno}.)
+Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Notare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dalle parole che abbiamo usato: se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto è analoga alla~\eqref{almeno}.)
 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton] \label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_n = \abs{x_n - \alpha}$ soddisfa
 \[
-\lim_{n\to \infty} \frac{e_{n+1}}{e_n^2} = r \in [0,\infty).
+\lim_{n\to \infty} \frac{e_{n+1}}{e_n^2} = s \in [0,\infty).
 \]
-(cioè il limite esiste ed è finito.)
+(cioè questo limite esiste ed è finito.)
 \end{theorem}
 
 \begin{proof}
@@ -640,13 +779,13 @@ Allora
 \]
 Vogliamo ora passare al limite per $n \to \infty$. Sappiamo che $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_n - \alpha} \to 0$ e quindi $\xi_n \to \alpha$. Allora, di nuovo per continuità di queste funzioni, $f''(\xi_n) \to f''(\alpha)$ e $f'(x_n) \to f'(\alpha)$ (che è diverso da zero); quindi
 \[
-\lim_{n\to\infty} \frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \lim \frac{f''(\xi_n)}{2f'(x_n)} = \frac{f''(\alpha)}{2f'(\alpha)} = c \in [0,\infty).
+\lim_{n\to\infty} \frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \lim \frac{f''(\xi_n)}{2f'(x_n)} = \frac{f''(\alpha)}{2f'(\alpha)} = s \in [0,\infty).
 \]
 \end{proof}
 
-\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo corrisponde a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine.
+\paragraph{Criterio di arresto per il metodo di Newton} Come per il metodo di bisezione, un criterio di arresto euristico è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine.
 
-\paragraph{Zeri di molteplicità superiore a 1} Cosa succede al metodo di Newton se la funzione a cui lo applichiamo ha $f'(\alpha) = 0$? Introduciamo innanzitutto una definizione: diciamo che \emph{$f$ ha uno zero di molteplicità $m$ in $\alpha$} se si ha
+\paragraph{Zeri di molteplicità superiore a 1} Cosa succede al metodo di Newton se la funzione a cui lo applichiamo ha $f'(\alpha) = 0$? Introduciamo innanzitutto una definizione: data una funzione $f\in\mathcal{C}^m$, diciamo che \emph{$f$ ha uno zero di molteplicità $m$ in $\alpha$} se vale
 \[
 f(\alpha) = f'(\alpha) = f''(\alpha) = \dots = f^{(m-1)}(\alpha) = 0, \quad \text{ ma } f^{(m)}(\alpha) \neq 0.
 \]
@@ -674,15 +813,15 @@ Per calcolare questo limite, utilizziamo $m$ volte il teorema di De l'Hopital:
 
 Con il linguaggio dell'analisi possiamo scrivere
 \[
-    f(x) \sim s (x-\alpha)^m,
+    f(x) \sim c (x-\alpha)^m,
 \]
-dove la costante $s$ vale $s= \frac{1}{m!}f^{(m)}(\alpha) \neq 0$. Ricordiamo difatti che la notazione $f(x) \sim g(x)$ significa che $\lim f(x) / g(x) = 1$, in questo caso quando $x\to \alpha$.
+dove la costante $c$ vale $c= \frac{1}{m!}f^{(m)}(\alpha) \neq 0$. Ricordiamo difatti che la notazione $f(x) \sim g(x)$ significa che $\lim f(x) / g(x) = 1$, in questo caso quando $x\to \alpha$.
 
 Possiamo concludere anche che
 \begin{equation} \label{lhopder}
-    f'(x) \sim sm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim sm(m-1)(x-\alpha)^{m-2}
+    f'(x) \sim cm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim cm(m-1)(x-\alpha)^{m-2}
 \end{equation} 
-con lo stesso valore della costante $s$, ripetendo la dimostrazione precedente con la regola di De l'Hopital.
+con lo stesso valore della costante $c$, ripetendo la dimostrazione precedente con la regola di De l'Hopital.
 
 Con questi risultati, possiamo dimostrare che se $\alpha$ è uno zero di molteplicità $m>1$, la convergenza del metodo di Newton è più lenta.
 \begin{theorem}
@@ -694,7 +833,7 @@ Vogliamo applicare di nuovo i risultati di convergenza locale del metodo di punt
 
 Possiamo però estendere anche questa funzione per continuità. Poiché
 \[
-    \frac{f(x)}{f'(x)} \sim \frac{s(x-\alpha)^m}{sm(x-\alpha)^{m-1}} \sim \frac{1}{m}(x-\alpha) \to 0,
+    \frac{f(x)}{f'(x)} \sim \frac{c(x-\alpha)^m}{cm(x-\alpha)^{m-1}} \sim \frac{1}{m}(x-\alpha) \to 0,
 \]
 abbiamo
 \begin{align*}
@@ -703,16 +842,16 @@ abbiamo
 
 Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, abbiamo che
 \begin{align*}
-    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{s(x-\alpha)^m sm(m-1)(x-\alpha)^{(m-2)}}{(sm(x-\alpha)^{m-1})^2} = \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
+    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{c(x-\alpha)^m cm(m-1)(x-\alpha)^{(m-2)}}{(cm(x-\alpha)^{m-1})^2} = \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
 \end{align*}
-C'è da stare attenti a quello che facciamo, ma i calcoli che abbiamo fatto mostrano che possiamo effettivamente estendere $\Phi(x)$ a una funzione di classe $\mathcal{C}^1$ con $\Phi'(\alpha)=\alpha$ e $\abs{\Phi'(\alpha)} = \frac{m-1}{m} < 1$, e questo mostra che il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
+È possibile, con un po' di attenzione ai dettagli (che qui non vediamo), dimostrare che $\Phi(x)$ si può estendere a una funzione di classe $\mathcal{C}^1$ con $\Phi(\alpha)=\alpha$ e $\abs{\Phi'(\alpha)} = \frac{m-1}{m} < 1$. Quindi, per il teorema del punto fisso, il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
 \end{proof}
 
-\paragraph{Metodo di Newton modificato} Data una funzione $f$ che ha uno zero di molteplicità $m$ in $\alpha$, i calcoli precedenti ci dicono che
+\paragraph{Metodo di Newton modificato} Data una funzione $f$ che ha uno zero di molteplicità $m$ in $\alpha$, abbiamo visto che la funzione
 \[
     \Phi(x) = x - \frac{f(x)}{f'(x)},
 \]
-una volta estesa per continuità, è tale che
+una volta estesa per continuità, soddisfa
 \[
     \Phi'(\alpha) = 1 - \frac{1}{m}.
 \]
@@ -720,11 +859,10 @@ Questo suggerisce di fare una modifica al metodo: se definiamo
 \[
     \Phi_m(x) = x - m \frac{f(x)}{f'(x)}
 \]
-ci aspettiamo che
+allora possiamo ripetere tutti i passaggi precedenti con un coefficiente $m$ davanti, e otteniamo
 \[
-    \Phi_m'(\alpha) = 1 - m\frac{1}{m} = 0
+    \Phi_m'(\alpha) = 1 - m\frac{1}{m} = 0.
 \]
-e quindi abbiamo convergenza superlineare.
 
 Quindi se il valore della molteplicità $m$ è noto a priori possiamo utilizzare il seguente (\emph{metodo di Newton modificato}):
 \begin{equation} \label{newtonmod}
@@ -734,7 +872,7 @@ Si può dimostrare che esso converge (localmente) con ordine almeno 2, con passa
 
 \paragraph{Esercizi}
 
-Esempio: metodo di Newton su $f(x) = m x + q$ (equazione lineare) $\rightarrow$ convergenza in un passo.
+Esempio: metodo di Newton su una funzione lineare $f(x) = a x + b$ $\rightarrow$ convergenza in un passo.
 
 Esempio: metodo di Newton su $f(x) = x^2-a$ $\rightarrow$ buono come metodo anche per calcolare radici quadrate a mano. Esempio: calcolando $\sqrt{17}$ con $x_0 = 4$, già $x_2$ ha 5 cifre significative esatte.
 
