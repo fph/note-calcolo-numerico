@@ -2707,6 +2707,10 @@ Abbiamo $A\tilde{\x} = \b + \mathbf{r}$. Allora, $\tilde{\x}$ è la soluzione de
 \end{proof}
 Questo risultato non si applica solo all'iterata $\x^{(k+1)}$ prodotta da un metodo iterativo, ma a una qualunque soluzione approssimata di un sistema lineare, non importa come l'abbiamo ottenuta. È quindi particolarmente interessante perché ci permette di ottenere una stima esplicita sull'errore.
 
+%%%
+% Per il futuro: eliminare D, E, F; creano solo confusione
+%%%
+
 \paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità.
 
 Scriviamo $A = D - E - F$, dove $D$ è la parte diagonale di $A$, $E$ è la parte strettamente triangolare inferiore (con un segno $-$), e $F$ è la parte triangolare superiore.
@@ -3781,9 +3785,9 @@ e_n \leq \frac{C_2 h}{2L}(e^{(t_n-t_0)L}-1) \leq \frac{C_2 h}{2L}(e^{(b-a)L}-1) 
 \paragraph{Metodi generali a un passo}
 
 In generale possiamo scrivere un metodo a un passo come
-\[
-\y_{n+1} = \y_n + h\Phi(t_n,\y_n)
-\]
+\begin{equation} \label{metodoaunpasso}
+    \y_{n+1} = \y_n + h\Phi(t_n,\y_n)    
+\end{equation}
 per un'opportuna funzione $\Phi$: anche se nella sua espressione compaiono $t_{n+1},\y_{n+1}$, ecc., possiamo comunque considerarla come una funzione di quei soli due argomenti, perché il valore $\y_{n+1}$ si può calcolare a partire dai soli $t_n$ e $\y_n$ (conoscendo il valore di $h$ e l'espressione per $\f$); non serve conoscere altre quantità come per esempio il valore di $\y_{n-1}$.
 
 Vogliamo dare un risultato generale di convergenza per questi metodi. Per questo ci serve introdurre alcune definizioni. Innanzitutto, diciamo che un metodo è \emph{convergente di ordine $p$} (per un qualche $p>0$) se $E_N = \mathcal{O}(h^p)$; quindi per esempio più sopra abbiamo dimostrato che il metodo di Eulero esplicito è convergente di ordine $1$.
@@ -3816,7 +3820,7 @@ Allora, un metodo è convergente di ordine~$p$ se e solo se è consistente di or
 \end{theorem}
 
 
-\paragraph{Metodi di Runge--Kutta} I metodi di Runge--Kutta sono una classe di metodi a un passo (quindi definiti da una $\Phi(t_n,\y_n)$ come sopra) più generale, che permette di raggiungere ordini di consistenza e convergenza maggiori. Un metodo di Runge--Kutta si definisce tramite alcuni valori che vengono convenzionalmente raccolti in una tabella, detta \emph{tavola} (o \emph{tableau}) \emph{di Butcher}; essa ha la forma
+\paragraph{Metodi di Runge--Kutta} I metodi di Runge--Kutta sono una classe più generale di metodi a un passo (quindi definiti da una $\Phi(t_n,\y_n)$ come nella~\eqref{metodoaunpasso}). Avendo una maggiore quantità di parametri, essi possono raggiungere ordini di consistenza e convergenza maggiori. Un metodo di Runge--Kutta si definisce tramite parametri che vengono convenzionalmente raccolti in una tabella, detta \emph{tavola} (o \emph{tableau}) \emph{di Butcher}:
 \[
 \begin{array}{c|cccc}
 c_1 & a_{11} & a_{12} & \dots & a_{1s}\\
@@ -3832,6 +3836,8 @@ L'intero $s$ è detto \emph{numero di stadi} del metodo. A partire dai coefficie
     \mathbf{k}_i &= \mathbf{f}\left(t_n + c_i h, \y_n + h\left(\sum_{j=1}^s a_{ij}\mathbf{k}_j\right)\right), & i&=1,2,\dots,s,\\
     \Phi(t_n, \mathbf{y}_n) &= \sum_{j=1}^s b_j \mathbf{k}_j.
 \end{align*}
+La funzione $\Phi(t_n, \mathbf{y}_n)$ definita in questo modo è quella che compare nella definizione di metodo a un passo~\eqref{metodoaunpasso}.
+
 I metodi che abbiamo visto finora sono casi particolari dei metodi di Runge--Kutta. Per il metodo di Eulero esplicito abbiamo $s=1$ e tavola di Butcher
 \[
 \begin{array}{c|c}
@@ -3859,7 +3865,15 @@ e per il metodo dei trapezi $s=2$ (difatti ci sono due diverse valutazioni di fu
 \]
 Per derivare le tavole degli ultimi due metodi abbiamo dovuto risostituire la relazione finale per scrivere il termine $\y_{n+1}$ che compare dentro $\mathbf{f}_{n+1}$ nella forma $\y_n + h(\dots)$.
 
-Un metodo di Runge--Kutta è \emph{esplicito} se la parte triangolare superiore di $A$ (inclusa la diagonale) contiene zeri; in questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo (come nel caso del metodo di Eulero esplicito). Altrimenti (metodi \emph{impliciti}) ogni $\mathbf{k}_i$ dipende anche dai valori dei successivi, ed è necessario risolvere il sistema di equazioni non-lineari come abbiamo visto per il metodo di Eulero implicito.
+Un metodo di Runge--Kutta è \emph{esplicito} se nella tavola di Butcher la matrice
+\[
+    A = \begin{bmatrix}
+        a_{11} & \dots & a_{1s}\\
+        \vdots & \ddots & \ddots\\
+        a_{s1} & \dots & a_{ss}
+    \end{bmatrix}
+\]
+è strettamente triangolare superiore, cioè $a_{ij}=0$ se $i \leq j$ (inclusi gli elementi sulla diagonale). In questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo. Altrimenti abbiamo un metodo \emph{implicito}: è necessario risolvere un sistema di equazioni non-lineari per calcolare i $\mathbf{k}_i$, analogamente a quello che succede nel metodo di Eulero implicito.
 
 Nella pratica, questi metodi sono usati con scelte particolari dei coefficienti fatte in modo da ottenere un alto ordine di consistenza (e quindi di convergenza). Per esempio Matlab utilizza in una delle sue funzioni per risolvere equazioni differenziali (\lstinline{ode45}) un metodo con tavola di Butcher
 \[
