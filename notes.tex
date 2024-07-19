@@ -789,7 +789,21 @@ Vogliamo ora passare al limite per $n \to \infty$. Sappiamo che $0 \leq \abs{\xi
 \[
 f(\alpha) = f'(\alpha) = f''(\alpha) = \dots = f^{(m-1)}(\alpha) = 0, \quad \text{ ma } f^{(m)}(\alpha) \neq 0.
 \]
-Questa definizione coincide con quella che avete già visto per i polinomi. Difatti, è possibile dimostrare questo risultato:
+Esempio: la funzione $f(x) = \sin(2x) - 2\sin(x)$ ha uno zero di molteplicità $3$ in $x=2\pi$. Difatti,
+\begin{align*}
+    f(\alpha) &= \sin(2\alpha) - 2\sin(\alpha) = 0 - 0 = 0,\\
+    f'(\alpha) &= 2\cos(2\alpha) - 2\cos(\alpha) = 2 - 2 = 0,\\
+    f''(\alpha) &= -4\sin(2\alpha) +2\sin(\alpha) = -0 + 0 = 0,\\
+    f'''(\alpha) &= -8\cos(2\alpha) +2\cos(\alpha) = -8 + 2 \neq 0.
+\end{align*}
+
+È possibile dimostrare che questa definizione di molteplicità restituisce lo stesso risultato di quella che già conoscete per i polinomi: se un polinomio si fattorizza come
+\[
+    p(x) = (x-\alpha)^m g(x),
+\]
+dove $g(x)$ è il prodotto di tutti gli altri fattori di grado $1$ diversi da $(x-\alpha)$, allora $\alpha$ è uno zero di molteplicità $m$. Però la nostra definizione è più generale, in quanto si applica anche a funzioni che non sono polinomi.
+
+È possibile anche dimostrare questo risultato, analogo a quello che si ha per i polinomi.
 \begin{lemma}
 Se $f\in\mathcal{C}^m([a,b])$ ha uno zero di molteplicità $m$ in $\alpha \in (a,b)$, allora si ha $f(x) = (x-\alpha)^m g(x)$, dove $g(x)$ è una funzione continua in $[a,b]$ con $g(\alpha) \neq 0$.
 \end{lemma}
@@ -842,9 +856,14 @@ abbiamo
 
 Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, abbiamo che
 \begin{align*}
-    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{c(x-\alpha)^m cm(m-1)(x-\alpha)^{(m-2)}}{(cm(x-\alpha)^{m-1})^2} = \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
+    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{c(x-\alpha)^m cm(m-1)(x-\alpha)^{(m-2)}}{(cm(x-\alpha)^{m-1})^2} = 
+    \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
 \end{align*}
-È possibile, con un po' di attenzione ai dettagli (che qui non vediamo), dimostrare che $\Phi(x)$ si può estendere a una funzione di classe $\mathcal{C}^1$ con $\Phi(\alpha)=\alpha$ e $\abs{\Phi'(\alpha)} = \frac{m-1}{m} < 1$. Quindi, per il teorema del punto fisso, il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
+Ricordando la definizione di $\sim$, questo significa
+\[
+    \lim_{x\to\alpha} \Phi'(x) = \frac{m-1}{m}.
+\]
+Quindi è possibile\footnote{Per essere completamente rigorosi, dovremmo anche dimostrare che $\Phi'(\alpha)$ esiste ed è effettivamente uguale al suo limite; qui non lo vediamo.} estendere $\Phi(x)$ a una funzione di classe $\mathcal{C}^1$ con $\Phi(\alpha)=\alpha$ e $\Phi'(\alpha) = \frac{m-1}{m} < 1$. Quindi, per il teorema del punto fisso, il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
 \end{proof}
 
 \paragraph{Metodo di Newton modificato} Data una funzione $f$ che ha uno zero di molteplicità $m$ in $\alpha$, abbiamo visto che la funzione
@@ -855,6 +874,9 @@ una volta estesa per continuità, soddisfa
 \[
     \Phi'(\alpha) = 1 - \frac{1}{m}.
 \]
+%%%
+% definire in generale un metodo di Newton con un parametro in più, e dire che se è uguale alla molteplicità viene superlineare?
+%%%
 Questo suggerisce di fare una modifica al metodo: se definiamo
 \[
     \Phi_m(x) = x - m \frac{f(x)}{f'(x)}
