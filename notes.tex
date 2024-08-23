@@ -57,19 +57,25 @@ Vedremo algoritmi per risolvere al computer alcuni problemi che avete visto nei 
 
 \paragraph{Problemi senza soluzione esatta} Alcuni problemi non hanno una soluzione esatta data da una formula, per esempio $\int_0^1 e^{x^2} \mathrm{d}x$, ma si riescono a calcolare approssimazioni di queste soluzioni, per esempio approssimare un integrale tramite somme di Riemann. Vista la quantità di conti, meglio farlo fare a un computer.
 
-\paragraph{Algoritmi lenti} Non sempre gli algoritmi che si vedono in un corso `teorico' funzionano bene su un computer. Esempio: calcolo del determinante tramite la formula di Laplace. Tempo di calcolo sul mio computer:
+\paragraph{Algoritmi lenti} Non sempre gli algoritmi che si vedono in un corso `teorico' funzionano bene su un computer. Ad esempio, consideriamo il calcolo del determinante di una matrice $A \in \mathbb{R}^{n\times n}$ tramite la formula di Laplace lungo la prima riga:
+\[
+    \det A = \sum_{j=1}^n (-1)^{j+1} a_{1j} A^{(1,j)}
+\]
+Qui $A^{1,j}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Notiamo che per calcolare il determinante di una matrice $11\times 11$ bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
+
+A meno che non ci siano proprietà particolari nella matrice $A$, come moltissime entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Sul mio computer, i tempi crescono in questo modo in funzione della dimensione $n$:
 \begin{center}
 \begin{tikzpicture}
-    \begin{axis}[ymode = log]
+    \begin{axis}[ymode = log, xlabel={$n$}, ylabel={tempo / secondi}]
         \addplot[
     color=blue,
     mark=square,
     ]
     coordinates {
    (1.0000e+00,3.3700e-04)
-   (2.0000e+00,3.9820e-03)
+   (2.0000e+00,8.9820e-04)
    (3.0000e+00,1.1920e-03)
-   (4.0000e+00,6.5600e-04)
+   (4.0000e+00,2.5600e-03)
    (5.0000e+00,4.1300e-03)
    (6.0000e+00,1.3605e-02)
    (7.0000e+00,5.7616e-02)
@@ -81,17 +87,27 @@ Vedremo algoritmi per risolvere al computer alcuni problemi che avete visto nei 
     \end{axis}
 \end{tikzpicture}
 \end{center}
-Più di 100 secondi per una matrice $11\times 11$ $\implies$ poco utile in pratica.
+Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 100 secondi! Un algoritmo così lento è poco utile in pratica.
 
-\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diversi modi di gestire i calcoli, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative, per esempio 16. Questo significa che certe operazioni sono approssimate; per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Alcuni algoritmi vanno implementati con attenzione per evitare che queste approssimazioni che sembrano innocue abbiano un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
+\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diversi modi di gestire i calcoli, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative. Questo significa che certe operazioni sono approssimate; per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Alcuni algoritmi vanno implementati con attenzione per evitare che queste approssimazioni che sembrano innocue abbiano un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
 
-\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo che usate nelle ali? Se è troppo spessa, consumate più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruisci un prototipo di aereo, e vedi se cade o no. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire se i risultati sono affidabili e se questi errori diventano così grandi da compromettere il risultato. Questo si applicherà, per voi, anche a simulare reazioni e processi chimici.
+\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruisci un prototipo di aereo, e vedi se cade o no. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire se i risultati sono affidabili e se questi errori diventano così grandi da compromettere il risultato. Questo si applicherà, per voi, anche a simulare reazioni e processi chimici.
 
-\paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{x^2} \mathrm{d}x$, ma fare in modo che il computer esegua questo calcolo per noi. E non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come usare il computer per risolvere qualunque nuovo problema ci capiti davanti.
+\paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{x^2} \mathrm{d}x$, o il determinante di una matrice $11\times 11$, ma vogliamo imparare a fare in modo che il computer esegua questo calcolo per noi. Non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come \emph{programmare} il computer in modo da saper risolvere da soli qualunque nuovo problema ci capiti davanti.
 
 \chapter{Equazioni non lineari (zeri di funzione)}
 
-Problema: data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{a}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - a$.
+\paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di van der Waals}
+\[
+    P = \frac{RT}{V-B} - \frac{A}{V^2}.
+\]
+Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume molare'', cioè il volume occupato da una mole del gas, e $R,A,B$ sono costanti (con $A,B$ che dipendono dal gas in questione). Supponiamo di sapere la pressione $P$ e la temperatura $T$, e voler calcolare il volume occupato da un gas. Questo è equivalente a trovare il valore $x$ che risolve
+\[
+    \frac{RT}{x-B} - \frac{A}{x^2} - P = 0.
+\]
+Lavorando con problemi ingegneristici è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio perché si riconduce a trovare uno zero di un polinomio di grado $2$); ma in generale sarebbe utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anhce più complicate.
+
+\paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{a}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - a$.
 
 Ci potrebbero essere più soluzioni in un dato intervallo (a priori anche infinite!). Un modo conveniente di dimostrare che esiste \emph{almeno} una soluzione in un dato intervallo $[a,b]$ è mostrare che è un \emph{intervallo di separazione}, cioè $f(a)$ e $f(b)$ hanno segni opposti: $f(a)>0,f(b)<0$ oppure $f(a)>0,f(b)<0$. Un modo semplice di scrivere questa condizione è $f(a)f(b) < 0$. Difatti, ricordiamo questo teorema che avete visto ad analisi.
 \begin{theorem}[Teorema degli zeri]
@@ -99,7 +115,7 @@ Sia $f \in \mathcal{C}^0([a,b])$. Se $f(a)$ e $f(b)$ hanno segno opposto (uno po
 \end{theorem}
 Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo di separazione, allora esso contiene uno zero della funzione.
 
-Questo non ci assicura che lo zero sia unico. Se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, per una $f\in\mathcal{C}^1$ mostrando che $f'(x) > 0$ per ogni $x\in (a,b)$ o $f'(x) < 0$ per ogni $x\in (a,b)$).
+Questo risultato non ci assicura che lo zero sia unico. Se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, per una $f\in\mathcal{C}^1$ mostrando che $f'(x) > 0$ per ogni $x\in (a,b)$ o $f'(x) < 0$ per ogni $x\in (a,b)$).
 
 Esempio: per ogni $n>2, a > 0$, consideriamo la funzione $f(x) = x^n - a$. Si ha $f(0) = -a < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, $f(a) = a^n - a > 0$. Quindi $[0,a]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. La soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive ma che sono sufficienti per noi.
 
@@ -147,10 +163,15 @@ $a_1=a,b_1=b$\;
     \end{tabular}
 \end{center}
 
+\paragraph{Costo computazionale} Come vedremo, una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? In particolare, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni che lo compongono. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ somme; calcolare $1+2+3+\dots+20$ richiede $19$ somme, cioè circa il doppio, e ci aspettiamo che ci metta il doppio del tempo.
 
-\paragraph{Terminazione}
+Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare la $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene va calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche poche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
 
-Si può dimostrare formalmente (noi non lo faremo) che le successioni $a_i,b_i,c_i$ convergono a un valore $\alpha$ che è uno zero di $f$. A noi però interessa poco cosa succede al limite, perché possiamo fare solo un numero finito di passi.
+Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale in cui abbiamo calcolato la $f$ tre volte, in $a_1,b_1,c_1$, in ogni passo successivo abbiamo calcolato il valore in \emph{un} solo nuovo punto, cioè $c_k$. Difatti, i valori di $f(a_k)$ e $f(b_k)$ sono già noti dal passo precedente, e ci è bastato ricopiarli dalla riga precedente della tabella.
+
+Per questo diciamo che il costo per passo del metodo di bisezione è di una valutazione della funzione.
+
+\paragraph{Criterio di arresto} Si può dimostrare formalmente (noi non lo faremo) che le successioni $a_k,b_k,c_k$ convergono a un valore $\alpha$ che è uno zero di $f$. A noi però interessa poco cosa succede al limite, perché possiamo fare solo un numero finito di passi.
 
 %%
 % enunciare un teorema?
@@ -175,7 +196,7 @@ Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono neces
 \frac{b_1 - a_1}{2^n} \leq \varepsilon \iff 2^n \geq \frac{b_1 - a_1}{\varepsilon} \iff n \geq \log_2 \frac{b_1 - a_1}{\varepsilon}.
 \]
 
-Un'altra idea naturale è fermarsi quando $f(c_k)$ è ``sufficientemente piccolo''. La condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, per colpa dei calcoli inaccurati in aritmetica di macchina, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
+\paragraph{Criterio di arresto euristico} Un'altra idea naturale è fermarsi quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
 
 Supponiamo di avere calcolato la funzione in un punto $c_k$, ottenendo $f(c_k)$. Una delle idee fondamentali dell'analisi è che se ``zoomiamo il grafico'' e ne guardiamo una sezione sufficientemente piccola, una funzione $f$ che sia \emph{differenziabile} si avvicina molto alla sua retta tangente. Pertanto, se $f$ è differenziabile in $c_k$,
 \[
@@ -219,10 +240,8 @@ Quindi un possibile criterio di arresto è: se vogliamo calcolare $\alpha$ con u
 Vantaggi:
 
 \begin{itemize}
-    \item Si applica a molte funzioni: richiede solo continuità di $f$.
+    \item Si applica a molte funzioni: richiede solo la continuità di $f$.
     \item Funziona \emph{sicuramente} se partiamo da un intervallo di separazione, restituendo un intervallo piccolo a piacere che contiene uno zero della funzione: come vedremo, non tutti i metodi offrono una garanzia di convergenza.
-    \item Basso costo computazionale: dobbiamo calcolare la $f$ solo su un \emph{nuovo} punto ad ogni iterazione.
-    Il costo (numero di operazioni) in questo caso sta nella valutazione di $f$ (che potrebbe essere complicatissima), non nelle poche altre operazioni che facciamo come $\frac{a_n + b_n}{2}$. Se implementiamo tutto correttamente, ad ogni passo ci sarà una sola nuova valutazione di $f$.
 \end{itemize}
 
 Svantaggi:
