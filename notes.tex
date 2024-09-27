@@ -328,7 +328,7 @@ Vogliamo dimostrare per induzione che
 \begin{equation} \label{fpindu}
     \abs{x_n - \alpha} \leq L^n \rho \quad \text{ per ogni $n \geq 0$}.    
 \end{equation}
-Per $n=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché $x_0 \in I$. Supponiamo la~\eqref{fpindu} vera per un certo $n$, e dimostriamola per $n+1$:
+Per $n=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. Supponiamo la~\eqref{fpindu} vera per un certo $n$, e dimostriamola per $n+1$:
 \begin{equation} \label{fpindu2}
     \abs{x_{n+1} - \alpha} = \abs{\Phi(x_n) - \Phi(\alpha)} = \abs{\Phi'(\xi_n)} \abs{x_n - \alpha} \leq L L^n r = L^{n+1}\rho,    
 \end{equation}
@@ -675,7 +675,11 @@ La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{ta
 \]
 L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre abbiamo usato di nuovo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per calcolare il limite.
 
-Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$, allora punti successivi tendono ad essere allineati in verticale, e la successione va a zero più velocemente di qualunque retta sul grafico in scala logaritmica. Questo tipo di convergenza si chiama \emph{superlineare}. Per esempio, i punti potrebbero formare una parabola con la concavità verso il basso. Questo fenomeno succede per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
+\[
+    \lim_{n\to\infty} \frac{e_{n+1}}{e_n} = 0.
+\]
+Questo comportamento implica una convergenza con una pendenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo punto in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha \emph{superlineare}. Questo tipo di convergenza si ha per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -704,7 +708,7 @@ Diciamo allora che il metodo di bisezione ha \emph{convergenza pressoché linear
 
 \paragraph{Criteri di arresto per il metodo del punto fisso}
 
-Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di arrestarsi quando due iterate successive sono vicine, cioè $\abs{x_{n} - x_{n-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_n - \alpha} < \varepsilon$. Difatti, supponiamo per semplicità che le iterate si comportino esattamente come una successione geometrica, cioè $e_n = \abs{x_n-\alpha} = ar^n$ (almeno da un certo punto in poi). Supponiamo anche, per fissare le idee, che le iterate stiano convergendo ad $\alpha$ dal basso, cioè $x_{n-1} < x_{n} < \alpha$. Allora, $x_{n} - x_{n-1} = e_{n-1} - e_n = ar^{n-1} - ar^n = ar^{n-1}(1-r) = e_n \frac{1-r}{r}$. Se $r$ è molto vicino a $1$, $\frac{1-r}{r}$ è molto vicino a $0$. Quindi possiamo avere una situazione in cui $\abs{x_{n-1}-x_n} = e_n \frac{1-r}{r}$ è al di sotto di una certa soglia $\varepsilon$, ma l'errore vero $e_n$ è molto più grande.
+Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{n} - x_{n-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_n - \alpha} < \varepsilon$. Difatti, supponiamo per semplicità che le iterate si comportino esattamente come una successione geometrica, cioè $e_n = \abs{x_n-\alpha} = ar^n$ (almeno da un certo punto in poi). Supponiamo anche, per fissare le idee, che le iterate stiano convergendo ad $\alpha$ dal basso, cioè $x_{n-1} < x_{n} < \alpha$. Allora, $x_{n} - x_{n-1} = e_{n-1} - e_n = ar^{n-1} - ar^n = ar^{n-1}(1-r) = e_n \frac{1-r}{r}$. Se $r$ è molto vicino a $1$, $\frac{1-r}{r}$ è molto vicino a $0$. Quindi possiamo avere una situazione in cui $\abs{x_{n-1}-x_n} = e_n \frac{1-r}{r}$ è al di sotto di una certa soglia $\varepsilon$, ma l'errore vero $e_n$ è molto più grande.
 
 Quindi, quando $r$ è molto vicino a $1$, non solo il metodo converge lentamente, ma dobbiamo stare attenti a non arrestare il metodo troppo presto.
 
@@ -890,7 +894,7 @@ Vogliamo applicare di nuovo i risultati di convergenza locale del metodo di punt
 
 Possiamo però estendere anche questa funzione per continuità. Poiché
 \[
-    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} \sim \frac{1}{m}(x-\alpha) \to 0,
+    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} = \frac{1}{m}(x-\alpha) \to 0,
 \]
 abbiamo
 \begin{align*}
@@ -924,7 +928,7 @@ Questo suggerisce di fare una modifica al metodo: se definiamo
 \[
     \Phi_m(x) = x - m \frac{f(x)}{f'(x)}
 \]
-allora possiamo ripetere tutti i passaggi precedenti con un coefficiente $m$ davanti, e otteniamo
+allora avremo
 \[
     \Phi_m'(\alpha) = 1 - m\frac{1}{m} = 0.
 \]
@@ -937,15 +941,15 @@ Si può dimostrare, con passaggi simili a quelli precedenti, che questo metodo c
 
 \paragraph{Esercizi}
 
-Esempio: metodo di Newton su una funzione lineare $f(x) = a x + b$ $\rightarrow$ convergenza in un passo.
+Esempio: metodo di Newton su una funzione lineare $f(x) = a x + b$: ha convergenza in un passo.
 
-Esempio: metodo di Newton su $f(x) = x^2-a$ $\rightarrow$ buono come metodo anche per calcolare radici quadrate a mano. Esempio: calcolando $\sqrt{17}$ con $x_0 = 4$, già $x_2$ ha 5 cifre significative esatte.
+Esempio: metodo di Newton su $f(x) = x^2-a$: è anche un metodo per calcolare radici quadrate a mano. Per esempio, calcolando $\sqrt{17}$ con $x_0 = 4$, già $x_2$ ha 5 cifre significative esatte.
 
-Esempio: metodo di Newton su $f(x) = x^2$ $\rightarrow$ la convergenza diventa lineare con ragione $\frac12$.
+Esempio: metodo di Newton su $f(x) = x^2$: lo zero è di ordine 2, e la convergenza diventa lineare con ragione $\frac12$.
 
 Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza quadratica (converge di nuovo in un passo).
 
-\paragraph{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata di una funzione $f$ di cui vogliamo trovare gli zeri. Per questo esistono alcune varianti che cercano di ``imitare'' il metodo di Newton ma senza dover calcolare derivate.
+\paragraph{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata della funzione $f$. Per questo esistono alcune varianti del metodo di Newton che cercano di evitare di calcolare derivate.
 \begin{description}
     \item[Metodo delle corde] È l'iterazione $x_{n+1} = x_n - \frac{f(x_n)}{c}$, dove $c$ è un valore costante fissato. Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $\frac14$. Visto che questo è un metodo di punto fisso, possiamo studiarne la convergenza come per un normale metodo di punto fisso; in particolare, per applicare i teoremi di convergenza è necessario scegliere $c$ in modo che $\abs{f'(\alpha)} < 1$.
     \item[Metodo delle secanti] È l'iterazione che si ottiene rimpiazzando, nel metodo di Newton, $f'(x_n)$ con il rapporto incrementale calcolato sugli ultimi due punti,
