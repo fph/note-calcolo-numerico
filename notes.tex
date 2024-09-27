@@ -2,8 +2,6 @@
 
 \usepackage{amsmath,amsthm,amssymb,mathtools}
 
-\usepackage[italian]{babel}
-
 \usepackage{tikz}
 \usepackage{pgfplots}
 
@@ -12,6 +10,8 @@
 
 \usepackage{algorithm2e}
 \usepackage{booktabs}
+\usepackage[italian]{babel}
+
 
 \usepackage{hyperref}
 
@@ -91,7 +91,7 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
 
 \paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diversi modi di gestire i calcoli, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative. Questo significa che certe operazioni sono approssimate; per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Alcuni algoritmi vanno implementati con attenzione per evitare che queste approssimazioni che sembrano innocue abbiano un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
 
-\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruisci un prototipo di aereo, e vedi se cade o no. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire se i risultati sono affidabili e se questi errori diventano così grandi da compromettere il risultato. Questo si applicherà, per voi, anche a simulare reazioni e processi chimici.
+\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruisci un prototipo di aereo, e vedi se cade o no. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire se i risultati sono affidabili e se questi errori diventano così grandi da compromettere il risultato. Anche voi volete simulare reazioni e processi chimici.
 
 \paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{x^2} \mathrm{d}x$, o il determinante di una matrice $11\times 11$, ma vogliamo imparare a fare in modo che il computer esegua questo calcolo per noi. Non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come \emph{programmare} il computer in modo da saper risolvere da soli qualunque nuovo problema ci capiti davanti.
 
@@ -117,7 +117,7 @@ Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo 
 
 Questo risultato non ci assicura che lo zero sia unico. Se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, per una $f\in\mathcal{C}^1$ mostrando che $f'(x) > 0$ per ogni $x\in (a,b)$ o $f'(x) < 0$ per ogni $x\in (a,b)$).
 
-Esempio: per ogni $n>2, a > 0$, consideriamo la funzione $f(x) = x^n - a$. Si ha $f(0) = -a < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, $f(a) = a^n - a > 0$. Quindi $[0,a]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. La soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive ma che sono sufficienti per noi.
+Esempio: per ogni $n>2, a > 0$, consideriamo la funzione $f(x) = x^n - a$. Si ha $f(0) = -a < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, $f(a) = a^n - a > 0$. Quindi $[0,a]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. La soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive di quelle che avete visto ad analisi.
 
 \begin{theorem}[Teorema di Rolle]
 Sia $f:[a,b] \to \mathbb{R}$ una funzione di classe $\mathcal{C}^1$. Se $f(a) = f(b)$, allora esiste almeno un punto $c\in (a,b)$ in cui $f'(c) = 0$.
@@ -146,6 +146,7 @@ $a_1=a,b_1=b$\;
         $a_{k+1} = c_k$, $b_{k+1} = b_k$\;
     }
 }
+\caption{Il metodo di bisezione}
 \end{algorithm}
 
 \paragraph{Esempio} Prendiamo $f(x) = x^2 - 2$. L'intervallo $[a,b] = [0,2]$ è un intervallo di separazione, quindi contiene (almeno) uno zero $\alpha$ di $f$. Sappiamo già in realtà che ne contiene esattamente uno, $\alpha=\sqrt{2}$.
@@ -184,8 +185,22 @@ Supponiamo di voler determinare il valore $\alpha$ a meno di una tolleranza $\va
 b_{k+1} - a_{k+1} = \frac{b_{k} - a_{k}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{1} - a_{1}}{2^k}
 \]
 Quindi se ci fermiamo dopo $n$ iterazioni del metodo abbiamo un intervallo di ampiezza $\frac{b_1-a_1}{2^{n-1}}$ che contiene \emph{uno} zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore che sia la migliore approssimazione possibile (con le informazioni a disposizione) di $\alpha$, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti se $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_1-a_1}{2^{n-1}}$, la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è $\ell$.
-
-IMMAGINE
+\begin{center}
+    \begin{tikzpicture}[scale=0.5]
+        \draw [->] (0,0) -- (10,0);
+        \draw (2,0) node[below] {$a$} circle (2pt);
+        \draw (8,0) node[below] {$b$} circle (2pt);
+        \draw (5,0) node[below] {$c$} circle (2pt);
+        \draw (2.5,0) node[below] {$\alpha$} circle (2pt);
+        \end{tikzpicture}\\
+        \begin{tikzpicture}[scale=0.5]
+            \draw [->] (0,0) -- (10,0);
+            \draw (2,0) node[below] {$a$} circle (2pt);
+            \draw (8,0) node[below] {$b$} circle (2pt);
+            \draw (5,0) node[below] {$c$} circle (2pt);
+            \draw (7.5,0) node[below] {$\alpha$} circle (2pt);
+            \end{tikzpicture}
+\end{center}
 
 Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, sappiamo che esiste uno zero $\alpha$ di $f$ tale che 
 \[
@@ -202,19 +217,30 @@ Supponiamo di avere calcolato la funzione in un punto $c_k$, ottenendo $f(c_k)$.
 \[
     f(x) \approx y = f(c_k) + f'(c_k)(x-c_k),
 \]
-dove a destra dell'uguale abbiamo l'equazione della retta tangente in $c_k$. Un modo di trasformare questa relazione in un'uguaglianza esatta è tramite lo sviluppo di Taylor: se esiste la derivata seconda $f''$ in un intorno di $c_k$, allora per $x-c_k$ sufficientemente piccolo vale
+dove a destra dell'uguale abbiamo l'equazione della retta tangente in $c_k$. Un modo di trasformare questa relazione in un'uguaglianza esatta è tramite lo sviluppo di Taylor: $f$ è una funzione di classe $\mathcal{C}^2$, allora per $x-c_k$ sufficientemente piccolo vale
 \[
     f(x) = f(c_k) + f'(c_k)(x-c_k) + \frac{1}{2}f''(\xi) (x-c_k)^2,
 \]
-dove $\xi$ è un punto compreso nell'intervallo tra $c_k$ e $x$ (in qualunque ordine essi siano). Ci aspettiamo che l'ultimo termine sia piccolo, se stiamo guardando in una sezione abbastanza piccola del grafico: se $x-c_k$ è piccolo, $(x-c_k)^2$ lo è ancora di più.
+dove $\xi$ è un punto compreso nell'intervallo tra $c_k$ e $x$ (in qualunque ordine essi siano). Ci aspettiamo che l'ultimo termine sia piccolo, se stiamo guardando in una sezione abbastanza piccola del grafico: se $x-c_k$ è piccolo, $(x-c_k)^2$ lo è molto di più.
 
 Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di valutare la distanza $\abs{\alpha - c_k}$ usando le formule sopra? Possiamo ricavare dalla prima formula
 \[
 \abs{c_k-\alpha} \approx \frac{\abs{f(c_k)}}{\abs{f'(c_k)}}.
 \]
-Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però; può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è differenziabile due volte.
+Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però; può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
 
-Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero. (IMMAGINE) È utile cercare di avere un criterio di arresto che non dipenda dal valore della funzione, perché questi possono variare molto a seconda delle applicazioni: se la funzione di cui cerchiamo uno zero ha a che vedere con le distanze tra gli atomi di una molecola, per esempio, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
+Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero.
+\begin{center}
+    \begin{tikzpicture}
+        \draw[->] (-2,0) -- (5,0) node[right] {$x$};
+        \draw[->] (0,-1) -- (0,2) node[above] {$y$};
+        \draw (4.5,0) node[below] {$c_k$} circle (1pt);
+        \draw (2,0) node[below] {$\alpha$} circle (1pt);
+        
+        \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
+    \end{tikzpicture}
+\end{center}
+È utile cercare di avere un criterio di arresto che non dipenda dal valore della funzione, perché questi possono variare molto a seconda delle applicazioni: se la funzione di cui cerchiamo uno zero ha a che vedere con le distanze tra gli atomi di una molecola, per esempio, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
 
 Ci manca ancora un ingrediente per completare questo criterio di arresto. Il valore di $f(c_k)$ viene calcolato lungo l'algoritmo, ma $f'(c_k)$ no, e calcolarlo può essere molto più complicato. Possiamo però rimpiazzarlo con un'altra approssimazione: se $c_k \in [a_k, b_k]$, allora
 \[
@@ -254,7 +280,7 @@ Svantaggi:
 
 \section{Metodo del punto fisso}
 
-Un altro algoritmo che ci permette di cercare zeri di funzioni è il \emph{metodo del punto fisso}, o di \emph{iterazione funzionale}. Per questo metodo, è necessario fare delle manipolazioni algebriche per riscrivere l'equazione dalla forma $f(x) = 0$ alla forma $x = \Phi(x)$, per un'opportuna funzione $\Phi$. Per esempio, se stiamo cercando uno zero della funzione $f(x) = x^3 - 2$, possiamo riscrivere l'equazione $f(x)$ in vari modi; per esempio: 
+Un altro algoritmo che ci permette di cercare zeri di funzioni è il \emph{metodo del punto fisso}, o di \emph{iterazione funzionale}. Per usare questo metodo, è necessario fare delle manipolazioni algebriche per riscrivere l'equazione dalla forma $f(x) = 0$ alla forma $x = \Phi(x)$, per un'opportuna funzione $\Phi$. Per esempio, se stiamo cercando uno zero della funzione $f(x) = x^3 - 2$, possiamo riscrivere l'equazione $f(x)$ in vari modi; per esempio: 
 \begin{itemize}
     \item $x = x^3 - 2 + x$;
     \item $x = x - \frac16 (x^3-2)$;
@@ -262,7 +288,7 @@ Un altro algoritmo che ci permette di cercare zeri di funzioni è il \emph{metod
 \end{itemize}
 Ognuno di queste scritture porta a una definizione diversa di $\Phi(x)$, la funzione che sta a destra dell'uguale. In tutti questi casi, uno zero $\alpha$ di $f(\alpha)=0$ è anche un \emph{punto fisso} di $\Phi$, cioè soddisfa $\alpha = \Phi(\alpha)$. Tutte queste possibilità portano a scelte diverse di $\Phi(x)$, e quindi a metodi che hanno (potenzialmente) comportamenti molto diversi. Alcuni di questi metodi potrebbero generare successioni che convergono a $\alpha$ ed altri no. Studiamo in generale questi metodi.
 
-Il metodo del punto fisso è fatto in questo modo: fissata una certa $\Phi:[a,b] \to \mathbb{R}$ e scelto $x_0 \in [a,b]$, costruiamo la successione
+Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b] \to \mathbb{R}$ e scelto $x_0 \in [a,b]$, costruiamo la successione
 \begin{equation} \label{puntofisso}
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
@@ -315,18 +341,18 @@ Questo completa la dimostrazione della~\eqref{fpindu}. Da questa relazione si ha
 da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_n = \alpha$.
 \end{proof}
 
-%%
-% Un primo esempio migliore per l'anno prossimo: prendere $x = x - 1/6*(x^3-2)$, fissare un rho, e mostrare che funziona.
-% Solo dopo fare l'esempio inverso: trovo il $\rho$ più grande possibile...
-% Altro esempio: $x = x + (x^3-2)$, in cui |f'(alpha)| non è <= 1. Ancora meglio sarebbe trovare un caso in cui la derivata non è sempre >= 1.
-%% 
+\paragraph{Esempio} Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Se prendiamo $\rho = 0.5$, abbiamo che su tutto l'intervallo
+\[
+    [\alpha-\rho,\alpha+\rho] \approx [1.26-0.5,1.26+0.5]
+\]
+si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che il metodo converge per ogni scelta di $x_0$ in questo intervallo. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $\rho < 2 - \sqrt[3]{2} \approx 0.74$ e la soluzione è analoga.
 
-\paragraph{Esempi} Possiamo prendere $f(x) = x^3 - 2$, e le tre formulazioni alternative come problema di punto fisso viste sopra. Di queste, solo la seconda è localmente convergente; le altre hanno $\abs{\Phi'(\alpha)} > 1$, e quindi non c'è speranza di applicare il teorema visto. (Anzi, con un ragionamento simile è possibile dimostrare che esiste un intervallo $I$ tale che per tutte le successioni con $x_0 \in I \setminus \{\alpha\}$ esiste un $n$ tale che $x_n \not\in I$. Non vediamo questa dimostrazione.)
+Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come punto fisso $x=\sqrt[3]{2}$. Questa volta si ha $\Phi'(x) = -\frac{4}{x^3}$, quindi $\Phi'(\alpha) = -2$. Non riusciremo mai a trovare un intervallo in cui applicare il teorema, perché già nel centro dell'intervallo non abbiamo $\abs{\Phi'(x)}< 1$. Si può difatti vedere che il metodo di punto fisso con questa funzione non converge ad $\alpha$, anzi, anche se partiamo da un $x_0$ molto vicino ad $\alpha$ (ma diverso da esso) le iterate si allontanano sempre di più.
 
 \begin{remark} \label{oss:corpuntofisso}
-Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha$, allora per continuità possiamo prendere un $\rho$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
+    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha$, allora per continuità possiamo prendere un $\rho$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
 \end{remark}
-
+    
 \paragraph{Esempio}
 
 Esercizio: consideriamo l'equazione di punto fisso $x = \cos x$ (con $x$ in radianti). Quante soluzioni positive ha? Sappiamo individuare esplicitamente un intervallo $I$ in cui si applica il teorema del punto fisso?
@@ -649,7 +675,7 @@ La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{ta
 \]
 L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre abbiamo usato di nuovo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per calcolare il limite.
 
-Quindi la convergenza è \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$, allora punti successivi tendono ad essere allineati in verticale, e la successione va a zero più velocemente di qualunque retta sul grafico in scala logaritmica. Questo fenomeno succede per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$, allora punti successivi tendono ad essere allineati in verticale, e la successione va a zero più velocemente di qualunque retta sul grafico in scala logaritmica. Questo tipo di convergenza si chiama \emph{superlineare}. Per esempio, i punti potrebbero formare una parabola con la concavità verso il basso. Questo fenomeno succede per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -664,7 +690,7 @@ Dall'esercizio precedente, ricaviamo che $r \geq 1$ può essere un'indicazione c
 
 \paragraph{Tasso di convergenza del metodo di bisezione}
 
-Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo questa definizione. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$ (IMMAGINE). Il comportamento non monotono si vede anche nella Figura~\ref{fig:iterativi}.
+Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo questa definizione. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
 
 Riusciamo però a dimostrare che $e_n \leq \varepsilon_n$, dove $\varepsilon_n$ è una successione che converge linearmente: difatti abbiamo visto che
 \[
@@ -744,15 +770,13 @@ Vantaggi:
     \item Nella maggior parte dei casi, converge molto più velocemente degli altri metodi.
 \end{itemize}
 
-Il comportamento che si osserva tipicamente dal metodo di Newton è un certo periodo di ``oscillazioni iniziali'' e poi una convergenza molto veloce; appena $x_n$ si avvicina a $\alpha$ e l'errore $e_n$ va sotto una certa soglia, esso comincia ad andare a zero molto velocemente.
+Il comportamento che si osserva tipicamente con il metodo di Newton è un certo numero di iterazioni iniziali in cui l'errore non scende per nulla o quasi, e poi una convergenza molto veloce; appena $x_n$ si avvicina a $\alpha$ e l'errore $e_n$ va sotto una certa soglia, esso comincia ad andare a zero molto velocemente.
 
 \paragraph{Ordine di convergenza di un metodo iterativo}
 
-Diciamo invece che si ha \emph{convergenza superlineare} quando il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$, e il grafico diventa più ripido di qualsiasi retta.
+Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$. Fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. In altre parole, un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
 
-In particolare, fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. In altre parole, un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
-
-Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: diciamo che un metodo iterativo dato un $p > 1$, diciamo che un metodo iterativo ha \emph{ordine di convergenza $p$} se vale
+Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: dato un $p > 1$, diciamo che un metodo iterativo ha \emph{ordine di convergenza $p$} se vale
 \[
 \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in (0,\infty).
 \]
@@ -771,7 +795,7 @@ Diciamo che un metodo numerico converge con ordine \emph{almeno $p$} se vale
 \[
 \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in [0,\infty).
 \]
-Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Notare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dalle parole che abbiamo usato: se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto è analoga alla~\eqref{almeno}.)
+Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Notare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dalle parole che abbiamo usato: se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto, che non vediamo, è analoga alla~\eqref{almeno}.)
 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton] \label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_n = \abs{x_n - \alpha}$ soddisfa
@@ -827,34 +851,34 @@ dove $g(x)$ è il prodotto di tutti gli altri fattori di grado $1$ diversi da $(
 Se $f\in\mathcal{C}^m([a,b])$ ha uno zero di molteplicità $m$ in $\alpha \in (a,b)$, allora si ha $f(x) = (x-\alpha)^m g(x)$, dove $g(x)$ è una funzione continua in $[a,b]$ con $g(\alpha) \neq 0$.
 \end{lemma}
 \begin{proof}
-Definiamo $g(x) = \frac{f(x)}{(x-\alpha)^m}$. Questa funzione è definita su tutto $[a,b]$ tranne che in $x=\alpha$, dove si annulla il denominatore. Possiamo però estenderla per continuità. Per farlo, dobbiamo calcolare il limite
+Definiamo $g(x) = \frac{f(x)}{(x-\alpha)^m}$. Questa funzione è definita su tutto $[a,b]$ tranne che in $x=\alpha$, dove si annulla il denominatore. Possiamo però estenderla per continuità. Per farlo, dobbiamo mostrare che esiste ed è finito il limite
 \[
 \lim_{x\to \alpha} \frac{f(x)}{(x-\alpha)^m}.
 \]
 Per calcolare questo limite, utilizziamo $m$ volte il teorema di De l'Hopital: 
-\begin{align*}
+\begin{align} \label{hop1}
 \lim_{x\to \alpha} \frac{f(x)}{(x-\alpha)^m} &= \lim_{x\to \alpha} \frac{f'(x)}{m(x-\alpha)^{m-1}} = \lim_{x\to \alpha} \frac{f''(x)}{m(m-1)(x-\alpha)^{m-2}} = \dots \\
-&= \lim_{x\to \alpha} \frac{f^{(m)}(x)}{m!\cdot 1} = \frac{f^{(m)}(\alpha)}{m!} \neq 0.
-\end{align*}
+&= \lim_{x\to \alpha} \frac{f^{(m)}(x)}{m!\cdot 1} = \frac{f^{(m)}(\alpha)}{m!} = C\neq 0.
+\end{align}
 (Tutti i limiti tranne l'ultimo sono della forma $\frac{0}{0}$.)
-\end{proof}
-
-%%%
-% Cambiare questo approccio perché è complicato dimostrare che la definizione con le derivate implica l'altra con g regolare.
-% In generale sembra complicato gestire le cose, serve assumere regolarità in $\alpha$. Più semplice farlo a livello di $g$.
-%%%
-
-Con il linguaggio dell'analisi possiamo scrivere
+Quindi possiamo definire
 \[
-    f(x) \sim c (x-\alpha)^m,
+    g(x) = \begin{cases}
+        \frac{f(x)}{(x-\alpha)^m} & x\neq \alpha,\\
+        C & x=\alpha.
+    \end{cases}
 \]
-dove la costante $c$ vale $c= \frac{1}{m!}f^{(m)}(\alpha) \neq 0$. Ricordiamo difatti che la notazione $f(x) \sim g(x)$ significa che $\lim f(x) / g(x) = 1$, in questo caso quando $x\to \alpha$.
-
-Possiamo concludere anche che
+In questo modo la funzione $g(x)$ è continua su tutto $[a,b]$, ha $g(\alpha)\neq 0$, e soddisfa $f(x) = (x-\alpha)^m g(x)$, come richiesto.
+\end{proof}
+Dalla dimostrazione precedente ricaviamo anche un'altra conseguenza: si ha
+\begin{equation}
+    f(x) \sim C (x-\alpha)^m,
+\end{equation}
+dove stiamo usando una notazione dell'analisi: $a(x) \sim b(x)$ significa che $\lim a(x) / b(x) = 1$, in questo caso quando $x\to \alpha$. Allo stesso modo, abbiamo anche
 \begin{equation} \label{lhopder}
-    f'(x) \sim cm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim cm(m-1)(x-\alpha)^{m-2}
-\end{equation} 
-con lo stesso valore della costante $c$, ripetendo la dimostrazione precedente con la regola di De l'Hopital.
+    f'(x) \sim Cm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim Cm(m-1)(x-\alpha)^{m-2}
+\end{equation}
+grazie alla~\eqref{hop1}.
 
 Con questi risultati, possiamo dimostrare che se $\alpha$ è uno zero di molteplicità $m>1$, la convergenza del metodo di Newton è più lenta.
 \begin{theorem}
@@ -866,7 +890,7 @@ Vogliamo applicare di nuovo i risultati di convergenza locale del metodo di punt
 
 Possiamo però estendere anche questa funzione per continuità. Poiché
 \[
-    \frac{f(x)}{f'(x)} \sim \frac{c(x-\alpha)^m}{cm(x-\alpha)^{m-1}} \sim \frac{1}{m}(x-\alpha) \to 0,
+    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} \sim \frac{1}{m}(x-\alpha) \to 0,
 \]
 abbiamo
 \begin{align*}
@@ -875,7 +899,7 @@ abbiamo
 
 Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, abbiamo che
 \begin{align*}
-    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{c(x-\alpha)^m cm(m-1)(x-\alpha)^{(m-2)}}{(cm(x-\alpha)^{m-1})^2} = 
+    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{C(x-\alpha)^m Cm(m-1)(x-\alpha)^{(m-2)}}{(Cm(x-\alpha)^{m-1})^2} = 
     \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
 \end{align*}
 Ricordando la definizione di $\sim$, questo significa
@@ -909,7 +933,7 @@ Quindi se il valore della molteplicità $m$ è noto a priori possiamo utilizzare
 \begin{equation} \label{newtonmod}
     x_{n+1} = \underbrace{x_n - m\frac{f(x_n)}{f'(x_n)}}_{:=\Phi_m(x_n)} \quad n = 0,1,2,\dots    
 \end{equation}
-Si può dimostrare che esso converge (localmente) con ordine almeno 2, con passaggi simili a quelli precedenti.
+Si può dimostrare, con passaggi simili a quelli precedenti, che questo metodo converge (localmente) con ordine almeno 2, quando viene applicato a una funzione che ha uno zero di molteplicità $m$.
 
 \paragraph{Esercizi}
 
@@ -928,7 +952,7 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
     \[
     \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}.
     \]
-    In questo modo si rimpiazza la derivata con un oggetto più economico da calcolare; difatti abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). Anche questo metodo converge localmente, e il suo di convergenza è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$ (non lo dimostriamo, è più complesso: difatti non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti). Per applicarlo, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$.
+    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). Anche questo metodo converge localmente, e il suo di convergenza è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$ (non lo dimostriamo, è più complesso: difatti non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti). Per applicarlo, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$.
 \end{description}
 
 % [Note per lezione Matlab:
@@ -965,8 +989,6 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
 % \]
 
 \chapter{Aritmetica di macchina}
-
-% TODO: aggiungere prima motivazione che usa notazione scientifica in base-10 per spiegare alcune caratteristiche base: ``spaziatura'' tra i numeri variabile, errore relativo limitato, operazioni approssimate (1/3+1/3+1/3).
 
 Se provate a implementare i metodi precedenti su un computer con Matlab, noterete in molti casi un comportamento abbastanza particolare: i metodi spesso smettono di convergere attorno a $10^{-15}$ o $10^{-16}$, come accade nella Figura~\ref{fig:iterativi2}. Per comprendere cosa sta succedendo, dobbiamo studiare come i numeri reali vengono rappresentati in un computer.
 
