@@ -110,7 +110,7 @@ Lavorando con problemi ingegneristici è normale incontrare problemi come questi
 \paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{a}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - a$.
 
 Ci potrebbero essere più soluzioni in un dato intervallo (a priori anche infinite!). Un modo conveniente di dimostrare che esiste \emph{almeno} una soluzione in un dato intervallo $[a,b]$ è mostrare che è un \emph{intervallo di separazione}, cioè $f(a)$ e $f(b)$ hanno segni opposti: $f(a)>0,f(b)<0$ oppure $f(a)>0,f(b)<0$. Un modo semplice di scrivere questa condizione è $f(a)f(b) < 0$. Difatti, ricordiamo questo teorema che avete visto ad analisi.
-\begin{theorem}[Teorema degli zeri]
+\begin{theorem}[Teorema di esistenza degli zeri]
 Sia $f \in \mathcal{C}^0([a,b])$. Se $f(a)$ e $f(b)$ hanno segno opposto (uno positivo e uno negativo), allora esiste almeno un reale $\alpha \in (a,b)$ tale che $f(\alpha) = 0$.
 \end{theorem}
 Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo di separazione, allora esso contiene uno zero della funzione.
@@ -118,7 +118,6 @@ Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo 
 Questo risultato non ci assicura che lo zero sia unico. Se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, per una $f\in\mathcal{C}^1$ mostrando che $f'(x) > 0$ per ogni $x\in (a,b)$ o $f'(x) < 0$ per ogni $x\in (a,b)$).
 
 Esempio: per ogni $n>2, a > 0$, consideriamo la funzione $f(x) = x^n - a$. Si ha $f(0) = -a < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, $f(a) = a^n - a > 0$. Quindi $[0,a]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. La soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive di quelle che avete visto ad analisi.
-
 \begin{theorem}[Teorema di Rolle]
 Sia $f:[a,b] \to \mathbb{R}$ una funzione di classe $\mathcal{C}^1$. Se $f(a) = f(b)$, allora esiste almeno un punto $c\in (a,b)$ in cui $f'(c) = 0$.
 \end{theorem}
@@ -214,22 +213,22 @@ Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono neces
 \paragraph{Criterio di arresto euristico} Un'altra idea naturale è fermarsi quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
 
 Supponiamo di avere calcolato la funzione in un punto $c_k$, ottenendo $f(c_k)$. Una delle idee fondamentali dell'analisi è che se ``zoomiamo il grafico'' e ne guardiamo una sezione sufficientemente piccola, una funzione $f$ che sia \emph{differenziabile} si avvicina molto alla sua retta tangente. Pertanto, se $f$ è differenziabile in $c_k$,
-\[
+\begin{equation} \label{fapprox}
     f(x) \approx y = f(c_k) + f'(c_k)(x-c_k),
-\]
+\end{equation}
 dove a destra dell'uguale abbiamo l'equazione della retta tangente in $c_k$. Un modo di trasformare questa relazione in un'uguaglianza esatta è tramite lo sviluppo di Taylor: $f$ è una funzione di classe $\mathcal{C}^2$, allora per $x-c_k$ sufficientemente piccolo vale
 \[
     f(x) = f(c_k) + f'(c_k)(x-c_k) + \frac{1}{2}f''(\xi) (x-c_k)^2,
 \]
 dove $\xi$ è un punto compreso nell'intervallo tra $c_k$ e $x$ (in qualunque ordine essi siano). Ci aspettiamo che l'ultimo termine sia piccolo, se stiamo guardando in una sezione abbastanza piccola del grafico: se $x-c_k$ è piccolo, $(x-c_k)^2$ lo è molto di più.
 
-Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di valutare la distanza $\abs{\alpha - c_k}$ usando le formule sopra? Possiamo ricavare dalla prima formula
+Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di valutare la distanza $\abs{\alpha - c_k}$ usando le formule sopra? Possiamo ricavare dalla~\eqref{fapprox}
 \[
 \abs{c_k-\alpha} \approx \frac{\abs{f(c_k)}}{\abs{f'(c_k)}}.
 \]
-Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però; può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
+Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però: può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
 
-Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero.
+Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore piccolo, ma $c_k$ e $\alpha$ sono lontani.
 \begin{center}
     \begin{tikzpicture}
         \draw[->] (-2,0) -- (5,0) node[right] {$x$};
@@ -673,13 +672,13 @@ La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{ta
 \[
 \lim_{n \to \infty} \frac{\abs{x_{n+1} - \alpha}}{\abs{x_n - \alpha}} = \lim_{n\to\infty} \abs{\Phi'(\xi_n)} = \abs{\Phi'(\alpha)} \in [0,1).
 \]
-L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre abbiamo usato di nuovo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per calcolare il limite.
+L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre dobbiamo usare il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_n\to\alpha$ allora $\abs{\Phi'(\xi_n)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
 
-Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Perché ``almeno''? Perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
+Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
 \[
     \lim_{n\to\infty} \frac{e_{n+1}}{e_n} = 0.
 \]
-Questo comportamento implica una convergenza con una pendenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo punto in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha \emph{superlineare}. Questo tipo di convergenza si ha per la quarta successione in Figura~\ref{fig:iterativi}, che converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+Questo comportamento implica una convergenza con una pendenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo $n$ in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui pendenza tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -732,18 +731,24 @@ Il metodo di Newton è un metodo per la ricerca di zeri che offre convergenza pi
 
 L'idea è la seguente. Ad ogni passo, data un'approssimazione $x_n$ di una soluzione, calcoliamo $x_{n+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_n$. L'equazione di questa retta è
 \[
-y(x) = f(x_n) + f'(x_n) (x- x_n),
+y = f(x_n) + f'(x_n) (x- x_n),
 \]
-quindi $x_{n+1}$ è il punto tale che
+quindi definiamo come $x_{n+1}$ il punto tale che
 \[
-0 = y(x_{n+1}) = f(x_n) + f'(x_n) (x_{n+1}- x_n),
+0 = f(x_n) + f'(x_n) (x_{n+1}- x_n),
 \]
 ossia, risolvendo,
 \[
 x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}.
 \]
-
-Il metodo di Newton è un metodo di punto fisso con funzione $\Phi(x) = x - \frac{f(x)}{f'(x)}$. Notiamo che questa funzione può non essere ben definita se $f'(x) = 0$: quando incontriamo un'iterata $x_n$ per cui si ha $f'(x_n) = 0$, il metodo di Newton fallisce e non riusciamo a calcolare l'iterata successiva.
+Il metodo di Newton quindi è definito dalla successione
+\[
+\begin{cases}
+    x_0 \text{ dato},\\
+    x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \quad n=0,1,2,\dots.
+\end{cases}
+\]
+Il metodo di Newton quindi è un metodo di punto fisso con $\Phi(x) = x - \frac{f(x)}{f'(x)}$. Notiamo che questa funzione non è definita se $f'(x) = 0$: quando incontriamo un'iterata $x_n$ per cui si ha $f'(x_n) = 0$, il metodo di Newton non è applicabile, perché non riusciamo a calcolare l'iterata successiva.
 
 Sotto l'ipotesi aggiuntiva $f'(\alpha) \neq 0$, riusciamo a dimostrare la convergenza locale del metodo di Newton.
 
@@ -755,19 +760,20 @@ Sia $f \in \mathcal{C}^2([a,b])$, e sia $\alpha \in (a,b)$ tale che $f(\alpha) =
 \end{itemize}
 \end{theorem}
 \begin{proof}
-Poiché $f'(\alpha) \neq 0$ e la funzione derivata $f'(x)$ è continua, in un intorno sufficientemente piccolo di $\alpha$ si ha $f'(x) \neq 0$. Inoltre, possiamo calcolare
+Poiché $f'(\alpha) \neq 0$ e la funzione derivata $f'(x)$ è continua, in un intorno sufficientemente piccolo di $\alpha$, che possiamo prendere della forma $[\alpha-\hat{\rho}, \alpha+\hat{\rho}]$, si ha $f'(x) \neq 0$; quindi la funzione $\Phi(x)$ è ben definita. Inoltre, possiamo calcolare
 \begin{equation} \label{Phiprime}
     \Phi'(x) = 1 - \frac{f'(x)f'(x) - f(x)f''(x)}{(f'(x))^2} = \frac{f(x)f''(x)}{(f'(x))^2};
 \end{equation}
-pertanto se $f'(\alpha) \neq 0$ abbiamo $\Phi'(\alpha) = 0$. Come nell'Osservazione~\ref{oss:corpuntofisso}, possiamo affermare che in un intorno sufficientemente piccolo di $\alpha$ avremo $\abs{\Phi'(x)} < 1$. Esiste quindi un intervallo $I$ centrato in $\alpha$ in cui la $\Phi(x)$ esiste (il denominatore non si annulla) e $\abs{\Phi'(x)} < 1$ per ogni $x\in I$. In questo intervallo possiamo applicare il teorema del punto fisso e quindi ottenere la tesi.
+pertanto se $f'(\alpha) \neq 0$ abbiamo $\Phi'(\alpha) = 0$. Come nell'Osservazione~\ref{oss:corpuntofisso}, possiamo affermare che in un intorno sufficientemente piccolo di $\alpha$ avremo $\abs{\Phi'(x)} < 1$. Esiste quindi un intervallo $I = [\alpha-\rho,\alpha+\rho]$, con $\rho\leq \hat{\rho}$, in cui la $\Phi(x)$ esiste e $\abs{\Phi'(x)} < 1$ per ogni $x\in I$. In questo intervallo possiamo applicare il teorema del punto fisso e quindi ottenere la tesi.
 \end{proof}
+Poiché $r = \Phi'(\alpha)=0$, il metodo di Newton ha convergenza superlineare.
 
 \paragraph{Vantaggi e svantaggi del metodo di Newton}
 Svantaggi:
 \begin{itemize}
     \item Richiede di saper calcolare non solo $f$ ma anche $f'$: con Matlab, tipicamente dovremo passare due funzioni anziché una.
     \item Costo computazionale maggiore: ad ogni passo, dobbiamo valutare $f$ e $f'$ una volta.
-    \item Convergenza non garantita.
+    \item La convergenza è garantita solo localmente, come per ogni metodo di punto fisso.
 \end{itemize}
 Vantaggi:
 \begin{itemize}
@@ -778,13 +784,13 @@ Il comportamento che si osserva tipicamente con il metodo di Newton è un certo 
 
 \paragraph{Ordine di convergenza di un metodo iterativo}
 
-Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$. Fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. In altre parole, un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
+Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$. Fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. Questo significa che un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
 
 Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: dato un $p > 1$, diciamo che un metodo iterativo ha \emph{ordine di convergenza $p$} se vale
 \[
 \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in (0,\infty).
 \]
-Notare che non stiamo chiedendo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere un metodo con convergenza superlineare. Difatti, se un metodo ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
+Notare che non richiediamo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere un metodo con convergenza superlineare. Difatti, se un metodo ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
 \begin{equation} \label{almeno}
 \lim_{n \to \infty }\frac{e_{n+1}}{e_n} = \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} \cdot \lim_{n \to \infty } e_n^{p-1} = s \cdot 0 = 0.
 \end{equation}
@@ -824,7 +830,7 @@ Allora
 \[
 \frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \frac{f''(\xi_n)}{2f'(x_n)}.
 \]
-Vogliamo ora passare al limite per $n \to \infty$. Sappiamo che $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_n - \alpha} \to 0$ e quindi $\xi_n \to \alpha$. Allora, di nuovo per continuità di queste funzioni, $f''(\xi_n) \to f''(\alpha)$ e $f'(x_n) \to f'(\alpha)$ (che è diverso da zero); quindi
+Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\xi_n$). Vogliamo ora passare al limite per $n \to \infty$. Come già detto sopra, sappiamo che $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_n - \alpha} \to 0$ e quindi $\xi_n \to \alpha$. Allora, per la continuità di queste funzioni, $f''(\xi_n) \to f''(\alpha)$ e $f'(x_n) \to f'(\alpha)$ (che è diverso da zero); quindi
 \[
 \lim_{n\to\infty} \frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \lim \frac{f''(\xi_n)}{2f'(x_n)} = \frac{f''(\alpha)}{2f'(\alpha)} = s \in [0,\infty).
 \]
@@ -836,6 +842,9 @@ Vogliamo ora passare al limite per $n \to \infty$. Sappiamo che $0 \leq \abs{\xi
 \[
 f(\alpha) = f'(\alpha) = f''(\alpha) = \dots = f^{(m-1)}(\alpha) = 0, \quad \text{ ma } f^{(m)}(\alpha) \neq 0.
 \]
+
+Esempio: la funzione $f(x)=x^2$ ha uno zero in $\alpha=0$ di molteplicità $m=2$.
+
 Esempio: la funzione $f(x) = \sin(2x) - 2\sin(x)$ ha uno zero di molteplicità $3$ in $x=2\pi$. Difatti,
 \begin{align*}
     f(\alpha) &= \sin(2\alpha) - 2\sin(\alpha) = 0 - 0 = 0,\\
@@ -850,7 +859,7 @@ Esempio: la funzione $f(x) = \sin(2x) - 2\sin(x)$ ha uno zero di molteplicità $
 \]
 dove $g(x)$ è il prodotto di tutti gli altri fattori di grado $1$ diversi da $(x-\alpha)$, allora $\alpha$ è uno zero di molteplicità $m$. Però la nostra definizione è più generale, in quanto si applica anche a funzioni che non sono polinomi.
 
-È possibile anche dimostrare questo risultato, analogo a quello che si ha per i polinomi.
+È possibile anche dimostrare una fattorizzazione simile a quella che si ha per i polinomi.
 \begin{lemma}
 Se $f\in\mathcal{C}^m([a,b])$ ha uno zero di molteplicità $m$ in $\alpha \in (a,b)$, allora si ha $f(x) = (x-\alpha)^m g(x)$, dove $g(x)$ è una funzione continua in $[a,b]$ con $g(\alpha) \neq 0$.
 \end{lemma}
@@ -878,7 +887,13 @@ Dalla dimostrazione precedente ricaviamo anche un'altra conseguenza: si ha
 \begin{equation}
     f(x) \sim C (x-\alpha)^m,
 \end{equation}
-dove stiamo usando una notazione dell'analisi: $a(x) \sim b(x)$ significa che $\lim a(x) / b(x) = 1$, in questo caso quando $x\to \alpha$. Allo stesso modo, abbiamo anche
+dove stiamo usando una notazione dell'analisi: $a(x) \sim b(x)$ significa che $\lim a(x) / b(x) = 1$, in questo caso quando $x\to \alpha$. Questa notazione ci permette di rimpiazzare $a(x)$ con $b(x)$ quando facciamo il limite di prodotti e rapporti che lo coinvolgono: per esempio, abbiamo
+\begin{align*}
+    \lim_{x\to\alpha} \frac{f(x)}{f'(x)} &= \lim_{x\to\alpha} \frac{f(x)}{(x-\alpha)^m} \frac{(x-\alpha)^m}{f'(x)}\\
+    & = \left(\lim_{x\to\alpha} \frac{f(x)}{(x-\alpha)^m}\right) \left(\lim_{x\to\alpha} \frac{(x-\alpha)^m}{f'(x)}\right)\\
+    & = 1 \cdot \lim_{x\to\alpha} \frac{(x-\alpha)^m}{f'(x)}.
+\end{align*}
+Allo stesso modo, abbiamo anche
 \begin{equation} \label{lhopder}
     f'(x) \sim Cm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim Cm(m-1)(x-\alpha)^{m-2}
 \end{equation}
@@ -892,16 +907,16 @@ Con questi risultati, possiamo dimostrare che se $\alpha$ è uno zero di moltepl
 \begin{proof}
 Vogliamo applicare di nuovo i risultati di convergenza locale del metodo di punto fisso; questa volta però ci scontriamo con il problema che la funzione $\Phi(x) = x - \frac{f(x)}{f'(x)}$ non è definita in $x=\alpha$, perché il denominatore si annulla.
 
-Possiamo però estendere anche questa funzione per continuità. Poiché
+Possiamo però estendere anche questa funzione per continuità. Notiamo che
 \[
-    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} = \frac{1}{m}(x-\alpha) \to 0,
+    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} = \frac{1}{m}(x-\alpha) \to 0.
 \]
-abbiamo
+Abbiamo quindi
 \begin{align*}
     \lim_{x\to\alpha} \Phi(x) &= \lim_{x\to\alpha} x - \frac{f(x)}{f'(x)} = \alpha - 0 = \alpha.
 \end{align*}
 
-Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, abbiamo che
+Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, otteniamo
 \begin{align*}
     \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{C(x-\alpha)^m Cm(m-1)(x-\alpha)^{(m-2)}}{(Cm(x-\alpha)^{m-1})^2} = 
     \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
@@ -951,12 +966,25 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
 
 \paragraph{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata della funzione $f$. Per questo esistono alcune varianti del metodo di Newton che cercano di evitare di calcolare derivate.
 \begin{description}
-    \item[Metodo delle corde] È l'iterazione $x_{n+1} = x_n - \frac{f(x_n)}{c}$, dove $c$ è un valore costante fissato. Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $\frac14$. Visto che questo è un metodo di punto fisso, possiamo studiarne la convergenza come per un normale metodo di punto fisso; in particolare, per applicare i teoremi di convergenza è necessario scegliere $c$ in modo che $\abs{f'(\alpha)} < 1$.
+    \item[Metodo delle corde] Si ottiene rimpiazzando la derivata $f'(x_n)$ con un valore costante fissato $c$:
+        \[
+            \begin{cases}
+                \text{$x_0$ dato},\\
+                x_{n+1} = x_n - \frac{f(x_n)}{c}, \quad n=0,1,2,\dots.
+            \end{cases}
+        \]    
+    Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $4$. Visto che questo è un metodo di punto fisso, possiamo studiarne la convergenza con le tecniche che abbiamo visto; in particolare, per applicare i teoremi di convergenza è necessario scegliere $c$ in modo che $\abs{\Phi'(\alpha)} < 1$.
     \item[Metodo delle secanti] È l'iterazione che si ottiene rimpiazzando, nel metodo di Newton, $f'(x_n)$ con il rapporto incrementale calcolato sugli ultimi due punti,
     \[
     \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}.
     \]
-    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). Anche questo metodo converge localmente, e il suo di convergenza è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$ (non lo dimostriamo, è più complesso: difatti non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti). Per applicarlo, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$.
+    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). Anche questo metodo converge localmente, e il suo di convergenza è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$ (non lo dimostriamo, è più complesso: difatti non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti). Per applicarlo, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$:
+    \[
+    \begin{cases}
+        \text{$x_0$, $x_1$ dati},\\
+        x_{n+1} = x_n - \frac{f(x_n) (x_n - x_{n-1})}{f(x_n) - f(x_{n-1})}, \quad n=1,2,\dots.
+    \end{cases}
+    \]
 \end{description}
 
 % [Note per lezione Matlab:
@@ -1228,7 +1256,7 @@ x = - 10^3 (7\cdot 10^{-1} + 6\cdot 10^{-2} + 4\cdot 10^{-3} + 8 \cdot 10^{-4} +
 \]
 Terminologia: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria si chiama \emph{mantissa}.
 
-Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ha senso soffermarsi sulle questioni di unicità.
+Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ci soffermiamo un attimo sulle questioni di unicità.
 
 La prima condizione $c_1 \neq 0$ serve a escludere scritture alternative con zeri iniziali, per esempio
 \[
@@ -1267,29 +1295,17 @@ L'elenco che abbiamo fatto qui sopra quindi riporta tutti i numeri di macchina n
 Notiamo che i numeri con esponente $-3$ hanno distanza $10^{-5}$ l'uno dal successivo; i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal successivo, fino ai numeri con esponente $3$ che hanno distanza $10$.
 
 \begin{esercizio}
-    Qual è il più piccolo intero positivo che non appartiene all'insieme $\mathbb{F}(10, 2, -3, 3)$ riportato qui sopra?
+    Qual è il più piccolo intero positivo che \emph{non} appartiene all'insieme $\mathbb{F}(10, 2, -3, 3)$ riportato qui sopra?
 \end{esercizio}
     
 Se segniamo sulla retta reale i numeri di macchina quindi vediamo che i numeri più vicini allo zero ($p$ piccolo) hanno uno spazio minore tra l'uno e l'altro; non sono equispaziati. Vedremo però che queste spaziature variabili sono proprio quello che consente una buona approssimazione relativa.
 
-
-Se $x$ è un numero di macchina, anche $-x$ lo è; quindi per enunciare le proprietà successive ci restringiamo ai numeri positivi; saranno valide anche per numeri negativi, ed è facile adattare le dimostrazioni.
+Se $x$ è un numero di macchina, anche $-x$ lo è; quindi per enunciare le proprietà successive ci restringiamo ai numeri positivi; sono valide anche per numeri negativi, ed è facile adattare le dimostrazioni.
 
 \paragraph{Numero di macchina più piccolo, più grande, successivo}  
 Il numero (positivo) più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte cifre $\beta-1$.
 
 Dato un numero di macchina normalizzato positivo $x = \beta^p \sum_{i=1}^t c_i \beta^{-i}$, il numero di macchina immediatamente successivo è quello che si ottiene aggiungendo $1$ all'ultima cifra, cioè $x + \beta^{p-t}$. Questo è chiaro se l'ultima cifra è diversa da $\beta-1$; se l'ultima cifra è $\beta-1$, aggiungendo 1 all'ultima cifra ci sono dei riporti, e la mantissa del risultato potrebbe avere $t+1$ cifre; però l'ultima cifra è $0$ e quindi si può omettere.
-
-
-\paragraph{Altri valori rappresentabili}
-
-Un computer oltre a questi numeri rappresenta alcuni valori speciali:
-\begin{itemize}
-    \item Lo zero (difficile fare senza, e non è un numero normalizzato!)
-    \item $+\infty, -\infty, -0$: vengono aggiunti, con regole aritmetiche ispirate dall'analisi come $1/-\infty = -0$, per far sì che gli algoritmi possano funzionare anche in alcuni casi limite.
-    \item \texttt{NaN}, che viene restituito come ``codice d'errore'' da alcune operazioni non valide come $0/0$.
-    \item Alcuni numeri in più compresi tra $0$ e $\omega$, chiamati \emph{numeri denormalizzati}; non ci interessano qui.
-\end{itemize}
 
 \paragraph{Approssimazione con numeri di macchina}
 
@@ -1315,10 +1331,18 @@ Data un'approssimazione $\tilde{x}$ di un numero reale $x \neq 0$, il suo \emph{
 \begin{equation} \label{relerr}
     \varepsilon = \frac{\tilde{x}-x}{x}.    
 \end{equation}
-È un oggetto molto naturale da considerare: l'errore assoluto $\abs{\tilde{x}-x}$ da solo non dice nulla: possiamo fare degli esempi dalla ``vita reale'' di errori su lunghezze e prezzi. Per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non vuol dire nulla: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
+È un tipo di errore naturale da considerare: l'errore assoluto $\abs{\tilde{x}-x}$ da solo non dice nulla: possiamo fare degli esempi dalla vita reale di errori su lunghezze e prezzi. Per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non vuol dire nulla: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
 
 Possiamo riscrivere la~\eqref{relerr} come $\tilde{x} = x(1+\varepsilon)$. Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (\emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
 
+\paragraph{Valori non normalizzati}
+Su un computer, una variabile può assumere anche alcuni valori speciali, oltre ai numeri di macchina visti sopra:
+\begin{itemize}
+    \item Lo zero (difficile fare senza, e non è un numero normalizzato!)
+    \item $+\infty, -\infty, -0$: vengono aggiunti, con regole aritmetiche ispirate dall'analisi come $1/-\infty = -0$, per far sì che gli algoritmi possano funzionare anche in alcuni casi limite.
+    \item \texttt{NaN}, che viene restituito come una sorta di codice d'errore da alcune operazioni non valide come $0/0$ e $\infty-\infty$.
+    \item Alcuni numeri in più compresi tra $0$ e $\omega$, chiamati \emph{numeri denormalizzati}; non ci interessano qui.
+\end{itemize}
 
 \paragraph{Numeri a doppia precisione}
 Esiste uno standard (IEEE 754) per l'aritmetica di macchina che specifica quali parametri scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}. Corrisponde a $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene rappresentato in 64 bit (=valori 0/1). Con questi valori ogni numero compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ viene rappresentato con errore relativo $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
@@ -1342,12 +1366,12 @@ Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}
 
 \paragraph{Underflow/overflow}
 
-Eseguendo queste operazioni, si possono incontrare numeri più grandi di $\Omega$ in valore assoluto. Questi numeri vengono rimpiazzati con $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando le operazioni producono numeri più piccoli di $\omega$ in valore assoluto, questi vengono rimpiazzati con $0$ (\emph{underflow}).
+Eseguendo una di queste operazioni, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
 \paragraph{Esempi} Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al più vicino)? $0.1 \ominus 0.001$; $1.01 \ominus 1.01$; $(0.77 \oplus 0.44) \oplus 1$; $0.077 \oplus (0.044 \oplus 1)$; $(1 \oslash 3) \otimes 3$; $500 \oplus 500$; $0.001 \odot 0.001$; $50 \oplus 0.01$.
 
 
-\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come fare i conti con razionali esatti (ma i numeratori diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine questo sistema è quello che si è affermato negli anni come il più comodo con cui fare i conti nelle applicazioni, ed è diventato lo standard. Ciononostante ci sono delle approssimazioni, per cui è importante comprendere teoricamente il loro impatto.
+\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come fare i conti con razionali esatti (ma i denominatori diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine questo sistema è quello che si è affermato negli anni come il più comodo con cui fare i conti nelle applicazioni, ed è diventato lo standard. Ciononostante ci sono delle approssimazioni, per cui è importante comprendere teoricamente il loro impatto.
 
 \chapter{Analisi dell'errore}
 
