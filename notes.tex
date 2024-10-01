@@ -727,7 +727,7 @@ Vantaggi del metodo:
 
 \section{Metodo di Newton}
 
-Il metodo di Newton è un metodo per la ricerca di zeri che offre convergenza più veloce, ma richiede di essere in grado di calcolare non solo $f \in \mathcal{C}^1([a,b])$, ma anche la sua derivata $f'$.
+Il \emph{metodo di Newton}, o \emph{metodo delle tangenti}, è un metodo per la ricerca di zeri che offre convergenza più veloce, ma richiede di essere in grado di calcolare non solo $f \in \mathcal{C}^1([a,b])$, ma anche la sua derivata $f'$.
 
 L'idea è la seguente. Ad ogni passo, data un'approssimazione $x_n$ di una soluzione, calcoliamo $x_{n+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_n$. L'equazione di questa retta è
 \[
@@ -1235,7 +1235,7 @@ Se provate a implementare i metodi precedenti su un computer con Matlab, noteret
         \end{axis}
         \end{tikzpicture}
         \end{center}
-    \caption{Stagnazione di un metodo iterativo attorno alla precisione di macchina.} \label{fig:iterativi2}
+    \caption{Stagnazione di un metodo iterativo attorno alla precisione di macchina.} \label{fig:stagnazione}
     \end{figure}    
 
 \paragraph{Rappresentazione in base}
@@ -1375,148 +1375,126 @@ Eseguendo una di queste operazioni, si può ottenere come risultato un numero pi
 
 \chapter{Analisi dell'errore}
 
-Con un computer, possiamo calcolare il risultato di problemi numerici, come ``trovare quanto fa $(0.7)^3$'' o ``trovare la radice cubica di $2$'', che ora sappiamo risolvere perché equivale a ``trovare $\alpha\in [0,2]$ che sia uno zero della funzione $x^3-2$.''.
-
-La maggior parte dei problemi numerici dipendono da uno o più dati in ingresso, per esempio il problema ``trovare la radice cubica del numero $a$'' dipende da $x\in\mathbb{R}$. Possiamo quindi considerarli come il calcolo di una funzione $x = f(a,b,c,\dots,)$ che dipende da uno o più dati di ingresso (input) $a,b,c,\dots$.
-
-Supponiamo di voler usare il calcolatore per calcolare una quantità $x = f(a)$ che dipende da un numero reale $a$. Attenzione che in generale questa non è la stessa $f$ del problema della ricerca di zeri! Se stiamo cercando la radice cubica di un numero $a$, per esempio, la funzione che vogliamo calcolare è $f(a) = x^{1/3}$.
-
-Supponiamo per ora che $f$ sia una funzione razionale, cioè che si scrive combinando solo le quattro operazioni. Per esempio, $f(a) = a^2 - 3/a$, e vogliamo calcolare il suo valore nel punto $a = 0.2$. Per esempio con Matlab
-\begin{lstlisting}
-a = 0.2;
-x = a^2 - 3/a
-\end{lstlisting}
-Ci sono due diverse fonti di errore che fanno sì che la quantità calcolata non sia il risultato esatto.
-\begin{description}
-    \item[Errore inerente] Il computer lavora non con il dato di partenza esatto $a$, ma con una sua approssimazione $\tilde{a}$ affetta da un errore relativo $\varepsilon$. Questo succede sicuramente tutte le volte che $a$ non è un numero di macchina, perché per utilizzarlo il computer deve approssimarlo con un numero di macchina $\tilde{a} = a(1+\varepsilon)$, commettendo un errore relativo $\abs{\varepsilon} \leq \mathsf{u}$. Però ci possono essere altre fonti di errori: per esempio, $a$ potrebbe essere a sua volta il risultato di operazioni precedenti, o potrebbe venire da una misurazione nel mondo reale (quindi affetto da un errore che tipicamente è molto più grande di $\mathsf{u}$). Quindi il computer in realtà può calcolare solo $f(\tilde{a})$ commettendo un \emph{errore inerente} pari a
-    \begin{equation} \label{e_in}
-        e_{in} = \frac{f(\tilde{a}) - f(a)}{f(a)}.    
-    \end{equation}
-    IMMAGINE illustrativa: grafico di una funzione in floating point ``per punti''.
-
-    \item[Errore algoritmico] Per quanto visto sopra, il computer può effettuare le operazioni aritmetiche solo approssimando il loro risultato con numeri di macchina; quindi può calcolare non $f(\tilde{a})$, bensì un'altra funzione $h(\tilde{a})$. Per esempio, dando i comandi più sopra, invece di $f(\tilde{a}) = a^2 - 3/a$, il computer calcolerà $h(\tilde{x}) = \tilde{a} \otimes \tilde{a} \ominus 3 \oslash \tilde{a}$. La differenza tra queste due funzioni determina un \emph{errore algoritmico}
-    \[
-    e_{alg} = \frac{h(\tilde{a}) - f(\tilde{a})}{f(\tilde{a})}.
-    \]
-\end{description}
-
-\paragraph{Errore totale} Combinando i due concetti, è naturale considerare l'\emph{errore totale}, cioè
+\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare più nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, supponiamo di rimpiazzare la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire
+\begin{equation} \label{ean}
+    e_{an} = \frac{\gamma - \alpha}{\alpha}.    
+\end{equation}
+Il secondo errore che commettiamo è il cosiddetto \emph{errore di macchina}, dovuto al fatto che per calcolare $\gamma$ usiamo non numeri e operazioni esatte, ma le loro approssimazioni ottenute con numeri in virgola mobile. Per esempio, se vogliamo applicare il metodo di Newton alla funzione $f(x) = x^2 - 2$, su un computer otterremo la successione
 \[
-e_{tot} = \frac{h(\tilde{a}) - f(a)}{f(a)}.
+\begin{cases}
+    \tilde{x}_0 = \text{approssimazione con numeri di macchina di $x_0$},\\
+    \tilde{x}_{n+1} = \tilde{x}_n \ominus (\tilde{x}_n\odot \tilde{x}_n \ominus 2) \oslash (2\odot \tilde{x}_n).
+\end{cases}
 \]
-Vediamo ora un teorema che consente di darne un'espressione approssimata. Essa è approssimata perché assumiamo che entrambi questi errori siano piccoli, e ignoriamo termini che contengono il prodotto di due errori: un po' come approssimare $\exp(x) \approx 1 + x$ per valori di $x$ piccoli, ignorando i termini di grado superiore $x^2, x^3, \dots$ perché sono molto più piccoli di $x$. 
+Questo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina. È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere il risultato dell'accumulo di molti errori successivi. Definiamo
+\[
+e_{mac} = \frac{\tilde{\gamma} - \gamma}{\gamma}.
+\]
+L'effetto combinato dei due errori è il cosiddetto \emph{errore totale}.
+\[
+e_{tot} = \frac{\tilde{\gamma} - \alpha}{\alpha}.
+\]
+Vediamo ora un teorema che consente di darne un'espressione approssimata. Essa è approssimata perché assumiamo che tutti questi errori siano piccoli, e ignoriamo termini che contengono il prodotto di due errori: un po' come approssimare $\exp(x) \approx 1 + x$ per valori di $x$ piccoli, ignorando i termini di grado superiore $x^2, x^3, \dots$ perché, essendo il prodotto di più copie di $x$, sono molto più piccoli di $x$.
 
-Nel seguito, usiamo il simbolo $a \doteq b$ per indicare che $a$ e $b$ sono uguali a patto di ignorare ``termini di ordine superiore''. Cosa siano esattamente dipende dal contesto: in questo caso, termini che sono il prodotto di due o più errori.
-
+Nel seguito, usiamo il simbolo $a \doteq b$ per indicare che $a$ e $b$ sono uguali a patto di ignorare ``termini di ordine superiore''. Cosa siano esattamente questi termini di ordine superiore dipende dal contesto: in questo caso, termini che sono il prodotto di due o più errori.
 \begin{theorem}
 \[
-e_{tot} \doteq e_{in} + e_{alg}.
+e_{tot} \doteq e_{an} + e_{mac}.
 \]
 \end{theorem}
-\begin{proof} Notiamo innanzitutto che riarrangiando la~\eqref{e_in} si ottiene
+\begin{proof} Notiamo innanzitutto che riarrangiando la~\eqref{ean} si ottiene
 \[
-f(\tilde{a}) = f(a)(1+e_{in}).
+\gamma = \alpha(1+e_{an}).
 \]
 Ora possiamo scrivere
 \begin{align*}
-e_{tot} &= \frac{h(\tilde{a}) - f(a)}{f(a)} = \frac{h(\tilde{a}) - f(\tilde{a})}{f(a)} + \frac{f(\tilde{a}) - f(a)}{f(a)}\\
-&= e_{alg}\frac{f(\tilde{a})}{f(a)} + e_{in} = e_{alg}(1+e_{in}) + e_{in}\\
-&= e_{alg} + e_{in} + e_{alg}e_{in} \doteq e_{alg} + e_{in}.
+e_{tot} &= \frac{\tilde{\gamma} - \alpha}{\alpha} = \frac{\tilde{\gamma} - \gamma}{\alpha} + \frac{\gamma - \alpha}{\alpha}\\
+&= e_{mac}\frac{\gamma}{\alpha} + e_{an} = e_{mac}(1+e_{an}) + e_{an}\\
+&= e_{mac} + e_{mac}e_{an} + e_{an} \doteq e_{mac} + e_{an}. \qedhere
 \end{align*}
 \end{proof}
+Riguardando a questa dimostrazione, notiamo che abbiamo usato solo il fatto che abbiamo fatto due approssimazioni successive una dopo l'altra: prima abbiamo rimpiazzato $\alpha$ con $\gamma$, poi $\gamma$ con $\tilde{\gamma}$. Questo quindi è un risultato generale che ci dice che gli errori relativi commessi successivamente si sommano (al prim'ordine).
 
-\paragraph{Approssimazione al prim'ordine dell'errore inerente}
-Supponiamo che $f$ sia derivabile due volte, e ricordiamo che abbiamo $\tilde{a} = a(1+\varepsilon)$.
-Allora,
-\[
-f(\tilde{a}) = f(a) + f'(a)(\tilde{a} - a) + \frac{f''(\xi)}{2}(\tilde{a}-a)^2 = f(a) + f'(a)\varepsilon a + \frac{f''(\xi)}{2}(\varepsilon a)^2
-\]
-da cui
-\[
-\frac{f(\tilde{a}) - f(a)}{f(a)} = \frac{f'(a)a}{f(a)}\varepsilon + \frac{f''(\xi)}{2f(a)}\varepsilon^2 a`^2 \doteq \frac{f'(a)a}{f(a)}\varepsilon.
-\]
-La quantità
-\[
-\kappa_{f,a} = \abs*{\frac{f'(a)a}{f(a)}}
-\]
-è detta \emph{numero di condizionamento} della funzione $f$ rispetto ad $a$. Mostra di quanto un piccolo errore (relativo) su $a$ viene ``amplificato'' dal calcolo di $f$.
+Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_n - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$.
 
-\paragraph{Esempio} La funzione $f(a) = \frac{a}{1-a}$ ha numero di condizionamento
+\paragraph{Approssimazione al prim'ordine dell'errore di macchina}
+In realtà però l'errore di macchina non è necessariamente dell'ordine di $10^{-16}$ come abbiamo visto sopra: l'accumulazione di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzarlo su un esempio semplice. Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, calcoliamo
+\begin{align*}
+\tilde{\gamma} = \tilde{f}(\tilde{x}, \tilde{y}) &= \tilde{x} \otimes \tilde{x} \ominus \tilde{y} \otimes \tilde{y} \\
+&= x(1+\varepsilon_x) \otimes x(1+\varepsilon_x) \ominus y(1+\varepsilon_y) \otimes (1+\varepsilon_y)\\
+&= x^2(1+\varepsilon_x)^2(1+\varepsilon_1) \ominus y^2(1+\varepsilon_y^2)(1+\varepsilon_2)\\
+&= \left( x^2(1+\varepsilon_x)^2(1+\varepsilon_1) - y^2(1+\varepsilon_y^2)(1+\varepsilon_2) \right)(1+\varepsilon_3) \\
+& \doteq \underbrace{x^2-y^2}_{\text{valore esatto $f(x,y)$}} {}+{} x^2 \cdot 2\varepsilon_x + x^2 \varepsilon_1 - y^2 \cdot 2\varepsilon_y - y^2\varepsilon_2 + (x^2-y^2)\varepsilon_3.
+\end{align*}
+Nell'ultima uguaglianza, notiamo il punto sopra l'uguale: espandendo il prodotto, abbiamo ignorato tutte le quantità ``del secondo ordine'', vale a dire che contengono il prodotto di due (o più) $\varepsilon_i$: visto che sappiamo che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, queste quantità sono dell'ordine di $\mathsf{u}^2$ e sono presumibilmente molto più piccole di tutti gli altri numeri coinvolti.
+
+Visto che tutto quello che sappiamo su questi errori è che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare sull'errore è quella che otteniamo usando la disuguaglianza triangolare: dividendo tutto per $\gamma$, abbiamo
+\begin{align}
+    \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} \stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
+    \leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{y^2}{\abs{x^2-y^2}} \mathsf{u} + \mathsf{u}. \label{esempiox2y2}
+\end{align}
+Questo calcolo ci mostra quando possiamo aspettarci che l'errore di macchina sia grande: le quantità che compaiono di fronte alle prime quattro $\mathsf{u}$ diventano grandi quando $x$ e $y$ sono vicini tra loro, perché in questo caso $x^2-y^2$ è molto più piccolo di $x^2$ e $y^2$. Quindi, nel calcolo di questa espressione, l'errore di macchina è grande quando $x\approx y$. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando ci troviamo a dover fare sottrazioni tra due numeri molto vicini.
+
+Il calcolo che abbiamo effettuato però è abbastanza lungo e macchinoso già per un'espressione molto semplice come $x^2+y^2$; potete immaginare come cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare più facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
+
+\paragraph{Numero di condizionamento} Concentriamoci sull'errore $\varepsilon_x$, e supponiamo per un attimo di ignorare gli errori $\varepsilon_y, \varepsilon_1,\varepsilon_2,\varepsilon_3$, ponendoli uguali a zero. Allora, possiamo notare che quello che stiamo calcolando è $\tilde{\gamma} = f(\tilde{x},y)$: l'unico errore che commettiamo è quello dovuto a rimpiazzare il valore iniziale $x$ con $\tilde{x}$, e tutte le altre operazioni sono esatte. Abbiamo a disposizione uno strumento dell'analisi per dare un'espressione approssimata di questo errore: lo sviluppo di Taylor. Consideriamo la funzione $g(x) = f(x,y)$, dove nascondiamo la dipendenza dalla $y$ perché la stiamo considerando costante. Se questa funzione è di classe $\mathcal{C}^1$, possiamo farne uno sviluppo di Taylor in $x$ per ottenere
 \[
-\kappa_{f,a} = \abs*{\frac{f'(a)a}{f(a)}} = \abs*{\frac{\frac{1}{(1-a)^2}a}{\frac{a}{1-a}}} = \frac{1}{\abs{1-a}}.
+g(\tilde{x}) \doteq g(x) + \frac{\partial g(x)}{\partial x} (\tilde{x}-x).
 \]
-Questa quantità è grande quando $a\approx 1$. Un errore relativo piccolo, per esempio $a=0.9991$, $\tilde{a} = 0.999$, causa un errore relativo grande $\frac{f(\tilde{a})-f(a)}{f(a)}$.
+La differenza $\tilde{x}-x$ è uguale a $x(1+\varepsilon_x)-x = x\varepsilon_x$, e abbiamo ignorato (con la notazione $\doteq$) il termine che dipende da $(\tilde{x}-x)^2$, perché contiene il termine $\varepsilon_x^2$ e quindi è molto più piccolo. Allora otteniamo
+\[
+\frac{\abs{\tilde{\gamma} - \gamma}}{\abs{\gamma}} = \frac{\abs{g(\tilde{x})-g(x)}}{\abs{g(x)}} \doteq \frac{\abs*{\frac{\partial g(x)}{\partial x} x\varepsilon_x}}{\abs{g(x)}}
+\]
+Questo calcolo ci dice che quando calcoliamo una funzione $g(x)$ nel punto $\tilde{x}$ anziché $x$, l'errore relativo sul dato in ingresso
+\[
+\abs{\varepsilon_x} = \frac{\abs{\tilde{x}-x}}{\abs{x}}
+\]
+viene ``amplificato'', cioè moltiplicato per un fattore
+\[
+\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}}.
+\]
+Questa quantità $\kappa_{g,x}$ viene detta \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Possiamo quindi riconoscere nel nostro esempio~\eqref{esempiox2y2} con $g(x) = f(x,y) = x^2-y^2$ che il coefficiente davanti a $\varepsilon_x$ è proprio
+\[
+\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}} = \abs{2x} \frac{\abs{x}}{\abs{x^2-y^2}}.
+\]
+Analogamente, il coefficiente davanti a $\varepsilon_y$ è uguale a 
+\[
+    \abs*{\frac{\partial (x^2-y^2)}{\partial y}}\frac{\abs{y}}{\abs{x^2-y^2}} = \abs{-2y} \frac{\abs{y}}{\abs{x^2-y^2}}.
+\]
+\paragraph{Esempio} La funzione $f(x) = \frac{x}{1-x}$ ha numero di condizionamento
+\[
+\kappa_{f,x} = \abs*{\frac{f'(x)x}{f(x)}} = \abs*{\frac{\frac{1}{(1-x)^2}x}{\frac{x}{1-x}}} = \frac{1}{\abs{1-x}}.
+\]
+Questa quantità è grande quando $x\approx 1$. Un errore relativo piccolo sull'argomento $x$, per esempio $x=0.9991$, $\tilde{x} = 0.999$, causa un errore relativo grande sul risultato della funzione $\frac{f(\tilde{x})-f(x)}{f(x)}$.
 
 Una funzione che ha un numero di condizionamento grande viene detta \emph{mal condizionata}.
 
-(Esempio su Matlab)
+\paragraph{Errore inerente, algoritmico, e stabilità}
 
-\paragraph{Condizionamento delle quattro operazioni}
-
-Possiamo studiare il condizionamento delle quattro operazioni rispetto a perturbazioni dei dati in ingresso. Notiamo che le operazioni dipendono da due valori in ingresso, quindi ha senso calcolare \emph{due} numeri di condizionamento (che in realtà spesso saranno uguali, per simmetria). Per esempio, $f(a,b) = a \cdot b$; cosa succede perturbando $a$ in $a(1+\varepsilon_a)$? 
+Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore otteniamo una funzione diversa $\tilde{\gamma}$:
 \[
-\kappa_{f,a} = \abs*{\frac{\frac{\partial f(a,b)}{\partial a} a}{f(a)}} = \abs*{\frac{b \cdot a}{ab}} = 1.
+    \tilde{\gamma} = \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y}).
 \]
-Quindi la moltiplicazione è un'operazione sempre ben condizionata.
+Se calcoliamo l'errore di macchina a partire da questa formulazione, otterremo un'espressione diversa dalla~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento dell'operazione moltiplicato per $\mathsf{u}$. Se abbiamo un'espressione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori.
 
-Possiamo fare un calcolo simile per $f(a,b) = a + b$.
-\[
-\kappa_{f,a} = \abs*{\frac{\frac{\partial f(a,b)}{\partial a} a}{f(a,b)}} = \abs*{\frac{1 \cdot a}{a + b}} = \abs*{\frac{a}{a+b}}.
-\]
-Questo errore diventa molto grande quando la somma $a+b$ è molto più piccola (in valore assoluto) degli addendi $a$ e $b$; questo succede quando sono vicini e hanno segno opposto. In questo caso, piccole perturbazioni (relative) agli addendi $a,b$ possono portare a una perturbazione molto grande (relativa) sulla somma $a+b$.
+La parte rimanente, che dipende dall'algoritmo che stiamo utilizzando, si chiama \emph{errore algoritmico}. Notiamo che nella formula~\eqref{esempiox2y2}, l'errore algoritmico è sempre dello stesso ordine di grandezza dell'errore inerente: la quantità
+$
+\frac{2x^2}{\abs{x^2-y^2}}
+$
+è sempre maggiore di 
+$
+\frac{x^2}{\abs{x^2-y^2}}
+$, la quantità 
+$
+\frac{2y^2}{\abs{x^2-y^2}}
+$
+è sempre maggiore di 
+$
+\frac{y^2}{\abs{x^2-y^2}},
+$
+e la loro somma è sempre almeno uguale a $1$ per la disuguaglianza triangolare.
 
-Esempio: $a = 1.0011$, $b = -1$. $\tilde{a} = 1.001$. La perturbazione relativa sul dato in ingresso è $\frac{\tilde{a}-a}{a} \approx 10^{-4}$, ma la perturbazione relativa sulla differenza è mille volte più grande,
-\[
-\abs*{\frac{f(\tilde{a},b) - f(a,b)}{f(a,b)}} \approx 10^{-1}.
-\]
-
-L'analisi della sottrazione è analoga a quella dell'addizione, poiché basta rimpiazzare $b$ con $-b$.
-
-Analogamente si può vedere che la divisione $f(a,b) = a / b$ è sempre ben condizionata, esattamente come la moltiplicazione.
-
-% Esempio: operazione di macchina (di nuovo con $\beta=10, t=3$), $1.25 \ominus 1.24$ e $1.24987 - 1.24367$; l'effetto combinato di approssimazioni precedenti e sottrazione è ``cancellazione catastrofica''.
-
-\paragraph{Approssimazione al prim'ordine dell'errore algoritmico}
-
-Data un'espressione, per esempio $x = f(x,y) = a^2 - b^2$ (anche con più di un ``valore di ingresso''), possiamo stimarne l'errore algoritmico. Dati numeri di macchina $\tilde{a}, \tilde{b}$, possiamo scrivere
-\begin{align*}
-h(\tilde{a}, \tilde{b}) &= \tilde{a} \otimes \tilde{a} \ominus \tilde{b} \otimes \tilde{b} = \tilde{a}^2(1+\varepsilon_1) \ominus \tilde{b}^2(1+\varepsilon_2)\\
-&= \left( \tilde{a}^2(1+\varepsilon_1) - \tilde{b}^2(1+\varepsilon_2) \right)(1+\varepsilon_3) \\
-& \doteq \underbrace{\tilde{a}^2-\tilde{b}^2}_{\text{valore esatto $f(\tilde{a},\tilde{b})$}} {}+{} \underbrace{\tilde{a}^2\varepsilon_1 - \tilde{b}^2\varepsilon_2 + (\tilde{a}^2-\tilde{b}^2)\varepsilon_3}_{\text{errore algoritmico}}.
-\end{align*}
-Nell'ultima parentesi abbiamo omesso tutte le quantità ``del secondo ordine'', vale a dire che contengono il prodotto di due (o più) $\varepsilon_i$: visto che sappiamo che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=1,2,3$, queste quantità sono dell'ordine di $\mathsf{u}^2$ e sono presumibilmente molto più piccole di tutti gli altri numeri coinvolti.
-
-
-Visto che tutto quello che sappiamo è che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=3,4,5$, la stima migliore che possiamo fare è
-\[
-\frac{\abs{h(\tilde{a},\tilde{b}) - f(\tilde{a},\tilde{b})}}{\abs{f(\tilde{a},\tilde{b})}} = \frac{\abs{\tilde{a}^2\varepsilon_1 - \tilde{b}^2\varepsilon_2 + (\tilde{a}^2-\tilde{b}^2)\varepsilon_3}}{\abs{\tilde{a}^2-\tilde{b}^2}} \leq \abs*{\frac{a^2}{\tilde{a}^2-\tilde{b}^2}}\mathsf{u} + \abs*{\frac{b^2}{\tilde{a}^2-\tilde{b}^2}}\mathsf{u} + \mathsf{u}.
-\]
-Un calcolo analogo si può impostare per sequenze più lunghe di operazioni: l'idea è sempre espandere le definizioni, eliminare tutti i termini con più di un $\varepsilon_i$, e stimare l'errore tramite valori assoluti. Per algoritmi più complessi questo calcolo diventa presto proibitivo, purtroppo.
-
-Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $f(a,b) = (a+b)(a-b)$ è la stessa funzione matematica, ma $h_2(\tilde{a},\tilde{b}) = (\tilde{a} \oplus \tilde{b})\odot (\tilde{a}\ominus \tilde{b})$ porta a un calcolo dell'errore algoritmico che a priori può essere completamente diverso.
-
-Un'altra osservazione è che gli algoritmi che causano problemi solitamente sono quelli che contengono differenze tra due valori molto vicini: in questo caso per esempio i termini $\frac{a^2}{\abs{a^2-b^2}}\mathsf{u}$, $\frac{b^2}{\abs{a^2-b^2}}\mathsf{u}$ possono essere molto grandi, se il denominatore è molto minore del numeratore. Questo segue dall'analisi del condizionamento delle quattro operazioni.
-
-\paragraph{Errore analitico}
-Anche supponendo di avere valori di $a,b$ esatti e ignorando gli errori dovuti all'aritmetica di macchina, spesso i nostri algoritmi non restituiscono la soluzione esatta, ma solo una sua approssimazione. Per esempio, se vogliamo calcolare $\sqrt{a}$ tramite il metodo di punto fisso con una certa funzione $\Phi(a)$ (che supponiamo razionale, cioè ottenuta solo componendo le quattro operazioni), e ci arrestiamo dopo 3 passi, la funzione che calcoliamo in aritmetica esatta non è $f(a) = \sqrt{a}$, bensì $g(a) = \Phi(\Phi(\Phi(x_1)))$.
-
-Difatti per la maggior parte degli $a$ il numero $\sqrt{a}$ non è razionale, quindi non abbiamo speranza di calcolarlo esattamente con solo le quattro operazioni.
-
-In generale, supponiamo di voler calcolare a partire da un valore in ingresso $\tilde{a}$ (già perturbato da errore in ingresso) una funzione $f(\tilde{a})$ (questa volta non per forza una funzione razionale), e di avere un algoritmo che calcola una sua approssimazione $g(\tilde{a})$; per esempio $f(a) = \sqrt{a}$ e $g(a) = \Phi(
-\Phi(\Phi(1)))$, dove $\Phi(t)$ è la funzione $\Phi(x) = x - \frac{x^2-a}{2x}$ (quella risultante dal metodo di Newton). Possiamo definire allo stesso modo un \emph{errore analitico}
-\[
-e_{an} = \frac{g(\tilde{a}) - f(\tilde{a})}{f(\tilde{a})}.
-\]
-Il computer questa volta calcolerà una versione modificata $h(a)$ di $g(a)$, anziché di $f(a)$, ottenuta con operazioni di macchina.
-Con una dimostrazione analoga a quella sopra ma con tre termini anziché due, possiamo dimostrare che
-\[
-e_{tot} = \frac{h(\tilde{a}) - f(a)}{f(a)} \doteq e_{in} + e_{an} + e_{alg}.
-\]
-Gli errori $e_{in}$ ed $e_{alg}$ sono dovuti all'aritmetica di macchina (almeno assumendo che non ci siano altre perturbazioni sui dati in ingresso), e quindi possiamo aspettarci (in molti casi!) che siano dell'ordine di $\mathsf{u}$: il fattore che limita l'accuratezza che possiamo ottenere è l'accuratezza dell'aritmetica di macchina. Invece $e_{an}$ va studiato algoritmo per algoritmo, e potrebbe essere anche molto più grande, e quindi dominare la somma. Abbiamo già studiato l'errore analitico dei metodi di ricerca di zeri, dicendo che converge a zero con il numero di passi e dandone delle stime. Allo stesso modo analizzeremo l'errore analitico di vari algoritmi che studieremo.
-
-In un problema più facile (che si risolve solo con le quattro operazioni) come risolvere un sistema di equazioni lineari, abbiamo formule esatte e quindi $e_{an} = 0$. In problemi più difficili come risolvere equazioni differenziali o calcolare integrali, $e_{an}$ è non-zero, e spesso è più grande degli altri errori, quindi è la componente più importante.
-
-Questi concetti di errore spiegano bene il comportamento della figura~\ref{fig:iterativi2}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore algoritmico, che è dell'ordine di $10^{-16}$.
+Un algoritmo in cui l'errore algoritmico è sempre dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: in un certo senso ci dice che l'algoritmo non fa mai un errore molto più grande dell'errore inerente, che è inevitabile perché dipende solo dalla funzione che vogliamo calcolare. Informalmente, possiamo pensare che per un algoritmo stabile l'errore che c'è è tutto ``colpa'' della funzione da calcolare, non dell'algoritmo che la calcola; quindi anche rimpiazzandolo con un algoritmo diverso non potremo mai avere un errore molto minore.
 
 \chapter{Equazioni lineari e autovalori}
 
@@ -1704,11 +1682,11 @@ Questa disuguaglianza è valida non solo al prim'ordine, ma per tutti gli $A,x,b
 
 La quantità $\kappa(A)$ è sempre maggiore di $1$, perché per ogni norma matriciale indotta $1 = \norm{I}_p = \norm{AA^{-1}}_p \leq \norm{A}_p\norm{A^{-1}}_p$. Una matrice si dice ``ben condizionata'' se questa quantità è vicina a 1, e ``mal condizionata'' se è molto maggiore di 1 (qualche migliaio almeno, di solito; non c'è una soglia precisa).
 
-Così per vostra conoscenza, si può dimostrare che $\kappa(A)$ limita anche l'errore inerente dovuto a perturbazioni della matrice $A$:
+Non vediamo la dimostrazione, ma si può dimostrare che $\kappa(A)$ è anche il numero di condizionamneto rispetto a perturbazioni della matrice $A$:
 \[
 \frac{\norm{\tilde{x}-x}_p}{\norm{x}_p} \mathrel{\stackrel{.}{\leq}} \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}.
 \]
-Occhio al punto sopra il $\leq$: a differenza del precedente, in questo caso si tratta di un risultato solo a meno di termini dell'ordine del quadrato di $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$: se $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$ è grande, questa disuguaglianza può essere ben lontana dall'essere verificata.
+Occhio al punto sopra il $\leq$: a differenza del precedente, in questo caso si tratta di un risultato che vale solo a meno di termini dell'ordine del quadrato di $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$: se $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$ è grande, questa disuguaglianza può essere ben lontana dall'essere verificata.
 
 \paragraph{Esempio} Con Matlab, è problematico fare esempi di perturbazioni dell'ordine della precisione di macchina $\mathsf{u}\approx 2.2\times 10^{-16}$, visto che i calcoli stessi sono affetti da un errore dello stesso ordine di grandezza. Possiamo però vedere cosa succede con perturbazioni molto più grandi.
 \begin{lstlisting}
