@@ -1022,7 +1022,7 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
 
 \chapter{Aritmetica di macchina}
 
-Se provate a implementare i metodi precedenti su un computer con Matlab, noterete in molti casi un comportamento abbastanza particolare: i metodi spesso smettono di convergere attorno a $10^{-15}$ o $10^{-16}$, come accade nella Figura~\ref{fig:iterativi2}. Per comprendere cosa sta succedendo, dobbiamo studiare come i numeri reali vengono rappresentati in un computer.
+Se provate a implementare i metodi precedenti su un computer con Matlab, noterete in molti casi un comportamento abbastanza particolare: i metodi spesso smettono di convergere attorno a $10^{-15}$ o $10^{-16}$, come accade nella Figura~\ref{fig:stagnazione}. Per comprendere cosa sta succedendo, dobbiamo studiare come i numeri reali vengono rappresentati in un computer.
 
 \begin{figure}
     \begin{center}
@@ -1349,52 +1349,50 @@ Esiste uno standard (IEEE 754) per l'aritmetica di macchina che specifica quali 
 
 C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha un errore relativo di $\approx 10^{-8}$. È più impreciso, ma permette di memorizzare più numeri nello stesso spazio (32 bit l'uno).
 
-Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì
+Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì
 \[
 \tilde{x} = 0.2\underbrace{999999999999999}_{\text{15 volte 9}}88897769753748434595763683319091796875,
 \]
-che ha un errore relativo minore di $2.2 \cdot 10^{-16}$, come promesso dal teorema.
+che ha un errore relativo minore di $2.2 \cdot 10^{-16}$ in valore assoluto, come promesso dal teorema.
 
 Per fare qualche esperimento: \url{https://www.exploringbinary.com/floating-point-converter/}.
 
 \paragraph{Operazioni di macchina}
 
-Una volta memorizzati due numeri, possiamo chiedere al computer di calcolarne la somma, per esempio se scrivete in Matlab
-\texttt{x = 0.3; y = 0.4; x + y} viene visualizzato un risultato.
+Una volta memorizzati due numeri, possiamo chiedere al computer di calcolarne la somma: per esempio se scriviamo in Matlab
+\texttt{x = 0.3; y = 0.4; x + y} viene visualizzato il risultato.
 
 Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}$ di 0.3 e 0.4, che soddisfano $\tilde{x} = 0.3(1+\varepsilon_1), \tilde{y} = 0.4(1+\varepsilon_2)$, con $\abs{\varepsilon_i} \leq \mathsf{u}$. Ma c'è una terza fonte di errore: anche se $\tilde{x}$ e $\tilde{y}$ sono numeri di macchina, la loro somma $\tilde{x} + \tilde{y}$ potrebbe non esserlo; quindi va approssimata anche lei con un numero di macchina. L'operazione ``calcola la somma di $\tilde{x}$ e $\tilde{y}$ e rimpiazzala con il numero di macchina più vicino'' viene indicata con $\tilde{x} \oplus \tilde{y}$. Analogamente definiamo $\ominus, \odot, \oslash$. Quindi $ \tilde{x} \oplus \tilde{y} = (\tilde{x}+\tilde{y})(1+\varepsilon)$, per un opportuno errore $\varepsilon$ che soddisfa $\abs{\varepsilon} \leq \mathsf{u}$, e analogamente per le altre operazioni.
 
-\paragraph{Underflow/overflow}
-
-Eseguendo una di queste operazioni, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
+\paragraph{Underflow/overflow} Ci sono due casi particolari da citare: eseguendo operazioni con numeri di macchina, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
 \paragraph{Esempi} Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al più vicino)? $0.1 \ominus 0.001$; $1.01 \ominus 1.01$; $(0.77 \oplus 0.44) \oplus 1$; $0.077 \oplus (0.044 \oplus 1)$; $(1 \oslash 3) \otimes 3$; $500 \oplus 500$; $0.001 \odot 0.001$; $50 \oplus 0.01$.
 
 
-\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come fare i conti con razionali esatti (ma i denominatori diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine questo sistema è quello che si è affermato negli anni come il più comodo con cui fare i conti nelle applicazioni, ed è diventato lo standard. Ciononostante ci sono delle approssimazioni, per cui è importante comprendere teoricamente il loro impatto.
+\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi che sono rappresentabili esattamente (ma i denominatori diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine il sistema dei numeri di macchina è quello che si è affermato negli anni come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
 
 \chapter{Analisi dell'errore}
 
-\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare più nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, supponiamo di rimpiazzare la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire
+\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, rimpiazzeremo la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire l'errore analitico come
 \begin{equation} \label{ean}
     e_{an} = \frac{\gamma - \alpha}{\alpha}.    
 \end{equation}
-Il secondo errore che commettiamo è il cosiddetto \emph{errore di macchina}, dovuto al fatto che per calcolare $\gamma$ usiamo non numeri e operazioni esatte, ma le loro approssimazioni ottenute con numeri in virgola mobile. Per esempio, se vogliamo applicare il metodo di Newton alla funzione $f(x) = x^2 - 2$, su un computer otterremo la successione
+Il secondo errore che commettiamo è il cosiddetto \emph{errore di macchina}, dovuto al fatto che nel calcolare $\gamma$ usiamo non numeri e operazioni esatte, ma le loro approssimazioni ottenute con numeri in virgola mobile. Per esempio, se vogliamo applicare il metodo di Newton alla funzione $f(x) = x^2 - 2$, su un computer otterremo la successione
 \[
 \begin{cases}
     \tilde{x}_0 = \text{approssimazione con numeri di macchina di $x_0$},\\
     \tilde{x}_{n+1} = \tilde{x}_n \ominus (\tilde{x}_n\odot \tilde{x}_n \ominus 2) \oslash (2\odot \tilde{x}_n).
 \end{cases}
 \]
-Questo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina. È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere il risultato dell'accumulo di molti errori successivi. Definiamo
+Questo processo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. (Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina.) È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere più grande a causa dell'accumulo di molti errori successivi (come nell'esempio $1\oslash 3 \oplus 1\oslash 3 \oplus 1\oslash 3 \neq 1$). Definiamo l'errore di macchina come
 \[
 e_{mac} = \frac{\tilde{\gamma} - \gamma}{\gamma}.
 \]
-L'effetto combinato dei due errori è il cosiddetto \emph{errore totale}.
+L'effetto combinato dei due errori è il cosiddetto \emph{errore totale}
 \[
 e_{tot} = \frac{\tilde{\gamma} - \alpha}{\alpha}.
 \]
-Vediamo ora un teorema che consente di darne un'espressione approssimata. Essa è approssimata perché assumiamo che tutti questi errori siano piccoli, e ignoriamo termini che contengono il prodotto di due errori: un po' come approssimare $\exp(x) \approx 1 + x$ per valori di $x$ piccoli, ignorando i termini di grado superiore $x^2, x^3, \dots$ perché, essendo il prodotto di più copie di $x$, sono molto più piccoli di $x$.
+Vediamo ora un teorema che consente di darne un'espressione approssimata. Essa è approssimata perché assumiamo che tutti questi errori siano piccoli, e ignoriamo termini che contengono il prodotto di due errori: un po' come quando approssimiamo $\exp(x) \approx 1 + x$ per valori di $x$ piccoli, ignorando i termini di grado superiore $x^2, x^3, \dots$ perché, essendo il prodotto di più copie di $x$, sono molto più piccoli di $x$.
 
 Nel seguito, usiamo il simbolo $a \doteq b$ per indicare che $a$ e $b$ sono uguali a patto di ignorare ``termini di ordine superiore''. Cosa siano esattamente questi termini di ordine superiore dipende dal contesto: in questo caso, termini che sono il prodotto di due o più errori.
 \begin{theorem}
@@ -1413,12 +1411,12 @@ e_{tot} &= \frac{\tilde{\gamma} - \alpha}{\alpha} = \frac{\tilde{\gamma} - \gamm
 &= e_{mac} + e_{mac}e_{an} + e_{an} \doteq e_{mac} + e_{an}. \qedhere
 \end{align*}
 \end{proof}
-Riguardando a questa dimostrazione, notiamo che abbiamo usato solo il fatto che abbiamo fatto due approssimazioni successive una dopo l'altra: prima abbiamo rimpiazzato $\alpha$ con $\gamma$, poi $\gamma$ con $\tilde{\gamma}$. Questo quindi è un risultato generale che ci dice che gli errori relativi commessi successivamente si sommano (al prim'ordine).
+In questa dimostrazione abbiamo usato solo il fatto che abbiamo fatto due approssimazioni successive una dopo l'altra: prima abbiamo rimpiazzato $\alpha$ con $\gamma$, poi $\gamma$ con $\tilde{\gamma}$. Questo quindi è un risultato generale che ci dice che gli errori relativi commessi successivamente si sommano (al prim'ordine).
 
-Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_n - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$.
+Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_n - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$ e cresce solo molto lentamente con il numero di iterazioni.
 
 \paragraph{Approssimazione al prim'ordine dell'errore di macchina}
-In realtà però l'errore di macchina non è necessariamente dell'ordine di $10^{-16}$ come abbiamo visto sopra: l'accumulazione di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzarlo su un esempio semplice. Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, calcoliamo
+In realtà l'errore di macchina $\varepsilon_{mac}$ non è sempre dell'ordine di $10^{-16}$: l'accumulo di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzare questo errore su un esempio semplice. Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, calcoliamo
 \begin{align*}
 \tilde{\gamma} = \tilde{f}(\tilde{x}, \tilde{y}) &= \tilde{x} \otimes \tilde{x} \ominus \tilde{y} \otimes \tilde{y} \\
 &= x(1+\varepsilon_x) \otimes x(1+\varepsilon_x) \ominus y(1+\varepsilon_y) \otimes (1+\varepsilon_y)\\
@@ -1435,7 +1433,7 @@ Visto che tutto quello che sappiamo su questi errori è che $\abs{\varepsilon_i}
 \end{align}
 Questo calcolo ci mostra quando possiamo aspettarci che l'errore di macchina sia grande: le quantità che compaiono di fronte alle prime quattro $\mathsf{u}$ diventano grandi quando $x$ e $y$ sono vicini tra loro, perché in questo caso $x^2-y^2$ è molto più piccolo di $x^2$ e $y^2$. Quindi, nel calcolo di questa espressione, l'errore di macchina è grande quando $x\approx y$. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando ci troviamo a dover fare sottrazioni tra due numeri molto vicini.
 
-Il calcolo che abbiamo effettuato però è abbastanza lungo e macchinoso già per un'espressione molto semplice come $x^2+y^2$; potete immaginare come cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare più facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
+La stima dell'errore che abbiamo effettuato però è abbastanza lunga e macchinosa anche per un'espressione molto semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare più facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
 
 \paragraph{Numero di condizionamento} Concentriamoci sull'errore $\varepsilon_x$, e supponiamo per un attimo di ignorare gli errori $\varepsilon_y, \varepsilon_1,\varepsilon_2,\varepsilon_3$, ponendoli uguali a zero. Allora, possiamo notare che quello che stiamo calcolando è $\tilde{\gamma} = f(\tilde{x},y)$: l'unico errore che commettiamo è quello dovuto a rimpiazzare il valore iniziale $x$ con $\tilde{x}$, e tutte le altre operazioni sono esatte. Abbiamo a disposizione uno strumento dell'analisi per dare un'espressione approssimata di questo errore: lo sviluppo di Taylor. Consideriamo la funzione $g(x) = f(x,y)$, dove nascondiamo la dipendenza dalla $y$ perché la stiamo considerando costante. Se questa funzione è di classe $\mathcal{C}^1$, possiamo farne uno sviluppo di Taylor in $x$ per ottenere
 \[
@@ -1453,7 +1451,7 @@ viene ``amplificato'', cioè moltiplicato per un fattore
 \[
 \kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}}.
 \]
-Questa quantità $\kappa_{g,x}$ viene detta \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Possiamo quindi riconoscere nel nostro esempio~\eqref{esempiox2y2} con $g(x) = f(x,y) = x^2-y^2$ che il coefficiente davanti a $\varepsilon_x$ è proprio
+La quantità $\kappa_{g,x}$ viene detta \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Possiamo quindi riconoscere nel nostro esempio~\eqref{esempiox2y2} con $g(x) = f(x,y) = x^2-y^2$ che il coefficiente davanti a $\varepsilon_x$ è proprio
 \[
 \kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}} = \abs{2x} \frac{\abs{x}}{\abs{x^2-y^2}}.
 \]
@@ -1469,32 +1467,39 @@ Questa quantità è grande quando $x\approx 1$. Un errore relativo piccolo sull'
 
 Una funzione che ha un numero di condizionamento grande viene detta \emph{mal condizionata}.
 
-\paragraph{Errore inerente, algoritmico, e stabilità}
+\paragraph{Errore inerente, algoritmico, e stabilità (*)}
 
 Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore otteniamo una funzione diversa $\tilde{\gamma}$:
 \[
     \tilde{\gamma} = \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y}).
 \]
-Se calcoliamo l'errore di macchina a partire da questa formulazione, otterremo un'espressione diversa dalla~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento dell'operazione moltiplicato per $\mathsf{u}$. Se abbiamo un'espressione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori.
+Se calcoliamo l'errore di macchina a partire da questa formulazione, otterremo un'espressione diversa dalla~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
 
-La parte rimanente, che dipende dall'algoritmo che stiamo utilizzando, si chiama \emph{errore algoritmico}. Notiamo che nella formula~\eqref{esempiox2y2}, l'errore algoritmico è sempre dello stesso ordine di grandezza dell'errore inerente: la quantità
+I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nel nostro esempio~\eqref{esempiox2y2}, l'errore algoritmico è composto dai termini contenenti $\varepsilon_1,\varepsilon_2,\varepsilon_3$. Notiamo che in questo esempio l'errore algoritmico non può mai essere sensibilmente più grande dell'errore inerente: la quantità
 $
-\frac{2x^2}{\abs{x^2-y^2}}
+\frac{2x^2}{\abs{x^2-y^2}}\mathsf{u}
 $
 è sempre maggiore di 
 $
-\frac{x^2}{\abs{x^2-y^2}}
+\frac{x^2}{\abs{x^2-y^2}}\mathsf{u}
 $, la quantità 
 $
-\frac{2y^2}{\abs{x^2-y^2}}
+\frac{2y^2}{\abs{x^2-y^2}}\mathsf{u}
 $
 è sempre maggiore di 
 $
-\frac{y^2}{\abs{x^2-y^2}},
+\frac{y^2}{\abs{x^2-y^2}}\mathsf{u},
 $
-e la loro somma è sempre almeno uguale a $1$ per la disuguaglianza triangolare.
+e la loro somma è sempre almeno uguale a $\mathsf{u}$.
 
 Un algoritmo in cui l'errore algoritmico è sempre dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: in un certo senso ci dice che l'algoritmo non fa mai un errore molto più grande dell'errore inerente, che è inevitabile perché dipende solo dalla funzione che vogliamo calcolare. Informalmente, possiamo pensare che per un algoritmo stabile l'errore che c'è è tutto ``colpa'' della funzione da calcolare, non dell'algoritmo che la calcola; quindi anche rimpiazzandolo con un algoritmo diverso non potremo mai avere un errore molto minore.
+
+\paragraph{Esempio di un algoritmo instabile (*)}
+Consideriamo di nuovo la Funzione
+\[
+    f(x) = \frac{x}{1-x} = 1 - \frac{1}{1-x}.
+\]
+Le due espressioni equivalenti conducono a due algoritmi diversi per calcolare questa funzione: $\tilde{f}_A(x) = x \oslash (1 \ominus x)$, e $\tilde{f}_B(x) = 1 \ominus \left(1\oslash (1\ominus x)\right)$. Calcolando l'errore di macchina nei due casi [CALCOLO], è possibile vedere che $\tilde{f}_A(x)$ è un algoritmo stabile, mentre $\tilde{f}_B(x)$ no.
 
 \chapter{Equazioni lineari e autovalori}
 
@@ -1520,45 +1525,38 @@ Partiamo studiando sistemi quadrati, cioè $A \in \mathbb{R}^{n\times n}$ (o $\m
 
 \emph{Non} possiamo scrivere $\mathbf{x} = \mathbf{b}A^{-1}$ (dimensioni non compatibili per il prodotto; l'ordine dei fattori conta!), né $\mathbf{x} = \frac{\mathbf{b}}{A}$ (non vuol dire nulla, e non mi specifica l'ordine!).
 
-In Matlab, esiste una funzione \lstinline{inv(A)} che calcola l'inversa, quindi potremmo scrivere \lstinline{inv(A) * b}; però questo metodo è più costoso (e spesso anche più inaccurato) di altri algoritmi. C'è una notazione diversa per risolvere un sistema, \lstinline{x = A \ b}. Occhio: la barra è la ``backslash'' \lstinline!\!, non \lstinline{/}. Per non confondere le barre, pensate a questa operazione come a una sorta di ``divisione da un lato'': c'è una barra di frazione, e la \lstinline{A} sta al di sotto.
+In Matlab, esiste una funzione \lstinline{inv(A)} che calcola la matrice inversa, quindi potremmo scrivere \lstinline{inv(A) * b}; però questo metodo di risolvere un sistema lineare è più costoso (e spesso anche più inaccurato) di altri algoritmi. C'è una notazione diversa per risolvere un sistema, \lstinline{x = A \ b}. Occhio: la barra è la ``backslash'' \lstinline!\!, non \lstinline{/}. Per non confondere le barre, pensate a questa operazione come a una sorta di ``divisione da un lato'': c'è una barra di frazione, e la \lstinline{A} sta al di sotto.
 
-Intuitivamente, calcolare un'inversa richiede risolvere gli $n$ sistemi lineari $A^{-1}e_1, A^{-1}e_2,\dots A^{-1}e_n$; per questo è più lento.
+Detto informalmente, per calcolare le colonne della matrice inversa dobbiamo risolvere gli $n$ sistemi lineari $A^{-1}\mathbf{e}_1, A^{-1}\mathbf{e}_2,\dots A^{-1}\mathbf{e}_n$; quando poi calcoliamo \texttt{x = inv(A)*b} facciamo una combinazione lineare di queste soluzioni. Per questo l'errore rischia di essere maggiore di quello fatto risolvendo un solo sistema lineare.
 
-\paragraph{Determinanti} Altri algoritmi da evitare sono quelli basati su determinanti, come il \emph{metodo di Cramer}. Il \emph{determinante} è una particolare funzione di una matrice quadrata; le proprietà che ci interessa ricordare qui sono queste:
-\begin{itemize}
-    \item Una matrice è invertibile se e solo se $\det(A) \neq 0$.
-    \item Se una matrice è \emph{triangolare}, il suo determinante è il prodotto degli elementi sulla diagonale.
-    \item $\det(AB) = \det(A) \det(B)$ (teorema di Binet).
-\end{itemize}
-Tipicamente i determinanti sono più lenti da calcolare, e per matrici grandi vanno spesso in overflow/underflow; per esempio, $\det(10 I_{400\times 400})$ restituisce $0$ su Matlab. Quindi essi sono inaffidabili anche solo per dire se una matrice è singolare o no. 
+\paragraph{Determinanti} Altri algoritmi da evitare per risolvere sistemi lineari su un computer sono quelli basati su determinanti, come il \emph{metodo di Cramer}. Tipicamente i determinanti sono più lenti da calcolare, e per matrici grandi vanno spesso in overflow/underflow; per esempio, $\det(10 I_{400\times 400})$ restituisce $0$ su Matlab. Quindi i determinanti sono inaffidabili anche solo per dire se una matrice è singolare o no. 
 
-Nelle prossime sezioni vedremo invece gli algoritmi che Matlab utilizza per risolvere sistemi lineari. Ma prima studiamo il condizionamento del problema.
+Nelle prossime sezioni vedremo invece gli algoritmi che Matlab utilizza per risolvere sistemi lineari. Ma prima di farlo, studiamo il condizionamento di questo problema.
 
 \section{Condizionamento della soluzione di sistemi lineari}
 
 Partiamo studiando il condizionamento della soluzione di sistemi lineari. Per farlo, introduciamo alcuni strumenti teorici.
 
-\paragraph{Norme vettoriali} Notate che l'analisi dell'errore che avevamo fatto assumeva di avere funzioni $f: \mathbb{R} \to \mathbb{R}$, funzioni $x=f(a)$ di un reale $a$. La soluzione di un sistema lineare invece è una funzione $x = f(A,b)$ che prende una matrice e un vettore e restituisce un vettore. Potremmo studiare separatamente il condizionamento di ogni componente rispetto a ogni componente dell'input, ma si preferisce un approccio diverso che passa attraverso il misurare ``distanze'' tra vettori e matrici.
+\paragraph{Norme vettoriali} L'analisi dell'errore che abbiamo fatto nei capitoli precedenti assumeva di avere funzioni $f: \mathbb{R} \to \mathbb{R}$, funzioni $x=f(a)$ di un reale $a$. La soluzione di un sistema lineare invece è una funzione $\mathsf{x} = f(A,\mathsf{b})$ che prende una matrice e un vettore e restituisce un vettore. Potremmo studiare separatamente il condizionamento di ogni componente rispetto a ogni componente dell'input, ma si preferisce un approccio diverso che passa attraverso il misurare ``distanze'' tra vettori e matrici.
 
 Lo strumento teorico che ci serve è una \emph{norma vettoriale}, cioè una funzione che ``assomiglia al valore assoluto'' per vettori.
 
 Si definisce \emph{norma vettoriale} una funzione $f: \mathbb{C}^n \to \mathbb{R}$ che ha queste proprietà.
 \begin{enumerate}
-    \item $f(v) \geq 0$ per ogni vettore $v\in\mathbb{C}^n$, e l'uguaglianza vale solo per il vettore zero.
-    \item $f(\alpha v) = \abs{\alpha} f(v)$ per ogni vettore $v\in\mathbb{C}^n$ e scalare $\alpha \in \mathbb{C}$.
-    \item $f(v+w) \leq f(v) + f(w)$ per ogni $v,w\in\mathbb{C}^n$.
+    \item $f(\mathbf{v}) \geq 0$ per ogni vettore $\mathbf{v}\in\mathbb{C}^n$, e l'uguaglianza vale solo per il vettore zero.
+    \item $f(\alpha \mathbf{v}) = \abs{\alpha} f(\mathbf{v})$ per ogni vettore $v\mathbf{v}\in\mathbb{C}^n$ e scalare $\alpha \in \mathbb{C}$.
+    \item $f(\mathbf{v}+\mathbf{w}) \leq f(\mathbf{v}) + f(\mathbf{w})$ per ogni $\mathbf{v},\mathbf{w}\in\mathbb{C}^n$.
 \end{enumerate}
+Notate che queste proprietà sono analoghe a quelle del valore assoluto; per esempio l'ultima è la disuguaglianza triangolare. Difatti non è complicato verificare che il valore assoluto è una norma per $n=1$.
 
-Notate che queste rispecchiano le proprietà del valore assoluto; per esempio l'ultima è la disuguaglianza triangolare. Difatti non è complicato verificare che il valore assoluto è una norma per $n=1$.
-
-Una norma di solito non si indica con $f(v)$, ma con $\norm{v}$ (due stanghette).
+Una norma di solito non si indica con $f(\mathbf{v})$, ma con $\norm{\mathbf{v}}$ (due stanghette).
 
 Le norme più usate sono le seguenti.
 
 \begin{itemize}
-    \item Norma-1: $\norm{v}_1 = \sum_{i=1}^n \abs{v_i}$.
-    \item Norma-2 (o Euclidea): $\norm{v}_2 = \sqrt{\sum_{i=1}^n \abs{v_i}^2} = \sqrt{v^*v}$.
-    \item Norma infinito: $\norm{v}_\infty = \max_{i\in \{1,2,\dots,n\}} \abs{v_i}$.
+    \item Norma-1: $\norm{\mathbf{v}}_1 = \sum_{i=1}^n \abs{v_i}$.
+    \item Norma-2 (o Euclidea): $\norm{\mathbf{v}}_2 = \sqrt{\sum_{i=1}^n \abs{v_i}^2} = \sqrt{\mathbf{v}^*\mathbf{v}}$.
+    \item Norma infinito: $\norm{\mathbf{v}}_\infty = \max_{i\in \{1,2,\dots,n\}} \abs{v_i}$.
 \end{itemize}
 Si dimostra che tutte e tre soddisfano le proprietà qui sopra. L'unica un po' più difficile è la disuguaglianza triangolare per la norma-2; le altre potete provare a farle come esercizio.
 
@@ -1566,17 +1564,17 @@ Esempio: calcola le tre norme di $\begin{bmatrix}
     2\\-3\\-1
 \end{bmatrix}$.
 
-Data una norma, $\norm{v-w}$ fornisce un modo di misurare la distanza tra $v$ e $w$. Ogni norma fornisce valori diversi, che danno modi leggermente diversi di definire questa distanza. In generale, si dimostra che date due norme qualunque queste differiscono per una costante; vale a dire, esistono due reali $c_1,c_2 > 0$ tali che \emph{per ogni} vettore $v\in\mathbb{C}^n$ si ha
+Data una norma vettoriale, $\norm{\mathbf{v}-\mathbf{w}}$ fornisce un modo di misurare la distanza tra $\mathbf{v}$ e $\mathbf{w}$. Ogni norma fornisce valori diversi, che danno modi leggermente diversi di definire questa distanza. In generale, si dimostra che date due norme qualunque queste differiscono per una costante; vale a dire, esistono due reali $c_1,c_2 > 0$ tali che \emph{per ogni} vettore $v\in\mathbb{C}^n$ si ha
 \[
-c_1\norm{v}_\alpha \leq \norm{v}_\beta \leq c_2 \norm{v}_\alpha.
+c_1\norm{\mathbf{v}}_\alpha \leq \norm{\mathbf{v}}_\beta \leq c_2 \norm{\mathbf{v}}_\alpha.
 \]
-Queste costanti spesso sono una funzione della dimensione; per esempio, per ogni $v\in\mathbb{C}^n$ si ha
+Queste costanti spesso sono una funzione della dimensione; per esempio, per ogni $\mathbf{v}\in\mathbb{C}^n$ si ha
 \[
-\norm{v}_0 \leq \norm{v}_2 \leq \sqrt{n}\norm{v}_0.
+\norm{\mathbf{v}}_0 \leq \norm{\mathbf{v}}_2 \leq \sqrt{n}\norm{\mathbf{v}}_0.
 \]
 (esercizio: dimostrarlo.)
 
-Esempio: disegnare le ``sfere'' $\norm{v}=1$ in $\mathbb{R}^2$ nelle tre norme.
+Esempio: disegnare le ``sfere'' $\norm{\mathbf{v}}=1$ in $\mathbb{R}^2$ nelle tre norme.
 
 \paragraph{Norme matriciali}
 
@@ -1755,7 +1753,7 @@ ans =
 Questa nuova matrice $A$ ha un numero di condizionamento molto più grande, $1.8\times 10^{-5}$. Diciamo che è \emph{mal condizionata}. L'errore relativo sul termine noto $b$ pari a $1.66 \times 10^{-5}$ produce un errore relativo sulla soluzione $x$ pari a $3$; cioè la soluzione ottenuta è completamente sbagliata. La disuguaglianza~\eqref{conditionbound} comunque è rispettata anche in questo caso.
 
 
-\section{Condizionamento del calcolo di autovalori (*)}
+\section{Condizionamento del calcolo di autovalori (**)}
 Un altro problema classico dell'algebra lineare è il calcolo di autovalori e autovettori. Non vediamo nel dettaglio algoritmi per farlo, perché sono molto più complicati; ci fideremo di \texttt{eig(A)} di Matlab. Però, almeno per studiare il problema teoricamente, è importante vedere quale è il condizionamento di questa operazione, in modo da sapere quando anche Matlab rischia di calcolare un risultato errato.
 
 Ci limitiamo a un caso più facile, quello di \emph{autovalori semplici}: un autovalore si dice \emph{semplice} se la sua molteplicità geometrica e algebrica è uguale a 1, cioè, se è uno zero semplice del polinomio caratteristico $\det(\lambda I - A)$. In questo caso, esistono e sono unici (a meno di multipli) un autovalore destro $\mathbf{x}$ e uno sinistro $\mathbf{y}^*$ associati a $\lambda$; cioè, $A\mathbf{x} = \mathbf{x}\lambda$ e $\mathbf{y}^* A = \lambda \mathbf{y}^*$. Si può dimostrare che per un autovalore semplice $\mathbf{x}$ e $\mathbf{y}^*$ non sono mai ortogonali. Il risultato di perturbazione che enunciamo dipende dal coseno dell'angolo che essi formano, cioè
@@ -1826,7 +1824,7 @@ che è molto più grande di $\varepsilon$. Per esempio, se $\varepsilon=10^{-16}
 
 \section{Teorema dei cerchi di Gershgorin (*)}
 
-È possibile ottenere anche un risultato di inclusione per gli autovalori, cioè un risultato teorico che ci dice in quali regioni del piano complesso si possono trovare gli autovalori di una matrice. Per introdurlo, definiamo i \emph{cerchi di Gershgorin} di una matrice $A\in\mathbb{C}^{n\times n}$ come gli insiemi
+Vediamo ora un risultato teorico che ci dice in quali regioni del piano complesso si possono trovare gli autovalori di una matrice. Per introdurlo, definiamo i \emph{cerchi di Gershgorin} di una matrice $A\in\mathbb{C}^{n\times n}$ come gli insiemi
 \[
 K_i = \left\{z\in \mathbb{C} \colon \abs{z - A_{ii}} \leq \sum_{\substack{j=1\\ j \neq i}}^n \abs{A_{ij}} \right\}, \quad i=1,2,\dots,n.
 \]
