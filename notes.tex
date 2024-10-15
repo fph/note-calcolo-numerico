@@ -1544,7 +1544,7 @@ Lo strumento teorico che ci serve è una \emph{norma vettoriale}, cioè una funz
 Si definisce \emph{norma vettoriale} una funzione $f: \mathbb{C}^n \to \mathbb{R}$ che ha queste proprietà.
 \begin{enumerate}
     \item $f(\mathbf{v}) \geq 0$ per ogni vettore $\mathbf{v}\in\mathbb{C}^n$, e l'uguaglianza vale solo per il vettore zero.
-    \item $f(\alpha \mathbf{v}) = \abs{\alpha} f(\mathbf{v})$ per ogni vettore $v\mathbf{v}\in\mathbb{C}^n$ e scalare $\alpha \in \mathbb{C}$.
+    \item $f(\alpha \mathbf{v}) = \abs{\alpha} f(\mathbf{v})$ per ogni vettore $\mathbf{v}\in\mathbb{C}^n$ e scalare $\alpha \in \mathbb{C}$.
     \item $f(\mathbf{v}+\mathbf{w}) \leq f(\mathbf{v}) + f(\mathbf{w})$ per ogni $\mathbf{v},\mathbf{w}\in\mathbb{C}^n$.
 \end{enumerate}
 Notate che queste proprietà sono analoghe a quelle del valore assoluto; per esempio l'ultima è la disuguaglianza triangolare. Difatti non è complicato verificare che il valore assoluto è una norma per $n=1$.
@@ -1564,9 +1564,9 @@ Esempio: calcola le tre norme di $\begin{bmatrix}
     2\\-3\\-1
 \end{bmatrix}$.
 
-Data una norma vettoriale, $\norm{\mathbf{v}-\mathbf{w}}$ fornisce un modo di misurare la distanza tra $\mathbf{v}$ e $\mathbf{w}$. Ogni norma fornisce valori diversi, che danno modi leggermente diversi di definire questa distanza. In generale, si dimostra che date due norme qualunque queste differiscono per una costante; vale a dire, esistono due reali $c_1,c_2 > 0$ tali che \emph{per ogni} vettore $v\in\mathbb{C}^n$ si ha
+Data una norma vettoriale, $\norm{\mathbf{v}-\mathbf{w}}$ fornisce un modo di misurare la distanza tra $\mathbf{v}$ e $\mathbf{w}$. Ogni norma fornisce valori diversi, che danno modi leggermente diversi di definire questa distanza. In generale, si dimostra (noi non lo vediamo) che date due norme qualunque queste non possono restituire valori troppo diversi l'una dall'altra: per ogni coppia di norme $\norm{\cdot}_p,\norm{\cdot}_q$ esistono due reali $c_1,c_2 > 0$ tali che
 \[
-c_1\norm{\mathbf{v}}_\alpha \leq \norm{\mathbf{v}}_\beta \leq c_2 \norm{\mathbf{v}}_\alpha.
+c_1\norm{\mathbf{v}}_p \leq \norm{\mathbf{v}}_q \leq c_2 \norm{\mathbf{v}}_p \quad \text{per ogni $\mathbf{v}\in\mathbb{C}^n$}.
 \]
 Queste costanti spesso sono una funzione della dimensione; per esempio, per ogni $\mathbf{v}\in\mathbb{C}^n$ si ha
 \[
@@ -1574,7 +1574,7 @@ Queste costanti spesso sono una funzione della dimensione; per esempio, per ogni
 \]
 (esercizio: dimostrarlo.)
 
-Esempio: disegnare le ``sfere'' $\norm{\mathbf{v}}=1$ in $\mathbb{R}^2$ nelle tre norme.
+Esempio: disegnare le ``sfere'' $\norm{\mathbf{v}}=1$ in $\mathbb{R}^2$ nelle tre norme viste.
 
 \paragraph{Norme matriciali}
 
@@ -1585,13 +1585,13 @@ Similmente ai vettori, possiamo definire norme su matrici. Si dice \emph{norma m
     \item $f(A+B) \leq f(A) + f(B)$ per ogni $A,B\in\mathbb{C}^{n\times n}$.
     \item $f(AB) \leq f(A)f(B)$ per ogni $A,B\in\mathbb{C}^{n\times n}$.
 \end{enumerate}
-Rispetto al caso dei vettori, abbiamo aggiunto una proprietà che lega la norma al prodotto di matrici. Notate stavolta una differenza rispetto al valore assoluto; non abbiamo $\norm{AB} = \norm{A}\norm{B}$. (Sarebbe impossibile ottenere norme con questa proprietà più forte.)
+Rispetto al caso dei vettori, abbiamo aggiunto una proprietà che lega la norma al prodotto di matrici. Notate stavolta una differenza rispetto al valore assoluto; non abbiamo $\norm{AB} = \norm{A}\norm{B}$. Sarebbe impossibile ottenere norme con questa proprietà più forte.
 
 \paragraph{Norme matriciali indotte}
 
 È possibile costruire una norma matriciale a partire da ogni norma vettoriale in questo modo. Fissata una norma vettoriale $\norm{\cdot}$ (per esempio le norme $1,2,\infty$) definiamo
 \begin{equation} \label{normamatriciale}
-    \norm{A}_p = \max_{\substack{u\in\mathbb{R}^n \\ \norm{u}_p=1}} \norm{Au}_p.
+    \norm{A}_p = \max_{\substack{\mathbf{u}\in\mathbb{R}^n \\ \norm{\mathbf{u}}_p=1}} \norm{Au}_p.
 \end{equation}
 In generale la matrice $A$ manderà gli infiniti vettori con norma uguale a $1$ in vettori di lunghezza diversa; prendiamo il più lungo, e definiamolo come la norma. Si può dimostrare (non lo faremo) che questa definizione soddisfa tutte le proprietà di una norma matriciale.
 
@@ -1626,7 +1626,7 @@ Data una matrice quadrata $A$, ricordiamo che quando $Av = v\lambda$ per un qual
 \]
 Possiamo semplificare $\norm{v}_p \neq 0$, quindi $\abs{\lambda} \leq \norm{A}$ per ogni autovalore.
 
-Data una matrice $A \in \mathbb{C}^{n\times n}$ (quindi gli autovalori esistono sempre), si chiama \emph{spettro} l'insieme dei suoi autovalori, e \emph{raggio spettrale} (e si indica $\rho(A)$) il valore assoluto più grande degli autovalori, $\rho(A) = \max_{\lambda \text{ autoval.}} \abs{\lambda}$. Notate che questo non è per forza un autovalore; per esempio potremmo avere $A$ con autovalori $\{-2, i, -i\}$, e quindi $\rho(A)=2$ non è un autovalore.
+Data una matrice $A \in \mathbb{C}^{n\times n}$ (quindi gli autovalori esistono sempre), si chiama \emph{spettro} l'insieme dei suoi autovalori, e \emph{raggio spettrale} (e si indica $\rho(A)$) il valore assoluto più grande degli autovalori, $\rho(A) = \max_{\lambda \text{ autoval.}} \abs{\lambda}$. Notate che il raggio spettrale non è per forza un autovalore: per esempio potremmo avere $A$ con autovalori $\{-2, i, -i\}$, e quindi $\rho(A)=2$ non è un autovalore.
 
 In ogni caso, dalla formula qui sopra segue
 \[
@@ -1635,7 +1635,7 @@ In ogni caso, dalla formula qui sopra segue
 per ogni norma matriciale indotta.
 
 \paragraph{Formule per le norme matriciali $1,2,\infty$}
-È abbastanza scomodo calcolare le norme matriciali indotte usando la loro definizione (c'è un massimo su un insieme infinito di vettori\dots). Per le norme $1,2,\infty$ ci sono delle formule più semplici. Le enunciamo senza dimostrazione.
+È abbastanza complicato calcolare le norme matriciali indotte usando la loro definizione: c'è da fare un massimo su un insieme infinito di vettori\dots. Per le norme $1,2,\infty$ ci sono delle formule più semplici. Le enunciamo senza dimostrazione.
 \begin{align*}
 \norm{A}_{\infty} &= \max_{i=1}^n \sum_{j=1}^n \abs{A_{ij}},\\
 \norm{A}_{1} &= \max_{j=1}^n \sum_{i=1}^n \abs{A_{ij}},\\
@@ -1652,41 +1652,39 @@ A = \begin{bmatrix}
 \]
 e verificare (aiutandosi eventualmente con Matlab) che $\rho(A)\leq \norm{A}_p$ per $p=1,2,\infty$. (La disuguaglianza è vera anche per $\norm{A}_F$, ma la dimostrazione che abbiamo fatto funziona solo per norme matriciali indotte.)
 
-\paragraph{Condizionamento della soluzione di sistemi lineari} La soluzione di sistemi lineari è un problema che ha come ``input'' $A,b$ e come ``output'' $x$. Ha senso chiederci come cambia $x$ se perturbiamo $A$ oppure $b$ (o anche tutti e due insieme). Analogamente al caso scalare, possiamo definire errori relativi in termini di norme: $\frac{\norm{\tilde{x}-x}}{\norm{x}}$, $\frac{\norm{\tilde{A}-A}}{\norm{A}}$, $\frac{\norm{\tilde{b}-b}}{\norm{b}}$ (occhio che $\norm{\frac{\tilde{b}-b}{b}}$ non vuol dire niente, non possiamo dividere per vettori!)
+\paragraph{Condizionamento della soluzione di sistemi lineari} Prima ancora di parlare di algoritmi risolutivi, andiamo a studiare il condizionamento della soluzione di sistemi lineari, che ci dice quanto vale l'errore inerente. La soluzione di sistemi lineari è un problema che ha come ``input'' $A,\b$ e come ``output'' $\x$. Ha senso chiederci come cambia $\x$ se perturbiamo $A$ oppure $\b$, o anche tutti e due insieme. Possiamo definire degli errori relativi su queste quantità vettoriali e matriciali rimpiazzando i valori assoluti con delle norme: $\frac{\norm{\tilde{\x}-\x}}{\norm{\x}}$, $\frac{\norm{\tilde{A}-A}}{\norm{A}}$, $\frac{\norm{\tilde{\b}-\b}}{\norm{\b}}$ (occhio che $\norm{\frac{\tilde{\b}-\b}{\b}}$ non vuol dire niente, non possiamo dividere per vettori!)
 
-Qui vediamo cosa succede quando perturbiamo il vettore dei termini noti $b$. 
-
+Qui vediamo cosa succede quando perturbiamo il vettore dei termini noti $\b$. 
 \begin{theorem}
-    Sia $A\in \mathbb{C}^{n\times n}$ una matrice invertibile, e $b,\tilde{b} \in \mathbb{C}^n$ due vettori, con $\norm{b}\neq 0$. Siano $x$ e $\tilde{x}$ le soluzioni dei due sistemi lineari $Ax=b$, $A\tilde{x}=\tilde{b}$. Allora, per una qualunque norma vettoriale $\norm{\cdot}_p$ si ha
+    Sia $A\in \mathbb{C}^{n\times n}$ una matrice invertibile, e $\b,\tilde{\b} \in \mathbb{C}^n$ due vettori, con $\b\neq \mathbf{0}$. Siano $\x$ e $\tilde{\x}$ le soluzioni dei due sistemi lineari $A\x=\b$, $A\tilde{\x}=\tilde{\b}$. Allora, per una qualunque norma vettoriale $\norm{\cdot}_p$ si ha
     \begin{equation} \label{conditionbound}
-        \frac{\norm{\tilde{x}-x}_p}{\norm{x}_p} \leq \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{b}-b}_p}{\norm{b}_p}.    
+        \frac{\norm{\tilde{\x}-\x}_p}{\norm{\x}_p} \leq \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{\b}-\b}_p}{\norm{\b}_p}.    
     \end{equation}
 \end{theorem}
-Qui $\norm{A}_p$, $\norm{A^{-1}}_p$ utilizzano la norma matriciale indotta dalla norma vettoriale data.
+In questa disuguaglianza, nei termini $\norm{A}_p$, $\norm{A^{-1}}_p$ si intende che utilizzano la norma matriciale indotta dalla norma vettoriale $\norm{\cdot}_p$.
 \begin{proof}
 Possiamo calcolare
 \[
-\norm{\tilde{x}-x}_p = \norm{A^{-1}\tilde{b} - A^{-1}b}_p = \norm{A^{-1}(\tilde{b}-b)}_p \leq \norm{A^{-1}}_p\norm{f}_p = \norm{A^{-1}}_p\norm{\tilde{b}-b}_p,
+\norm{\tilde{\x}-\x}_p = \norm{A^{-1}\tilde{\b} - A^{-1}\b}_p = \norm{A^{-1}(\tilde{\b}-\b)}_p \leq  \norm{A^{-1}}_p\norm{\tilde{\b}-\b}_p,
 \]
 utilizzando la proprietà di compatibilità della norma matriciale indotta (Teorema~\ref{thm:compatibilita}). Per la stessa proprietà abbiamo
 \[
-\norm{b}_p = \norm{Ax}_p \leq \norm{A}\norm{x}_p.
+\norm{\b}_p = \norm{A \x}_p \leq \norm{A}\norm{\x}_p.
 \]
 Possiamo dividere membro a membro le due disuguaglianze (i versi sono quelli corretti per farlo!), ottenendo la~\eqref{conditionbound}.
 \end{proof}
 
-Questa disuguaglianza è valida non solo al prim'ordine, ma per tutti gli $A,x,b$. La quantità $\kappa_p(A) = \norm{A}_p\norm{A^{-1}}_p$ si definisce ``numero di condizionamento'' (in norma-$p$) della matrice $A$ (con un piccolo abuso di notazione, visto che finora abbiamo definito il condizionamento di un \emph{problema} o di una \emph{funzione}).
-
+Questa disuguaglianza è valida non solo al prim'ordine, ma per tutti gli $A,\x,\b$. La quantità $\kappa_p(A) = \norm{A}_p\norm{A^{-1}}_p$ si definisce ``numero di condizionamento'' (in norma-$p$) della matrice $A$ (con un piccolo abuso di notazione, visto che finora abbiamo definito il condizionamento di un \emph{problema} o di una \emph{funzione}).
 
 La quantità $\kappa(A)$ è sempre maggiore di $1$, perché per ogni norma matriciale indotta $1 = \norm{I}_p = \norm{AA^{-1}}_p \leq \norm{A}_p\norm{A^{-1}}_p$. Una matrice si dice ``ben condizionata'' se questa quantità è vicina a 1, e ``mal condizionata'' se è molto maggiore di 1 (qualche migliaio almeno, di solito; non c'è una soglia precisa).
 
-Non vediamo la dimostrazione, ma si può dimostrare che $\kappa(A)$ è anche il numero di condizionamneto rispetto a perturbazioni della matrice $A$:
+Non vediamo la dimostrazione, ma si può dimostrare che $\kappa(A)$ è anche il numero di condizionamneto rispetto a perturbazioni della matrice $A$: se $\tilde{\x}$ e $\x$ sono le soluzioni rispettivamente di $\tilde{A}\tilde{\x}=\b$ e $A\x=\b$, allora
 \[
-\frac{\norm{\tilde{x}-x}_p}{\norm{x}_p} \mathrel{\stackrel{.}{\leq}} \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}.
+\frac{\norm{\tilde{\x}-\x}_p}{\norm{\x}_p} \mathrel{\stackrel{.}{\leq}} \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}.
 \]
 Occhio al punto sopra il $\leq$: a differenza del precedente, in questo caso si tratta di un risultato che vale solo a meno di termini dell'ordine del quadrato di $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$: se $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$ è grande, questa disuguaglianza può essere ben lontana dall'essere verificata.
 
-\paragraph{Esempio} Con Matlab, è problematico fare esempi di perturbazioni dell'ordine della precisione di macchina $\mathsf{u}\approx 2.2\times 10^{-16}$, visto che i calcoli stessi sono affetti da un errore dello stesso ordine di grandezza. Possiamo però vedere cosa succede con perturbazioni molto più grandi.
+\paragraph{Esempio} Con Matlab, è problematico mostrare gli errori facendo esempi di perturbazioni dell'ordine della precisione di macchina $\mathsf{u}\approx 2.2\times 10^{-16}$, visto che i calcoli stessi che facciamo sono affetti da un errore dello stesso ordine di grandezza. Possiamo però vedere cosa succede con perturbazioni molto più grandi.
 \begin{lstlisting}
 >> A = [1 2; 3 4]
 A =
@@ -1715,7 +1713,7 @@ ans =
 ans =
     2.1000e+01
 \end{lstlisting}
-La matrice $A$ ha numero di condizionamento 21. Quindi l'errore relativo sulla soluzione $x$ calcolata è pari ad al più 21 volte l'errore relativo sul dato in ingresso $b$. Visto che questo fattore 21 è sufficientemente piccolo, diciamo che la matrice $A$ è \emph{ben condizionata}.
+La matrice $A$ ha numero di condizionamento 21. Quindi l'errore relativo sulla soluzione $\x$ calcolata è pari ad al più 21 volte l'errore relativo sul dato in ingresso $\b$. Visto che questo fattore 21 è tutto sommato piccolo, diciamo che la matrice $A$ è \emph{ben condizionata}.
 \begin{lstlisting}
 >> A = [1 2; 2.0001 4]
 A =
@@ -1861,8 +1859,10 @@ A = \begin{bmatrix}
     & A_{22}\\
     && \ddots\\
     &&& A_{nn}
-\end{bmatrix} \in \mathbb{R}^{n \times n}.
+\end{bmatrix} \in \mathbb{R}^{n \times n}
 \]
+(ricordiamo la convenzione che gli elementi che non scriviamo sono zeri).
+
 In questo caso i prodotti sono semplici da fare, e $Ax=b$ implica
 \begin{align*}
 x_i = \frac{b_i}{A_{ii}}, \quad i=1,2,\dots,n.
@@ -1907,8 +1907,10 @@ x_1 &= \frac{b_1 - A_{1,n}x_n - A_{1,n-1}x_{n-1} - \dots -A_{1,2}x_{2}}{A_{11}}.
 
 La complessità è di nuovo $n^2$ operazioni.
 
-Se una matrice triangolare ha molti elementi uguali a zero (si dice che è \emph{sparsa}), 
+Se una matrice triangolare ha molti elementi uguali a zero (si dice che è \emph{sparsa}), e sappiamo da principio questo fatto, possiamo scrivere del codice specializzato che salta le operazioni che coinvolgono degli elementi $A_{ij}$ che sappiamo essere zero. In questo modo si utilizzano $O(2\texttt{nnz})$ operazioni, dove \texttt{nnz} è il \emph{numero di nonzeri} della matrice.
 
+\paragraph{Stabilità della soluzione di sistemi lineari speciali} Abbiamo visto che l'errore commesso nella soluzione numerica di un problema è $e_{tot} \doteq e_{an} + e_{mac}$. In questi algoritmi, la quantità $\gamma$ che calcoliamo è \emph{esattamente} uguale alla soluzione $\alpha$ del problema: non abbiamo processi di limite, o successioni che convergono alla soluzione $\alpha$ e che dobbiamo troncare. Quindi $e_{an} = 0$. Abbiamo visto ulteriormente che 
+$e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} + \kappa_{\x,\b} \mathsf{u} \doteq 2\kappa(A)\mathsf{u}$. È possibile dimostrare (qui non lo vediamo) che gli algoritmi di soluzione di sistemi diagonali e sostituzione in avanti e all'indietro sono \emph{stabili}, cioè $e_{alg}$ non è mai molto più grande di $e_{in}$.
 
 \section{Eliminazione di Gauss e fattorizzazione LU}
 
