@@ -1916,7 +1916,11 @@ $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} +
 
 Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\in\mathbb{C}^{n\times n}$ come prodotto $A=LU$, dove $L$ è una matrice triangolare inferiore con elementi tutti uguali a $1$ sulla diagonale, e $U$ è una matrice triangolare superiore. Vediamo ora un metodo che permette di calcolare una fattorizzazione LU di una matrice $A \in \mathbb{C}^{n\times n}$; questo algoritmo è sostanzialmente una variante dell'eliminazione di Gauss che avete già visto ad algebra lineare.
 
-\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
+\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo da una singola matrice quadrata ; qui \emph{non} usiamo la cosiddetta ``matrice estesa'' $\begin{bmatrix}
+    A & \b
+\end{bmatrix}$, ma lavoriamo con la sola matrice quadrata $A\in\mathbb{R}^{n\times n}$, la matrice dei coefficienti del nostro sistema lineare.
+
+Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
 U_k = \begin{bmatrix}
     \ast & \dots & \ast & \ast & \ast & \dots & \ast\\
@@ -2013,18 +2017,18 @@ E_k = \begin{bmatrix}
 \]
 (ricordiamo la convenzione: gli elementi che non scriviamo sono zero). La possiamo anche scrivere come
 \[
-E_k = I - \ell_k e_k^T,
+E_k = I - \boldsymbol{\ell}_k \mathbf{e}_k^T,
 \]
-dove $\ell_k$ è il vettore tale che 
+dove $\boldsymbol{\ell}_k$ è il vettore tale che 
 \[
-(\ell_k)_i = L_{i,k} = \begin{cases}
+(\boldsymbol{\ell}_k)_i = L_{i,k} = \begin{cases}
 0 & i \leq k,\\
 \frac{(U_k)_{ik}}{(U_k)_{kk}} & i>k,
 \end{cases}
 \]
-e $e_k$ è il $k$-esimo vettore della base canonica.
+e $\mathbf{e}_k$ è il $k$-esimo vettore della base canonica.
 
-Difatti, è semplice verificare che per ogni vettore $x\in\mathbb{R}^n$ 
+Difatti, è semplice verificare che per ogni vettore $\x\in\mathbb{R}^n$ 
 \[
 E_k \begin{bmatrix}
     x_1\\x_2\\ \vdots \\ x_n
@@ -2041,25 +2045,25 @@ quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+
 Dimostriamo innanzitutto alcune proprietà di queste matrici.
 \begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
 \begin{enumerate}
-    \item $E_k^{-1} = I + \ell_k e_k^T$.
-    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$.
+    \item $E_k^{-1} = I + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
+    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
 \end{enumerate}
 \end{lemma}
 \begin{proof}
 \begin{enumerate}
     \item Basta verificare che
     \[
-    E_k(I+\ell_ke_k^T) = (I-\ell_ke_k^T)(I+\ell_ke_k^T) = I - \ell_ke_k^T + \ell_ke_k^T - \ell_k\underbrace{e_k^T\ell_k}_{=0}e_k^T = I.
+    E_k(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = (I-\boldsymbol{\ell}_ke_k^T)(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = I - \boldsymbol{\ell}_k \mathbf{e}_k^T + \boldsymbol{\ell}_k \mathbf{e}_k^T - \boldsymbol{\ell}_k\underbrace{\mathbf{e}_k^T\ell_k}_{=0}\mathbf{e}_k^T = I.
     \]
-    Difatti il prodotto scalare $e_k^T\ell_k$ fa zero perché $\ell_k$ ha uno zero in posizione~$k$.
+    Difatti il prodotto scalare $\mathbf{e}_k^T\boldsymbol{\ell}_k$ fa zero perché $\boldsymbol{\ell}_k$ ha uno zero in posizione~$k$.
     \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
     \begin{align*}
-    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_{k-1} e_{k-1}^T)(I+\ell_ke_k^T).
+    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_{k-1} \mathbf{e}_{k-1}^T)(I+\ell_k \mathbf{e}_k^T).
     \end{align*}
-    Ora espandiamo le parentesi e utilizziamo il fatto che $e_i^T\ell_k=0$ per $i<k$, vero perché $\ell_k$ ha le prime componenti uguali a zero.
+    Ora espandiamo le parentesi e utilizziamo il fatto che $\mathbf{e}_i^T\boldsymbol{\ell}_k=0$ per $i<k$, vero perché $\boldsymbol{\ell}_k$ ha le prime componenti uguali a zero.
 \end{enumerate}
 \end{proof}
-Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$ è esattamente la matrice che abbiamo chiamato $L_{k+1}$ più sopra:
+Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$ è esattamente la matrice che abbiamo chiamato $L_{k+1}$ più sopra:
 \[
     L_{k+1} = \begin{bmatrix}
         1\\
@@ -2392,7 +2396,7 @@ Partiamo da una matrice $P_1 = I$. Al primo passo dell'eliminazione di Gauss, un
 
 Similmente, prima di ogni passo $k$, individuiamo la riga dove sta il pivot $\abs{(U_k)_{pk}} = \max \abs{(U_k)_{k:n,k}}$, e scambiamo la riga $k$ con la riga $p$ nella matrice $P_k A$. Quella che otteniamo quindi è un'altra matrice ottenuta permutando le righe della matrice $A$, che possiamo quindi scrivere come $P_{k+1} A$, dove $P_k$ è un'opportuna matrice di permutazione.
 
-Notiamo che fino a questo punto l'algoritmo di fattorizzazione LU ha lavorato indipendentemente sulle righe da $k:n$: se queste righe fossero state in un altro ordine nella matrice $A$, avremmo ottenuto le stesse matrici $L_k$ e $U_k$, solo con gli elementi calcolati nelle ultime righe in ordine diverso. Quindi per ottenere il risultato dei primi $k$ passi di fattorizzazione LU su questa matrice $P_{k+1} A$, dobbiamo semplicemente prendere le matrici $L_k$ e $U_k$ che abbiamo già calcolato, e scambiare le righe $p$ e $k$ negli elementi che abbiamo calcolato finora. (Sulla matrice $L_k$, questo scambio si limita alle prime $k-1$ colonne, quelle contenenti gli elementi che abbiamo calcolato: gli elementi uguali a $1$ sulla diagonale restano al loro posto.)
+Notiamo che fino a questo punto l'algoritmo di fattorizzazione LU ha lavorato indipendentemente sulle righe da $k:n$: se queste righe fossero state in un altro ordine nella matrice $A$, avremmo ottenuto le stesse matrici $L_k$ e $U_k$, solo con gli elementi calcolati nelle ultime righe in ordine diverso. Quindi per ottenere il risultato dei primi $k$ passi di fattorizzazione LU su questa matrice $P_{k+1} A$, dobbiamo semplicemente prendere le matrici $L_k$ e $U_k$ che abbiamo già calcolato, e scambiare gli elementi calcolati nelle righe $p$ e $k$. (Occhio: sulla matrice $L_k$, questo scambio si limita alle prime $k-1$ colonne, quelle contenenti gli elementi che abbiamo calcolato: gli elementi uguali a $1$ sulla diagonale restano al loro posto.)
 
 A questo punto, effettuiamo normalmente un passo di eliminazione di Gauss sulle matrici ottenute, ottenendo due nuove matrici $L_{k+1}$ e $U_{k+1}$. Per come abbiamo lavorato, vale ad ogni passo la relazione $P_k A = L_k U_k$.
 
@@ -2437,7 +2441,7 @@ Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salva
 
 Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono un certo tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Quindi il costo in termini di operazioni aritmetiche è sempre di $\frac23 n^3$ operazioni aritmetiche.
 
-In Matlab, questa funzione già esiste, con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
+In Matlab, questa funzione già esiste, solo con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
 
 
 \paragraph{Soluzione di sistemi lineari tramite fattorizzazione LU con pivoting}
@@ -2454,9 +2458,9 @@ La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolver
 anche \lstinline{A \ b} utilizza questo algoritmo.
 
 \paragraph{Errore algoritmico dell'eliminazione di Gauss con pivoting}
-Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico è dell'ordine di $\norm{L}\norm{U} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che gli elementi della $L$ e della $U$ non siano molto grandi.
+Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
 
-Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono esempi particolarmente sfortunati in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è la dimensione. Nella maggior parte dei casi, però, l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. (L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $Ax=b$, non una successione convergente ad essa.)
+Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è la dimensione. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. (L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $Ax=b$, non una successione convergente ad essa.)
 
 \paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficace di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
 
@@ -2567,10 +2571,10 @@ Una matrice simmetrica $A$ è definita positiva se e solo se tutti i suoi autova
 \end{theorem}
 Valgono le seguenti proprietà.
 \begin{enumerate}
-    \item Una matrice definita positiva ha tutti gli elementi sulla diagonale (strettamente) positivi; difatti $A_{kk} = e_k^T A e_k > 0$. (Notare che questo \emph{non} è un ``se e solo se'': esistono matrici simmetriche che hanno tutti gli elementi sulla diagonale positivi, ma non sono positive definite! Per esempio, $A = \begin{bsmallmatrix}
+    \item Una matrice definita positiva ha tutti gli elementi sulla diagonale (strettamente) positivi; difatti $A_{kk} = \mathbf{e}_k^T A \mathbf{e}_k > 0$. (Notare che questo \emph{non} è un ``se e solo se'': esistono matrici simmetriche che hanno tutti gli elementi sulla diagonale positivi, ma non sono positive definite! Per esempio, $A = \begin{bsmallmatrix}
         1 & 1\\ 1 & 1
     \end{bsmallmatrix}$).
-    \item Se $A$ è positiva definita e $M$ è invertibile, allora lo è anche $MAM^T$: difatti $\mathbf{x}^T MAM^T \mathbf{x} = (M^T\mathbf{x})^T A (M^T\mathbf{x}) > 0$.
+    \item Se $A$ è positiva definita e $M$ è una qualunque invertibile, allora anche $MAM^T$ è definita positiva: difatti $\mathbf{x}^T MAM^T \mathbf{x} = (M^T\mathbf{x})^T A (M^T\mathbf{x}) > 0$.
 \end{enumerate}
 Utilizzando queste due proprietà, è facile dimostrare che ad ogni passo della fattorizzazione $LDL^T$ $U_k$ è positiva definita, e il pivot $U_{kk}$ è (strettamente!) positivo. Quindi una matrice SPD ammette sempre fattorizzazione $LDL^T$, e gli elementi diagonali $d_{kk}$ sono tutti (strettamente) positivi. In più, è possibile dimostrare che questa fattorizzazione è stabile senza bisogno di fare pivoting; gli elementi della matrice $D$ non crescono mai troppo rispetto agli elementi di $A$.
 
@@ -3183,7 +3187,7 @@ Vogliamo dimostrare che la norma di questo residuo è maggiore o uguale a quella
 \[
 \norm{A(\x+\mathbf{z})-\b}^2 = (\mathbf{r}+\mathbf{s})^T(\mathbf{r}+\mathbf{s}) = \mathbf{s}^T \mathbf{s} + \mathbf{s}^T\mathbf{r} + \mathbf{r}^T \mathbf{s} + \mathbf{r}^T \mathbf{r}.
 \]
-Notiamo però che il prodotto scalare $\mathbf{r}^T\mathbf{s} = \mathbf{s}^T\mathbf{r}$ si annulla: difatti,
+Notiamo però che il prodotto scalare $\mathbf{r}^T\mathbf{s} = \mathbf{s}^T\mathbf{r}$ è uguale a zero: difatti,
 \[
 \mathbf{s}^T \mathbf{r} = (A\mathbf{z})^T \mathbf{r} = \mathbf{z}^T A^T \mathbf{r} = 0.
 \]
