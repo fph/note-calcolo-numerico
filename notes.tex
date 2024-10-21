@@ -1916,7 +1916,7 @@ $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} +
 
 Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\in\mathbb{C}^{n\times n}$ come prodotto $A=LU$, dove $L$ è una matrice triangolare inferiore con elementi tutti uguali a $1$ sulla diagonale, e $U$ è una matrice triangolare superiore. Vediamo ora un metodo che permette di calcolare una fattorizzazione LU di una matrice $A \in \mathbb{C}^{n\times n}$; questo algoritmo è sostanzialmente una variante dell'eliminazione di Gauss che avete già visto ad algebra lineare.
 
-Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
+\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
 U_k = \begin{bmatrix}
     \ast & \dots & \ast & \ast & \ast & \dots & \ast\\
@@ -1941,33 +1941,88 @@ U_{k+1} = \begin{bmatrix}
     0& 0  &0 & 0 & \ast & \dots & \ast\\
 \end{bmatrix}.
 \]
-Lo facciamo sottraendo ogni riga $i>k$ un opportuno multiplo della $k$-esima riga, in modo da eliminare l'elemento in posizione $(i,k)$. Tale multiplo quindi dev'essere $\frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe rimangono invariate.
+Lo facciamo sottraendo ogni riga $i>k$ un opportuno multiplo della $k$-esima riga (\emph{moltiplicatore}), in modo da eliminare l'elemento in posizione $(i,k)$. Tale multiplo quindi dev'essere $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe rimangono invariate.
 
-\paragraph{Matrici elementari di Gauss} La parte che probabilmente non avete visto ad algebra lineare è che questa trasformazione si può vedere come una moltiplicazione a sinistra per una matrice: $U_{k+1} = E_k U_k$. La matrice $E_k$ si può scrivere come
+\paragraph{Moltiplicatori}
+In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicatori usati ad ogni passo, andando a scriverli separatamente in una seconda matrice. Al primo passo, partiamo da una matrice $L_1 = I$ (vedremo poi perché partiamo dalla matrice identità); poi, ad ogni passo di eliminazione di Gauss, andiamo a scrivere il moltiplicatore $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$ nella posizione $i,k$ di questa matrice. In questo modo, per esempio per una matrice $4\times 4$,  ad ogni passo la struttura delle matrici ottenute è (indicando con $*$ gli elementi diversi da zero)
 \[
-E_k = I - \ell_k e_k^T,
+    \begin{array}{ll}
+    L_1 = \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        0 & 1 & 0 & 0\\
+        0 & 0 & 1 & 0\\        
+        0 & 0 & 0 & 1\\
+    \end{bmatrix} 
+    & U_1 = \begin{bmatrix}
+        * & * & * & *\\
+        * & * & * & *\\
+        * & * & * & *\\
+        * & * & * & *\\
+    \end{bmatrix},\\[3ex]
+    L_2 = \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        * & 1 & 0 & 0\\
+        * & 0 & 1 & 0\\        
+        * & 0 & 0 & 1\\
+    \end{bmatrix} & U_2 = \begin{bmatrix}
+        * & * & * & *\\
+        0 & * & * & *\\
+        0 & * & * & *\\
+        0 & * & * & *\\
+    \end{bmatrix},\\[3ex]
+    L_3 = \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        * & 1 & 0 & 0\\
+        * & * & 1 & 0\\        
+        * & * & 0 & 1\\
+    \end{bmatrix} & U_3 = \begin{bmatrix}
+        * & * & * & *\\
+        0 & * & * & *\\
+        0 & 0 & * & *\\
+        0 & 0 & * & *\\
+    \end{bmatrix},\\[3ex]
+    L_4 = \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        * & 1 & 0 & 0\\
+        * & * & 1 & 0\\        
+        * & * & * & 1\\
+    \end{bmatrix} & U_4 = \begin{bmatrix}
+        * & * & * & *\\
+        0 & * & * & *\\
+        0 & 0 & * & *\\
+        0 & 0 & 0 & *\\
+    \end{bmatrix}.
+    \end{array}
 \]
-dove $\ell_k$ è il vettore tale che 
-\[
-(\ell_k)_i = \ell_{i,k} = \begin{cases}
-0 & i \leq k,\\
-\frac{(U_k)_{ik}}{(U_k)_{kk}} & i>k,
-\end{cases}
-\]
-e $e_k$ è il $k$-esimo vettore della base canonica. La matrice $E_k$ differisce dalla matrice identità solo per una sequenza di elementi diversi da zero nella $k$-esima colonna sotto la diagonale:
+Vogliamo dimostrare che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere questa identità.
+
+Per dimostrare questa proprietà, ci serve introdurre una famiglia di matrici che permette di vedere l'eliminazione di Gauss come una sequenza di moltiplicazioni.
+
+\paragraph{Matrici elementari di Gauss} Possiamo notare che effettuare un passo di eliminazione di Gauss si può vedere come una moltiplicazione a sinistra per una matrice: $U_{k+1} = E_k U_k$. La matrice $E_k$ è
 \[
 E_k = \begin{bmatrix}
     1 \\
     & 1\\
     && \ddots\\
     & & & 1\\
-    & & & -\ell_{k+1,k} & 1\\
-    & & & -\ell_{k+2,k} & & 1\\
+    & & & -L_{k+1,k} & 1\\
+    & & & -L_{k+2,k} & & 1\\
     & & & \vdots & & & \ddots \\
-    & & & -\ell_{n,k} & & & & 1
-\end{bmatrix}.
+    & & & -L_{n,k} & & & & 1
+\end{bmatrix}
 \]
-Una matrice di questo tipo si chiama \emph{matrice elementare di Gauss}: nel dettaglio, una matrice si chiama \emph{matrice elementare di Gauss} se si scrive (per un qualche $k$) nella forma $I - \ell_k e_k^T$, dove $(\ell_k)_i = 0$ per ogni $i\leq k$.
+(ricordiamo la convenzione: gli elementi che non scriviamo sono zero). La possiamo anche scrivere come
+\[
+E_k = I - \ell_k e_k^T,
+\]
+dove $\ell_k$ è il vettore tale che 
+\[
+(\ell_k)_i = L_{i,k} = \begin{cases}
+0 & i \leq k,\\
+\frac{(U_k)_{ik}}{(U_k)_{kk}} & i>k,
+\end{cases}
+\]
+e $e_k$ è il $k$-esimo vettore della base canonica.
 
 Difatti, è semplice verificare che per ogni vettore $x\in\mathbb{R}^n$ 
 \[
@@ -1976,11 +2031,101 @@ E_k \begin{bmatrix}
 \end{bmatrix}
 =
 \begin{bmatrix}
-    x_1 \\ x_2\\ \vdots \\ x_k \\ x_{k+1} - \ell_{k+1,k}x_k\\
+    x_1 \\ x_2\\ \vdots \\ x_k \\ x_{k+1} - L_{k+1,k}x_k\\
     \vdots \\
-    x_n - \ell_{n,k}x_k
-\end{bmatrix}.
+    x_n - L_{n,k}x_k
+\end{bmatrix},
 \]
+quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+1$-esima in poi un multiplo della $k$-esima, per la precisione $L_{i,k}$ volte la $k$-esima riga.
+
+Dimostriamo innanzitutto alcune proprietà di queste matrici.
+\begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
+\begin{enumerate}
+    \item $E_k^{-1} = I + \ell_k e_k^T$.
+    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+\begin{enumerate}
+    \item Basta verificare che
+    \[
+    E_k(I+\ell_ke_k^T) = (I-\ell_ke_k^T)(I+\ell_ke_k^T) = I - \ell_ke_k^T + \ell_ke_k^T - \ell_k\underbrace{e_k^T\ell_k}_{=0}e_k^T = I.
+    \]
+    Difatti il prodotto scalare $e_k^T\ell_k$ fa zero perché $\ell_k$ ha uno zero in posizione~$k$.
+    \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
+    \begin{align*}
+    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_{k-1} e_{k-1}^T)(I+\ell_ke_k^T).
+    \end{align*}
+    Ora espandiamo le parentesi e utilizziamo il fatto che $e_i^T\ell_k=0$ per $i<k$, vero perché $\ell_k$ ha le prime componenti uguali a zero.
+\end{enumerate}
+\end{proof}
+Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$ è esattamente la matrice che abbiamo chiamato $L_{k+1}$ più sopra:
+\[
+    L_{k+1} = \begin{bmatrix}
+        1\\
+        L_{21} & \ddots\\
+        \vdots & \ddots & 1\\
+        \vdots & \vdots & L_{k+1,k} & 1\\
+        \vdots & \vdots & L_{k+2,k} & 0 & 1\\
+        \vdots & \vdots & \vdots & \vdots & \ddots & \ddots\\
+        L_{n1} & \dots & L_{n,k} & 0 & \dots & 0 & 1\\
+    \end{bmatrix}.
+\]
+
+Possiamo ora enunciare il risultato promesso.
+
+\begin{theorem}
+    Sia data una matrice $A\in\mathbb{R}^{n\times n}$, supponiamo di non incontrare mai pivot $(U_k)_{kk}$ nulli durante l'eliminazione di Gauss. Allora, dopo ogni passo dell'eliminazione si ha $L_k U_k = A$. In particolare, dopo $n-1$ passi, otteniamo la \emph{fattorizzazione LU} $A = LU = L_{n}U_{n}$, in cui $L$ è una matrice triangolare inferiore con tutti $1$ sulla diagonale, e $U$ è una matrice triangolare superiore.
+\end{theorem}
+\begin{proof}
+    All'inizio, abbiamo $L_1 U_1 = I \cdot A = A$, quindi la proprietà è vera per $k=1$. Otteniamo la matrice $U_{k+1}$ moltiplicando $A$ successivamente per le matrici elementari $E_1, E_2,\dots, E_k$, quindi (occhio all'ordine!)
+    \[
+        U_{k+1} = E_k E_{k-1} \dots E_2 E_1 A.
+    \]
+    Abbiamo già osservato al termine della dimostrazione del lemma che $L_{k+1} = E_1^{-1} E_2^{-1} \dots E_{k-1}^{-1} E_k^{-1}$, quindi il prodotto di queste due matrici fa $A$.
+\end{proof}
+% Quindi dopo il passo $k$ abbiamo
+% \begin{equation} \label{fattLU}
+% A = 
+% \underbrace{
+% \begin{bmatrix}
+%     1\\
+%     \ell_{21} & \ddots\\
+%     \vdots & \vdots & 1\\
+%     \vdots & \vdots & \ell_{k+1,k} & 1\\
+%     \vdots & \vdots & \ell_{k+2,k} & 0 & 1\\
+%     \vdots & \vdots & \vdots & 0 & 0 & \ddots\\
+%     \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & \dots & 1\\
+% \end{bmatrix}
+% }_{L_{k+1} = E_1^{-1}E_2^{-1}\dots E_k^{-1}}
+% \underbrace{
+% \begin{bmatrix}
+%     U_{11} & U_{12} & \dots & & & &U_{1,n} \\
+%     0 & \ddots  & \dots & \dots & \dots &\dots & \vdots\\
+%     0 & & U_{kk} & \dots & \dots & \dots & \vdots\\
+%     0 & \dots & 0 & U_{k+1,k+1} & \dots & \dots & U_{k+1,n}\\
+%     0 & \dots & 0 & U_{k+2,k+1} & & &\vdots\\
+%     0 & \dots & 0 & \vdots & & & \vdots\\
+%     0 & \dots & 0 & U_{n,k+1} & \dots & \dots & U_{n,n}\\
+% \end{bmatrix}.
+% }_{U_{k+1}}
+% \end{equation}
+% In particolare, dopo $n-1$ passi, abbiamo ottenuto matrici $L=L_n$ e $U=U_n$ tali che
+% \[
+% A = L U,
+% \]
+% $U = U_n$ è una matrice triangolare superiore, e 
+% \[
+% L = E_1^{-1}E_2^{-1}\dots E_{n-1}^{-1} = \begin{bmatrix}
+%     1\\
+%     \ell_{21} & 1\\
+%     \ell_{31} & \ell_{32} & 1\\
+%     \ell_{41} & \ell_{42} & \ell_{43} & 1\\
+%     \vdots & \vdots & \vdots & \ddots & \ddots\\
+%     \ell_{n1} & \ell_{n2} & \ell_3 & \dots & \ell_{n,n-1} & 1
+% \end{bmatrix},
+% \]
+% è una matrice triangolare inferiore con $1$ sulla diagonale.
 
 \paragraph{Esempio} Vediamo ora un esempio.
 % >> rng(0)
@@ -2029,18 +2174,7 @@ U4 =
          0         0   -0.0212    0.4791
          0         0         0   -2.4948
 \end{lstlisting}
-Andiamo ora a scrivere in una funzione una versione più generale del metodo. Andremo ad utilizzare due sole variabili, una che chiamiamo $U$ e che contiene $U_k$ ad ogni passo, e una che chiamiamo $L$, che inizialmente è uguale alla matrice identità, e in cui scriviamo di volta in volta (senza il segno meno) i moltiplicatori usati: quindi avremo $L_1=I$, e dopo il passo $k$
-\[
-    L_{k+1} = \begin{bmatrix}
-        1\\
-        \ell_{21} & \ddots\\
-        \vdots & \ddots & 1\\
-        \vdots & \vdots & \ell_{k+1,k} & 1\\
-        \vdots & \vdots & \ell_{k+2,k} & 0 & 1\\
-        \vdots & \vdots & \vdots & 0 & 0 & \ddots\\
-        \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & \dots & 1\\
-    \end{bmatrix}.
-\]
+Andiamo ora a scrivere in una funzione una versione più generale del metodo. Andremo ad utilizzare due sole variabili, una che chiamiamo $U$ e che contiene $U_k$ ad ogni passo, e una che chiamiamo $L$, che inizialmente è uguale alla matrice identità, e in cui scriviamo di volta in volta (senza il segno meno) i moltiplicatori usati.
 \begin{lstlisting}
 function [L, U] = fattorizzazioneLU(A)
 
@@ -2064,42 +2198,43 @@ for k = 1:n-1
     end
 end
 \end{lstlisting}
-Vogliamo dimostrare che dopo ogni passo del ciclo \lstinline{for} si ha $L_k U_k = I$. Per questo ci servirà innanzitutto un lemma.
-\begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
-\begin{enumerate}
-    \item $E_k^{-1} = I + \ell_k e_k^T$.
-    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$.
-\end{enumerate}
-\end{lemma}
-\begin{proof}
-\begin{enumerate}
-    \item Basta verificare che
-    \[
-    E_k(I+\ell_ke_k^T) = (I-\ell_ke_k^T)(I+\ell_ke_k^T) = I - \ell_ke_k^T + \ell_ke_k^T - \ell_k\underbrace{e_k^T\ell_k}_{=0}e_k^T = I.
-    \]
-    Difatti il prodotto scalare $e_k^T\ell_k$ fa zero perché $\ell_k$ ha uno zero in posizione~$k$.
-    \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
-    \begin{align*}
-    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_{k-1} e_{k-1}^T)(I+\ell_ke_k^T).
-    \end{align*}
-    Ora espandiamo le parentesi e utilizziamo il fatto che $e_i^T\ell_k=0$ per $i<k$, vero perché $\ell_k$ ha le prime componenti uguali a zero.
-\end{enumerate}
-\end{proof}
-Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \ell_1 e_1^T + \ell_2 e_2^T + \dots + \ell_k e_k^T$ è esattamente quella che abbiamo chiamato $L_{k+1}$ più sopra.
 
-Possiamo ora enunciare il risultato promesso.
+\paragraph{Costo computazionale dell'eliminazione di Gauss}
 
-\begin{theorem}
-    Supponiamo che la funzione \lstinline{FattorizzazioneLU} arriva alla fine senza mai incontrare un pivot \lstinline{U(k,k)} nullo. Allora, dopo ogni passo del ciclo \lstinline{for}, si ha $L_k U_k = A$. In particolare, dopo il passo $n-1$, abbiamo la fattorizzazione LU $A = LU = L_{n-1}U_{n-1}$.
+Il grosso del costo è dato dall'aggiornamento del blocco $A_{k+1:n, k+1:n}$ ad ogni passo del ciclo for; questo richiede $2(n-1)^2$ operazioni al primo passo, $2(n-2)^2$ al secondo, \dots $2\cdot 1^2$ al $n-2$-esimo passo, $2\cdot 0^2$ al $n-1$-esimo passo. Un'identità algebrica (che possiamo dimostrare per induzione) ci dice che
+\[
+0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
+\]
+I termini che abbiamo omesso e indicato con $O(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Similmente, se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (o dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
+
+Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece usato del codice che ne calcola il risultato usando la struttura particolare di queste matrici $E_k$. Se invece lo avessimo scritto come prodotto, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato ad ogni passo l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutto l'algoritmo!
+
+\paragraph{Soluzione di sistemi lineari tramite la fattorizzazione LU} 
+Una volta calcolata $A = LU$, abbiamo decomposto $A$ in un prodotto di matrici più semplici, e possiamo usare questa decomposizione per risolvere sistemi lineari. 
+
+Notiamo inoltre che la matrice $L$ è sempre invertibile (perché ha 1 sulla diagonale), e in più abbiamo $\det(A) = \det(LU) = \det(L) \det(U)$, quindi $U$ è invertibile se e solo se $A$ lo è. Quindi possiamo risolvere sistemi lineari con matrici $L$ e $U$. Abbiamo $\b = A\x = LU\x$.
+
+L'algoritmo è composto di tre passi:
+\begin{enumerate}
+    \item Calcolo la fattorizzazione $A=LU$.
+    \item Calcolo il vettore $\mathbf{y}=U\x$ risolvendo il sistema lineare $\b=L\mathbf{y}$ (sostituzione in avanti).
+    \item Calcolo il vettore $\x$ risolvendo il sistema lineare $\mathbf{y}=U\x$ (sostituzione all'indietro).
+\end{enumerate}
+Il costo del primo passo è di $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche. Il secondo e il terzo costano $n^2$ operazioni aritmetiche, quindi sono molto più economici e possono venire inclusi dentro il termine $\mathcal{O}(n^2)$. In totale quindi la soluzione di un sistema lineare tramite la fattorizzazione LU richiede $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
+
+Un'altra osservazione interessante è che se dobbiamo risolvere molti sistemi lineari con vettori $\b$ diversi ma la stessa matrice $A$, possiamo riutilizzare la stessa fattorizzazione LU più volte, e quindi effettuare il passo più costoso una volta sola.
+
+\paragraph{Esistenza della fattorizzazione LU}
+
+Cosa può andare storto? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
+
+Definiamo le \emph{sottomatrici principali di testa} di una matrice $A$ come $A_{1:k,1:k}$. Questa notazione (che ci è familiare da Matlab) significa prendere gli elementi della matrice $A$ che stanno nelle righe dalla $1$ alla $k$ e nelle colonne dalla $1$ alla $k$, ottenendo una sottomatrice quadrata $k\times k$.
+
+\begin{theorem}[Esistenza della fattorizzazione LU]
+Data una matrice $A\in\mathbb{C}^{n\times n}$, supponiamo che le sottomatrici principali di testa $A_{1:k,1:k}$ di $A$, per $k=1,\dots,n-1$, siano tutte invertibili. Allora, è possibile portare a termine l'algoritmo di fattorizzazione LU senza mai incontrare pivot nulli, e quindi esiste una fattorizzazione LU di $A$.
 \end{theorem}
 \begin{proof}
-    All'inizio, abbiamo $L_1 = I$, $U_1 = A$, quindi la proprietà è vera per $k=1$. Otteniamo la matrice $U_{k+1}$ moltiplicando $A$ di volta in volta per le matrici elementari $E_1, E_2,\dots, E_k$, quindi (occhio all'ordine!)
-    \[
-        U_{k+1} = E_k E_{k-1} \dots E_2 E_1 A.
-    \]
-    Abbiamo già osservato al termine della dimostrazione del lemma che $L_{k+1} = E_1^{-1} E_2^{-1} \dots E_{k-1}^{-1} E_k^{-1}$, quindi il prodotto di queste due matrici fa $A$.
-\end{proof}
-Quindi dopo il passo $k$ abbiamo
+Partiamo dall'equazione
 \begin{equation} \label{fattLU}
 A = 
 \underbrace{
@@ -2125,63 +2260,9 @@ A =
 \end{bmatrix}.
 }_{U_{k+1}}
 \end{equation}
-In particolare, dopo $n-1$ passi, abbiamo ottenuto matrici $L=L_n$ e $U=U_n$ tali che
-\[
-A = L U,
-\]
-$U = U_n$ è una matrice triangolare superiore, e 
-\[
-L = E_1^{-1}E_2^{-1}\dots E_{n-1}^{-1} = \begin{bmatrix}
-    1\\
-    \ell_{21} & 1\\
-    \ell_{31} & \ell_{32} & 1\\
-    \ell_{41} & \ell_{42} & \ell_{43} & 1\\
-    \vdots & \vdots & \vdots & \ddots & \ddots\\
-    \ell_{n1} & \ell_{n2} & \ell_3 & \dots & \ell_{n,n-1} & 1
-\end{bmatrix},
-\]
-è una matrice triangolare inferiore con $1$ sulla diagonale.
+che mostra le matrici ottenute dopo i primi $k$ passi della fattorizzazione. Siamo quindi pronti per fare il passo $k+1$, e vogliamo controllare se il pivot $(U_{k+1})_{k+1,k+1}$ è zero.
 
-\paragraph{Costo computazionale dell'eliminazione di Gauss}
-
-Il grosso del costo è dato dall'aggiornamento del blocco $A_{k:n, k:n}$ ad ogni passo del ciclo for; questo richiede $2(n-1)^2$ operazioni al primo passo, $2(n-2)^2$ al secondo, \dots $2\cdot 1^2$ al $n-2$-esimo passo, $2\cdot 0^2$ al $n-1$-esimo passo. Un'identità algebrica (che possiamo dimostrare per induzione) ci dice che
-\[
-0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
-\]
-I termini che abbiamo omesso e indicato con $O(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Similmente, se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (o dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
-
-Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece usato del codice che ne calcola il risultato usando la struttura particolare di queste matrici $E_k$. Se invece lo avessimo scritto come prodotto, Matlab avrebbe usato l'algoritmo generale per calcolare un prodotto matrice-matrice, che costa $2n^3 + \mathcal{O}(n^2)$. Una sola moltiplicazione di matrici costa più che non tutto l'algoritmo!
-
-\paragraph{Soluzione di sistemi lineari tramite la fattorizzazione LU} 
-Una volta calcolata $A = LU$, abbiamo decomposto $A$ in un prodotto di matrici più semplici, e possiamo usare questa decomposizione per risolvere sistemi lineari. 
-
-Notiamo inoltre che la matrice $L$ è sempre invertibile (perché ha 1 sulla diagonale), e in più abbiamo $\det(A) = \det(LU) = \det(L) \det(U)$, quindi $U$ è invertibile se e solo se $A$ lo è. Quindi possiamo risolvere sistemi lineari con matrici $L$ e $U$. Abbiamo $\b = A\x = LU\x$.
-
-L'algoritmo è composto di tre passi:
-\begin{enumerate}
-    \item Calcolo la fattorizzazione $A=LU$.
-    \item Calcolo il vettore $\mathbf{y}=U\x$ risolvendo il sistema lineare $\b=L\mathbf{y}$ (sostituzione in avanti).
-    \item Calcolo il vettore $\x$ risolvendo il sistema lineare $\mathbf{y}=U\x$ (sostituzione all'indietro).
-\end{enumerate}
-Il costo del primo passo è di $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche. Il secondo e il terzo costano $n^2$ operazioni aritmetiche, quindi sono molto più economici e ``spariscono'' dentro l'$\mathcal{O}(n^2)$. In totale quindi abbiamo $\frac23 n^3 + \mathcal{O}(n^2)$.
-
-Un'altra osservazione interessante è che se dobbiamo risolvere molti sistemi lineari con vettori $\b$ diversi ma la stessa matrice $A$, possiamo riutilizzare la stessa fattorizzazione LU più volte, e quindi effettuare il passo più costoso una volta sola.
-
-\paragraph{Esistenza della fattorizzazione LU}
-
-Cosa può andare storto? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
-
-Definiamo le \emph{sottomatrici principali di testa} di una matrice $A$ come $A_{1:k,1:k}$. Questa notazione (che possiamo usare anche in Matlab) significa prendere le righe dalla $1$ alla $k$ e le colonne dalla $1$ alla $k$ della matrice $A$.
-
-Esempio: sottomatrici principali di una ``matrice a freccia''; sono tutte uguali a matrici identità.
-
-\begin{theorem}[Esistenza della fattorizzazione LU]
-Data una matrice $A\in\mathbb{C}^{n\times n}$, supponiamo che le sottomatrici principali di testa $A_{1:k,1:k}$ di $A$, per $k=1,\dots,n-1$, siano tutte invertibili. Allora, è possibile portare a termine l'algoritmo di fattorizzazione LU senza mai incontrare pivot nulli, e quindi esiste una fattorizzazione LU di $A$.
-\end{theorem}
-\begin{proof}
-Partiamo dall'equazione~\eqref{fattLU}, che mostra le matrici ottenute dopo i primi $k$ passi della fattorizzazione. Siamo quindi pronti per fare il passo $k+1$, e vogliamo controllare se il pivot $(U_{k+1}){k+1,k+1}$ è zero.
-
-Notiamo che le prime $k+1$ \emph{righe} (e non solo $k$) di $L$ e di $U$ sono già quelle definitive: non verranno più modificate nei passi successivi. Inoltre, per come sono messi gli zeri nelle matrici, se facciamo il prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$ otteniamo $A_{1:k+1,1:k+1}$; cioè
+Notiamo che le prime $k+1$ \emph{righe} (e non solo $k$) di $L_k$ e di $U_k$ sono già quelle definitive che compariranno in $L$ e $U$ alla fine dell'algoritmo: difatti non vengono più modificate nei passi successivi. Inoltre, per come sono messi gli zeri in queste matrici, se facciamo il prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$ otteniamo $A_{1:k+1,1:k+1}$; cioè
 \[
 A_{1:k+1,1:k+1} = L_{1:k+1,1:k+1} U_{1:k+1,1:k+1}:
 \]
@@ -2189,7 +2270,7 @@ Questa è una fattorizzazione LU della matrice $A_{1:k+1,1:k+1}$. In particolare
 \[
 \det A_{1:k+1,1:k+1} = (\det L_{1:k+1,1:k+1}) (\det U_{1:k+1,1:k+1}) = (1\cdot 1 \cdot \dots \cdot 1) (U_{11}U_{22}\cdots U_{k+1,k+1}).
 \]
-Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k$-esimo dell'eliminazione di Gauss. Visto che ho $n-1$ passi, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potrei avere $U_{nn}=0$, ma tanto non devo più effettuare divisioni.
+Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k$-esimo dell'eliminazione di Gauss. Visto che ci sono $n-1$ passi nel metodo, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potremmo avere $U_{nn}=0$, ma non importa: non ci sono passi successivi in cui dobbiamo dividere per esso.
 \end{proof}
 Notiamo che quello che abbiamo dimostrato qui sopra in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la prima sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero. Ma arrivati al passo $k+1$ si ha che $\det A_{1:k+1,1:k+1} = 0$ implica $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
 
@@ -2210,7 +2291,7 @@ Supponiamo invece (per assurdo) che $A\mathbf{x}=0$ per un qualche vettore $\mat
 \]
 e quindi contraddice la dominanza diagonale.
 \end{proof}
-Osserviamo che se $A$ è dominante diagonale, allora lo sono anche tutte le sue sottomatrici principali di testa (le disuguaglianze diventano più forti perché stiamo omettendo dei termini!). Quindi se $A$ è dominante diagonale allora ammette fattorizzazione LU.
+Osserviamo che se $A$ è dominante diagonale, allora lo sono anche tutte le sue sottomatrici principali di testa: le disuguaglianze diventano più forti perché stiamo omettendo dei termini. Quindi se $A$ è dominante diagonale allora ammette fattorizzazione LU.
 
 Analogamente, possiamo definire matrici dominanti diagonali per colonne, quando
 \[
@@ -2248,29 +2329,29 @@ Questa matrice è ben condizionata (il condizionamento nelle tre norme è minore
     0 & 1-\frac{1}{\varepsilon} & -1-\frac{1}{\varepsilon}
 \end{bmatrix}.
 \]
-Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\frac{1}{\varepsilon}$ che a $-1-\frac{1}{\varepsilon}$ è $\frac{1}{\varepsilon}$, e quindi le ultime due righe diventano uguali quando andiamo a scrivere quei numeri su un calcolatore: pertanto l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice è molto lontana dall'esserlo. Anche senza arrivare a valori così estremi, dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi andare a fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
+Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\frac{1}{\varepsilon}$ che a $-1-\frac{1}{\varepsilon}$ è $\frac{1}{\varepsilon}$, e quindi le ultime due righe diventano uguali quando andiamo a scrivere quei numeri su un calcolatore: pertanto l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice è molto lontana dall'esserlo, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche senza arrivare a valori così estremi, possiamo veder che in una matrice in cui $A_{11}$ è piccolo dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dovremo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
 
-La soluzione, in questo caso e in molti problemi simili, è scambiare tra loro le righe. In particolare, vogliamo scambiarle in modo da avere in posizione $(k,k)$ (cioè come pivot) il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$.
+La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, vogliamo scambiarle in modo da avere in posizione $(k,k)$ (cioè come pivot) il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$.
 
-Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili, quindi scegliamo $-4$ come pivot.
+Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
 
 \paragraph{Matrici di permutazione}
-La fattorizzazione che vedremo corrisponde essenzialmente a calcolare la fattorizzazione LU di una matrice ottenuta dalla $A$ permutando le righe in un ordine opportuno: quindi per esempio
+La soluzione che vedremo per questo problema corrisponde essenzialmente a calcolare la fattorizzazione LU di una matrice ottenuta dalla $A$ permutando le righe in un ordine opportuno: quindi per esempio
 \[
 A = \begin{bmatrix}
-    A_{1,:} \\
+    \hspace{1em} A_{1,:} \hspace{1em}  \\
     A_{2,:} \\
     A_{3,:} \\
     A_{4,:}
 \end{bmatrix}, \quad
 PA = \begin{bmatrix}
-    A_{4,:}\\
+    \hspace{1em} A_{4,:} \hspace{1em}\\
     A_{2,:}\\
     A_{1,:}\\
     A_{3,:}
 \end{bmatrix}.
 \]
-Abbiamo indicato la matrice di destra con $PA$ perché effettivamente è ottenuta moltiplicando la matrice $A$ a sinistra per una matrice $P\in\mathbb{R}^{n\times n}$: questa è la matrice ottenuta dalla matrice identità applicando alcuni scambi di righe (gli stessi applicati in $A$); ad esempio,
+Abbiamo indicato la matrice di destra con $PA$ perché effettivamente si verifica che si può ottenere moltiplicando la matrice $A$ a sinistra per una matrice $P\in\mathbb{R}^{n\times n}$: la matrice ottenuta dalla matrice identità applicando alcuni scambi di righe (gli stessi applicati in $A$); ad esempio,
 \[
 P = 
 \begin{bmatrix}
@@ -2352,18 +2433,12 @@ for k = 1:n-1
     end
 end    
 \end{lstlisting}
-Notiamo che \lstinline{posizione} restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ delle matrici con cui stiamo lavorando. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
+Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
 
-Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono un certo tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Quindi il costo in termini di operazioni aritmetiche è di nuovo di $\frac23 n^3$ operazioni aritmetiche.
+Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono un certo tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Quindi il costo in termini di operazioni aritmetiche è sempre di $\frac23 n^3$ operazioni aritmetiche.
 
 In Matlab, questa funzione già esiste, con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
 
-\paragraph{Errore algoritmico dell'eliminazione di Gauss con pivoting}
-Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss (che è abbastanza complessa), ma il messaggio principale è che l'errore algoritmico è circa dello stesso ordine dell'errore inerente (e quindi l'algoritmo è ``il migliore possibile'') a patto che gli elementi della $L$ e della $U$ non crescano troppo durante l'algoritmo.
-
-Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto. Però anche con il pivoting esistono esempi particolarmente sfortunati in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è la dimensione. Nella maggior parte dei casi, però, l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_in$. (L'errore analitico, invece, è $0$, visto che l'algoritmo calcola la soluzione esatta di $Ax=b$, non una successione convergente ad essa).
-
-Questo è l'algoritmo più usato per risolvere sistemi lineari; in Matlab anche \lstinline{A \ b} utilizza questo algoritmo.
 
 \paragraph{Soluzione di sistemi lineari tramite fattorizzazione LU con pivoting}
 
@@ -2374,6 +2449,14 @@ Il sistema $A\x = \b$ ha la stessa soluzione di $PA\x = P\b$; difatti, moltiplic
 L\mathbf{y} = P\b, \quad U\x = \mathbf{y}
 \]
 per sostituzione in avanti e all'indietro rispettivamente.
+
+La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolvere sistemi lineari su un computer; in Matlab 
+anche \lstinline{A \ b} utilizza questo algoritmo.
+
+\paragraph{Errore algoritmico dell'eliminazione di Gauss con pivoting}
+Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico è dell'ordine di $\norm{L}\norm{U} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che gli elementi della $L$ e della $U$ non siano molto grandi.
+
+Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono esempi particolarmente sfortunati in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è la dimensione. Nella maggior parte dei casi, però, l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. (L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $Ax=b$, non una successione convergente ad essa.)
 
 \paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficace di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
 
@@ -2466,7 +2549,7 @@ D = U;
 
 \paragraph{Pivoting e fattorizzazione $LDL^T$}
 
-In una fattorizzazione $LDL^T$, il pivoting diventa più complicato: difatti, scambiando righe si perde la simmetria. Per mantenerla, è necessario scambiare non solo le righe, ma anche le colonne corrispondenti, cioè considerare $PAP^T$. Anche con questa modifica, però, non si ottiene un algoritmo stabile.
+In una fattorizzazione $LDL^T$, il pivoting diventa più complicato: difatti, scambiando righe si perde la simmetria. Per mantenerla, è necessario scambiare non solo le righe, ma anche le colonne corrispondenti, cioè considerare $PAP^T$. Questo, però, non è sufficiente per ottenere un algoritmo stabile.
 In Matlab, la funzione \lstinline{[L,D,P] = ldl(A)} produce una fattorizzazione $LDL^T = P^TAP$, però (per avere una versione più stabile) la matrice $D$ può avere dei blocchi $2\times 2$ lungo la diagonale. Anche questa volta, però, abbiamo una categoria particolare di matrici per cui possiamo dimostrare che la fattorizzazione funziona sempre senza bisogno di ricorrere al pivoting.
 
 \paragraph{Matrici SPD (simmetriche e positive definite)}
