@@ -97,6 +97,10 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
 
 \chapter{Equazioni non lineari (zeri di funzione)}
 
+%%%
+% Pannocchia dice che è più comune un'altra variante, la formula di Peng--Robinson; usare quella invece
+%%%
+
 \paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di van der Waals}
 \[
     P = \frac{RT}{V-B} - \frac{A}{V^2}.
@@ -2319,23 +2323,32 @@ Esempio: la matrice
 
 Su un computer, difficilmente gli ``zeri'' vengono calcolati esattamente come zero! L'eliminazione di Gauss tecnicamente fallisce solo se c'è un pivot \emph{esattamente} uguale a zero, ma un pivot molto vicino a zero è comunque problematico. Non facciamo un'analisi dettagliata dell'errore algoritmico, ma vediamo direttamente un esempio in cui le cose vanno storte. Supponiamo di avere (per un $\varepsilon>0$ molto piccolo) la matrice
 \[
-\begin{bmatrix}
+A = \begin{bmatrix}
     \varepsilon & 1 & 1\\
     1 & 1 & 1\\
     1 & 1 & -1
 \end{bmatrix}.
 \]
-Questa matrice è ben condizionata (il condizionamento nelle tre norme è minore di 10), ma dopo il primo passo di eliminazione di Gauss otteniamo
+Questa matrice è ben condizionata (in tutte e tre le norme che abbiamo visto, il suo condizionamento è minore di 10), ma dopo il primo passo di eliminazione di Gauss otteniamo
 \[
-\begin{bmatrix}
+U_2 = \begin{bmatrix}
     \varepsilon & 1 & 1\\
     0 & 1-\frac{1}{\varepsilon} & 1-\frac{1}{\varepsilon}\\
     0 & 1-\frac{1}{\varepsilon} & -1-\frac{1}{\varepsilon}
 \end{bmatrix}.
 \]
-Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\frac{1}{\varepsilon}$ che a $-1-\frac{1}{\varepsilon}$ è $\frac{1}{\varepsilon}$, e quindi le ultime due righe diventano uguali quando andiamo a scrivere quei numeri su un calcolatore: pertanto l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice è molto lontana dall'esserlo, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche senza arrivare a valori così estremi, possiamo veder che in una matrice in cui $A_{11}$ è piccolo dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dovremo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
+Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\frac{1}{\varepsilon}$ che a $-1-\frac{1}{\varepsilon}$ è $\frac{1}{\varepsilon}$, e quindi quando andiamo a scrivere quei numeri su un calcolatore la matrice che viene memorizzata è
+\[
+\tilde{U}_2 = 
+\begin{bmatrix}  
+    \varepsilon & 1 & 1\\
+    0 & -\frac{1}{\varepsilon} & -\frac{1}{\varepsilon}\\
+    0 & -\frac{1}{\varepsilon} & -\frac{1}{\varepsilon}
+\end{bmatrix}.
+\]
+In particolare, le ultime due righe sono identiche. Pertanto al passo successivo l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice di partenza $A$ è molto lontana dall'essere singolare, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche in un esempio senza valori così estremi, possiamo vedere che quando $A_{11}$ è molto più piccolo degli altri valori presenti nella matrice dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dobbiamo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
 
-La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, vogliamo scambiarle in modo da avere in posizione $(k,k)$ (cioè come pivot) il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$.
+La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, vogliamo scambiarle in modo da avere ad ogni passo $k$ in posizione $(k,k)$ (cioè come pivot) il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$.
 
 Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
 
