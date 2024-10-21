@@ -3926,29 +3926,31 @@ dove la seconda equazione è uno sviluppo di Taylor. Sottraendo membro a membro 
             & \leq \abs*{y_n - y(t_n)} + h \abs*{f(t_n,y_n) - f(t_n,y(t_n))} + \frac{h^2}{2} \abs*{y''(\xi)}\\
             & \leq e_n + hL e_n + \frac{h^2}{2}C_2 = (1+hL) e_n + \frac{h^2}{2}C_2.
 \end{align*}
-Poniamo $M = \frac{h^2}{2}C_2$; iterando, abbiamo
+Per semplificare la notazione nei passaggi successivi, introduciamo le due costanti $A = 1+hL$ e $B = \frac{h^2}{2}C_2$, in questo modo la relazione precedente diventa $e_{n+1} \leq A e_n + B$. Possiamo dare una limitazione dell'errore non ricorsiva ragionando per passi successivi: poiché $e_0 = y_0 - y(0) = 0$, abbiamo
 \begin{align*}
-    e_n &\leq M + (1+hL)e_{n-1} \\&\leq M + (1+hL)M + (1+hL)^2e_{n-2}\\ &\leq M + (1+hL)M + (1+hL)^2M + (1+hL)^3 e_{n-3}\\
-    & \leq \dots\\\
-    & \leq M\left(1 + (1+hL) + (1+hL)^2 + \dots + (1+hL)^{n-1}\right)    + (1+hL)^n \underbrace{e_0}_{=0}\\
-    & = M\frac{(1+hL)^n-1}{(1+hL)-1}\\
-    & = \frac{M}{hL}\left(\left(1+\frac{t_n-t_0}{n}L\right)^n-1\right);
+    e_1 &\leq B,\\
+    e_2 &\leq Ae_1 + B = (A + 1)B,\\    
+    e_3 &\leq Ae_2 + B = (A^2 + A +1)B,\\
+    \vdots & \quad\quad\vdots\\
+    e_N &\leq (A^{N-1}+ \dots + A^2 + A + 1)B.
 \end{align*}
-l'ultima uguaglianza segue dal fatto che $t_n - t_0 = nh$. 
-
-Quando nei corsi di analisi avete studiato il limite notevole
+Chiaramente tra tutti questi termini il più grande è l'ultimo; quindi ci basta trovare una limitazione per quello. Stabilire il comportamento di questa espressione quando $N\to \infty$ non è immediato, visto che $A$ e $B$ sono funzioni di $h = \frac{b-a}{N}$ e anche il numero di termini nella somma dipende da $N$. Cominciamo col semplificare la quantità
 \[
-    \lim_{n\to\infty} \left(1+\frac{x}{n}\right)^n = e^x,
+    (A^{N-1}+ \dots + A^2 + A + 1) = \frac{A^N-1}{A-1} = \frac{(1+hL)^N-1}{1+hL-1} = \frac{\left(1+\frac{(b-a)L}{N}\right)^N-1}{hL}.
 \]
-probabilmente avete dimostrato che questa convergenza avviene in modo crescente, cioè, per ogni $n$ si ha $\left(1+\frac{x}{n}\right)^n \leq e^x$. Quindi per questa disuguaglianza abbiamo
+Ricordiamo ora che esiste il limite notevole
 \[
-\left(1+\frac{t_n-t_0}{n}L\right)^n \leq e^{(t_n-t_0)L}.
+    \lim_{N\to \infty} \left(1+\frac{x}{N}\right)^N = e^{x}.
 \]
-Quindi rimettendo tutto insieme abbiamo per ogni $n=1,2,\dots,N$
+Nei corsi di analisi probabilmente avete anche dimostrato che questa successione tende a $e^{x}$ dal basso, quindi si ha
 \[
-e_n \leq \frac{C_2 h}{2L}(e^{(t_n-t_0)L}-1) \leq \frac{C_2 h}{2L}(e^{(b-a)L}-1) = \mathcal{O}(h). \qedhere
+    \left(1+\frac{(b-a)L}{N}\right)^N \leq e^{(b-a)L}.
 \]
-
+Pertanto rimettendo tutto insieme abbiamo per ogni $n=1,2,\dots,N$
+\[
+e_n \leq (A^{N-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
+\]
+Le quantità $C_2, L, b-a$ non dipendono più da $N$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
 \end{proof}
 
 \paragraph{Metodi generali a un passo}
