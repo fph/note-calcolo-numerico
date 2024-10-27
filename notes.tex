@@ -1920,6 +1920,10 @@ $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} +
 
 Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\in\mathbb{C}^{n\times n}$ come prodotto $A=LU$, dove $L$ è una matrice triangolare inferiore con elementi tutti uguali a $1$ sulla diagonale, e $U$ è una matrice triangolare superiore. Vediamo ora un metodo che permette di calcolare una fattorizzazione LU di una matrice $A \in \mathbb{C}^{n\times n}$; questo algoritmo è sostanzialmente una variante dell'eliminazione di Gauss che avete già visto ad algebra lineare.
 
+%%%
+% Queste parti si possono separare: prima eliminazione di Gauss (su una matrice generica A, non per forza quadrata) per introdurre le matrici elementari; poi usarla sulla A di un sistema lineare per fare la fattorizzazione LU.
+%%%
+
 \paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo da una singola matrice quadrata ; qui \emph{non} usiamo la cosiddetta ``matrice estesa'' $\begin{bmatrix}
     A & \b
 \end{bmatrix}$, ma lavoriamo con la sola matrice quadrata $A\in\mathbb{R}^{n\times n}$, la matrice dei coefficienti del nostro sistema lineare.
@@ -2057,7 +2061,7 @@ Dimostriamo innanzitutto alcune proprietà di queste matrici.
 \begin{enumerate}
     \item Basta verificare che
     \[
-    E_k(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = (I-\boldsymbol{\ell}_ke_k^T)(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = I - \boldsymbol{\ell}_k \mathbf{e}_k^T + \boldsymbol{\ell}_k \mathbf{e}_k^T - \boldsymbol{\ell}_k\underbrace{\mathbf{e}_k^T\ell_k}_{=0}\mathbf{e}_k^T = I.
+    E_k(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = (I-\boldsymbol{\ell}_k\mathbf{e}_k^T)(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = I - \boldsymbol{\ell}_k \mathbf{e}_k^T + \boldsymbol{\ell}_k \mathbf{e}_k^T - \boldsymbol{\ell}_k\underbrace{\mathbf{e}_k^T\boldsymbol{\ell}_k}_{=0}\mathbf{e}_k^T = I.
     \]
     Difatti il prodotto scalare $\mathbf{e}_k^T\boldsymbol{\ell}_k$ fa zero perché $\boldsymbol{\ell}_k$ ha uno zero in posizione~$k$.
     \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
@@ -2213,7 +2217,7 @@ Il grosso del costo è dato dall'aggiornamento del blocco $A_{k+1:n, k+1:n}$ ad 
 \[
 0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
 \]
-I termini che abbiamo omesso e indicato con $O(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Similmente, se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (o dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
+I termini che abbiamo omesso e indicato con $O(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (o dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
 
 Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece usato del codice che ne calcola il risultato usando la struttura particolare di queste matrici $E_k$. Se invece lo avessimo scritto come prodotto, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato ad ogni passo l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutto l'algoritmo!
 
@@ -2270,21 +2274,23 @@ A =
 \end{equation}
 che mostra le matrici ottenute dopo i primi $k$ passi della fattorizzazione. Siamo quindi pronti per fare il passo $k+1$, e vogliamo controllare se il pivot $(U_{k+1})_{k+1,k+1}$ è zero.
 
-Notiamo che le prime $k+1$ \emph{righe} (e non solo $k$) di $L_k$ e di $U_k$ sono già quelle definitive che compariranno in $L$ e $U$ alla fine dell'algoritmo: difatti non vengono più modificate nei passi successivi. Inoltre, per come sono messi gli zeri in queste matrici, se facciamo il prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$ otteniamo $A_{1:k+1,1:k+1}$; cioè
+La matrice $A_{1:k+1,1:k+1}$ è uguale al prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$. In realtà, per come sono messi gli zeri nella matrice di destra, ci basta considerare le due matrici $(k+1)\times(k+1)$ ottenute prendendo le prime $k+1$ righe e $k+1$ colonne delle matrici al membro di destra, che chiameremo $\hat{L}$ e $\hat{U}$. Difatti tutti gli elementi a destra di $\hat{L}$ sono zeri, quindi quando facciamo il prodotto con gli elementi sotto $\hat{U}$ (che pure \emph{non} sono tutti zeri!) non contano.
+
+Per questo abbiamo
 \[
-A_{1:k+1,1:k+1} = L_{1:k+1,1:k+1} U_{1:k+1,1:k+1}:
+A_{1:k+1,1:k+1} = \hat{L}\hat{U}.
 \]
 Questa è una fattorizzazione LU della matrice $A_{1:k+1,1:k+1}$. In particolare, abbiamo
 \[
-\det A_{1:k+1,1:k+1} = (\det L_{1:k+1,1:k+1}) (\det U_{1:k+1,1:k+1}) = (1\cdot 1 \cdot \dots \cdot 1) (U_{11}U_{22}\cdots U_{k+1,k+1}).
+\det A_{1:k+1,1:k+1} = (\det \hat{L}) (\det \hat{U}) = (1\cdot 1 \cdot \dots \cdot 1) (U_{11}U_{22}\cdots U_{k+1,k+1}).
 \]
 Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k$-esimo dell'eliminazione di Gauss. Visto che ci sono $n-1$ passi nel metodo, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potremmo avere $U_{nn}=0$, ma non importa: non ci sono passi successivi in cui dobbiamo dividere per esso.
 \end{proof}
-Notiamo che quello che abbiamo dimostrato qui sopra in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la prima sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero. Ma arrivati al passo $k+1$ si ha che $\det A_{1:k+1,1:k+1} = 0$ implica $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
+Notiamo che quello che abbiamo dimostrato qui sopra in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la \emph{prima} sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero, ma arrivati al passo $k+1$ si ha $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
 
-\paragraph{Categorie di matrici per cui esiste sempre la fattorizzazione LU}
+\paragraph{Matrici dominanti diagonali}
 
-Ci sono alcune categorie di matrici particolari per cui esiste sempre la fattorizzazione LU. Una sono le matrici \emph{dominanti diagonali}. Una matrice $A\in\mathbb{C}^{n\times n}$ si dice \emph{dominante diagonale per righe} se
+Ci sono alcune famiglie di matrici particolari per cui si può dimostrare che esiste sempre la fattorizzazione LU. Una di esse sono le matrici \emph{dominanti diagonali}. Una matrice $A\in\mathbb{C}^{n\times n}$ si dice \emph{dominante diagonale per righe} se
 \[
 \abs{A_{ii}} > \sum_{j\neq i} \abs{A_{ij}}, \quad i=1,2,\dots,n
 \]
@@ -2452,14 +2458,14 @@ end
 \end{lstlisting}
 Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
 
-Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono un certo tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Quindi il costo in termini di operazioni aritmetiche è sempre di $\frac23 n^3$ operazioni aritmetiche.
+Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Se misuriamo il costo in termini di numero di operazioni aritmetiche necessarie, come abbiamo fatto finora, quindi il costo dell'eliminazione di Gauss con pivoting è sempre  $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come nel caso senza pivoting.
 
-In Matlab, questa funzione già esiste, solo con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
+In Matlab esiste già una funzione che calcola la fattorizzazione LU con pivoting, come la nostra \lstinline{fattLU}, con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
 
 
 \paragraph{Soluzione di sistemi lineari tramite fattorizzazione LU con pivoting}
 
-La fattorizzazione LU con pivoting restituisce quindi $L,U,P$ tali che $LU = PA$. Possiamo usare questa fattorizzazione per risolvere un sistema lineare $A\x=\b$, in questo modo.
+La fattorizzazione LU con pivoting restituisce quindi tre matrici $L,U,P$ (le prime due triangolari, la terza matrice di permutazione) tali che $LU = PA$. Possiamo usare questa fattorizzazione per risolvere un sistema lineare $A\x=\b$, in questo modo.
 
 Il sistema $A\x = \b$ ha la stessa soluzione di $PA\x = P\b$; difatti, moltiplicare per $P$ ha il solo effetto di riordinare le equazioni del sistema. Possiamo quindi risolvere $LU\x=P\b$, e per farlo procediamo come nel caso della fattorizzazione LU: chiamiamo $\mathbf{y}=U\x$, e risolviamo nell'ordine
 \[
@@ -2470,10 +2476,10 @@ per sostituzione in avanti e all'indietro rispettivamente.
 La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolvere sistemi lineari su un computer; in Matlab 
 anche \lstinline{A \ b} utilizza questo algoritmo.
 
-\paragraph{Errore algoritmico dell'eliminazione di Gauss con pivoting}
-Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
+\paragraph{Errore algoritmico dell'eliminazione di Gauss}
+Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico (con o senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
 
-Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è la dimensione. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. (L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $Ax=b$, non una successione convergente ad essa.)
+Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
 
 \paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficace di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
 
@@ -2491,10 +2497,10 @@ Usando il teorema di Binet, abbiamo
 \end{equation}
 Poiché $L$ e $U$ sono triangolari, i loro determinanti sono i prodotti degli elementi lungo la diagonale:
 \begin{align*}
-\det L = 1 \cdot 1 \cdot 1 \cdot \dots \cdot 1 = 1;
+\det L = 1 \cdot 1 \cdot 1 \cdot \dots \cdot 1 = 1; \quad
 \det U = U_{11} U_{22} \dots U_{nn}.
 \end{align*}
-La matrice di permutazione $P$ è ottenuta applicando alla matrice identità gli scambi di riga effettuati lungo la fattorizzazione; sappiamo dall'algebra lineare che ogni scambio di riga fa cambiare il segno del determinante, quindi
+La matrice di permutazione $P$ è ottenuta applicando alla matrice identità gli scambi di riga effettuati lungo la fattorizzazione; sappiamo dall'algebra lineare che ogni scambio di riga fa cambiare il segno del determinante, quindi abbiamo
 \[
 \det P = (-1)^s \det I = (-1)^s.
 \]
@@ -2506,7 +2512,7 @@ Possiamo quindi ricavare $\det A$ dalla~\eqref{detconti}, ottenendo la tesi.
 
 \paragraph{Fattorizzazione $LDL^T$}
 
-Supponiamo di effettuare l'eliminazione di Gauss su una matrice simmetrica, cioè $A = A^T$. Non è difficile vedere che dopo il primo passo la matrice $U_2$ ottenuta non è più simmetrica; la ``struttura'' della matrice viene distrutta. Esiste però una variante dell'eliminazione di Gauss che evita questo problema e lavora unicamente con matrici simmetriche. L'idea è la seguente: ad ogni passo, anziché definire $U_{2} = E_1 U_1$, definiamo $U_{2} = E_1 U_1 E_1^T$ (moltiplicando a destra e a sinistra). Questa matrice è simmetrica, difatti $(E_1 U_1 E_1^T)^T = (E_1^T)^T (U_1)^T E_1^T = E_1 U_1 E_1^T$.
+Supponiamo di effettuare l'eliminazione di Gauss su una matrice simmetrica, cioè $A = A^T$. Non è difficile vedere che già dopo il primo passo la matrice $U_2$ ottenuta non è più simmetrica; la struttura della matrice viene persa. Esiste però una variante dell'eliminazione di Gauss che evita questo problema e lavora unicamente con matrici simmetriche. L'idea è la seguente: ad ogni passo, anziché definire $U_{2} = E_1 U_1$, definiamo $U_{2} = E_1 U_1 E_1^T$ (moltiplicando a destra e a sinistra). Questa matrice è simmetrica, difatti $(E_1 U_1 E_1^T)^T = (E_1^T)^T (U_1)^T E_1^T = E_1 U_1 E_1^T$.
 
 L'effetto della moltiplicazione per $E_1^T$ è quello di sommare ad ogni colonna un multiplo della prima; quindi gli unici elementi che cambiano rispetto a $E_1 U_1$ sono quelli della prima riga successivi al primo, che diventano zero: quindi $U_2 = E_1 U_1 E_1^T$ ha la forma
 \[
@@ -2554,7 +2560,7 @@ for k = 1:n-1
     for i = k+1:n
         % aggiorniamo la parte triangolare superiore della riga i...
         U(i, i:n) = U(i, i:n) - L(i,k)*U(k,i:n);
-        % ...e copiamo gli elementi calcolati nella parte tr. inf.
+        % ...e copiamo gli elementi calcolati nella parte inferiore
         U(i+1:n, i) = U(i, i+1:n)';
     end
     % questi elementi sono 0, non serve calcolarli
@@ -2564,10 +2570,24 @@ end
 D = U;        
 \end{lstlisting}
 
-\paragraph{Pivoting e fattorizzazione $LDL^T$}
+\paragraph{Pivoting nella fattorizzazione $LDL^T$}
 
 In una fattorizzazione $LDL^T$, il pivoting diventa più complicato: difatti, scambiando righe si perde la simmetria. Per mantenerla, è necessario scambiare non solo le righe, ma anche le colonne corrispondenti, cioè considerare $PAP^T$. Questo, però, non è sufficiente per ottenere un algoritmo stabile.
-In Matlab, la funzione \lstinline{[L,D,P] = ldl(A)} produce una fattorizzazione $LDL^T = P^TAP$, però (per avere una versione più stabile) la matrice $D$ può avere dei blocchi $2\times 2$ lungo la diagonale. Anche questa volta, però, abbiamo una categoria particolare di matrici per cui possiamo dimostrare che la fattorizzazione funziona sempre senza bisogno di ricorrere al pivoting.
+In Matlab, la funzione \lstinline{[L,D,P] = ldl(A)} produce una fattorizzazione $LDL^T = P^TAP$, però (per avere una versione più stabile) la matrice $D$ non è diagonale, ma è diagonale a blocchi con blocchi $1\times 1$ o $2\times 2$, per esempio come questa:
+\[
+    D = \begin{bmatrix}
+        *\\
+        & * & *\\
+        & * & *\\
+        & & & *\\
+        && & & *\\
+        & & & & & * & *\\
+        & & & & & * & *\\
+        & & & & & & & *\\
+        & & & & & & & &*
+    \end{bmatrix}.
+\]
+Anche per questa fattorizzazione, però, c'è una categoria particolare di matrici per cui possiamo dimostrare che la fattorizzazione funziona sempre senza bisogno di ricorrere al pivoting.
 
 \paragraph{Matrici SPD (simmetriche e positive definite)}
 
@@ -2585,11 +2605,11 @@ Una matrice simmetrica $A$ è definita positiva se e solo se tutti i suoi autova
 Valgono le seguenti proprietà.
 \begin{enumerate}
     \item Una matrice definita positiva ha tutti gli elementi sulla diagonale (strettamente) positivi; difatti $A_{kk} = \mathbf{e}_k^T A \mathbf{e}_k > 0$. (Notare che questo \emph{non} è un ``se e solo se'': esistono matrici simmetriche che hanno tutti gli elementi sulla diagonale positivi, ma non sono positive definite! Per esempio, $A = \begin{bsmallmatrix}
-        1 & 1\\ 1 & 1
+        1 & 2\\ 2 & 1
     \end{bsmallmatrix}$).
-    \item Se $A$ è positiva definita e $M$ è una qualunque invertibile, allora anche $MAM^T$ è definita positiva: difatti $\mathbf{x}^T MAM^T \mathbf{x} = (M^T\mathbf{x})^T A (M^T\mathbf{x}) > 0$.
+    \item Se $A$ è positiva definita e $M$ è una qualunque invertibile, allora anche $MAM^T$ è definita positiva: difatti $MAM^T$ è simmetrica, e $\mathbf{x}^T MAM^T \mathbf{x} = (M^T\mathbf{x})^T A (M^T\mathbf{x}) > 0$.
 \end{enumerate}
-Utilizzando queste due proprietà, è facile dimostrare che ad ogni passo della fattorizzazione $LDL^T$ $U_k$ è positiva definita, e il pivot $U_{kk}$ è (strettamente!) positivo. Quindi una matrice SPD ammette sempre fattorizzazione $LDL^T$, e gli elementi diagonali $d_{kk}$ sono tutti (strettamente) positivi. In più, è possibile dimostrare che questa fattorizzazione è stabile senza bisogno di fare pivoting; gli elementi della matrice $D$ non crescono mai troppo rispetto agli elementi di $A$.
+Utilizzando queste due proprietà, è facile dimostrare che ad ogni passo della fattorizzazione $LDL^T$ la matrice $U_k$ è positiva definita, e quindi il pivot $U_{kk}$ è (strettamente!) positivo. Quindi una matrice SPD ammette sempre fattorizzazione $LDL^T$, e gli elementi diagonali $d_{kk}$ sono tutti (strettamente) positivi. In più, è possibile dimostrare (noi non lo facciamo) che questa fattorizzazione è stabile senza bisogno di fare pivoting; gli elementi della matrice $D$ non crescono mai troppo rispetto agli elementi di $A$.
 
 \paragraph{Fattorizzazione di Cholesky}
 Per una matrice definita positiva, possiamo riscrivere la fattorizzazione LDL in un formato leggermente diverso. Visto che tutti gli elementi di $D$ sono positivi, possiamo scrivere $D = D^{1/2} D^{1/2}$, dove $D^{1/2}$ è la matrice diagonale che ha elementi diagonali $\sqrt{d_{11}}, \sqrt{d_{22}}, \dots, \sqrt{d_{nn}}$. Quindi
@@ -2598,7 +2618,7 @@ A = LDL^T = (LD^{1/2})(D^{1/2}L^T) = R^TR,
 \]
 dove $R$ è una matrice triangolare superiore. Abbiamo quindi scritto $A$ come il prodotto di una matrice triangolare inferiore e di una triangolare superiore, che sono una la trasposta dell'altra. Questa fattorizzazione si chiama \emph{fattorizzazione di Cholesky}. 
 
-Il costo computazionale è di nuovo di $\frac13n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, con il dettaglio che tra le operazioni ci sono anche $n$ radici quadrate. In Matlab, c'è il comando \lstinline{R = chol(A)}.
+Il costo computazionale di questa fattorizzazione è di nuovo di $\frac13n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come per la $LDL^T$, con il dettaglio che tra le operazioni da fare ci sono anche $n$ radici quadrate. In Matlab, questa fattorizzazione si può calcolare con il comando \lstinline{R = chol(A)}.
 
 \paragraph{Esercizio} Dato un parametro $\alpha \in \mathbb{C}$, consideriamo la matrice
 \[
@@ -3096,11 +3116,11 @@ Ad esempio, supponiamo di voler risolvere $F(\mathbf{x})=0$, dove
         \sin(x_1) + 2x_2 - \pi
     \end{bmatrix}.
 \end{equation}
-Questo è un sistema (\emph{non} lineare) di due equazioni in due incognite; una soluzione per esempio è $(x_1, x_2) = (0,\pi)$.
+Questo è un sistema (\emph{non} lineare) di due equazioni in due incognite; una soluzione del sistema per esempio è $(x_1, x_2) = (0,\pi)$.
 
 Un sistema di questo tipo è un problema molto più complicato che non un sistema lineare; tanto per cominciare, in generale si possono avere zero soluzioni, una, più di una, o anche infinite, e non c'è un criterio generale per capire quando questi casi si verificano.
 
- Non c'è un modo facile di estendere il metodo di bisezione, più che altro perché non abbiamo un analogo facile del teorema di Weierstrass in più dimensioni: anche se $F(\mathbf{x})$ ha tutte le componenti $<0$ e $F(\mathbf{y})$ ha tutte le componenti $>0$, non è detto che ci sia una soluzione simultanea di tutte le equazioni né nella retta che congiunge $(x_1,x_2)$ a $(y_1,y_2)$ né nel ``rettangolo'' che li comprende. I metodi di punto fisso invece si riescono a generalizzare facilmente, come abbiamo già visto. In particolare ci concentriamo su uno particolarmente efficiente, il metodo di Newton.
+ Non c'è un modo facile di estendere a sistemi di più equazioni il metodo di bisezione, più che altro perché non abbiamo un analogo facile del teorema di Weierstrass in più dimensioni: anche se $F(\mathbf{x})$ ha tutte le componenti $<0$ e $F(\mathbf{y})$ ha tutte le componenti $>0$, non è detto che ci sia una soluzione simultanea di tutte le equazioni né nella retta che congiunge $(x_1,x_2)$ a $(y_1,y_2)$ né nel ``rettangolo'' che li comprende. I metodi di punto fisso invece si riescono a generalizzare facilmente, come abbiamo già visto: possiamo calcolare la successione $\x_{k+1} = \Phi(\x_k)$ anche per una funzione in più variabili $\Phi: \mathbb{R}^n \to \mathbb{R}^n$. In particolare ci concentriamo su un metodo del punto fisso particolarmente efficiente, il metodo di Newton.
 
 \paragraph{Metodo di Newton multivariato}
 Possiamo definire, generalizzando la derivata prima di una funzione, la \emph{matrice Jacobiana}
@@ -3124,11 +3144,11 @@ J_F(\x) = \begin{bmatrix}
 \]
 Vale, per funzioni sufficientemente regolari, una generalizzazione dello sviluppo di Taylor:
 \begin{equation} \label{taylormulti}
-    F(\x+\mathbf{h}) = F(\x) + J_F(\x) \mathbf{h} + O(\norm{\mathbf{h}}^2),
+    F(\x+\mathbf{h}) = F(\x) + J_F(\x) \mathbf{h} + \mathcal{O}(\norm{\mathbf{h}}^2),
 \end{equation}
-con $\x,\mathbf{h} \in\mathbb{R}^n$; notiamo in particolare che nel membro di destra compare il prodotto matrice-vettore $J_F(\x) \mathbf{h}$. Ragionando come nel metodo di Newton in una sola variabile, possiamo trascurare il termine di resto $O(\norm{\mathbf{h}}^2)$ e cercare una nuova approssimazione $\x_{k+1} = \x_k+\mathbf{h}$ imponendo che
+con $\x,\mathbf{h} \in\mathbb{R}^n$, e un termine di resto che abbiamo indicato con $\mathcal{O}(\norm{\mathbf{h}}^2)$ e che va a zero ogni volta che il vettore $\mathbf{h}$ tende a zero. Notiamo in particolare che nel membro di destra compare un prodotto matrice-vettore $J_F(\x) \mathbf{h}$. Ragionando come nel metodo di Newton in una sola variabile, possiamo trascurare il termine di resto $\mathcal{O}(\norm{\mathbf{h}}^2)$ e cercare una nuova approssimazione $\x_{k+1} = \x_k+\mathbf{h}$ imponendo che
 \[
-    0 = F(\x_k+\mathbf{h}) = F(\x_k) + J_F(\x_k) \mathbf{h}.
+    \mathbf{0} = F(\x_k+\mathbf{h}) = F(\x_k) + J_F(\x_k) \mathbf{h}.
 \]
 Questo produce il metodo
 \[
@@ -3137,35 +3157,42 @@ Questo produce il metodo
 \x^{(k+1)} = \x^{(k)} - \left(J_F(\x^{(k)})\right)^{-1} F(\x^{(k)}), & k=0,1,2,\dots.
 \end{cases}
 \]
-Valgono risultati analoghi a quelli del caso scalare: su funzioni sufficientemente regolari, il metodo converge a patto di prendere $\x^{(0)}$ sufficientemente vicino a una soluzione $\x$, e la convergenza è quadratica se $J_F(\x)$ è invertibile. 
+Valgono risultati analoghi a quelli del caso scalare: su funzioni sufficientemente regolari, il metodo converge a patto di prendere $\x^{(0)}$ sufficientemente vicino a una soluzione $\x$, e la convergenza è quadratica se la matrice $J_F(\x)$ è invertibile. 
 
-Nella pratica, ad ogni passo, possiamo evitare di calcolare esplicitamente la matrice inversa: troviamo il valore di $J_F(\x^{(k)})$, e poi risolviamo il sistema lineare
+Ad ogni passo, dobbiamo risolvere un sistema lineare con matrice $J_F(\x^{(k)})$. Nella pratica, possiamo evitare di calcolare esplicitamente la matrice inversa: calcoliamo la matrice $J_F(\x^{(k)})$, e poi risolviamo il sistema lineare
 \[
     J_F(\x^{(k)}) \mathbf{h} = F(\x^{(k)}), \quad \mathbf{h} = \x^{(k)} - \x^{(k+1)}
 \]
-con una fattorizzazione LU o altri metodi: i passi del metodo quindi sono, nell'ordine
+con una fattorizzazione LU o altri metodi. Abbiamo visto, difatti, che quando dobbiamo effettuare il calcolo $\x = A^{-1}\b$, calcolare esplicitamente l'inversa $A^{-1}$ non è una buona idea, visto che costa di più e ha proprietà di stabilità peggiori rispetto a risolvere il sistema lineare con la fattorizzazione LU.
+
+I passi del metodo di Newton multivariato quindi sono, nell'ordine
 \begin{enumerate}
     \item calcolare $F(\x^{(k)})$;
     \item calcolare $J_F(\x^{(k)})$;
     \item risolvere il sistema lineare $J_F(\x^{(k)}) \mathbf{h} = F(\x^{(k)})$ per trovare $\mathbf{h}$;
     \item calcolare $\x^{(k+1)} = \x^{(k)} - \mathbf{h}$.
 \end{enumerate}
-È impossibile dire qualcosa in generale su come si confrontano i costi dei vari passi senza sapere quanto costa calcolare $F$ e $J_F$. Però possiamo osservare che se utilizziamo una fattorizzazione LU, il costo del terzo passo è $O(n^3)$, e spesso questa risulta essere l'operazione più costosa. Per questo, spesso si utilizzano varianti del metodo di Newton che cercano di ridurre il costo di questo passo. Ne vediamo in particolare uno, il metodo delle corde.
+È impossibile dire qualcosa in generale su come si confrontano i costi dei vari passi senza sapere quanto costa calcolare $F$ e $J_F$. In molti casi, però, calcolare gli $n$ elementi di $F$ e gli $n^2$ elementi di $J_F$ costa in tutto $\mathcal{O}(n^2)$ operazioni aritmetiche. Se utilizziamo una fattorizzazione LU, il costo del terzo passo è invece $\mathcal{O}(n^3)$: quindi spesso questo passo risulta essere quello più costoso. Per questo, sono state ideate varianti del metodo di Newton che cercano di ridurre il costo di questo passo. Ne vediamo in particolare uno, il metodo delle corde.
 
-\paragraph{Metodo delle corde multivariato}  Nel metodo delle corde, una volta calcolata una matrice $A$ da invertire, per esempio come $A = J_F(\x^{(0)})$, la teniamo fissa per più iterazioni.
+\paragraph{Metodo delle corde multivariato} Questo metodo utilizza la stessa idea del metodo delle corde multivariato: invece di calcolare ad ogni passo lo Jacobiano $J_F(\x^{(k)})$, lo rimpiazziamo con una matrice fissata $A$. Vediamo però che nella pratica è difficile trovare una matrice $A$ che assicuri la convergenza del metodo. Per questo motivo, solitamente si utilizza un approccio ibrido: in alcuni passi del metodo calcoliamo la matrice Jacobiana, in altri riutilizziamo la matrice calcolata nei passi precedenti.
 
-Pseudocodice: per ogni $k=0,1,2,\dots$
-\begin{itemize}
+Lo pseudocodice del metodo è questo: per ogni $k=0,1,2,\dots$
+\begin{enumerate}
     \item Calcolo $F(\x^{(k)})$;
-    \item In alcune iterazioni, valuto $A = J_F(\x^{(k)})$ e calcolo una sua fattorizzazione $PA = LU$; altrimenti, riutilizzo $P,L,U$ da un passo precedente. Per esempio, posso scegliere di ricalcolare la fattorizzazione ogni $5$ passi;
+    \item Faccio una di queste due cose: \begin{enumerate}
+        \item valuto $A = J_F(\x^{(k)})$ e calcolo una sua fattorizzazione $PA = LU$; oppure
+        \item prendo le matrici $A,L,U,P$ calcolate in un passo precedente del metodo.
+    \end{enumerate}
     \item Utilizzo la fattorizzazione per risolvere il sistema lineare $ A \mathbf{h} = F(\x^{(k)})$;
     \item Calcolo $\x^{(k+1)} = \x^{(k)} - \mathbf{h}$.
-\end{itemize}
-Costo computazionale: ad ogni passaggio dobbiamo fare una valutazione di $F$ e una soluzione di un sistema lineare ($O(n^2)$). Inoltre, ogni volta che vogliamo ricalcolare la fattorizzazione facciamo $O(n^3)$ operazioni più una valutazione di $J_F$. 
+\end{enumerate}
+Per esempio, posso fissare un intero $m>1$ e scegliere di fare il passo (a) ogni $m$ passi: al passo $1$, $m+1$, $2m+1$, \dots.
+
+Costo computazionale: ad ogni passo dobbiamo fare una valutazione di $F$ e una soluzione di un sistema lineare ($\mathcal{O}(n^2)$). Inoltre, ogni volta che vogliamo ricalcolare la fattorizzazione facciamo $\mathcal{O}(n^3)$ operazioni più una valutazione di $J_F$.
 
 Come nel caso scalare, la convergenza è garantita solo se partiamo all'interno di un certo intorno della soluzione (che può essere anche molto piccolo!).
 
-La velocità di convergenza del metodo di Newton è quadratica. Nel metodo delle corde, è più complicato. La convergenza in linea teorica è sempre quadratica, ma diventa più lenta se ricalcoliamo lo Jacobiano e la sua fattorizzazione meno spesso: questo perché se la matrice $A$ è fissata il metodo si comporta come un metodo con convergenza lineare.
+La convergenza del metodo delle corde in linea teorica è sempre quadratica, sotto le stesse condizioni del metodo di Newton. Nella pratica, visto che utilizziamo un metodo a convergenza lineare per parecchie iterazioni, vediamo che il grafico dell'errore si comporta come una spezzata: ci sono dei segmenti di retta quando teniamo la matrice $A$ costante, e la pendenza cambia e diventa più ripida quando aggiorniamo la matrice $A$.
 
 \section{Sistemi lineari sovradeterminati (minimi quadrati)}
 
