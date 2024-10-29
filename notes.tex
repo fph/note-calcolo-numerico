@@ -1899,7 +1899,7 @@ Possiamo contare il numero di operazioni in ogni riga, ottenendo
 
 Diciamo che la complessità del metodo è di $n^2$ operazioni aritmetiche. Notare che in questo caso non ci sono funzioni sconosciute da valutare, quindi questa è davvero tutta la complessità. Inoltre queste operazioni calcolano esattamente la soluzione, quindi quello che abbiamo chiamato ``errore analitico'' è zero.
 
-Spesso quando si parla di complessità ci interessa solo l'ordine di grandezza, e quindi si scrive $O(n^2)$. Come in analisi, questa è una notazione che include complessità come $2n^2$, $\frac{1}{3}n^2 + 2n - 5$, ecc. Si intende che lavoriamo nel limite $n\to \infty$, quindi ignoriamo potenze \emph{inferiori} della $n$ che crescono più lentamente di $n^2$. 
+Spesso quando si parla di complessità ci interessa solo l'ordine di grandezza, e quindi si scrive $\mathcal{O}(n^2)$. Come in analisi, questa è una notazione che include complessità come $2n^2$, $\frac{1}{3}n^2 + 2n - 5$, ecc. Si intende che lavoriamo nel limite $n\to \infty$, quindi ignoriamo potenze \emph{inferiori} della $n$ che crescono più lentamente di $n^2$. 
 
 Per una matrice triangolare superiore, la tecnica è analoga, ma dobbiamo partire dall'ultima equazione e risolvere ``andando al contrario'' (\emph{sostituzione all'indietro}):
 \begin{align*}
@@ -1911,7 +1911,7 @@ x_1 &= \frac{b_1 - A_{1,n}x_n - A_{1,n-1}x_{n-1} - \dots -A_{1,2}x_{2}}{A_{11}}.
 
 La complessità è di nuovo $n^2$ operazioni.
 
-Se una matrice triangolare ha molti elementi uguali a zero (si dice che è \emph{sparsa}), e sappiamo da principio questo fatto, possiamo scrivere del codice specializzato che salta le operazioni che coinvolgono degli elementi $A_{ij}$ che sappiamo essere zero. In questo modo si utilizzano $O(2\texttt{nnz})$ operazioni, dove \texttt{nnz} è il \emph{numero di nonzeri} della matrice.
+Se una matrice triangolare ha molti elementi uguali a zero (si dice che è \emph{sparsa}), e sappiamo da principio questo fatto, possiamo scrivere del codice specializzato che salta le operazioni che coinvolgono degli elementi $A_{ij}$ che sappiamo essere zero. In questo modo si utilizzano $\mathcal{O}(2\texttt{nnz})$ operazioni, dove \texttt{nnz} è il \emph{numero di nonzeri} della matrice.
 
 \paragraph{Stabilità della soluzione di sistemi lineari speciali} Abbiamo visto che l'errore commesso nella soluzione numerica di un problema è $e_{tot} \doteq e_{an} + e_{mac}$. In questi algoritmi, la quantità $\gamma$ che calcoliamo è \emph{esattamente} uguale alla soluzione $\alpha$ del problema: non abbiamo processi di limite, o successioni che convergono alla soluzione $\alpha$ e che dobbiamo troncare. Quindi $e_{an} = 0$. Abbiamo visto ulteriormente che 
 $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} + \kappa_{\x,\b} \mathsf{u} \doteq 2\kappa(A)\mathsf{u}$. È possibile dimostrare (qui non lo vediamo) che gli algoritmi di soluzione di sistemi diagonali e sostituzione in avanti e all'indietro sono \emph{stabili}, cioè $e_{alg}$ non è mai molto più grande di $e_{in}$.
@@ -2217,7 +2217,7 @@ Il grosso del costo è dato dall'aggiornamento del blocco $A_{k+1:n, k+1:n}$ ad 
 \[
 0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
 \]
-I termini che abbiamo omesso e indicato con $O(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (o dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
+I termini che abbiamo omesso e indicato con $\mathcal{O}(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (così come quello dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
 
 Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece usato del codice che ne calcola il risultato usando la struttura particolare di queste matrici $E_k$. Se invece lo avessimo scritto come prodotto, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato ad ogni passo l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutto l'algoritmo!
 
@@ -2477,7 +2477,7 @@ La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolver
 anche \lstinline{A \ b} utilizza questo algoritmo.
 
 \paragraph{Errore algoritmico dell'eliminazione di Gauss}
-Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico (con o senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
+Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico (con o senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, visto che l'errore inerente è invece dell'ordine di $\kappa(A)\mathsf{u} = \norm{A}\norm{A^{-1}}\mathsf{u}$  l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
 
 Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
 
@@ -2507,6 +2507,90 @@ La matrice di permutazione $P$ è ottenuta applicando alla matrice identità gli
 Possiamo quindi ricavare $\det A$ dalla~\eqref{detconti}, ottenendo la tesi.
 \end{proof}
 
+\paragraph{Esercizio} Dato un parametro $\alpha \in \mathbb{C}$, consideriamo la matrice
+\[
+A_\alpha =
+\begin{bmatrix}
+    1  & & & & -\alpha\\
+    -\alpha & 1 & & & \\
+    & -\alpha & 1 & & \\
+    & & \ddots & \ddots\\
+    & & & -\alpha & 1
+\end{bmatrix} \in \mathbb{C}^{n\times n}.
+\]
+\begin{enumerate}
+    \item Per quali valori di $\alpha$ il teorema dei cerchi di Gershgorin ci permette di concludere che la matrice è invertibile?
+    \item Per quali valori di $\alpha$ è soddisfatta la condizione di esistenza della fattorizzazione LU?
+    \item Sapreste trovare la fattorizzazione LU di $A$?
+    \item Per quali valori di $\alpha$ la matrice è invertibile?
+\end{enumerate}
+Soluzione:
+\begin{enumerate}
+    \item I cerchi di Gershgorin hanno tutti centro $1$ e raggio $\abs{\alpha}$. Se $\abs{\alpha} < 1$, allora $0$ non appartiene all'unione dei cerchi di Gershgorin, quindi non è un autovalore della matrice $A_\alpha$; pertanto $A_\alpha$ è invertibile. Se invece $\abs{\alpha} \geq 1$, allora $1$ sta all'interno dell'unione dei cerchi, quindi il teorema non ci permette di concludere nulla: $0$ potrebbe essere autovalore oppure no.
+    \item Le sottomatrici di testa fino all'ordine $n-1$ sono tutte triangolare inferiori con $1$ sulla diagonale; quindi sono invertibili per ogni valore di $\alpha\in\mathbb{C}$.
+    \item Eseguiamo l'eliminazione di Gauss: al primo passo, l'unico elemento da eliminare è quello in posizione $(2,1)$, e per farlo dobbiamo sottrarre $-\alpha$ volte la riga 1 dalla riga 2 (occhio al doppio segno $-$).
+    \[
+        U_1 = A; \, U_2 = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  -\alpha\\
+            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
+            0& -\alpha & 1 & \dots  & 0 & 0\\
+            & & \alpha & 1\\
+            & & & \ddots & \ddots & \\
+            & & &  &-\alpha & 1      
+        \end{bmatrix}
+    \]
+    Continuando nello stesso modo, al passo successivo dobbiamo eliminare l'elemento in posizione $(3,2)$, di nuovo con moltiplicatore $-\alpha$, ottenendo
+    \[
+        U_3 = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  -\alpha\\
+            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
+            0& 0 & 1 & \dots  & 0 & 0\\
+            & & \alpha & 1\\
+            & & & \ddots & \ddots & \\
+            & & &  &-\alpha & 1      
+        \end{bmatrix}.
+    \]
+    L'unico passo leggermente diverso è l'ultimo, in cui abbiamo
+    \[
+        U_{n-1} = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  -\alpha\\
+            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
+            0& 0 & 1 & \dots  & 0 & 0\\
+            & & \ddots & \ddots\\
+            & & & 0 & 1 & -\alpha^{n-1}\\
+            & & &  &-\alpha & 1      
+        \end{bmatrix},
+        \quad
+        U_n = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  -\alpha\\
+            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
+            0& 0 & 1 & \dots  & 0 & 0\\
+            & & \ddots & \ddots\\
+            & & & -\alpha & 1 & -\alpha^{n-1}\\
+            & & &  & 0 & 1-\alpha_n
+        \end{bmatrix}.
+    \]
+    Quindi otteniamo la fattorizzazione $A=LU$ con
+    \[
+        L = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  0\\
+            -\alpha & 1 & 0 & \dots & 0 & 0\\
+            0& -\alpha & 1 & \dots  & 0 & 0\\
+            & & \alpha & 1\\
+            & & & \ddots & \ddots & \\
+            & & &  &-\alpha & 1      
+        \end{bmatrix}, \quad U = \begin{bmatrix}
+            1  & 0 &  0& \dots  & 0 &  -\alpha\\
+            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
+            0& 0 & 1 & \dots  & 0 & 0\\
+            & & \ddots & \ddots\\
+            & & & 0 & 1 & -\alpha^{n-1}\\
+            & & &  & 0 & 1-\alpha_n
+        \end{bmatrix}.
+    \]
+    Ricordiamo che la matrice $L$ è ottenuta a partire dalla matrice identità inserendo sotto la diagonale tutti i moltiplicatori utilizzati nell'eliminazione.
+    \item Dalla fattorizzazione LU calcolata, abbiamo $\det A_\alpha = \det U = 1\cdot 1 \cdot \dots \cdot 1 \cdot (1-\alpha^n) = 1-\alpha^n$. Quindi il determinante si annulla se e solo se $\alpha$ è una radice $n$-esima complessa dell'unità. Notiamo che questo risultato è coerente con quanto visto sopra con il teorema dei cerchi di Gershgorin.
+\end{enumerate}
 
 \section{Fattorizzazioni per matrici simmetriche}
 
@@ -2620,90 +2704,6 @@ dove $R$ è una matrice triangolare superiore. Abbiamo quindi scritto $A$ come i
 
 Il costo computazionale di questa fattorizzazione è di nuovo di $\frac13n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come per la $LDL^T$, con il dettaglio che tra le operazioni da fare ci sono anche $n$ radici quadrate. In Matlab, questa fattorizzazione si può calcolare con il comando \lstinline{R = chol(A)}.
 
-\paragraph{Esercizio} Dato un parametro $\alpha \in \mathbb{C}$, consideriamo la matrice
-\[
-A_\alpha =
-\begin{bmatrix}
-    1  & & & & -\alpha\\
-    -\alpha & 1 & & & \\
-    & -\alpha & 1 & & \\
-    & & \ddots & \ddots\\
-    & & & -\alpha & 1
-\end{bmatrix} \in \mathbb{C}^{n\times n}.
-\]
-\begin{enumerate}
-    \item Per quali valori di $\alpha$ il teorema dei cerchi di Gershgorin ci permette di concludere che la matrice è invertibile?
-    \item Per quali valori di $\alpha$ è soddisfatta la condizione di esistenza della fattorizzazione LU?
-    \item Sapreste trovare la fattorizzazione LU di $A$?
-    \item Per quali valori di $\alpha$ la matrice è invertibile?
-\end{enumerate}
-Soluzione:
-\begin{enumerate}
-    \item I cerchi di Gershgorin hanno tutti centro $1$ e raggio $\abs{\alpha}$. Se $\abs{\alpha} < 1$, allora $0$ non appartiene all'unione dei cerchi di Gershgorin, quindi non è un autovalore della matrice $A_\alpha$; pertanto $A_\alpha$ è invertibile. Se invece $\abs{\alpha} \geq 1$, allora $1$ sta all'interno dell'unione dei cerchi, quindi il teorema non ci permette di concludere nulla: $0$ potrebbe essere autovalore oppure no.
-    \item Le sottomatrici di testa fino all'ordine $n-1$ sono tutte triangolare inferiori con $1$ sulla diagonale; quindi sono invertibili per ogni valore di $\alpha\in\mathbb{C}$.
-    \item Eseguiamo l'eliminazione di Gauss: al primo passo, l'unico elemento da eliminare è quello in posizione $(2,1)$, e per farlo dobbiamo sottrarre $-\alpha$ volte la riga 1 dalla riga 2 (occhio al doppio segno $-$).
-    \[
-        U_1 = A; \, U_2 = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  -\alpha\\
-            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
-            0& -\alpha & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
-            & & & \ddots & \ddots & \\
-            & & &  &-\alpha & 1      
-        \end{bmatrix}
-    \]
-    Continuando nello stesso modo, al passo successivo dobbiamo eliminare l'elemento in posizione $(3,2)$, di nuovo con moltiplicatore $-\alpha$, ottenendo
-    \[
-        U_3 = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  -\alpha\\
-            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
-            0& 0 & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
-            & & & \ddots & \ddots & \\
-            & & &  &-\alpha & 1      
-        \end{bmatrix}.
-    \]
-    L'unico passo leggermente diverso è l'ultimo, in cui abbiamo
-    \[
-        U_{n-1} = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  -\alpha\\
-            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
-            0& 0 & 1 & \dots  & 0 & 0\\
-            & & \ddots & \ddots\\
-            & & & 0 & 1 & -\alpha^{n-1}\\
-            & & &  &-\alpha & 1      
-        \end{bmatrix},
-        \quad
-        U_n = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  -\alpha\\
-            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
-            0& 0 & 1 & \dots  & 0 & 0\\
-            & & \ddots & \ddots\\
-            & & & -\alpha & 1 & -\alpha^{n-1}\\
-            & & &  & 0 & 1-\alpha_n
-        \end{bmatrix}.
-    \]
-    Quindi otteniamo la fattorizzazione $A=LU$ con
-    \[
-        L = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  0\\
-            -\alpha & 1 & 0 & \dots & 0 & 0\\
-            0& -\alpha & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
-            & & & \ddots & \ddots & \\
-            & & &  &-\alpha & 1      
-        \end{bmatrix}, \quad U = \begin{bmatrix}
-            1  & 0 &  0& \dots  & 0 &  -\alpha\\
-            0 & 1 & 0 & \dots & 0 & -\alpha^2\\
-            0& 0 & 1 & \dots  & 0 & 0\\
-            & & \ddots & \ddots\\
-            & & & 0 & 1 & -\alpha^{n-1}\\
-            & & &  & 0 & 1-\alpha_n
-        \end{bmatrix}.
-    \]
-    Ricordiamo che la matrice $L$ è ottenuta a partire dalla matrice identità inserendo sotto la diagonale tutti i moltiplicatori utilizzati nell'eliminazione.
-    \item Dalla fattorizzazione LU calcolata, abbiamo $\det A_\alpha = \det U = 1\cdot 1 \cdot \dots \cdot 1 \cdot (1-\alpha^n) = 1-\alpha^n$. Quindi il determinante si annulla se e solo se $\alpha$ è una radice $n$-esima complessa dell'unità. Notiamo che questo risultato è coerente con quanto visto sopra con il teorema dei cerchi di Gershgorin.
-\end{enumerate}
 
 % \section{Laboratorio su LDL ed esistenza LU}
 
@@ -3291,7 +3291,7 @@ Ad esempio: supponiamo di avere un impianto industriale in cui stiamo eseguendo 
 Magari abbiamo dei modelli che ci dicono che la temperatura decresce linearmente o esponenzialmente, ma questi modelli dipendono da parametri che dobbiamo calcolare. Oppure qualche volta non abbiamo proprio un modello e stiamo genericamente cercando una funzione `semplice' che approssima i valori trovati.
 
 \begin{itemize}
-    \item Si chiama \emph{interpolazione} il problema di trovare una funzione $\phi$ (all'interno di una certa classe) tale che $\phi(x_i) = y_i$ per ogni $i=1,2,\dots, n$.
+    \item Si chiama \emph{interpolazione} il problema di trovare una funzione $\phi$ (all'interno di una certa classe) tale che $\phi(x_i) = y_i$ per ogni $i=1,2,\dots, n$. In altre parole, il grafico della funzione nel piano cartesiano deve passare esattamente per i punti $(x_i, y_i)$.
     \item Si chiama \emph{approssimazione} (o, dall'inglese, \emph{fit}) il problema di trovare una funzione $\phi$ tale che $\phi(x_i) \approx y_i$, minimizzando un qualche tipo di residuo.
 \end{itemize}
 
@@ -3679,7 +3679,7 @@ I_{T,N} = \sum_{n=1}^N \frac{x_{n}-x_{n-1}}2 \left(f(x_{n-1})+f(x_n)\right) = \f
     &= \frac{2}{3}I_{M,N} + \frac13 I_{T,N}.
 \end{align*}
 \end{description}
-Il costo del metodo del punto medio composito è $N$ valutazioni di funzione, nei punti medi di ognuno degli intervalli della suddivisione. (Più $O(N)$ somme che sono solitamente trascurabili rispetto alle valutazioni di funzione.)
+Il costo del metodo del punto medio composito è $N$ valutazioni di funzione, nei punti medi di ognuno degli intervalli della suddivisione. (Più $\mathcal{O}(N)$ somme che sono solitamente trascurabili rispetto alle valutazioni di funzione.)
 
 Il costo del metodo dei trapezi apparentemente è di $2N$ valutazioni di funzione; però possiamo osservare che tutti i punti a parte il primo e l'ultimo compaiono due volte: una volta come estremo destro di un intervallo, una volta come estremo sinistro. Quindi possiamo riscrivere la sommatoria che compare in $I_{T,N}$ come
 \[
@@ -3708,7 +3708,7 @@ Se per una formula di integrazione vale una stima sull'errore del tipo $\abs{\ti
 
 \paragraph{Ordine di convergenza} Al crescere del numero di punti $N$, quindi, l'errore di una formula composita $e_N = \abs{I_N - I}$ tende a zero come una potenza dell'inverso del numero di punti $\frac{1}{N}$, o, equivalentemente, come una potenza di $h$. Possiamo quindi scrivere
 \[
-e_N = O(\frac{1}{N^p}) = O(h^p).
+e_N = \mathcal{O}(\frac{1}{N^p}) = \mathcal{O}(h^p).
 \]
 Il numero $p$ è detto \emph{ordine di convergenza} della formula di integrazione. Quindi, per esempio, la formula dei trapezi composita e la formula del punto medio composita hanno ordine di convergenza $p = 2$, mentre la formula di Cavalieri--Simpson ha ordine $p=4$. 
 
@@ -3717,7 +3717,7 @@ L'ordine di convergenza ci permette di prevedere come decresce l'errore al cresc
 \paragraph{Diverse nozioni di ordine di convergenza}
 Attenzione: è importante notare che questo è un concetto di ``ordine di convergenza'' diverso da quello visto per i metodi iterativi. Nel caso dei metodi iterativi, la convergenza si riferiva a un numero di iterazioni $n$: convergenza di ordine $p$ significa che
 \[
-e_{n+1} = O(e_n^p),
+e_{n+1} = \mathcal{O}(e_n^p),
 \]
 cioè, l'errore al passo $n+1$ è dell'ordine della potenza $p$-esima di \emph{quello al passo precedente}.
 
