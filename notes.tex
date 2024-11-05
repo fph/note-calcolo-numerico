@@ -3000,13 +3000,13 @@ L'equazione corrispondente alla riga $i$-esima è
 \]
 Risolvendola per $x_{i}^{(k+1)}$ otteniamo
 \begin{equation} \label{GS}
-    x_{i}^{(k+1)} = \frac{b_i - \sum_{j=1}^n A_{ij}x_j^{(k+1)} - \sum_{j=i+1}^n A_{ij}x_j^{(k)} }{A_{ii}}, \quad i=1,2,\dots,n.
+    x_{i}^{(k+1)} = \frac{b_i - \sum_{j=1}^{i-1} A_{ij}x_j^{(k+1)} - \sum_{j=i+1}^n A_{ij}x_j^{(k)} }{A_{ii}}, \quad i=1,2,\dots,n.
 \end{equation}
 Possiamo risolvere queste equazioni una dopo l'altra per $i=1,2,\dots,n$ (in quest'ordine!) per calcolare tutti gli elementi di $\x^{(k+1)}$. Questo corrisponde a risolvere il sistema lineare $M\x^{(k+1)} = \b + N\x^{(k)}$ per sostituzione in avanti; il sistema è triangolare inferiore, quindi non ci stupisce che questo sia possibile!
 
-La~\eqref{GS} differisce dalla corrispondente formula per il metodo di Jacobi solo per il fatto che abbiamo $x_j^{(k+1)}$ anziché $x_j^{(k)}$ nella prima sommatoria. Questo corrisponde ad usare immediatamente gli elementi più nuovi $x_j^{(k+1)}$ appena li abbiamo calcolati invece di aspettare l'iterazione successiva del metodo. Intuitivamente, questo metodo fornisce un'approssimazione migliore della soluzione, perché usiamo approssimazioni più accurate ad ogni passo. Questa intuizione non sempre corrisponde a realtà; esistono matrici per cui il metodo di Jacobi converge più velocemente di quello di Gauss--Seidel. (Lo vedremo in laboratorio.)
+La~\eqref{GS} differisce dalla corrispondente formula per il metodo di Jacobi solo per il fatto che abbiamo $x_j^{(k+1)}$ anziché $x_j^{(k)}$ nella prima sommatoria. Questo corrisponde ad usare immediatamente gli elementi più nuovi $x_j^{(k+1)}$ appena li abbiamo calcolati invece di aspettare l'iterazione successiva del metodo. Intuitivamente, questo metodo fornisce un'approssimazione migliore della soluzione, perché usiamo approssimazioni più accurate ad ogni passo. Questa intuizione non sempre corrisponde a realtà: esistono matrici per cui il metodo di Jacobi converge più velocemente di quello di Gauss--Seidel. (Lo vedremo in laboratorio.)
 
-Un'osservazione interessante che il metodo di Gauss--Seidel può essere implementato in Matlab usando \emph{una sola} variabile (vettore) $\x$ che contiene ad ogni passo le approssimazioni più recenti degli elementi di $\x$; ad ogni passo $i=1,2,\dots,n$ rimpiazziamo un elemento $x_i^{(k)}$ con $x_i^{(k+1)}$:
+Un'osservazione interessante è che il metodo di Gauss--Seidel può essere implementato in Matlab usando \emph{una sola} variabile (vettore) $\x$ che contiene ad ogni passo le approssimazioni più recenti degli elementi di $\x$; ad ogni passo $i=1,2,\dots,n$ rimpiazziamo un elemento $x_i^{(k)}$ con $x_i^{(k+1)}$:
 \[
 \x^{(k)} = \begin{bmatrix}
     x^{(k)}_1\\ 
@@ -3048,7 +3048,9 @@ Un'osservazione interessante che il metodo di Gauss--Seidel può essere implemen
     x^{(k+1)}_n\\ 
 \end{bmatrix} = \x^{(k+1)}.
 \]
-Lavorando in questo modo, in ogni momento abbiamo a disposizione tutti gli elementi che ci servono per calcolare l'elemento successivo.
+Lavorando in questo modo, in ogni passo abbiamo a disposizione tutti gli elementi che ci servono per calcolare l'elemento successivo.
+
+Lo stesso trucco non funziona per il metodo di Jacobi: non possiamo cancellare $x_1^{(k)}$ rimpiazzandolo con $x_1^{(k+1)}$, perché quell'elemento ci serve anche successivamente quando calcoliamo $x_2^{(k+1)}, \dots, x_n^{(k+1)}$.
 
 \paragraph{Convergenza per matrici $A$ dominanti diagonali}
 
@@ -3116,7 +3118,7 @@ Ad esempio, supponiamo di voler risolvere $F(\mathbf{x})=0$, dove
         \sin(x_1) + 2x_2 - \pi
     \end{bmatrix}.
 \end{equation}
-Questo è un sistema (\emph{non} lineare) di due equazioni in due incognite; una soluzione del sistema per esempio è $(x_1, x_2) = (0,\pi)$.
+Questo è un sistema (\emph{non} lineare) di due equazioni in due incognite; una soluzione del sistema per esempio è $(x_1, x_2) = (0,\pi/2)$.
 
 Un sistema di questo tipo è un problema molto più complicato che non un sistema lineare; tanto per cominciare, in generale si possono avere zero soluzioni, una, più di una, o anche infinite, e non c'è un criterio generale per capire quando questi casi si verificano.
 
@@ -3142,7 +3144,7 @@ J_F(\x) = \begin{bmatrix}
     \cos(x_1) & 2
 \end{bmatrix}.
 \]
-Vale, per funzioni sufficientemente regolari, una generalizzazione dello sviluppo di Taylor:
+Per funzioni sufficientemente regolari vale una generalizzazione dello sviluppo di Taylor:
 \begin{equation} \label{taylormulti}
     F(\x+\mathbf{h}) = F(\x) + J_F(\x) \mathbf{h} + \mathcal{O}(\norm{\mathbf{h}}^2),
 \end{equation}
@@ -3172,11 +3174,11 @@ I passi del metodo di Newton multivariato quindi sono, nell'ordine
     \item risolvere il sistema lineare $J_F(\x^{(k)}) \mathbf{h} = F(\x^{(k)})$ per trovare $\mathbf{h}$;
     \item calcolare $\x^{(k+1)} = \x^{(k)} - \mathbf{h}$.
 \end{enumerate}
-È impossibile dire qualcosa in generale su come si confrontano i costi dei vari passi senza sapere quanto costa calcolare $F$ e $J_F$. In molti casi, però, calcolare gli $n$ elementi di $F$ e gli $n^2$ elementi di $J_F$ costa in tutto $\mathcal{O}(n^2)$ operazioni aritmetiche. Se utilizziamo una fattorizzazione LU, il costo del terzo passo è invece $\mathcal{O}(n^3)$: quindi spesso questo passo risulta essere quello più costoso. Per questo, sono state ideate varianti del metodo di Newton che cercano di ridurre il costo di questo passo. Ne vediamo in particolare uno, il metodo delle corde.
+È impossibile dire qualcosa in generale su come si confrontano i costi dei vari passi senza sapere quanto costa calcolare $F$ e $J_F$. In molti casi, però, calcolare gli $n$ elementi di $F$ e gli $n^2$ elementi di $J_F$ costa in tutto $\mathcal{O}(n^2)$ operazioni aritmetiche. Se per risolvere il sistema lineare utilizziamo una fattorizzazione LU, il costo del terzo passo è invece $\mathcal{O}(n^3)$: quindi spesso questo passo risulta essere quello più costoso. Per questo, spesso vengono utilizzate varianti del metodo di Newton che cercano di ridurre il costo di questo passo. Una di esse è il metodo delle corde, in cui al posto della matrice $J_F(\x^{(k)})$ viene utilizzata una matrice fissata $A$, per esempio lo Jacobiano calcolato al primo passo $A = J_F(\x^{(0)})$. In questo modo, è possibile calcolare una volta sola la fattorizzazione LU della matrice $A$ (con il costo di $\mathcal{O}(n^3)$ da ``pagare'' una volta all'inizio del metodo), e poi riutilizzarla ad ogni passo per risolvere il sistema lineare (con il costo di $\mathcal{O}(n^2)$ per ogni passo).
 
-\paragraph{Metodo delle corde multivariato} Questo metodo utilizza la stessa idea del metodo delle corde multivariato: invece di calcolare ad ogni passo lo Jacobiano $J_F(\x^{(k)})$, lo rimpiazziamo con una matrice fissata $A$. Vediamo però che nella pratica è difficile trovare una matrice $A$ che assicuri la convergenza del metodo. Per questo motivo, solitamente si utilizza un approccio ibrido: in alcuni passi del metodo calcoliamo la matrice Jacobiana, in altri riutilizziamo la matrice calcolata nei passi precedenti.
+\paragraph{Una strategia ibrida} Un altro metodo utilizzato abbastanza spesso cerca di combinare i benefici del metodo delle corde e di quello di Newton. L'idea è che la matrice $J_F$ viene ricalcolata solo in alcune iterazioni del metodo; in altre, viene riutilizzata la matrice calcolata ai passi precedenti.
 
-Lo pseudocodice del metodo è questo: per ogni $k=0,1,2,\dots$
+Nel dettaglio, per ogni $k=0,1,2,\dots$:
 \begin{enumerate}
     \item Calcolo $F(\x^{(k)})$;
     \item Faccio una di queste due cose: \begin{enumerate}
@@ -3192,17 +3194,53 @@ Costo computazionale: ad ogni passo dobbiamo fare una valutazione di $F$ e una s
 
 Come nel caso scalare, la convergenza è garantita solo se partiamo all'interno di un certo intorno della soluzione (che può essere anche molto piccolo!).
 
-La convergenza del metodo delle corde in linea teorica è sempre quadratica, sotto le stesse condizioni del metodo di Newton. Nella pratica, visto che utilizziamo un metodo a convergenza lineare per parecchie iterazioni, vediamo che il grafico dell'errore si comporta come una spezzata: ci sono dei segmenti di retta quando teniamo la matrice $A$ costante, e la pendenza cambia e diventa più ripida quando aggiorniamo la matrice $A$.
+La convergenza di questo metodo è quadratica, sotto le stesse condizioni del metodo di Newton. Nella pratica, visto che utilizziamo un metodo a convergenza lineare per parecchie iterazioni, vediamo che il grafico dell'errore si comporta come una spezzata: nelle iterazioni in cui teniamo la matrice $A$ costante osserviamo dei segmenti di retta, visto che se $A$ è costante si ha convergenza lineare; ma nelle iterazioni in cui aggiorniamo la matrice $A$ la pendenza di questa retta cambia e diventa più ripida, come ci aspettiamo da un metodo a convergenza quadratica. Un esempio di questo comportamento è raffigurato in Figura~\ref{fig:newtonibrido}.
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[width=0.7\textwidth, ymode = log, xlabel={iterazione $k$}, ylabel={errore $\|\x^{(k)} - \x_*\|$}, legend style={at={(0.5,-0.15)},anchor=north}]
+            \addplot+[x=it, y=e] table{
+                it e
+                0   2.8284e-01
+                1.0000e+00   1.0859e-01
+                2.0000e+00   7.6739e-02
+                3.0000e+00   6.3122e-02
+                4.0000e+00   5.5023e-02
+                5.0000e+00   1.3399e-02
+                6.0000e+00   6.1339e-03
+                7.0000e+00   2.8688e-03
+                8.0000e+00   1.4247e-03
+                9.0000e+00   1.5944e-05
+                1.0000e+01   3.6558e-07
+                1.1000e+01   8.3809e-09
+                1.2000e+01   1.9239e-10
+                1.3000e+01   1.9626e-17
+        }; %\addlegendentry{Punto fisso su $\Phi(x) = 2/x^2 + (x^3-2)/4$};
+        \end{axis}
+        \end{tikzpicture}
+        \end{center}
+    \caption{Convergenza della variante del metodo di Newton in un esempio con $m=4$.} \label{fig:newtonibrido}
+    \end{figure}    
 
 \section{Sistemi lineari sovradeterminati (minimi quadrati)}
 
 Supponiamo di avere un sistema del tipo
 \[
-A\x = \b, \quad A \in \mathbb{R}^{m\times n}, \, \b\in\mathbb{R}^m, \, \x\in\mathbb{R}^n.
+A\x = \b, \quad A \in \mathbb{R}^{m\times n}, \, \b\in\mathbb{R}^m, \, \x\in\mathbb{R}^n
 \]
-Se $m>n$ ($A$ alta e stretta), la soluzione spesso non esiste: abbiamo più equazioni che incognite. Dall'algebra lineare, sappiamo che $A\x$ produce una combinazione lineare delle colonne di $A$, e queste sono solo un sottospazio di $\mathbb{R}^m$ (iperpiano).
+in cui $A$ non è quadrata, bensì alta e stretta ($m>n$).
 
-[Figura in 3D: piano che corrisponde all'immagine di $A$, vettore $\b$ al di fuori di esso.]
+In un sistema di questo tipo, la soluzione spesso non esiste: abbiamo più equazioni che incognite, ed esse tipicamente non sono soddisfatte contemporaneamente. Dall'algebra lineare, sappiamo che il vettore $A\x$ è una combinazione lineare delle colonne di $A$, e al variare del vettore $\x$ queste combinazioni lineari stanno tutte all'interno in un sottospazio di $\mathbb{R}^m$ (iperpiano).
+\begin{center}
+    \begin{tikzpicture}[scale=1.5]
+
+    \draw[thick, blue, opacity=0.5] (-1, 0, 0) -- (1, 0, 0) -- (1, 0, 1) -- (-1, 0, 1) -- cycle;
+    
+    \node at (1.4, 0, 0.5) {Im A};
+
+    \draw[thick, ->, red] (0, 0, 0.5) -- (1, 1, 1) node[midway, right] {$\mathbf{b}$};
+\end{tikzpicture}
+\end{center}
 
 Possiamo però risolvere un problema diverso, quello di calcolare la combinazione lineare delle colonne di $A$, cioè il vettore $A\x$, che va più vicino al vettore $\b$. In altre parole, cerchiamo 
 \begin{equation} \label{minresiduo}
@@ -3210,11 +3248,15 @@ Possiamo però risolvere un problema diverso, quello di calcolare la combinazion
 \end{equation}
 Come nei sistemi lineari, dato un vettore $\tilde{\x}$, chiamiamo \emph{residuo} la quantità $\mathbf{r} = A \tilde{\x} - \b$. Attenzione: in questo problema, anche quando lo calcoliamo nella soluzione esatta $\x$, il residuo non vale $\mathbf{0}$!
 
-\paragraph{Equazioni normali} Il problema~\eqref{minresiduo} ha una soluzione particolarmente semplice se usiamo la norma-2. Difatti, minimizzare la norma-2 di $\mathbf{r}$ equivale a minimizzare $\sum r_i^2  = \mathbf{r}^T\mathbf{r}$, ovvero
+Vogliamo concentrarci sul risolvere il problema~\eqref{minresiduo} nel caso della norma-2; difatti, vedremo che in questo caso ha una soluzione particolarmente semplice.
+
+Minimizzare la norma-2 di $\mathbf{r}$ equivale a minimizzare $\sum r_i^2  = \mathbf{r}^T\mathbf{r}$, ovvero
 \begin{equation} \label{minimiquadrati}
     \min_{\x\in\mathbb{R}^n} \mathbf{r}^T \mathbf{r} = \min_{\x\in\mathbb{R}^n} (A\x-\b)^T(A\x-\b).    
 \end{equation}
-Il problema~\eqref{minimiquadrati} è detto \emph{problema dei minimi quadrati}, visto che compaiono per l'appunto i quadrati delle componenti del residuo $\mathbf{r}$. Dimostriamo il seguente risultato.
+Il problema~\eqref{minimiquadrati} è detto \emph{problema dei minimi quadrati}, visto che compaiono per l'appunto i quadrati delle componenti del residuo $\mathbf{r}$.
+
+\paragraph{Equazioni normali}  Dimostriamo il seguente risultato.
 \begin{theorem}
 Sia $\x\in\mathbb{R}^n$ un vettore tale che $A^T \mathbf{r} = A^T(A\x-\b) = 0$. Allora, $\x$ risolve il problema di minimo~\eqref{minimiquadrati}.
 \end{theorem}
