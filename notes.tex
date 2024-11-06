@@ -2354,7 +2354,7 @@ Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In p
 \]
 In particolare, le ultime due righe sono identiche. Pertanto al passo successivo l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice di partenza $A$ è molto lontana dall'essere singolare, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche in un esempio senza valori così estremi, possiamo vedere che quando $A_{11}$ è molto più piccolo degli altri valori presenti nella matrice dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dobbiamo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
 
-La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, vogliamo scambiarle in modo da avere ad ogni passo $k$ in posizione $(k,k)$ (cioè come pivot) il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$.
+La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, ad ogni passo scambieremo le righe in modo da portare, ad ogni passo $k$, in posizione pivot $(k,k)$ il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$. Questo scambio lo facciamo sempre, non solo quando $(U_k)_{k,k}$ è molto piccolo.
 
 Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
 
@@ -2408,6 +2408,8 @@ P\mathbf{x}
 \end{bmatrix}.
 \]
 La stessa cosa succede quando effettuiamo il prodotto $PA$; la stessa permutazione viene applicata calcolando ogni colonna separatamente, quindi l'effetto netto è quello di permutare le righe di $A$.
+
+L'algoritmo che vedremo non suppone di conoscere a priori la matrice $P$, ma la costruisce passo per passo scambiando le righe di $A$.
 
 \paragraph{Eliminazione di Gauss con pivoting (parziale)}
 
@@ -2805,112 +2807,41 @@ Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo
 
 La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $\x_{k+1} = \Phi(\x_k)$ che abbiamo già visto. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo.
 
-Partiamo introducendo una definizione. Diciamo che il metodo iterativo è \emph{convergente} se \emph{per ogni scelta} di $\x^{(1)}\in\mathbb{C}^n$ la successione generata dal metodo converge alla soluzione $\x$ del sistema lineare.
-
-Per studiare la convergenza, definiamo $\e^{(k)} = \x^{(k)} - \x$ l'errore (assoluto) al passo $k$. Usando la~\eqref{solsistema} e la~\eqref{iterlin} abbiamo per ogni $k=1,2,\dots$
-\begin{equation} \label{ekiter}
-    \e^{(k+1)} = \x^{(k+1)} - \x = M^{-1}(N\x^{(k)} + \b) - M^{-1}(N\x + \b) = M^{-1}(N\x^{(k)}-N \x) = M^{-1}N \e^{(k)}.    
-\end{equation}
-Definiamo la \emph{matrice di iterazione} del metodo come $H = M^{-1}N$.
-
-\begin{theorem}
-Il metodo iterativo~\eqref{iterlin} è convergente se e solo se $\rho(H) < 1$.
-\end{theorem}
-\begin{proof}
-In questo corso dimostriamo il teorema solo nel caso particolare in cui $H$ è diagonalizzabile (ma in realtà è vero sempre).
-
-Usando ripetuatamente la~\eqref{ekiter} is ha
+\paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità. Il \emph{metodo di Jacobi} si ottiene scegliendo come $M$ una matrice diagonale che ha elementi diagonali uguali a quelli di $A$, cioè
 \[
-\e^{(k+1)} = H\e^{(k)} = H H \e^{(k-1)} = \dots = H^{k} \e^{(1)}.
+M = \begin{bmatrix}
+    A_{11}\\
+    & A_{22}\\
+    & & \ddots \\
+    & & & A_{nn}
+\end{bmatrix}, \quad N = -\begin{bmatrix}
+    0 & A_{12} & \dots & A_{1n}\\
+    A_{21} & 0 & \dots & A_{2n}\\
+    \vdots & \vdots & \ddots & \vdots\\
+    A_{n1} & A_{n2} & \dots & 0
+\end{bmatrix}.
 \]
-Supponiamo che la matrice $H$ sia diagonalizzabile, cioè che esistano una matrice $V$ invertibile e $D$ diagonale tali che $H = VDV^{-1}$; sappiamo dall'algebra lineare che gli elementi diagonali di $D$ sono proprio gli autovalori di $H$. Possiamo scrivere
+(Notiamo che, una volta scelta la $M$, la matrice $N = M-A$ è determinata univocamente.) Con questa scelta, la soluzione di sistemi lineari con $M$ è particolarmente veloce perché $M$ è diagonale. Questo metodo è applicabile tutte le volte che gli elementi sulla diagonale di $A$ sono diversi da zero, visto che ci serve che $M$ sia invertibile.
+
+Il \emph{metodo di Gauss--Seidel} si ottiene scegliendo come $M$ una matrice triangolare inferiore che ha entrate uguali a quelle di $A$ nella parte triangolare inferiore, cioè
 \[
-H^k = \underbrace{(VDV^{-1})(VDV^{-1}) \dots (VDV^{-1})}_{\text{$k$ volte}} = VD^kV^{-1}.
+M = \begin{bmatrix}
+    A_{11}\\
+    A_{21} & A_{22}\\
+    A_{31}& \ddots & \ddots \\
+    A_{n1}& A_{n2} &\dots & A_{nn}
+\end{bmatrix}
+, \quad N =-\begin{bmatrix}
+    0& A_{12} & \dots & A_{1n}\\
+    & 0 & \ddots & \vdots\\
+    &  & \ddots & A_{n-1,n}\\
+    & &  & 0
+\end{bmatrix}.
 \]
-Se $\rho(H) < 1$, allora $\abs{D_{ii}} < 1$ per ogni $i=1,2,\dots,n$, e quindi $\lim_{k\to\infty} D^k = 0$. Sostituendo più sopra abbiamo allora anche $\lim_{k\to\infty} \e^{(k+1)} = 0$.
-
-Questo conclude (con l'ipotesi aggiuntiva che $k$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta. Per fare questo, ci basta dimostrare che se $H$ ha un autovalore $H\mathbf{v} = \mathbf{v} \lambda$, $\abs{\lambda} \geq 1$, allora esiste una scelta di $\x^{(1)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Per farlo, prendiamo $\x^{(1)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(1)} = \x^{(1)} - \x = \mathbf{v}$, e 
-\begin{equation} \label{nonconverge}
-    \e^{(k+1)} = H^k \mathbf{v} = \mathbf{v} \lambda^k    
-\end{equation}
-(notare infatti che ogni volta che facciamo un prodotto $H\mathbf{v}$ otteniamo il vettore $\mathbf{v}\lambda$, quindi\dots)
-
-
-Se $\abs{\lambda} \geq 1$ (e $\mathbf{v}\neq 0$, visto  che $\mathbf{v}$ è un autovettore), allora la quantità $\mathbf{v} \lambda^k$ non converge a zero, che era quello che volevamo dimostrare.
-\end{proof}
-Visto che $\rho(H) \leq \norm{H}_p$ per ogni norma matriciale indotta, abbiamo anche il seguente risultato.
-\begin{corollary}
-Se $\norm{H}_p \leq 1$ per una qualunque norma matriciale indotta, allora il metodo iterativo~\eqref{iterlin} è convergente.
-\end{corollary}
-Questo \emph{non} è un ``se e solo se''! In particolare, possiamo anche avere situazioni in cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
-
-È possibile dimostrare anche che per ogni norma vettoriale vale
-\[
-\lim_{k\to\infty} \frac{\norm{\e^{(k+1)}}}{\norm{\e^{(k)}}} \leq \rho(H),
-\]
-con uguaglianza per quasi tutti i vettori di partenza $\x^{(1)}$. Pertanto il metodo converge linearmente. La convergenza è tanto più veloce (pendenza della retta in scala logaritmica più vicina a $-\infty$) quanto più $\rho(H)$ è piccolo.
-
-\paragraph{Criteri di arresto per metodi iterativi per sistemi lineari}
-Abbiamo due scelte naturali come criteri di arresto per il metodo:
-\begin{enumerate}
-    \item Ci fermiamo quando $\norm{\x^{(k)} - \x^{(k+1)}} \leq \varepsilon$, per una certa norma e un valore $\varepsilon > 0$ fissato.
-    \item Ci fermiamo quando $\norm{A \x^{(k+1)} - \b} \leq \varepsilon$.
-\end{enumerate}
-Il primo è facile e veloce da calcolare, ma (esattamente come abbiamo visto per il metodo del punto fisso nel caso scalare), quando la convergenza è lenta, $\norm{\x^{(k)} - \x^{(k+1)}}$ può essere molto più piccolo di $\norm{\x^{(k+1)} - \x}$, quindi rischiamo di sottostimare l'errore.
-
-% Cosa possiamo affermare sull'errore $\e^{(k+1)} = \x^{(k+1)}-\x$ quando è verificato uno di questi criteri? Analizziamoli a partire dal primo. 
-
-% \begin{theorem}[Errore di un metodo iterativo]
-% Consideriamo il metodo iterativo~\eqref{iterlin}; supponiamo che sia convergente (quindi $\rho(H)<1$) e che per un certo valore di $k$ sia verificato (in una certa norma vettoriale) il criterio di arresto $\norm{\x^{(k)} - \x^{(k+1)}} \leq \varepsilon$. Allora, 
-% \[
-% \norm{\e^{(k+1)}} \leq \norm{H(I-H)^{-1}} \varepsilon,
-% \]
-% dove la norma è la norma matriciale indotta dalla norma vettoriale usata.
-% \end{theorem}
-% \begin{proof}
-% Notiamo innanzitutto che la matrice $I-H$ è invertibile, se $\rho(H)<1$: difatti, se per un vettore $\mathbf{v}\neq \mathbf{0}$ valesse $(I-H)\mathbf{v} = \mathbf{0}$, allora $H\mathbf{v} = \mathbf{v}$; quindi $\mathbf{v}$ sarebbe un autovettore di $H$ con autovalore $1$, ma questo è impossibile per la definizione di raggio spettrale.
-
-% Abbiamo
-% \[
-% \x^{(k)} - \x^{(k+1)} = (\x^{(k)} - \x) - (\x^{(k+1)}-\x)) = \e^{(k)} - \e^{(k+1)} = \e^{(k)} - H\e^{(k+1)} = (I-H)\e^{(k)}.
-% \]
-
-% Quindi quando ci arrestiamo
-% \begin{align*}
-% \norm{\e^{(k+1)}} &= \norm{H\e^{(k)}} = \norm{H(I-H)^{-1}(\x^{(k)} - \x^{(k+1)})} 
-% \\ & \leq \norm{H(I-H)^{-1}}\norm{\x^{(k)} - \x^{(k+1)}} \leq \norm{H(I-H)^{-1}} \varepsilon. \qedhere
-% \end{align*}
-% \end{proof}
-% Si può vedere che la quantità $\norm{H(I-H)^{-1}}$ può essere molto grande; in particolare questo succede quando $\rho(H)$ è vicino a 1. Quindi questo criterio di arresto non è particolarmente buono: diventa meno accurato quanto più lentamente converge il metodo.
-
-\paragraph{Residuo e stabilità all'indietro (*)}  Se $\x$ è la soluzione esatta del sistema lineare $A\x = \b$, allora chiaramente $\norm{A\x-\b} = 0$. Ma se per un vettore $\tilde{\x} \in \mathbb{C}^n$ il \emph{residuo} $\mathbf{r} = A\tilde{\x}-\b$ è piccolo, questo implica che $\tilde{\x}$ e $\x$ sono vicini? Intuitivamente sì, ma vediamo un risultato quantitativo che dice cosa succede.
-
-\begin{theorem}[Stima sul residuo]
-Siano $A \in \mathbb{C}^{n\times n}$, $\b\in\mathbb{C}^n$. Sia $\x$ la soluzione del sistema lineare $A\x=\b$, sia $\tilde{\x}\in\mathbb{R}^n$ un altro vettore, e sia $\mathbf{r} = A\tilde{\x}-\b$. Allora,
-\[
-\frac{\norm{\tilde{\x}-\x}}{\norm{\x}} \leq \kappa(A) \frac{\norm{\mathbf{r}}}{\norm{\b}}.
-\]
-\end{theorem}
-\begin{proof}
-Abbiamo $A\tilde{\x} = \b + \mathbf{r}$. Allora, $\tilde{\x}$ è la soluzione del sistema lineare $A\tilde{\x} = \widehat{\b}$, in cui abbiamo perturbato il termine noto in $\widehat{\b} = \b + \mathbf{r}$. Pertanto possiamo applicare la disuguaglianza~\eqref{conditionbound}, che ci dà la tesi.
-\end{proof}
-Questo risultato non si applica solo all'iterata $\x^{(k+1)}$ prodotta da un metodo iterativo, ma a una qualunque soluzione approssimata di un sistema lineare, non importa come l'abbiamo ottenuta. È quindi particolarmente interessante perché ci permette di ottenere una stima esplicita sull'errore.
-
-%%%
-% Per il futuro: eliminare D, E, F; creano solo confusione
-%%%
-
-\paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità.
-
-Scriviamo $A = D - E - F$, dove $D$ è la parte diagonale di $A$, $E$ è la parte strettamente triangolare inferiore (con un segno $-$), e $F$ è la parte triangolare superiore.
-
-Il \emph{metodo di Jacobi} si ottiene scegliendo $M = D$. È applicabile quando $D$ è invertibile (cioè quando $A_{ii} \neq 0$ per ogni $i$). La soluzione di sistemi lineari con $M$ è particolarmente veloce perché $M$ è diagonale.
-
-Il \emph{metodo di Gauss--Seidel} si ottiene scegliendo $M = D - E$. È applicabile, di nuovo, quando $A_{ii} \neq 0$ per ogni $i$. La soluzione di sistemi lineari con $M$ è particolarmente veloce perché $M$ è triangolare.
+La soluzione di sistemi lineari con $M$ è veloce perché $M$ è triangolare. Anche questo metodo è applicabile se e solo se $A_{ii} \neq 0$ per ogni $i$. 
 
 \paragraph{Implementazione del metodo di Jacobi}
-
-Partiamo scrivendo la relazione $M\x^{(k+1)} = \b + N\x^{(k)}$:
+Per ottenere una formula più esplicita, partiamo scrivendo la relazione $M\x^{(k+1)} = \b + N\x^{(k)}$:
 \[
 \begin{bmatrix}
     A_{11}\\
@@ -2953,9 +2884,10 @@ da cui possiamo ricavare $x_i^{(k+1)}$ ottenendo
 \[
 x_i^{(k+1)} = \frac{b_i - \sum_{\substack{j=1\\ j \neq i}}^n A_{ij}x_j^{(k)}}{A_{ii}} = \frac{b_i - \sum_{j=1}^{i-1} A_{ij}x_j^{(k)} - \sum_{j=i+1}^n A_{ij}x_j^{(k)} }{A_{ii}}, \quad i=1,2,\dots,n.
 \]
-Queste equazioni sono indipendenti tra loro per ogni $i$, possiamo risolverle una dopo l'altra in qualunque ordine per ottenere $\x^{(k+1)}$ a partire da $\x^{(k)}$. Questo costituisce un'iterazione del metodo.
+Con queste formule possiamo calcolare uno ad uno gli elementi di $\x^{(k+1)}$ a partire da quelli $\x^{(k)}$. Questo costituisce un'iterazione del metodo.
 
-Il costo computazionale è di $2n$ operazioni aritmetiche per ogni $i$, quindi in totale $2n^2$ per ogni iterazione (il numero di iterazioni che servono per ottenere convergenza non è noto a priori, anzi, il metodo potrebbe non convergere del tutto). Inoltre, se so a priori che alcuni elementi $A_{ij}$ sono zero, posso restringere la somma agli elementi non-nulli; questo modifica il costo totale in $2nnz(A)$.
+Il costo computazionale è di $2n$ operazioni aritmetiche per ogni $i$, quindi in totale $2n^2$ per ogni iterazione (il numero di iterazioni che servono per ottenere convergenza non è noto a priori, anzi, il metodo potrebbe non convergere del tutto). Inoltre, se
+ so a priori che alcuni elementi $A_{ij}$ sono zero, posso restringere la somma agli elementi non-nulli; questo modifica il costo totale in $2nnz(A)$.
 
 \paragraph{Implementazione del metodo di Gauss--Seidel}
 
@@ -3052,10 +2984,76 @@ Lavorando in questo modo, in ogni passo abbiamo a disposizione tutti gli element
 
 Lo stesso trucco non funziona per il metodo di Jacobi: non possiamo cancellare $x_1^{(k)}$ rimpiazzandolo con $x_1^{(k+1)}$, perché quell'elemento ci serve anche successivamente quando calcoliamo $x_2^{(k+1)}, \dots, x_n^{(k+1)}$.
 
-\paragraph{Convergenza per matrici $A$ dominanti diagonali}
+\paragraph{Convergenza dei metodi iterativi} Dimostriamo ora dei risultati che ci dicono quando un metodo iterativo converge. Partiamo introducendo una definizione. Diciamo che il metodo iterativo è \emph{convergente} se \emph{per ogni scelta} di $\x^{(1)}\in\mathbb{C}^n$ la successione generata dal metodo converge alla soluzione $\x$ del sistema lineare.
 
-Non è facile prevedere a priori per quali matrici $A$ questi due metodi convergono. Ci sono matrici in cui uno converge e l'altro no, per esempio. Un risultato che possiamo dimostrare è il seguente.
+Per studiare la convergenza, definiamo $\e^{(k)} = \x^{(k)} - \x$ l'errore (assoluto) al passo $k$. Usando la~\eqref{solsistema} e la~\eqref{iterlin} abbiamo per ogni $k=1,2,\dots$
+\begin{equation} \label{ekiter}
+    \e^{(k+1)} = \x^{(k+1)} - \x = M^{-1}(N\x^{(k)} + \b) - M^{-1}(N\x + \b) = M^{-1}(N\x^{(k)}-N \x) = M^{-1}N \e^{(k)}.    
+\end{equation}
+Definiamo la \emph{matrice di iterazione} del metodo come $H = M^{-1}N$.
 
+\begin{theorem}
+Il metodo iterativo~\eqref{iterlin} è convergente se e solo se $\rho(H) < 1$.
+\end{theorem}
+\begin{proof}
+In questo corso dimostriamo il teorema solo nel caso particolare in cui $H$ è diagonalizzabile (ma in realtà è vero sempre).
+
+Usando ripetuatamente la~\eqref{ekiter} is ha
+\[
+\e^{(k+1)} = H\e^{(k)} = H H \e^{(k-1)} = \dots = H^{k} \e^{(1)}.
+\]
+Supponiamo che la matrice $H$ sia diagonalizzabile, cioè che esistano una matrice $V$ invertibile e $D$ diagonale tali che $H = VDV^{-1}$; sappiamo dall'algebra lineare che gli elementi diagonali di $D$ sono proprio gli autovalori di $H$. Possiamo scrivere
+\[
+H^k = \underbrace{(VDV^{-1})(VDV^{-1}) \dots (VDV^{-1})}_{\text{$k$ volte}} = VD^kV^{-1}.
+\]
+Se $\rho(H) < 1$, allora $\abs{D_{ii}} < 1$ per ogni $i=1,2,\dots,n$, e quindi $\lim_{k\to\infty} D^k = 0$. Allora anche
+\[
+\lim_{k\to\infty} \mathbf{e}^{(k+1)} = \lim H^k \mathbf{e}^{(1)} = \lim VD^k V^{-1} \mathbf{e}^{(1)} = 0.
+\]
+
+Questo conclude (con l'ipotesi aggiuntiva che $k$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta. Per fare questo, ci basta dimostrare che se $H$ ha un autovalore $H\mathbf{v} = \mathbf{v} \lambda$, $\abs{\lambda} \geq 1$, allora esiste \emph{almeno una} scelta di $\x^{(1)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Per farlo, prendiamo $\x^{(1)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(1)} = \x^{(1)} - \x = \mathbf{v}$, e 
+\begin{equation} \label{nonconverge}
+    \e^{(k+1)} = H^k \mathbf{v} = \mathbf{v} \lambda^k    
+\end{equation}
+(notare infatti che ogni volta che facciamo un prodotto $H\mathbf{v}$ otteniamo il vettore $\mathbf{v}\lambda$, quindi\dots)
+
+
+Se $\abs{\lambda} \geq 1$ (e $\mathbf{v}\neq 0$, visto  che $\mathbf{v}$ è un autovettore), allora la quantità $\mathbf{v} \lambda^k$ non converge a zero, che era quello che volevamo dimostrare.
+\end{proof}
+Visto che $\rho(H) \leq \norm{H}_p$ per ogni norma matriciale indotta, abbiamo anche il seguente risultato.
+\begin{corollary}
+Se $\norm{H}_p \leq 1$ per una qualunque norma matriciale indotta, allora il metodo iterativo~\eqref{iterlin} è convergente.
+\end{corollary}
+Questo \emph{non} è un ``se e solo se''! In particolare, possiamo anche avere situazioni in cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
+
+È possibile dimostrare anche che per ogni norma vettoriale vale
+\[
+\lim_{k\to\infty} \frac{\norm{\e^{(k+1)}}}{\norm{\e^{(k)}}} \leq \rho(H),
+\]
+con uguaglianza per quasi tutti i vettori di partenza $\x^{(1)}$. Pertanto il metodo converge linearmente. La convergenza è tanto più veloce (pendenza della retta in scala logaritmica più vicina a $-\infty$) quanto più $\rho(H)$ è piccolo.
+
+\paragraph{Criteri di arresto per metodi iterativi per sistemi lineari}
+Abbiamo due scelte naturali come criteri di arresto per il metodo:
+\begin{enumerate}
+    \item Ci fermiamo quando $\norm{\x^{(k)} - \x^{(k+1)}} \leq \varepsilon$, per una certa norma e un valore $\varepsilon > 0$ fissato.
+    \item Ci fermiamo quando $\norm{A \x^{(k+1)} - \b} \leq \varepsilon$.
+\end{enumerate}
+Il primo criterio è facile da implementare, ma (esattamente come abbiamo visto per il metodo del punto fisso nel caso scalare), quando la convergenza è lenta, $\norm{\x^{(k)} - \x^{(k+1)}}$ può essere molto più piccolo di $\norm{\x^{(k+1)} - \x}$, quindi rischiamo di sottostimare l'errore.
+
+\paragraph{Residuo e stabilità all'indietro (*)}  Se $\x$ è la soluzione esatta del sistema lineare $A\x = \b$, allora chiaramente $\norm{A\x-\b} = 0$. Ma se per un vettore $\tilde{\x} \in \mathbb{C}^n$ il \emph{residuo} $\mathbf{r} = A\tilde{\x}-\b$ è piccolo, questo implica che $\tilde{\x}$ e $\x$ sono vicini? Intuitivamente sì, ma vediamo un risultato quantitativo che dice cosa succede.
+
+\begin{theorem}[Stima del residuo]
+Siano $A \in \mathbb{C}^{n\times n}$, $\b\in\mathbb{C}^n$. Sia $\x$ la soluzione del sistema lineare $A\x=\b$, sia $\tilde{\x}\in\mathbb{R}^n$ un altro vettore, e sia $\mathbf{r} = A\tilde{\x}-\b$. Allora,
+\[
+\frac{\norm{\tilde{\x}-\x}}{\norm{\x}} \leq \kappa(A) \frac{\norm{\mathbf{r}}}{\norm{\b}}.
+\]
+\end{theorem}
+\begin{proof}
+Abbiamo $A\tilde{\x} = \b + \mathbf{r}$. Allora, $\tilde{\x}$ è la soluzione del sistema lineare $A\tilde{\x} = \widehat{\b}$, in cui abbiamo perturbato il termine noto in $\widehat{\b} = \b + \mathbf{r}$. Pertanto possiamo applicare la disuguaglianza~\eqref{conditionbound}, che ci dà la tesi.
+\end{proof}
+Questo risultato non si applica solo all'iterata $\x^{(k+1)}$ prodotta da un metodo iterativo, ma a una qualunque soluzione approssimata di un sistema lineare, non importa come l'abbiamo ottenuta. È quindi particolarmente interessante perché ci permette di ottenere una stima esplicita sull'errore relativo nella $\tilde{\x}$ calcolata, sulla base di quantità calcolabili al computer.
+
+\paragraph{Convergenza di Jacobi e Gauss--Seidel per matrici $A$ dominanti diagonali}
 \begin{theorem}
 Se $A$ è dominante diagonale, i metodi di Jacobi e Gauss--Seidel sono applicabili e convergenti.
 \end{theorem}
