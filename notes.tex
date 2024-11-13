@@ -3133,7 +3133,7 @@ J_F(\x) =
     \frac{\partial F_n}{\partial x_1}(x) & \frac{\partial F_n}{\partial x_2}(x) & \dots & \frac{\partial F_n}{\partial x_n}(x)\\
 \end{bmatrix} \in \mathbb{R}^{n\times n}
 \]
-Per evitare di confondere $J_F$ con la sua trasposta, possiamo usare questa tecnica mnemonica per ricordarci la posizione degli indici: le diverse componenti di $F(\x)$ sono elementi successivi di un vettore colonna, e anche nello Jacobiano vediamo che le diverse componenti di ogni derivata parziale stanno nella stessa colonna una sopra l'altra. 
+Per evitare di confondere $J_F$ con la sua trasposta, possiamo usare questa tecnica mnemonica per ricordarci la posizione degli indici: le diverse componenti di $F(\x)$ sono elementi di un vettore colonna, e anche nello Jacobiano vediamo che le diverse componenti di ogni derivata parziale stanno nella stessa colonna. 
 
 Per esempio per la~\eqref{esempiosistemanonlin} abbiamo
 \[
@@ -3186,13 +3186,13 @@ Nel dettaglio, per ogni $k=0,1,2,\dots$:
     \item Utilizzo la fattorizzazione per risolvere il sistema lineare $ A \mathbf{h} = F(\x^{(k)})$;
     \item Calcolo $\x^{(k+1)} = \x^{(k)} - \mathbf{h}$.
 \end{enumerate}
-Per esempio, posso fissare un intero $m>1$ e scegliere di fare il passo (a) ogni $m$ passi: al passo $1$, $m+1$, $2m+1$, \dots.
+Per esempio, posso fissare un intero $m>1$ e scegliere di fare il passo (2a) ogni $m$ passi: al passo $1$, $m+1$, $2m+1$, \dots.
 
-Costo computazionale: ad ogni passo dobbiamo fare una valutazione di $F$ e una soluzione di un sistema lineare ($\mathcal{O}(n^2)$). Inoltre, ogni volta che vogliamo ricalcolare la fattorizzazione facciamo $\mathcal{O}(n^3)$ operazioni più una valutazione di $J_F$.
+Con questa strategia, riduciamo il costo computazionale per passo: possiamo vedere che il costo è $\mathcal{O}(n^3)$ nei passi in cui ricalcoliamo lo Jacobiano, ma solo $\mathcal{O}(n^2)$ nei passi in cui riutilizziamo quello precedente.
 
 Come nel caso scalare, la convergenza è garantita solo se partiamo all'interno di un certo intorno della soluzione (che può essere anche molto piccolo!).
 
-La convergenza di questo metodo è quadratica, sotto le stesse condizioni del metodo di Newton. Nella pratica, visto che utilizziamo un metodo a convergenza lineare per parecchie iterazioni, vediamo che il grafico dell'errore si comporta come una spezzata: nelle iterazioni in cui teniamo la matrice $A$ costante osserviamo dei segmenti di retta, visto che se $A$ è costante si ha convergenza lineare; ma nelle iterazioni in cui aggiorniamo la matrice $A$ la pendenza di questa retta cambia e diventa più ripida, come ci aspettiamo da un metodo a convergenza quadratica. Un esempio di questo comportamento è raffigurato in Figura~\ref{fig:newtonibrido}.
+La convergenza di questo metodo è quadratica, sotto le stesse condizioni del metodo di Newton. Nella pratica, il grafico dell'errore si comporta come una spezzata: nelle iterazioni in cui teniamo la matrice $A$ costante osserviamo dei segmenti di retta, visto che se $A$ è costante si ha convergenza lineare; ma nelle iterazioni in cui aggiorniamo la matrice $A$ la pendenza di questa retta cambia e diventa più ripida, come ci aspettiamo da un metodo a convergenza quadratica. Un esempio di questo comportamento è raffigurato in Figura~\ref{fig:newtonibrido}.
 \begin{figure}
     \begin{center}
         \begin{tikzpicture}
@@ -3228,8 +3228,32 @@ A\x = \b, \quad A \in \mathbb{R}^{m\times n}, \, \b\in\mathbb{R}^m, \, \x\in\mat
 \]
 in cui $A$ non è quadrata, bensì alta e stretta ($m>n$).
 
-In un sistema di questo tipo, la soluzione spesso non esiste: abbiamo più equazioni che incognite, ed esse tipicamente non sono soddisfatte contemporaneamente. Dall'algebra lineare, sappiamo che il vettore $A\x$ è una combinazione lineare delle colonne di $A$, e al variare del vettore $\x$ queste combinazioni lineari stanno tutte all'interno in un sottospazio di $\mathbb{R}^m$ (iperpiano).
+In un sistema di questo tipo, la soluzione spesso non esiste: abbiamo più equazioni che incognite, ed esse tipicamente non sono soddisfatte contemporaneamente. 
+
+\paragraph{Esempio} Consideriamo il sistema di tre equazioni
+\begin{equation} \label{esminquadrati}
+\begin{cases}
+    x_1 + x_2 = 2,\\
+    x_1 - x_2 = 1,\\
+    x_2 = 1,
+\end{cases} \quad \text{quindi } A = \begin{bmatrix}
+    1 & 1\\
+    1 & -1\\
+    0 & 1
+\end{bmatrix}, \quad \b = \begin{bmatrix}
+    2\\1\\1
+\end{bmatrix}.
+\end{equation}
+Visto che ho più equazioni che incognite, non è garantito che esista un vettore $\x$ che soddisfa tutte e tre le equazioni. Per esempio, il vettore che soddisfa le prime due equazioni è $\x_1 = \begin{bsmallmatrix}1.5\\0.5\end{bsmallmatrix}$, ma la terza equazione non è soddisfatta, e si ha $A\x_1 - \b = \begin{bsmallmatrix}0\\0\\-0.5\end{bsmallmatrix}$.
+
+Similmente, se prendiamo il vettore $\x_2$ che soddisfa la seconda e la terza equazione, abbiamo $\x_2 = \begin{bsmallmatrix}2\\1\end{bsmallmatrix}$; questa volta la prima equazione non è soddisfatta e si ha $A\x_1 - \b = \begin{bsmallmatrix}1\\0\\0\end{bsmallmatrix}$.
+
+In un certo senso però $\x_1$ è ``meno sbagliato'' di $\x_2$, visto che $A\x_1$ è più vicino a $\b$ che non $A\x_2$: difatti $\norm{A\x_1-\b} = 0.5$, $\norm{A\x_2 - \b} = 1$, per tutte e tre le norme che abbiamo visto. Da questo punto di vista, ha senso chiedersi qual è il vettore $\x$ per cui $A\x$ è più vicino a $\b$.
+
+\paragraph{Interpretazione geometrica} Dall'algebra lineare, sappiamo che il vettore $A\x$ è una combinazione lineare delle colonne di $A$, e al variare del vettore $\x$ queste combinazioni lineari stanno tutte all'interno dell'immagine $\operatorname{Im} A$, che è un sottospazio di $\mathbb{R}^m$.
 \begin{center}
+
+    
     \begin{tikzpicture}[scale=1.5]
 
     \draw[thick, blue, opacity=0.5] (-1, 0, 0) -- (1, 0, 0) -- (1, 0, 1) -- (-1, 0, 1) -- cycle;
@@ -3240,42 +3264,47 @@ In un sistema di questo tipo, la soluzione spesso non esiste: abbiamo più equaz
 \end{tikzpicture}
 \end{center}
 
-Possiamo però risolvere un problema diverso, quello di calcolare la combinazione lineare delle colonne di $A$, cioè il vettore $A\x$, che va più vicino al vettore $\b$. In altre parole, cerchiamo 
+\paragraph{Problema dei minimi quadrati} Possiamo quindi risolvere questo problema: di calcolare la combinazione lineare delle colonne di $A$, cioè il vettore $A\x$, che va più vicino al vettore $\b$:
 \begin{equation} \label{minresiduo}
     \min_{\x\in\mathbb{R}^n} \norm{A\x-\b}.    
 \end{equation}
-Come nei sistemi lineari, dato un vettore $\tilde{\x}$, chiamiamo \emph{residuo} la quantità $\mathbf{r} = A \tilde{\x} - \b$. Attenzione: in questo problema, anche quando lo calcoliamo nella soluzione esatta $\x$, il residuo non vale $\mathbf{0}$!
+In altre parole, stiamo cercando il vettore $\x$ che rende più piccola possibile la norma del \emph{residuo} $\mathbf{r}(\x) = A \x - \b$, cioè la differenza tra il termine di sinistra e quello di destra delle equazioni che stiamo considerando. Attenzione: in questo problema, anche quando lo calcoliamo nel punto di minimo $\x$, il residuo non vale $\mathbf{0}$, perché le equazioni non ammettono una soluzione comune!
 
-Vogliamo concentrarci sul risolvere il problema~\eqref{minresiduo} nel caso della norma-2; difatti, vedremo che in questo caso ha una soluzione particolarmente semplice.
-
-Minimizzare la norma-2 di $\mathbf{r}$ equivale a minimizzare $\sum r_i^2  = \mathbf{r}^T\mathbf{r}$, ovvero
+Vogliamo concentrarci sul risolvere il problema~\eqref{minresiduo} nel caso della norma-2; difatti, vedremo che in questo caso ha una soluzione particolarmente semplice; non succede altrettanto per le altre norme. Minimizzare la norma-2 di $\mathbf{r}(\x)$ equivale a minimizzare il suo quadrato $\sum r_i^2  = \mathbf{r}(\x)^T\mathbf{r}(\x)$, ovvero
 \begin{equation} \label{minimiquadrati}
-    \min_{\x\in\mathbb{R}^n} \mathbf{r}^T \mathbf{r} = \min_{\x\in\mathbb{R}^n} (A\x-\b)^T(A\x-\b).    
+    \min_{\x\in\mathbb{R}^n} \norm{\mathbf{r}(\x)}_2^2 = \min_{\x\in\mathbb{R}^n} \norm{A\x-\b}_2^2.
 \end{equation}
-Il problema~\eqref{minimiquadrati} è detto \emph{problema dei minimi quadrati}, visto che compaiono per l'appunto i quadrati delle componenti del residuo $\mathbf{r}$.
+Il problema~\eqref{minimiquadrati} è detto \emph{problema dei minimi quadrati}, visto che se espandiamo $\norm{\mathbf{r}(\x)}_2^2 = \mathbf{r}(\x)^T\mathbf{r}(\x) = \sum r_i^2$ otteniamo la somma dei quadrati delle componenti di $\mathbf{r}(\x)$. Per esempio, nell'esempio~\eqref{esminquadrati} si ha la somma di quadrati
+\[
+\min_{\x = \begin{bsmallmatrix}x_1\\x_2\end{bsmallmatrix} \in \mathbb{R}^2}\,\, (x_1 + x_2 - 2)^2 + (x_1 - x_2 - 1)^2 + (x_2 - 1)^2.
+\]
 
 \paragraph{Equazioni normali}  Dimostriamo il seguente risultato.
 \begin{theorem}
-Sia $\x\in\mathbb{R}^n$ un vettore tale che $A^T \mathbf{r} = A^T(A\x-\b) = 0$. Allora, $\x$ risolve il problema di minimo~\eqref{minimiquadrati}.
+Sia $\x\in\mathbb{R}^n$ un vettore tale che $A^T \mathbf{r}(\x) = A^T(A\x-\b) = \mathbf{0}$. Allora, $\x$ risolve il problema di minimo~\eqref{minimiquadrati}.
 \end{theorem}
 \begin{proof}
 Prendiamo un qualunque vettore diverso da $\x$: possiamo scriverlo come $\x+\mathbf{z}$, con $\mathbf{z}\in\mathbb{R}^n, \mathbf{z} \neq \mathbf{0}$; il suo residuo vale
 \[
-A(\x+\mathbf{z})-\b = \underbrace{A\x-\b}_{=\mathbf{r}} + \underbrace{A\mathbf{z}}_{=\mathbf{s}} = \mathbf{r}+\mathbf{s}.
+\mathbf{r}(\x+\mathbf{z}) =  A(\x+\mathbf{z})-\b = \underbrace{A\x-\b}_{=\mathbf{r}} + \underbrace{A\mathbf{z}}_{=\mathbf{s}} = \mathbf{r}+\mathbf{s}.
 \]
+(Abbiamo usato la sola lettera $\mathbf{r}$ per indicare il residuo $\mathbf{r}(\x)$, per avere una notazione più semplice.)
+
 Vogliamo dimostrare che la norma di questo residuo è maggiore o uguale a quella di $\mathbf{r}$; questo ci permette di concludere che $\x$ è la soluzione del problema. Il quadrato di questa norma vale
 \[
-\norm{A(\x+\mathbf{z})-\b}^2 = (\mathbf{r}+\mathbf{s})^T(\mathbf{r}+\mathbf{s}) = \mathbf{s}^T \mathbf{s} + \mathbf{s}^T\mathbf{r} + \mathbf{r}^T \mathbf{s} + \mathbf{r}^T \mathbf{r}.
+\norm{\mathbf{r}(\x+\mathbf{z})}_2^2 = \norm{A(\x+\mathbf{z})-\b}_2^2 = (\mathbf{r}+\mathbf{s})^T(\mathbf{r}+\mathbf{s}) = \mathbf{s}^T \mathbf{s} + \mathbf{s}^T\mathbf{r} + \mathbf{r}^T \mathbf{s} + \mathbf{r}^T \mathbf{r}.
 \]
 Notiamo però che il prodotto scalare $\mathbf{r}^T\mathbf{s} = \mathbf{s}^T\mathbf{r}$ è uguale a zero: difatti,
 \[
-\mathbf{s}^T \mathbf{r} = (A\mathbf{z})^T \mathbf{r} = \mathbf{z}^T A^T \mathbf{r} = 0.
+\mathbf{s}^T \mathbf{r} = (A\mathbf{z})^T \mathbf{r} = \mathbf{z}^T A^T \mathbf{r} = 0,
 \]
+visto che $A^T\mathbf{r} = A^T(A\x-\b) = \mathbf{0}$ per ipotesi.
+
 Allora si ha
 \[
-\norm{A(\x+\mathbf{z})-\b}^2 = \mathbf{s}^T \mathbf{s} + \mathbf{r}^T \mathbf{r} \geq \mathbf{r}^T\mathbf{r}.
+\norm{A(\x+\mathbf{z})-\b}_2^2 = \mathbf{s}^T \mathbf{s} + \mathbf{r}^T \mathbf{r} \geq \mathbf{r}^T\mathbf{r}.
 \]
-Difatti $\mathbf{s}^T\mathbf{s} = s_1^2 + s_2^2 + \dots + s_m^2 \geq 0$.
+Difatti $\mathbf{s}^T\mathbf{s} = s_1^2 + s_2^2 + \dots + s_m^2 \geq 0$ è positivo. Questo dimostra che $\mathbf{r}(\x +\mathbf{z})$ ha norma maggiore o uguale a quella di $\mathbf{r}(\x)$ per ogni scelta del vettore $\z$.
 \end{proof}
 Quindi per trovare la soluzione $\x$ di questo problema ci basta risolvere il sistema di equazioni
 \begin{equation} \label{eqnormali}
@@ -3283,13 +3312,21 @@ Quindi per trovare la soluzione $\x$ di questo problema ci basta risolvere il si
 \end{equation}
 che si ottiene moltiplicando per $A^T$ il sistema originale (che era rettangolare e quindi potenzialmente senza soluzione) $A \x= \b$. La~\eqref{eqnormali} si chiama \emph{metodo delle equazioni normali}, perché le equazioni corrispondenti dicono (in termini geometrici) che il residuo $\mathbf{r}=A \x-\b$ è ortogonale (prodotto scalare nullo) alle colonne di $A$.
 
-È semplice vedere che $A^T A$ è quadrata e simmetrica; inoltre, si può dimostrare che è positiva definita (quindi invertibile!) tutte le volte che le colonne di $A$ sono linearmente indipendenti. Possiamo allora risolvere~\eqref{eqnormali} usando la fattorizzazione di Cholesky. 
+È semplice vedere che $A^T A$ è quadrata e simmetrica; inoltre, si può dimostrare che è positiva definita (quindi invertibile!) tutte le volte che le colonne di $A$ sono linearmente indipendenti. Possiamo allora risolvere il sistema lineare~\eqref{eqnormali} usando la fattorizzazione di Cholesky. 
 
-Questo metodo però in alcuni casi risulta instabile: il condizionamento del sistema lineare~\eqref{eqnormali} può essere molto più alto di quello del problema originale (che non abbiamo studiato). Esiste un altro metodo più costoso ma più stabile.
+Per risolvere questo problema quindi possiamo usare il seguente algoritmo.
+\begin{enumerate}
+    \item Calcoliamo la matrice $A^TA$ (costo computazionale: $O(mn^2)$);
+    \item Calcoliamo il vettore $A^T \b$ (costo computazionale: $O(mn)$);
+    \item Risolviamo il sistema lineare $(A^TA)\x = A^T\b$, utilizzando la fattorizzazione di Cholesky (costo computazionale: $O(n^3)$).
+\end{enumerate}
+Poiché $m>n$, il maggiore di questi costi è $O(mn^2)$.
+
+Questo metodo basato sul sistema~\eqref{eqnormali} però in alcuni casi risulta instabile: il condizionamento del sistema lineare~\eqref{eqnormali} $\kappa(A^TA)$ può essere molto grande, e in particolare essere più alto di quello del problema di minimo originale. Esiste un altro metodo più costoso ma più stabile.
 
 \paragraph{Fattorizzazione QR}
 
-Si può dimostrare (noi non lo facciamo) il seguente risultato.
+Si può dimostrare (noi qui non lo facciamo) il seguente risultato.
 \begin{theorem}
     Per ogni $A \in \mathbb{R}^{m\times n}$, esistono una matrice $Q\in\mathbb{R}^{m\times m}$ \emph{ortogonale} (cioè che soddisfa $Q^TQ=I$) e una matrice $R \in \mathbb{R}^{m\times n}$ triangolare superiore tali che $A = QR$.
 \end{theorem}
@@ -3299,7 +3336,7 @@ R = \begin{bmatrix}
     R_1\\ O
 \end{bmatrix},
 \]
-dove $R_1 \in \mathbb{R}^{n\times n}$ è una ``normale'' matrice quadrata triangolare, e $O\in\mathbb{R}^{(m-n)\times n}$ è un blocco di zeri. Se suddividiamo nello stesso modo
+dove $R_1 \in \mathbb{R}^{n\times n}$ è una normale matrice quadrata triangolare, e $O\in\mathbb{R}^{(m-n)\times n}$ è un blocco di zeri. Se suddividiamo in blocchi anche
 \[
 Q = \begin{bmatrix}
     Q_1 & Q_2
@@ -3316,7 +3353,7 @@ Questo ci suggerisce un altro algoritmo per la soluzione del problema dei minimi
     \item Calcoliamo la fattorizzazione $A=QR$ (o anche solo i blocchi $A = Q_1 R_1$).
     \item Risolviamo per sostituzione all'indietro il sistema~\eqref{qrsystem}.
 \end{itemize}
-Questo metodo è più costoso del precedente (facendo un'analisi più accurata, è possibile dimostrare che quando $m\gg n$ richiede $2mn^2$ operazioni più termini di ordine inferiore, contro $mn^2$ per il metodo delle equazioni normali) ma è più stabile in alcuni problemi in cui $A^TA$ è mal condizionata.
+Questo metodo è più costoso del precedente: facendo un'analisi più accurata, è possibile dimostrare che quando $m\gg n$ richiede $2mn^2$ operazioni più termini di ordine inferiore, contro $mn^2$ per il metodo delle equazioni normali. Però, il metodo è più stabile in alcuni problemi in cui $A^TA$ è mal condizionata.
 
 \paragraph{Soluzione tramite Matlab} In Matlab, risolvere un problema ai minimi quadrati~\eqref{minimiquadrati} è semplice: basta il comando \lstinline{A \ b}, lo stesso che avreste usato per risolvere il sistema lineare se $A$ fosse quadrata. Matlab usa il metodo più stabile basato sulla fattorizzazione QR.
 
@@ -3337,7 +3374,7 @@ Magari abbiamo dei modelli che ci dicono che la temperatura decresce linearmente
 
 \section{Interpolazione polinomiale}
 
-Vediamo più nel dettaglio il problema dell'\emph{interpolazione polinomiale}. Fissiamo un grado $d$ (usiamo questa lettera dall'inglese \emph{degree}). Supponiamo di avere $d+1$ punti dati nel piano $(x_0, y_0), (x_1, y_1), \dots, (x_{d}, y_{d})$ (attenzione: per comodità con gli indici partiamo da $0$ questa volta) e di voler trovare un polinomio di grado minore o uguale a $d$ il cui grafico passa esattamente per questi punti; cioè, stiamo cercando coefficienti incogniti $\alpha_0, \alpha_1, \dots, \alpha_d$ tali che il polinomio
+Vediamo più nel dettaglio il problema dell'\emph{interpolazione polinomiale}. Fissiamo un grado massimo $d$ (si usa questa lettera dall'inglese \emph{degree}). Supponiamo di avere $d+1$ punti dati nel piano $(x_0, y_0), (x_1, y_1), \dots, (x_{d}, y_{d})$ (attenzione: per comodità con gli indici partiamo da $0$ questa volta) e di voler trovare un polinomio di grado minore o uguale a $d$ il cui grafico passa esattamente per questi punti; cioè, stiamo cercando coefficienti incogniti $\alpha_0, \alpha_1, \dots, \alpha_d$ tali che il polinomio
 \[
 p(x) = \alpha_0 + \alpha_1 x + \alpha_2 x^2 + \dots + \alpha_d x^d
 \]
@@ -3351,25 +3388,23 @@ Possiamo osservare che le relazioni~\eqref{interpolazione_polinomiale} sono equi
 \[
 \underbrace{
 \begin{bmatrix}
-    1 & x_0 & x_0^2 & \dots x_0^{d}\\
-    1 & x_1 & x_1^2 & \dots x_1^{d}\\
-    1 & x_2 & x_2^2 & \dots x_2^{d}\\
-    \vdots & \vdots & \ddots & \vdots\\
-    1 & x_d & x_d^2 & \dots x_d^{d}\\
+    1 & x_0 & x_0^2 & \dots & x_0^{d}\\
+    1 & x_1 & x_1^2 & \dots & x_1^{d}\\
+    1 & x_2 & x_2^2 & \dots & x_2^{d}\\
+    \vdots & \vdots & \vdots & \ddots & \vdots\\
+    1 & x_d & x_d^2 & \dots & x_d^{d}\\
 \end{bmatrix}
 }_{=X}
 \begin{bmatrix}
-    \alpha_0 \\ \alpha_1 \\ \vdots \\ \alpha_d
+    \alpha_0 \\ \alpha_1 \\ \alpha_2 \\ \vdots \\ \alpha_d
 \end{bmatrix}=
 \begin{bmatrix}
-    y_0 \\ y_1 \\ \vdots \\ y_d
+    y_0 \\ y_1 \\ y_2 \\ \vdots \\ y_d
 \end{bmatrix}.
 \]
 Attenzione: non ci facciamo ingannare dalle lettere usate: le $x_i$ e le $y_i$ non sono incognite: qui sono note, e sono i dati del problema.
 
 La matrice associata a questo sistema, che abbiamo indicato con $X$, si chiama \emph{matrice di Vandermonde}.
-
-%%% TODO: inserire un esempio %%%
 
 \paragraph{Risolubilità} È possibile dimostrare il seguente risultato.
 \begin{theorem}
@@ -3398,9 +3433,27 @@ Dall'invertibilità di questa matrice segue che il problema dell'interpolazione 
 Date $n+1$ coppie di punti $(x_0,y_0),\dots,(x_d,y_d)$, con gli $x_i$ tutti diversi tra loro, esiste uno e un solo polinomio $p(x)$ di grado minore o uguale a $d$ tale che $p(x_i)=y_i$ per ogni $i=0,1,\dots,d$.
 \end{theorem}
 
-Notare che sul grado abbiamo solo una disuguaglianza: nulla vieta che il coefficiente $\alpha_d$ (o anche quelli precedenti) sia uguale a zero per una particolare scelta dei punti $(x_i,y_i)$. Per esempio, se scelgo $(0,3), (1,4), (2,5)$, allora il polinomio di grado $d\leq 2$ che passa esattamente per questi punti è $p(x)=x+4$, che in realtà ha grado $1$.
+\paragraph{Esempio} Cerchiamo il polinomio di grado minore o uguale a $d=2$ che passa per i tre punti $(x_0,y_0) = (1,2)$, $(x_1,y_1) = (2,5)$, $(x_2,y_2) = (3,7)$. Questo equivale a trovare il polinomio $p(x) = \alpha_0 + \alpha_1 x + \alpha_2 x^2$ che risolve il sistema $X\mathbf{\alpha} = \mathbf{y}$
+\[
+    \begin{bmatrix}
+    1 & 1 & 1\\
+    1 & 2 & 4\\
+    1 & 3 & 9
+    \end{bmatrix}\begin{bmatrix}
+        \alpha_0\\
+        \alpha_1\\
+        \alpha_2
+    \end{bmatrix} = \begin{bmatrix}
+        2\\5\\7
+    \end{bmatrix}.
+\]
+Risolvendo il sistema (per esempio con \lstinline{X \ y} in Matlab, dopo aver definito $X$ e $\mathbf{y}$) si ottengono i coefficienti del polinomio $p(x) = -2 + 4.5 x = 0.5x^2$, che effettivamente soddisfa le tre condizioni cercate. Questo è l'unico polinomio di grado minore o uguale a due che soddisfa le tre condizioni; ne esistono altri di grado maggiore: tutti quelli della forma $p(x) = -2 + 4.5 x = 0.5x^2 + (x-1)(x-2)(x-3)q(x)$ per un altro polinomio $q(x)$; difatti il secondo termine si annulla per $x=1,x=2$, e $x=3$. 
 
-Solitamente l'interpolazione polinomiale si usa con pochi nodi; $d \leq 10$ per esempio. Questo perché per valori grandi di $d$ in molti casi la matrice di Vandermonde, seppure invertibile, risulta mal condizionata. Questo significa che a piccole variazioni dei dati $x_i$ o $y_i$ corrispondono grandi variazioni nei coefficienti del polinomio. Pertanto i coefficienti calcolati sono affetti da un errore inerente molto grande. Un altro problema è che, anche in aritmetica esatta, spesso al crescere di $d$ il polinomio di interpolazione di una funzione $f$ soddisfa sì $p(x_i)=f(x_i)$, ma i valori di $p$ e di $f$ al di fuori di questi valori possono differire anche di molto, con il polinomio che oscilla eccessivamente. [TODO: Immagine di esempio] In molti casi, approssimare i dati utilizzando un polinomio di di grado basso, anche a patto di commettere un errore (come vedremo più avanti) fornisce risultati graficamente migliori che non un polinomio di interpolazione. Questo fenomeno è detto \emph{overfitting}.
+Notare che sul grado abbiamo solo una disuguaglianza: nulla vieta che il coefficiente $\alpha_d$ (o anche quelli precedenti) sia uguale a zero per una particolare scelta dei punti $(x_i,y_i)$. Per esempio, se modifico i dati in $(1,3), (2,5), (3,7)$ (tre punti allineati!), allora il polinomio di grado $\leq 2$ che passa esattamente per questi punti è $p(x)=1+2x+0x^2 = 1+2x$, che ha grado $1$ perché $\alpha_2 = 0$. 
+
+Solitamente l'interpolazione polinomiale si usa con pochi nodi; $d \leq 10$ per esempio. Questo perché per valori grandi di $d$ in molti casi la matrice di Vandermonde, seppure invertibile, risulta mal condizionata. Ad esempio, la matrice di Vandermonde costruita con 10 nodi $x_0 = 0,x_1=1,\dots,x_9=9$ ha condizionamento in norma-2 $\kappa(V) = 9\cdot 10^{10}$, un numero altissimo!
+
+Questo significa che a piccole variazioni dei dati $x_i$ o $y_i$ corrispondono grandi variazioni nei coefficienti del polinomio: i coefficienti calcolati sono affetti da un errore inerente molto grande. Un problema collegato è che, anche in aritmetica esatta, spesso al crescere di $d$ il polinomio di interpolazione di una funzione $f$ soddisfa sì $p(x_i)=f(x_i)$, ma i valori di $p$ e di $f$ al di fuori di questi valori possono differire anche di molto, con il polinomio che oscilla eccessivamente. [TODO: Immagine di esempio] In molti casi, approssimare i dati utilizzando un polinomio di grado basso che passa \emph{vicino}, ma non esattamente per i punti dati (come vedremo più avanti) fornisce risultati graficamente migliori che non un polinomio di interpolazione. Questo fenomeno è detto \emph{overfitting}.
 
 \paragraph{Polinomi di Lagrange}
 
@@ -3425,7 +3478,7 @@ L_k(x_i) = \begin{cases}
 \begin{proof}
 Sostituendo $x = x_k$, numeratore e denominatore diventano identici, quindi il polinomio vale $1$. Sostituendo $x = x_i$ con $i\neq k$, uno dei fattori nella produttoria al numeratore diventa $(x_i-x_i)$, quindi $L_k(x_i) = 0$.
 \end{proof}
-Quindi il $k$-esimo polinomio di Lagrange fornisce la soluzione al problema di interpolazione con $\mathbf{y} = \e_k$ ($k$-esimo vettore della base canonica). Con queste soluzioni, possiamo ottenere la soluzione a un problema di interpolazione polinomiale generico.
+Quindi il $k$-esimo polinomio di Lagrange fornisce la soluzione al problema di interpolazione con $\mathbf{y} = \e_k$ ($k$-esimo vettore della base canonica). Facendo una combinazione lineare di queste soluzioni, possiamo ottenere la soluzione a un problema di interpolazione polinomiale con un vettore $\mathbf{y}$ generico.
 \begin{theorem}
 Siano $(x_0,y_0),\dots,(x_d,y_d)$ dati. La soluzione del problema di interpolazione polinomiale (cioè l'unico polinomio $p$ di grado $\leq d$ tale che $p(x_i)=y_i$ per ogni $i=0,1,\dots,d$) è data da
 \[
@@ -3441,19 +3494,19 @@ Sappiamo già che la soluzione del problema è unica. Basta verificare che $p(x_
 \paragraph{Resto dell'interpolazione}
 
 Vale il seguente risultato.
-\begin{theorem}
-Sia $f\in \mathcal{C}^{n+1}([a,b])$, $x_0,x_1,\dots,x_d$ nodi distinti in $[a,b]$, e $p(x)$ il polinomio di interpolazione (di grado al più $d$) di $f$ sui nodi dati. Allora per ogni $x\in [a,b]$ esiste un punto $\xi \in (a,b)$ tale che
+\begin{theorem}[Resto dell'interpolazione]
+Sia $f\in \mathcal{C}^{d+1}([a,b])$, $x_0,x_1,\dots,x_d$ nodi distinti in $[a,b]$, e $p(x)$ il polinomio di interpolazione (di grado al più $d$) di $f$ sui nodi dati. Allora per ogni $x\in [a,b]$ esiste un punto $\xi \in (a,b)$ tale che
 \[
 f(x) - p(x) = \frac{f^{(d+1)}(\xi)}{(d+1)!} (x-x_0)(x-x_1) \dots (x-x_d).
 \]
 \end{theorem}
-Non lo dimostriamo ma facciamo qualche commento. Notare che questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Poiché abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$.
+Non lo dimostriamo ma facciamo qualche commento. Notare che questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Qui abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, e nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$.
 
 Non ci stupisce che ci siano dei fattori $(x-x_i)$ nel membro di destra: difatti, se sostituiamo $x=x_i$, per un qualche $i=0,1,\dots,d$, il termine di sinistra si annulla, quindi deve annullarsi anche quello di destra.
 
 Un altro caso speciale in cui possiamo verificare il risultato direttamente è quello in cui $f(x)$ è essa stessa un polinomio di grado minore o uguale a $d$. In questo caso il polinomio di interpolazione coincide con $f(x)$ stessa, quindi il termine di sinistra è nullo per ogni $x$; e anche il termine di destra si annulla perché per un polinomio di grado al più $d$ abbiamo $f^{(d+1)} \equiv 0$.
 
-Da questa formula segue una stima per l'errore massimo (differenza tra $f(x)$ e $p(x)$), cioè
+\paragraph{Errore dell'interpolazione} Dal teorema del resto dell'interpolazione segue una stima per l'errore massimo (differenza tra $f(x)$ e $p(x)$), cioè
 \[
 \abs{f(x) - p(x)} \leq \frac{C_{d+1}}{(d+1)!}(b-a)^{d+1},
 \]
@@ -3513,10 +3566,10 @@ dove l'ultima formula corrisponde ad usare le equazioni normali per risolvere qu
 \paragraph{Approssimazione polinomiale}
 Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare un grado massimo $d$, e trovare il polinomio di grado al più $d$ che meglio approssima una sequenza di punti. Questo corrisponde a scegliere le $n = d+1$ funzioni di base
 \begin{equation} \label{basepolinomi}
-    \phi_1(x) = 1, \quad \phi_2(x) = x, \quad \phi_3(x) = x^2, \dots, \phi_{d+1}(x) = x^{d}.    
+    \phi_1(x) = 1, \quad \phi_2(x) = x, \quad \phi_3(x) = x^2,\quad \dots,\quad \phi_{d+1}(x) = x^{d}.    
 \end{equation}
 
-\paragraph{Polinomi trigonometrici} Se desideriamo interpolare (o approssimare) una funzione che sappiamo essere periodica di periodo $\pi$, una base ``naturale'' da usare è
+\paragraph{Polinomi trigonometrici} Se desideriamo interpolare (o approssimare) una funzione che sappiamo essere periodica di periodo $\pi$, viene naturale scegliere una base composta di funzioni che sono anch'esse periodiche, per esempio
 \begin{align*}
 \phi_1(x) &= 1,\\
 \phi_2(x) &= \sin x, & \phi_3(x) &= \cos x,\\
@@ -3524,7 +3577,7 @@ Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare u
 \vdots & & \vdots &\\
 \phi_{2k}(x) &= \sin kx, & \phi_{2k+1}(x) &= \cos kx.
 \end{align*}
-Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che probabilmente avrete occasione di incontrare in futuro in altri corsi.
+Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che forse avrete occasione di incontrare in futuro in altri corsi.
 
 \section{Formule di integrazione}
 
