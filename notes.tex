@@ -3587,10 +3587,11 @@ Sappiamo dall'analisi che il problema di calcolare il valore di un integrale è 
 
 Le formule che vedremo sono tutte del tipo
 \[
-I \approx \sum_{i=1}^n w_i f(x_i),
+I \approx \sum_{i=1}^n w_i f(x_i) = w_1 f(x_1) + w_2 f(x_2) + \dots + w_n f(x_n),
 \]
 dove $w_i$ sono detti \emph{pesi} e $x_i$ \emph{nodi} della formula, e sono scelti indipendentemente da $f$ (ma tipicamente dipendono dall'intervallo $[a,b]$).
 
+Il costo computazionale di applicare una formula di quadratura con $n$ pesi e nodi è di $n$ valutazioni della funzione $f$, più poche altre operazioni ($2n-1$ per la precisione). Poiché il calcolo della funzione $f$ richiede un numero variabile di operazioni (e potenzialmente molto grande), esprimiamo il costo computazionale in termini di qaunte volte va valutata la funzione, esattamente come abbiamo fatto in passato per gli algoritmi per risolvere equazioni non lineari.
 
 % Spesso a queste formule chiediamo che siano esatte su alcune funzioni semplici; per esempio, polinomi di grado basso. Notiamo che una formula è esatta sulla funzione $f(x) \equiv 1$ se $\sum_{i=1}^n w_n = b-a$, per esempio.
 Partiamo analizzando due formule semplici.
@@ -3598,7 +3599,7 @@ Partiamo analizzando due formule semplici.
 \paragraph{Formula del punto medio}
 È la formula
 \[
-I_M = (b-a)f(c),
+\tilde{I}_M = (b-a)f(c),
 \]
 dove $c=\frac{a+b}{2}$ è il punto medio dell'intervallo di integrazione. Corrisponde a rimpiazzare l'integrale con l'area del rettangolo di base $[a,b]$ e altezza $f(m)$, quindi una somma di Riemann con un solo rettangolo. 
 \begin{center}
@@ -3623,17 +3624,21 @@ dove $c=\frac{a+b}{2}$ è il punto medio dell'intervallo di integrazione. Corris
 
 \end{tikzpicture}
 \end{center}
-Esempio: per calcolare l'integrale di $f(x)=x^2$ su $[a,b]=[0,1]$
-\[
-    I = \int_0^1 x^2\, dx = \frac{1}{3},
-\]
+In questo disegno, così come nei successivi, evidenziamo in blu l'integrale eatto $I$ (area sotto la curva), e in rosso la sua approssimazione con una formula di quadratura, in questo caso $I_M$.
+
+
+Esempio: per calcolare l'integrale di $f(x)=x^2$ su $[a,b]=[0,1]$, 
 la formula del punto medio fornisce
 \[
-    I_M = (b-a)f(c) = (1-0)f(0.5) = \frac{1}{4}.
+    \tilde{I}_M = (b-a)f(c) = (1-0)f(0.5) = \frac{1}{4}.
 \]
-Questo risultato è minore del valore esatto.
+Questo risultato è inferiore al valore esatto 
+\[
+    I = \int_0^1 x^2\, dx = \frac{1}{3}.
+\]
+Su questo problema, la formula del punto medio quindi commette un errore pari a $\abs{\tilde{I}_M - I} \approx 0.0833$.
 
-Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora questa formula calcola esattamente l'integrale. Difatti, [disegno] la differenza tra i due integrali è pari all'area di due triangoli uguali, una presa con il segno $+$ e una presa con il segno $-$.
+Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora questa formula restituisce il valore esatto dell'integrale, con un errore $\tilde{I}_M - I = 0$. Difatti, nella figura qui sotto, i due triangolini che abbiamo indicato con le lettere $A$ e $B$ sono uguali: quindi hanno la stessa area, e pertanto l'area della figura rossa e di quella blu sono uguali.
 \begin{center}
     \begin{tikzpicture}
         % Draw axes
@@ -3652,22 +3657,22 @@ Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora que
         \node at (1,-0.3) {$a$};
         \node at (4,-0.3) {$b$};
         \node at (2.5,-0.3) {$c$};
+        \node at (1.5,2) {$A$};
+        \node at (3.5,2.5) {$B$};
     %    \node at (\midpoint,0) {$c$};
-    
     \end{tikzpicture}
     \end{center}
-
-Quindi abbiamo mostrato che la formula del punto medio restituisce il valore esatto dell'integrale ($I_M = I$) su tutti i polinomi di grado $0$ o $1$, ma esiste almeno un polinomio di grado $2$ su cui commette un errore ($1/4 \neq 1/3$!).
+Questo ragionamento geometrico mostra che la formula del punto medio restituisce il valore esatto dell'integrale ($I_M = I$) su tutti i polinomi di grado $0$ o $1$. Invece, esiste almeno un polinomio di grado $2$ su cui commette un errore ($1/4 \neq 1/3$!).
 
 Diremo che una formula di integrazione numerica ha \emph{ordine} $p$ se $p$ è il grado del polinomio di grado più basso su cui la formula \emph{non} restituisce il valore esatto dell'integrale. Quindi, la formula del punto medio ha ordine $p = 2$.
 
-Il grado $p-1$ si chiama \emph{grado di esattezza} (o qualche volta \emph{di precisione, di accuratezza}) della formula.
+Talvolta, anziché di ordine si parla di \emph{grado di esattezza} (o anche \emph{di precisione, di accuratezza}): una formula ha grado di esattezza $p-1$ se restituisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $p-1$ (ma non su tutti i polinomi di grado $p$). Con questa definizione, la formula del punto medio ha grado di esattezza $p-1 = 1$. 
 
-Possiamo dimostrare una formula per l'errore $I_M-I$ in termini della derivata seconda di $f$.
+Possiamo dare una limitazione per l'errore $\tilde{I}_M-I$ in termini della derivata seconda di $f$.
 \begin{theorem}
 Sia $f\in\mathcal{C}^2([a,b])$. Allora,
 \[
-\abs{I_M-I} \leq \frac{1}{24}C_2 (b-a)^3,
+\abs{\tilde{I}_M-I} \leq \frac{1}{24}C_2 (b-a)^3,
 \]
 dove $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$.
 \end{theorem}
@@ -3679,7 +3684,7 @@ f(x) = f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2.
 \]
 Ora sostituiamo
 \begin{align*}
-    I_M - I &= f(c)(b-a) - \int_{a}^b \left(f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2\right)dx\\
+    \tilde{I}_M - I &= f(c)(b-a) - \int_{a}^b \left(f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2\right)dx\\
     &= \underbrace{f(c)(b-a) - \int_{a}^b \biggl(f(c) + f'(c)(x-c)\biggr)dx}_{=0} - \int_a^b \frac12 f''(\xi)(x-c)^2dx.
 \end{align*}
 Il primo termine si annulla: difatti, la funzione $g(x) = f(c) + f'(c)(x-c)$ è una funzione polinomiale di grado 1, e quindi possiamo calcolare il suo integrale esattamente con la formula del punto medio:
@@ -3688,7 +3693,7 @@ Il primo termine si annulla: difatti, la funzione $g(x) = f(c) + f'(c)(x-c)$ è 
 \]
 Possiamo allora stimare l'errore come
 \begin{align*}
-\abs{I_M - I} &= \abs*{\int_a^b \frac12 f''(\xi)(x-c)^2 dx}
+\abs{\tilde{I}_M - I} &= \abs*{\int_a^b \frac12 f''(\xi)(x-c)^2 dx}
     \leq \int_a^b \frac12 \abs{f''(\xi)}(x-c)^2 
     \\ &\leq \frac12  \int_a^b C_2(x-c)^2 dx = \frac1{24}C_2 (b-a)^3,
 \end{align*}
@@ -3700,27 +3705,53 @@ Con un po' più di attenzione, possiamo dimostrare un risultato più forte: se $
 \]
 e quindi (per la continuità di $f''$) esiste un valore di $\xi$ per cui
 \[
-I_M - I = -\frac{f''(\xi)}{24}(b-a)^3.
+    \tilde{I}_M - I = -\frac{f''(\xi)}{24}(b-a)^3.
 \]
-Questa formula ci dà anche informazioni sul segno: se la derivata seconda di $f$ è sempre positiva (cioè $f$ è convessa), allora $I_M < I$; e al contrario se la derivata seconda è sempre negativa e $f$ è concava, allora $I_M > I$.
+Questa formula ci dà anche informazioni sul segno: se la derivata seconda di $f$ è sempre positiva (cioè $f$ è convessa), allora $\tilde{I}_M < I$; e al contrario se la derivata seconda è sempre negativa e $f$ è concava, allora $\tilde{I}_M > I$.
 
 \paragraph{Formula dei trapezi}
-
-È la formula $I \approx I_T = \frac{b-a}{2}(f(a)+f(b))$; cioè, rimpiazziamo l'integrale con l'area del trapezio con basi $f(a)$ e $f(b)$ (disegno sulla lavagna). Abbiamo due pesi $w_1=w_2=\frac{b-a}{2}$ e due nodi $a,b$. 
+È la formula che si ottiene rimpiazzando $\int_a^b f(x)\, dx$ con l'integrale della funzione che si ottiene congiungendo $(a,f(a))$ e $(b,f(b))$ con un segmento di retta.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw axes
+        \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
+        \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
+        
+        \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+        \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+          (1, 0)
+          -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+          -- (4, 0)
+          -- cycle;
+        
+        \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,4) -- (1,1) -- cycle;
+        
+        \node at (1,-0.3) {$a$};
+        \node at (4,-0.3) {$b$};
+        \node at (2.5,-0.3) {altezza};
+        \node[rotate=90] at (0.7, 0.5) {base};
+        \node[rotate=90] at (4.3, 2) {base};
+    \end{tikzpicture}
+    \end{center}
+Girando la testa verso sinistra, possiamo vedere che la figura in rosso è un trapezio rettangolo con due basi (in verticale!) lunghe $f(a)$ e $f(b)$, e altezza (in orizzontale!) lunga $b-a$. Pertanto, usando la formula per l'area di un trapezio si ha
+\[
+    \tilde{I}_T = \frac{f(a)+f(b)}{2}(b-a) = \frac{b-a}{2}f(a) + \frac{b-a}{2}f(b).
+\]
+Questa formula ha due pesi $w_1=w_2=\frac{b-a}{2}$ e due nodi $x_1=a,x_2=b$. 
 
 Esempio: $I = \int_0^1 x^2\, dx = 1/3$. La formula dei trapezi fornisce
 \[
-    I_T = \frac{b-a}{2}(f(0)+f(1)) = \frac{1-0}{2}(0^2+1^2) = \frac{1}{2}.
+    \tilde{I}_T = \frac{b-a}{2}(f(0)+f(1)) = \frac{1-0}{2}(0^2+1^2) = \frac{1}{2}.
 \]
 Questa volta l'errore è per eccesso. Difatti $f(x)=x^2$ è una funzione convessa, e quindi sta al di sotto della retta che congiunge $(0,f(0))$ e $(1,f(1))$.
 
-Notiamo che $I_T$ è uguale all'integrale della retta che congiunge $(a,f(a))$ e $(b,f(b))$. Se $f(x)$ è una funzione lineare, questa retta è propiro il grafico della funzione, e quindi la formula restituisce il valore esatto dell'integrale, $I_T = I$. Da quanto detto sopra perciò possiamo concludere che l'ordine di questa formula è $p=2$.
+Notiamo che $\tilde{I}_T$ è uguale all'integrale della retta che congiunge $(a,f(a))$ e $(b,f(b))$. Se $f(x)$ è una funzione lineare, questa retta è propiro il grafico della funzione, e quindi la formula restituisce il valore esatto dell'integrale, $I_T = I$. Da quanto detto sopra perciò possiamo concludere che l'ordine di questa formula è $p=2$.
 
 Più in generale, questa retta è il polinomio di interpolazione $p(x)$ alla funzione sui nodi $x_0=a$ e $x_1=b$. Questa osservazione ci permette di dimostrare un risultato analogo a quello visto poco fa per il metodo del punto medio.
 \begin{theorem}
 Sia $f\in\mathcal{C}^2([a,b])$. Allora,
 \[
-\abs{I_T-I} \leq \frac{1}{12}C_2 (b-a)^3,
+\abs{\tilde{I}_T-I} \leq \frac{1}{12}C_2 (b-a)^3,
 \]
 dove $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$.
 \end{theorem}
@@ -3730,20 +3761,20 @@ Scriviamo la formula del resto dell'interpolazione,
 \[
 f(x) - p(x) = \frac{f''(\xi)}{2}(x-a)(x-b),
 \]
-dove $p(x)$ è il polinomio di grado $d=1$ (cioè la retta) che interpola $f(x)$ nei due nodi $a$ e $b$; abbiamo detto poco fa che $I_T = \int_a^b p(x) dx$. Allora,
+dove $p(x)$ è il polinomio di grado $d=1$ (cioè la retta) che interpola $f(x)$ nei due nodi $a$ e $b$; abbiamo detto poco fa che $\tilde{I}_T = \int_a^b p(x) dx$. Allora,
 \[
-I_T - I = \int_a^b (p(x)-f(x)) dx = \int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx,
+    \tilde{I}_T - I = \int_a^b (p(x)-f(x)) dx = \int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx,
 \]
 dove abbiamo cambiato segno a $x-b$. Scegliendo i segni in questo modo, $(x-a)(b-x)\geq 0$ per ogni $x\in [a,b]$, e quindi è sempre uguale al suo valore assoluto. Ora possiamo scrivere
 \begin{align*}
-\abs{I_T - I} &= \abs*{\int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx} \leq \int_a^b \frac{\abs{f''(\xi)}}{2}(x-a)(b-x) dx \\
+\abs{\tilde{I}_T - I} &= \abs*{\int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx} \leq \int_a^b \frac{\abs{f''(\xi)}}{2}(x-a)(b-x) dx \\
 & \leq \frac{C_2}{2} \int_a^b (x-a)(b-x)dx = \frac{C_2}{12}(b-a)^3,
 \end{align*}
 visto che $\int_a^b (x-a)(x-b)dx = \frac{1}{6}(b-a)^3$ (di nuovo è un conto su un integrale di un polinomio di grado 2).
 \end{proof}
 Come prima, un ragionamento più accurato porta a
 \[
-I_T - I = \frac{f''(\xi)}{12}(b-a)^3.
+    \tilde{I}_T - I = \frac{f''(\xi)}{12}(b-a)^3.
 \]
 Quindi questa formula restituisce un risultato più \emph{grande} di $I$ per funzioni convesse, e più \emph{piccolo} per funzioni concave; cosa che è evidente anche da un disegno (TODO).
 
@@ -3751,7 +3782,7 @@ Quindi questa formula restituisce un risultato più \emph{grande} di $I$ per fun
 
 Utilizzando la forma di Lagrange del polinomio di interpolazione, abbiamo
 \[
-I_d = \int_a^b p(x) dx = \int_a^b \sum_{k=0}^d L_k(x)f(x_k) dx = \sum_{k=0}^d f(x_k) \underbrace{\int_a^b L_k(x) dx}_{=w_k}.
+    \tilde{I}_d = \int_a^b p(x) dx = \int_a^b \sum_{k=0}^d L_k(x)f(x_k) dx = \sum_{k=0}^d f(x_k) \underbrace{\int_a^b L_k(x) dx}_{=w_k}.
 \]
 
 Calcoliamo per esempio i pesi che risultano per $[a,b]=[-1,1]$ e $d=2$ intervalli: i tre punti equispaziati sono $x_0=-1,x_1=0,x_2 = 1$, e 
@@ -3779,20 +3810,20 @@ w_0 = \frac16(b-a), \quad w_1 = \frac46 (b-a), \quad w_2 = \frac16 (b-a).
 \]
 e quindi la formula
 \[
-I \approx I_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right),
+I \approx \tilde{I}_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right),
 \]
 che è nota anche come \emph{formula di Cavalieri--Simpson}. Analogamente è possibile costruire formule di Newton--Cotes di grado più alto.
 
 \paragraph{Ordine delle formule di Newton--Cotes}
 
-La formula di Cavalieri--Simpson che abbiamo costruito ha necessariamente ordine almeno 3: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha ordine 4, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $I_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
+La formula di Cavalieri--Simpson che abbiamo costruito ha necessariamente ordine almeno 3: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha ordine 4, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $\tilde{I}_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
 
 Più in generale, per le formule di Newton--Cotes valgono espressioni dell'errore simili a quella dimostrata per il metodo dei trapezi.
 \begin{theorem}
 La formula di Newton--Cotes di grado $d$ (con $d+1$ punti equispaziati) ha come ordine il più piccolo numero pari maggiore di $d$, cioè $p=d+1$ se $d$ è dispari, e $p=d+2$ se $d$ è pari.
 Inoltre abbiamo per ogni $d$ la stima per l'errore
 \[
-\abs{I_d - I} \leq \kappa_d C_{p} (b-a)^{p+1},
+\abs{\tilde{I}_d - I} \leq \kappa_d C_{p} (b-a)^{p+1},
 \]
 dove $\kappa_d$ è un'opportuna costante che dipende dal grado.
 \end{theorem}
@@ -3817,30 +3848,28 @@ Poi approssimiamo ognuno degli $n$ integrali nel termine di destra con una delle
 \begin{description}
     \item[Metodo del punto medio composito]
 \[
-I_{M,N} = \sum_{n=1}^N \underbrace{(x_{n}-x_{n-1})}_{h}f\left(\frac{x_{n-1}+x_n}{2}\right) = \frac{b-a}{n} \sum_{n=1}^N f\left(\frac{x_{n-1}+x_n}{2}\right).
+    \tilde{I}_{M,N} = \sum_{n=1}^N \underbrace{(x_{n}-x_{n-1})}_{h}f\left(\frac{x_{n-1}+x_n}{2}\right) = \frac{b-a}{N} \sum_{n=1}^N f\left(\frac{x_{n-1}+x_n}{2}\right).
 \]
 \item[Metodo dei trapezi composito]
 \[
-I_{T,N} = \sum_{n=1}^N \frac{x_{n}-x_{n-1}}2 \left(f(x_{n-1})+f(x_n)\right) = \frac{b-a}{2n} \sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right).
+    \tilde{I}_{T,N} = \sum_{n=1}^N \frac{x_{n}-x_{n-1}}2 \left(f(x_{n-1})+f(x_n)\right) = \frac{b-a}{2N} \sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right).
 \]
 \item[Metodo di Cavalieri--Simpson composito]
 \begin{align*}
-    I_{2,N} &= \sum_{n=1}^N  \frac{x_{n}-x_{n-1}}6  \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
-    &= \frac{b-a}{6n} \sum_{n=1}^N \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
-    &= \frac{2}{3}I_{M,N} + \frac13 I_{T,N}.
+    \tilde{I}_{2,N} &= \sum_{n=1}^N  \frac{x_{n}-x_{n-1}}6  \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
+    &= \frac{b-a}{6N} \sum_{n=1}^N \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
+    &= \frac{2}{3}\tilde{I}_{M,N} + \frac13 \tilde{I}_{T,N}.
 \end{align*}
 \end{description}
-Il costo del metodo del punto medio composito è $N$ valutazioni di funzione, nei punti medi di ognuno degli intervalli della suddivisione. (Più $\mathcal{O}(N)$ somme che sono solitamente trascurabili rispetto alle valutazioni di funzione.)
+Il metodo del punto medio composito richiede $N$ valutazioni di funzione, nei punti medi di ognuno degli intervalli della suddivisione. (Più $\mathcal{O}(N)$ altre operazioni, il cui costo è solitamente trascurabile rispetto alle valutazioni di funzione.)
 
-Il costo del metodo dei trapezi apparentemente è di $2N$ valutazioni di funzione; però possiamo osservare che tutti i punti a parte il primo e l'ultimo compaiono due volte: una volta come estremo destro di un intervallo, una volta come estremo sinistro. Quindi possiamo riscrivere la sommatoria che compare in $I_{T,N}$ come
+Il metodo dei trapezi apparentemente richiede $2N$ valutazioni di funzione; però possiamo osservare che tutti i punti a parte il primo e l'ultimo compaiono due volte: una volta come estremo destro di un intervallo, una volta come estremo sinistro. Quindi possiamo riscrivere la sommatoria che compare in $I_{T,N}$ come
 \[
 \frac12\sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right) = \frac12 f(x_0) + \frac12 f(x_N) + \sum_{n=1}^{N-1} f(x_n),
 \]
-che richiede solo $N+1$ valutazioni di funzione. Sarà un'accortezza necessaria quando lo implementeremo.
+che richiede solo $N+1$ valutazioni di funzione. Lo stesso ragionamento si può applicare per il metodo di Cavalieri--Simpson, che in questo modo richiede $2N+1$ valutazioni di funzione anziché $3N$.
 
-Analogamente, il metodo di Cavalieri--Simpson richiede $2N+1$ valutazioni di funzione. Vedremo però che questo costo maggiore è compensato da un errore minore.
-
-Questo trucco per ridurre il numero di valutazioni si può applicare non solo per la formula dei trapezi e di Cavalieri--Simpson, ma tutte le volte che una formula di integrazione include come nodi gli estremi dell'intervallo di valutazione. Le formule che soddisfano questa proprietà sono dette \emph{chiuse} (per analogia con gli intervalli chiusi, che includono gli estremi).
+Questo trucco per ridurre il numero di valutazioni si può applicare non solo per la formula dei trapezi e di Cavalieri--Simpson, ma tutte le volte che una formula di integrazione include come nodi i due estremi dell'intervallo di valutazione. Le formule che soddisfano questa proprietà sono dette \emph{chiuse} (per analogia con gli intervalli chiusi, che includono gli estremi).
 
 \paragraph{Errore delle formule composite}
 
@@ -3889,13 +3918,13 @@ Questo, in particolare, vale anche per le formule non composite, se immaginiamo 
 
 \paragraph{Stima dell'errore per le formule composite} Sia $N$ un intero pari. Applicando una formula di integrazione composita con ordine di convergenza $p$ prima con $N$ intervalli e poi con $N/2$ sottointervalli, ci aspettiamo quindi che
 \[
-I_N = I + e_N, \quad I_{N/2} = I + e_{N/2} \approx I + 2^{p}e_N.
+    \tilde{I}_N = I + e_N, \quad \tilde{I}_{N/2} = I + e_{N/2} \approx I + 2^{p}e_N.
 \]
 Da queste due relazioni possiamo eliminare $I$ e ricavare approssimativamente il valore di $e_N$ come
 \[
-\frac{I_{N/2} - I_{N}}{2^p -1} \approx \frac{I + 2^p e_N -(I+e_N)}{2^p-1} = e_N.
+\frac{\tilde{I}_{N/2} - \tilde{I}_{N}}{2^p -1} \approx \frac{I + 2^p e_N -(I+e_N)}{2^p-1} = e_N.
 \]
-Per le formule dei trapezi e di Cavalieri--Simpson (ma non per tutti i metodi!) il calcolo di $I_{N/2}$ non richiede ulteriori valutazioni rispetto a quelle già utilizzate per il calcolo di $I_N$; e, a patto di fare le somme in un ordine appropriato durante l'implementazione, neppure somme aggiuntive. Quindi calcolare questa stima dell'errore ha un costo aggiuntivo trascurabile, per questi due metodi.
+Per le formule dei trapezi e di Cavalieri--Simpson (ma non per tutti i metodi!) il calcolo di $\tilde{I}_{N/2}$ non richiede ulteriori valutazioni rispetto a quelle già utilizzate per il calcolo di $\tilde{I}_N$; e, a patto di fare le somme in un ordine appropriato durante l'implementazione, neppure somme aggiuntive. Quindi calcolare questa stima dell'errore ha un costo aggiuntivo trascurabile, per questi due metodi.
 
 
 \section{Quadratura Gaussiana}
