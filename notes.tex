@@ -3579,11 +3579,11 @@ Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare u
 \end{align*}
 Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che forse avrete occasione di incontrare in futuro in altri corsi.
 
-\section{Formule di integrazione}
+\section{Formule di quadratura}
 
 In questa sezione consideriamo il problema di approssimare numericamente l'integrale di una funzione, $I = \int_a^b f(x) dx$. Questo problema si chiama \emph{integrazione numerica}, o \emph{quadratura}.
 
-Sappiamo dall'analisi che il problema di calcolare esattamente integrali (con una formula risolutiva) è un problema difficile: a differenza delle derivate, non ci sono delle formule da applicare meccanicamente ma soltanto una serie di tecniche che a volte funzionano e a volte no. Per questo diventa prezioso avere dei metodi numerici per approssimare la soluzione.
+Sappiamo dall'analisi che il problema di calcolare il valore di un integrale è un problema difficile: a differenza delle derivate, non ci sono delle formule da applicare meccanicamente ma soltanto una serie di tecniche che a volte funzionano e a volte no. Per questo diventa prezioso avere dei metodi numerici per approssimare la soluzione.
 
 Le formule che vedremo sono tutte del tipo
 \[
@@ -3591,8 +3591,8 @@ I \approx \sum_{i=1}^n w_i f(x_i),
 \]
 dove $w_i$ sono detti \emph{pesi} e $x_i$ \emph{nodi} della formula, e sono scelti indipendentemente da $f$ (ma tipicamente dipendono dall'intervallo $[a,b]$).
 
-% Spesso a queste formule chiediamo che siano esatte su alcune funzioni semplici; per esempio, polinomi di grado basso. Notiamo che una formula è esatta sulla funzione $f(x) \equiv 1$ se $\sum_{i=1}^n w_n = b-a$, per esempio.
 
+% Spesso a queste formule chiediamo che siano esatte su alcune funzioni semplici; per esempio, polinomi di grado basso. Notiamo che una formula è esatta sulla funzione $f(x) \equiv 1$ se $\sum_{i=1}^n w_n = b-a$, per esempio.
 Partiamo analizzando due formule semplici.
 
 \paragraph{Formula del punto medio}
@@ -3600,12 +3600,29 @@ Partiamo analizzando due formule semplici.
 \[
 I_M = (b-a)f(c),
 \]
-dove $c=\frac{a+b}{2}$ è il punto medio dell'intervallo di integrazione. Corrisponde a rimpiazzare l'integrale con l'area del rettangolo di base $[a,b]$ e altezza $f(m)$, quindi una somma di Riemann con un solo rettangolo. Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora questa formula calcola esattamente l'integrale. Difatti, [disegno] la differenza tra i due integrali è pari all'area di due triangoli uguali, una presa con il segno $+$ e una presa con il segno $-$.
+dove $c=\frac{a+b}{2}$ è il punto medio dell'intervallo di integrazione. Corrisponde a rimpiazzare l'integrale con l'area del rettangolo di base $[a,b]$ e altezza $f(m)$, quindi una somma di Riemann con un solo rettangolo. 
+\begin{center}
+\begin{tikzpicture}
+    % Draw axes
+    \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
+    \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
+    
+    \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+    \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+      (1, 0)
+      -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+      -- (4, 0)
+      -- cycle;
+    
+    \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,3.0625) -- (1,3.0625) -- cycle;
+    
+    \node at (1,-0.3) {$a$};
+    \node at (4,-0.3) {$b$};
+    \node at (2.5,-0.3) {$c$};
+%    \node at (\midpoint,0) {$c$};
 
-Diremo che una formula di integrazione numerica ha \emph{grado di esattezza} (o qualche volta \emph{di precisione, di accuratezza}) $d$ se fornisce il valore esatto dell'integrale per tutte le funzioni $f$ che sono polinomi di grado $d$ o inferiore.
-
-La formula del punto medio ha grado di esattezza $1$. Difatti, se prendiamo un polinomio di grado $2$, per esempio $x^2$, la formula non fornisce più valori esatti.
-
+\end{tikzpicture}
+\end{center}
 Esempio: per calcolare l'integrale di $f(x)=x^2$ su $[a,b]=[0,1]$
 \[
     I = \int_0^1 x^2\, dx = \frac{1}{3},
@@ -3616,6 +3633,36 @@ la formula del punto medio fornisce
 \]
 Questo risultato è minore del valore esatto.
 
+Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora questa formula calcola esattamente l'integrale. Difatti, [disegno] la differenza tra i due integrali è pari all'area di due triangoli uguali, una presa con il segno $+$ e una presa con il segno $-$.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw axes
+        \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
+        \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
+        
+        \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{0.5*\x + 1});
+        \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+          (1, 0)
+          -- plot ({\x},{0.5*\x + 1})
+          -- (4, 0)
+          -- cycle;
+        
+        \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,2.25) -- (1,2.25) -- cycle;
+        
+        \node at (1,-0.3) {$a$};
+        \node at (4,-0.3) {$b$};
+        \node at (2.5,-0.3) {$c$};
+    %    \node at (\midpoint,0) {$c$};
+    
+    \end{tikzpicture}
+    \end{center}
+
+Quindi abbiamo mostrato che la formula del punto medio restituisce il valore esatto dell'integrale ($I_M = I$) su tutti i polinomi di grado $0$ o $1$, ma esiste almeno un polinomio di grado $2$ su cui commette un errore ($1/4 \neq 1/3$!).
+
+Diremo che una formula di integrazione numerica ha \emph{ordine} $p$ se $p$ è il grado del polinomio di grado più basso su cui la formula \emph{non} restituisce il valore esatto dell'integrale. Quindi, la formula del punto medio ha ordine $p = 2$.
+
+Il grado $p-1$ si chiama \emph{grado di esattezza} (o qualche volta \emph{di precisione, di accuratezza}) della formula.
+
 Possiamo dimostrare una formula per l'errore $I_M-I$ in termini della derivata seconda di $f$.
 \begin{theorem}
 Sia $f\in\mathcal{C}^2([a,b])$. Allora,
@@ -3624,6 +3671,7 @@ Sia $f\in\mathcal{C}^2([a,b])$. Allora,
 \]
 dove $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$.
 \end{theorem}
+La presenza della derivata seconda non è soprendente: difatti, già abbiamo osservato che se $C_2 = 0$ (cioè $f(x)$ è un polinomio di grado $0$ o $1$), allora l'errore è uguale a zero.
 \begin{proof}
 Scriviamo uno sviluppo di Taylor in $c$ di ordine 2,
 \[
@@ -3634,7 +3682,11 @@ Ora sostituiamo
     I_M - I &= f(c)(b-a) - \int_{a}^b \left(f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2\right)dx\\
     &= \underbrace{f(c)(b-a) - \int_{a}^b \biggl(f(c) + f'(c)(x-c)\biggr)dx}_{=0} - \int_a^b \frac12 f''(\xi)(x-c)^2dx.
 \end{align*}
-Il primo termine si annulla perché la formula del punto medio ha grado di esattezza $1$, quindi calcola esattamente l'integrale della funzione $f(c) + f'(c)(x-c)$, che è un polinomio di grado $1$ che assume il valore $f(c)$ per $x=c$. Possiamo allora stimare l'errore come
+Il primo termine si annulla: difatti, la funzione $g(x) = f(c) + f'(c)(x-c)$ è una funzione polinomiale di grado 1, e quindi possiamo calcolare il suo integrale esattamente con la formula del punto medio:
+\[
+\int_a^b g(x)\, dx = (b-a)g(c) = (b-a)f(c).
+\]
+Possiamo allora stimare l'errore come
 \begin{align*}
 \abs{I_M - I} &= \abs*{\int_a^b \frac12 f''(\xi)(x-c)^2 dx}
     \leq \int_a^b \frac12 \abs{f''(\xi)}(x-c)^2 
@@ -3654,7 +3706,7 @@ Questa formula ci dà anche informazioni sul segno: se la derivata seconda di $f
 
 \paragraph{Formula dei trapezi}
 
-È la formula $I \approx I_T = \frac{b-a}{2}(f(a)+f(b))$; cioè, rimpiazziamo l'integrale con l'area del trapezio con basi $f(a)$ e $f(b)$ (disegno sulla lavagna). Abbiamo due pesi $w_1=w_2=\frac{b-a}{2}$ e due nodi $a,b$. Questa formula calcola esattamente l'integrale $I_T$ della retta di interpolazione per $f$ con i due nodi $x_1=a$, $x_2=b$. In particolare, da questo segue che ha grado di esattezza almeno $1$. Di nuovo, è facile mostrare che il grado di esattezza è proprio 1.
+È la formula $I \approx I_T = \frac{b-a}{2}(f(a)+f(b))$; cioè, rimpiazziamo l'integrale con l'area del trapezio con basi $f(a)$ e $f(b)$ (disegno sulla lavagna). Abbiamo due pesi $w_1=w_2=\frac{b-a}{2}$ e due nodi $a,b$. 
 
 Esempio: $I = \int_0^1 x^2\, dx = 1/3$. La formula dei trapezi fornisce
 \[
@@ -3662,7 +3714,9 @@ Esempio: $I = \int_0^1 x^2\, dx = 1/3$. La formula dei trapezi fornisce
 \]
 Questa volta l'errore è per eccesso. Difatti $f(x)=x^2$ è una funzione convessa, e quindi sta al di sotto della retta che congiunge $(0,f(0))$ e $(1,f(1))$.
 
-Possiamo dimostrare un risultato analogo a quello visto poco fa per il metodo del punto medio.
+Notiamo che $I_T$ è uguale all'integrale della retta che congiunge $(a,f(a))$ e $(b,f(b))$. Se $f(x)$ è una funzione lineare, questa retta è propiro il grafico della funzione, e quindi la formula restituisce il valore esatto dell'integrale, $I_T = I$. Da quanto detto sopra perciò possiamo concludere che l'ordine di questa formula è $p=2$.
+
+Più in generale, questa retta è il polinomio di interpolazione $p(x)$ alla funzione sui nodi $x_0=a$ e $x_1=b$. Questa osservazione ci permette di dimostrare un risultato analogo a quello visto poco fa per il metodo del punto medio.
 \begin{theorem}
 Sia $f\in\mathcal{C}^2([a,b])$. Allora,
 \[
@@ -3676,7 +3730,7 @@ Scriviamo la formula del resto dell'interpolazione,
 \[
 f(x) - p(x) = \frac{f''(\xi)}{2}(x-a)(x-b),
 \]
-dove $p(x)$ è il polinomio di grado 1 ($d=1$) che interpola $f(x)$ nei due nodi $a$ e $b$; abbiamo detto poco fa che $I_T = \int_a^b p(x) dx$. Allora,
+dove $p(x)$ è il polinomio di grado $d=1$ (cioè la retta) che interpola $f(x)$ nei due nodi $a$ e $b$; abbiamo detto poco fa che $I_T = \int_a^b p(x) dx$. Allora,
 \[
 I_T - I = \int_a^b (p(x)-f(x)) dx = \int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx,
 \]
@@ -3693,7 +3747,7 @@ I_T - I = \frac{f''(\xi)}{12}(b-a)^3.
 \]
 Quindi questa formula restituisce un risultato più \emph{grande} di $I$ per funzioni convesse, e più \emph{piccolo} per funzioni concave; cosa che è evidente anche da un disegno (TODO).
 
-\paragraph{Formule di Newton--Cotes} La dimostrazione che abbiamo fatto suggerisce una strategia generale: per calcolare un integrale, possiamo scegliere un grado $d$, fissare a nostro piacere $d+1$ nodi in $[a,b]$, calcolare il polinomio di interpolazione $p(x)$ su questi nodi, e rimpiazzare $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Questo ci fornisce una formula con grado di esattezza almeno $d$, visto che se $f(x)$ è un polinomio di grado al più $d$ allora coincide con il suo polinomio di interpolazione. Le \emph{formule di Newton--Cotes} si ottengono prendendo $n = d+1$ nodi \emph{equispaziati} $x_0=a, x_1=a+h,\dots x_{d}=b$, con $h = \frac{b-a}{d}$.
+\paragraph{Formule di Newton--Cotes} La dimostrazione che abbiamo fatto suggerisce una strategia generale: per calcolare un integrale, possiamo scegliere un grado $d$, fissare a nostro piacere $d+1$ nodi in $[a,b]$, calcolare il polinomio di interpolazione $p(x)$ su questi nodi, e rimpiazzare $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Questo ci fornisce una formula con ordine almeno $d+1$, visto che se $f(x)$ è un polinomio di grado al più $d$ allora coincide con il suo polinomio di interpolazione, $f(x)=p(x)$. Le \emph{formule di Newton--Cotes} si ottengono prendendo $n = d+1$ nodi \emph{equispaziati} $x_0=a, x_1=a+h,\dots x_{d}=b$, con $h = \frac{b-a}{d}$.
 
 Utilizzando la forma di Lagrange del polinomio di interpolazione, abbiamo
 \[
@@ -3711,34 +3765,38 @@ L_2(x) &= \frac{(x+1)(x-0)}{(1+1)(1-0)}  = \frac{(x+1)x}{2}, & w_2 = \int_{-1}^1
 
 Quindi abbiamo $dx = \frac{b-a}{2}dy$ e 
 \[
-\int_{a}^b f(x)dx = \frac{b-a}{2}\int_{-1}^1 f\left(\frac{2}{b-a}(x-c)\right) dy.
+\int_{a}^b f(x)dx = \frac{b-a}{2}\int_{-1}^1 \underbrace{f\left(c+\frac{b-a}{2}y\right)}_{:=g(y)} dy.
 \]
-Questa formula di cambio di variabile si può utilizzare non solo per integrare la funzione $f$, ma anche per integrare i polinomi di Lagrange $L_k(x)$.
+Applicando la formula di Newton-Cotes di grado $d$ per approssimare il valore di $\int_{-1}^1 g(y) \, dy$, abbiamo
+\[
+\int_{a}^b f(x)dx =\int_{-1}^1 g(y)\, dy \approx \frac{b-a}{2}\left( w_0 g(y_0) + w_1 g(y_1) + \dots + w_d g(y_d) \right).
+\]
+I valori $g(0),g(1),\dots,g(d)$ sono i valori assunti dalla funzione $g$ in $d+1$ punti equispaziati tra $-1$ e $1$, ossia, una volta fatto il cambio di variabile, i valori della funzione $f$ in $d+1$ punti equispaziati tra $a$ e $b$. Quindi, detti $w_0,w_1,\dots,w_d$ i pesi relativi all'intervallo $[-1,1]$, i pesi corrispondenti a un generico intervallo $[a,b]$ si ottengono moltiplicandoli per $\frac{b-a}{2}$. È possibile verificare che questo procedimento produce gli stessi pesi che avremmo ottenuto ricalcolando i polinomi $L_k(x)$ e i loro integrali sull'intervallo $[a,b]$.
 
-Inoltre, visto che il cambio di variabile è lineare, $d+1$ punti equispaziati $x_0,\dots,x_d$ su $[a,b]$ diventano $d+1$ punti equispaziati $y_0,\dots,y_d$ su $[-1,1]$, e il polinomio di Lagrange $L_k(x)$ costruito sui punti $x_0,\dots,x_d$ diventa il polinomio di Lagrange $L_k(y)$ costruito sui punti $y_0,\dots,y_d$. Questo ci dice che per un intervallo generico i pesi di $I_2$ saranno
+In particolare, per $d=2$ si hanno i pesi
 \[
 w_0 = \frac16(b-a), \quad w_1 = \frac46 (b-a), \quad w_2 = \frac16 (b-a).
 \]
-Otteniamo quindi, per $d=2$, la formula
+e quindi la formula
 \[
 I \approx I_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right),
 \]
-che è detta \emph{formula di Cavalieri--Simpson}. Analogamente è possibile costruire formule di Newton--Cotes di grado più alto.
+che è nota anche come \emph{formula di Cavalieri--Simpson}. Analogamente è possibile costruire formule di Newton--Cotes di grado più alto.
 
-\paragraph{Grado di esattezza delle formule di Newton--Cotes}
+\paragraph{Ordine delle formule di Newton--Cotes}
 
-La formula di Cavalieri--Simpson che abbiamo costruito ha necessariamente grado di esattezza almeno 2: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha grado di esattezza 3, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $I_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
+La formula di Cavalieri--Simpson che abbiamo costruito ha necessariamente ordine almeno 3: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha ordine 4, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $I_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
 
 Più in generale, per le formule di Newton--Cotes valgono espressioni dell'errore simili a quella dimostrata per il metodo dei trapezi.
 \begin{theorem}
-La formula di Newton--Cotes di grado $d$ (con $d+1$ punti equispaziati) ha grado di esattezza $d$ se $d$ è dispari, $d+1$ se $d$ è pari.
-Inoltre, se chiamiamo $p-1$ il grado di esattezza (di modo che $p$ sia sempre pari) abbiamo la stima per l'errore
+La formula di Newton--Cotes di grado $d$ (con $d+1$ punti equispaziati) ha come ordine il più piccolo numero pari maggiore di $d$, cioè $p=d+1$ se $d$ è dispari, e $p=d+2$ se $d$ è pari.
+Inoltre abbiamo per ogni $d$ la stima per l'errore
 \[
 \abs{I_d - I} \leq \kappa_d C_{p} (b-a)^{p+1},
 \]
 dove $\kappa_d$ è un'opportuna costante che dipende dal grado.
 \end{theorem}
-Per il metodo dei trapezi, già sappiamo che $\kappa_1 = \frac{1}{12}$. Per il metodo di Cavalieri--Simpson, vale $\kappa_2 = \frac{1}{90}$. Non lo dimostriamo qui, così come non dimostriamo questo teorema.
+Per il metodo dei trapezi ($d=1$), già sappiamo che $\kappa_1 = \frac{1}{12}$. Per il metodo di Cavalieri--Simpson, vale $\kappa_2 = \frac{1}{90}$. Non lo dimostriamo qui, così come non dimostriamo questo teorema.
 
 \section{Formule di integrazione composite}
 
@@ -3799,13 +3857,11 @@ Se per una formula di integrazione vale una stima sull'errore del tipo $\abs{\ti
 \end{align*}
 \end{proof}
 
-\paragraph{Ordine di convergenza} Al crescere del numero di punti $N$, quindi, l'errore di una formula composita $e_N = \abs{I_N - I}$ tende a zero come una potenza dell'inverso del numero di punti $\frac{1}{N}$, o, equivalentemente, come una potenza di $h$. Possiamo quindi scrivere
+\paragraph{Ordine e convergenza} Al crescere del numero di punti $N$, quindi, l'errore di una formula composita $e_N = \abs{I_N - I}$ tende a zero come la potenza $p$-esima dell'inverso del numero di punti $\frac{1}{N}$, o, equivalentemente, come $h^p$. Possiamo quindi scrivere
 \[
 e_N = \mathcal{O}(\frac{1}{N^p}) = \mathcal{O}(h^p).
 \]
-Il numero $p$ è detto \emph{ordine di convergenza} della formula di integrazione. Quindi, per esempio, la formula dei trapezi composita e la formula del punto medio composita hanno ordine di convergenza $p = 2$, mentre la formula di Cavalieri--Simpson ha ordine $p=4$. 
-
-L'ordine di convergenza ci permette di prevedere come decresce l'errore al crescere del numero di punti $N$: se il numero di punti raddoppia, passando da $N$ a $2N$, cioè la distanza tra due punti successivi dimezza, passando da $h$ a $\frac{h}{2}$, allora l'errore si riduce di un fattore $2^p$ (approssimativamente, visto che la relazione è vera solo nel limite per $N\to\infty$).
+L'ordine ci permette di prevedere come decresce l'errore al crescere del numero di punti $N$: se il numero di punti raddoppia, passando da $N$ a $2N$, cioè la distanza tra due punti successivi dimezza, passando da $h$ a $\frac{h}{2}$, allora l'errore si riduce di un fattore $2^p$ (approssimativamente, visto che la relazione è vera solo nel limite per $N\to\infty$).
 
 \paragraph{Diverse nozioni di ordine di convergenza}
 Attenzione: è importante notare che questo è un concetto di ``ordine di convergenza'' diverso da quello visto per i metodi iterativi. Nel caso dei metodi iterativi, la convergenza si riferiva a un numero di iterazioni $n$: convergenza di ordine $p$ significa che
@@ -3826,9 +3882,10 @@ quindi $e_n \approx C r^n$. In particolare, passando dall'iterazione $n$ all'ite
 \begin{itemize}
     \item Una costante (per esempio $\frac{1}{24}$);
     \item La lunghezza dell'intervallo su cui stiamo lavorando (tipicamente $b-a$);
-    \item La costante $C_p$, cioè, il massimo della derivata di un certo \emph{ordine} $p$, per la funzione su cui stiamo lavorando;
+    \item La costante $C_p$, cioè, il massimo della derivata $p$-esima, dove $p$ è l'ordine della formula di integrazione;
     \item La lunghezza $h$ dei sottointervalli su cui lavoriamo, elevata alla $p$.
 \end{itemize}
+Questo, in particolare, vale anche per le formule non composite, se immaginiamo di avere $N=1$ sottointervalli e quindi $h=b-a$; è un modo comodo per ricordarsi le potenze che compaiono nelle formule.
 
 \paragraph{Stima dell'errore per le formule composite} Sia $N$ un intero pari. Applicando una formula di integrazione composita con ordine di convergenza $p$ prima con $N$ intervalli e poi con $N/2$ sottointervalli, ci aspettiamo quindi che
 \[
@@ -3842,17 +3899,17 @@ Per le formule dei trapezi e di Cavalieri--Simpson (ma non per tutti i metodi!) 
 
 
 \section{Quadratura Gaussiana}
-Ci poniamo ora (insieme a Gauss) il problema di quanto alto può essere il grado di esattezza di una formula di quadratura, se scegliamo bene pesi e nodi. Perché una formula $\tilde{I}$ con $n$ nodi sia esatta su tutti i polinomi di grado $ \leq d$, è necessario e sufficiente che sia esatta su $1, x, x^2, \dots, x^{d}$, visto che i polinomi di grado $\leq d$ sono combinazioni lineari di queste funzioni. Questo porta a $d+1$ equazioni (non lineari!) nelle $2n$ incognite $w_1,x_1,\dots, w_n,x_n$: per esempio, con $[a,b]=[-1,1]$ abbiamo
-\[
-\sum_{k=1}^n w_k 1 = 2, \quad \sum_{k=1}^n w_k x_k = 0, \quad \sum_{k=1}^n w_k x_k^2 = \frac23, \dots
-\]
-Visto che abbiamo $d+1$ equazioni in $2n$ incognite, possiamo aspettarci che il sistema abbia delle soluzioni quando $d+1=2n$.  Questo è vero: esiste una (e una sola) scelta di $x_1,\dots,x_n,w_1,\dots,w_n$ che risolve le equazioni, e fornisce una formula con grado di esattezza $2n-1$. Non vediamo la dimostrazione qui; non è semplice, anche perché queste equazioni non sono lineari!
+Ci poniamo ora (insieme a Gauss) il problema di quanto alto può essere l'ordine di una formula di quadratura, se scegliamo bene pesi e nodi. Perché una formula $\tilde{I}$ con $n$ nodi sia esatta su tutti i polinomi di grado $ < p$, è necessario e sufficiente che sia esatta su $1, x, x^2, \dots, x^{p-1}$, visto che i polinomi di grado $< p$ sono combinazioni lineari di queste funzioni. Questo porta a $p$ equazioni (non lineari!) nelle $2n$ incognite $w_1,x_1,\dots, w_n,x_n$: per esempio, con $[a,b]=[-1,1]$ abbiamo
+\begin{equation} \label{eqquadgaussiana}
+    \sum_{k=1}^n w_k 1 = 2, \quad \sum_{k=1}^n w_k x_k = 0, \quad \sum_{k=1}^n w_k x_k^2 = \frac23, \quad \sum_{k=1}^n w_k x_k^3 = 0, \quad \dots    
+\end{equation}
+Visto che abbiamo $p$ equazioni in $2n$ incognite, possiamo aspettarci che il sistema abbia delle soluzioni quando $p=2n$.  Questo è vero: esiste una (e una sola) scelta di $x_1,\dots,x_n,w_1,\dots,w_n$ che risolve le prime $2n$ equazioni della forma~\eqref{eqquadgaussiana}, e fornisce una formula con ordine $p=2n$. Non vediamo la dimostrazione qui; non è semplice, perché queste equazioni non sono lineari!
 
-Per ogni scelta di $n$ quindi possiamo quindi trovare nodi e pesi $x_1,\dots,x_n,w_1,\dots,w_n$, che dipendono solo dall'intervallo $[a,b]$. Nodi e pesi di queste formule, dette di \emph{quadratura Gaussiana}, si possono trovare su diverse fonti online, per esempio \url{https://en.wikipedia.org/wiki/Gaussian_quadrature}. Per esempio con $n=2$ abbiamo
+Per ogni scelta di $n$ quindi possiamo quindi trovare nodi e pesi $x_1,\dots,x_n,w_1,\dots,w_n$ che forniscono l'ordine massimo possibile $p=2n$. Nodi e pesi di queste formule, dette di \emph{quadratura Gaussiana}, si possono trovare su diverse fonti online, per esempio \url{https://en.wikipedia.org/wiki/Gaussian_quadrature}. Per esempio con $n=2$ abbiamo
 \[
 x_1 = \frac{1}{\sqrt{3}} = 0.57735\dots, \quad x_2 = -\frac{1}{\sqrt{3}} = -0.57735\dots, w_1=w_2=1
 \]
-che sono i nodi e i pesi dell'unica formula di quadratura su $[-1,1]$ con grado di esattezza $3$. Con un cambio di variabile simile a quello visto sopra è possibile adattarle ad altri intervalli. Non essendo formule chiuse, tipicamente non vengono usate nella versione composita, ma sono particolarmente utili nella loro versione semplice, quando basta un'approssimazione dell'integrale con bassa precisione ma calcolabile con poche valutazioni di funzione.
+che sono i nodi e i pesi dell'unica formula di quadratura su $[-1,1]$ con ordine $4$, che fornisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $3$. Con un cambio di variabile simile a quello visto sopra è possibile adattarle ad altri intervalli. Non essendo formule chiuse, tipicamente non vengono usate nella versione composita, ma sono particolarmente utili nella loro versione non composita, quando basta un'approssimazione dell'integrale con bassa precisione ma calcolabile con poche valutazioni di funzione.
 
 \chapter{Equazioni differenziali ordinarie}
 
