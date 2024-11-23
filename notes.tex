@@ -4215,7 +4215,56 @@ L'intero $s$ è detto \emph{numero di stadi} del metodo. A partire dai coefficie
 \end{align*}
 La funzione $\Phi(t_n, \mathbf{y}_n)$ definita in questo modo è quella che compare nella definizione di metodo a un passo~\eqref{metodoaunpasso}.
 
-I metodi che abbiamo visto finora sono casi particolari dei metodi di Runge--Kutta. Per il metodo di Eulero esplicito abbiamo $s=1$ e tavola di Butcher
+Un metodo di Runge--Kutta è \emph{esplicito} se nella tavola di Butcher la matrice
+\[
+    A = \begin{bmatrix}
+        a_{11} & \dots & a_{1s}\\
+        \vdots & \ddots & \ddots\\
+        a_{s1} & \dots & a_{ss}
+    \end{bmatrix}
+\]
+è strettamente triangolare superiore, cioè $a_{ij}=0$ se $i \leq j$ (inclusi gli elementi sulla diagonale). In questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo. Altrimenti abbiamo un metodo \emph{implicito}: è necessario risolvere un sistema di equazioni non-lineari per calcolare i $\mathbf{k}_i$, analogamente a quello che succede nel metodo di Eulero implicito.
+
+\paragraph{Esempio: un metodo esplicito}
+Consideriamo il metodo con tavola di Butcher
+\[
+\begin{array}{c|cc}
+0 & 0 & 0\\
+1 & 1 & 0\\
+\hline
+& \frac12 & \frac12
+\end{array}.
+\]
+Scrivendo esplicitamente le relazioni otteniamo
+\begin{align*}
+\mathbf{k}_1 &= \mathbf{f}(t_n + 0 \cdot h, \mathbf{y}_n + h(0\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_n,\mathbf{y}_n),\\
+\mathbf{k}_2 &= \mathbf{f}(t_n + 1 \cdot h, \mathbf{y}_n + h(1\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_{n+1},\mathbf{y}_n+\mathbf{k}_1),\\
+\mathbf{y}_{n+1} &= \mathbf{y}_n + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2 = \mathbf{y}_n + \frac12 \left(\mathbf{f}(t_n,\mathbf{y}_n) + \mathbf{f}(t_{n+1},\mathbf{y}_n+ \mathbf{f}(t_n,\mathbf{y}_n))\right).
+\end{align*}
+Questo metodo è noto come \emph{metodo di Heun}; si può mostrare che ha ordine $p=2$. È interessante notare che è una sorta di ``variante esplicita'' del metodo dei trapezi: al posto di $\mathbf{y}_{n+1}$ nel membro di destra usiamo la sua approssimazione $\mathbf{y}_n+ \mathbf{f}(t_n,\mathbf{y}_n)$ ottenuta con il metodo di Eulero esplicito.
+
+\paragraph{Esempio: un metodo implicito}
+Consideriamo il metodo con tavola di Butcher
+\[
+\begin{array}{c|cc}
+\frac14 & \frac14 & 0\\
+\frac34 & \frac12 & \frac14\\
+\hline
+& \frac12 & \frac12
+\end{array}.
+\]
+Scritte per esteso, questo metodo diventa
+\begin{align*}
+    \mathbf{k}_1 &= \mathbf{f}(t_n + \frac14 h, \mathbf{y}_n +  \frac14 h \mathbf{k}_1),\\
+    \mathbf{k}_2 &= \mathbf{f}(t_n + \frac34 h, \mathbf{y}_n + h(\frac12 \mathbf{k}_1 + \frac14 \mathbf{k}_2)),\\
+    \mathbf{y}_{n+1} &= \mathbf{y}_n + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2.
+\end{align*}
+Questa volta il metodo è implicito: l'equazione per $\mathbf{k}_1$ contiene $\mathbf{k}_1$ stesso al membro di destra, quindi possiamo risolverla solo implicitamente; analogamente per l'equazione per $\mathbf{k}_2$. Notiamo che questo caso è un caso un po' più semplice di quello generale: visto che la prima equazione dipende solo da $\mathbf{k}_1$, possiamo risolvere un'equazione per volta, anziché considerarlo come un sistema di due equazioni nelle due incognite $\mathbf{k}_1$ e $\mathbf{k}_2$, come succederebbe nel caso più generale in cui $a_{12}\neq 0$.
+
+Esercizio: che formula esplicita si ottiene applicando questo metodo al problema test $y' = \lambda y$?
+
+\paragraph{Altri metodi visti come metodi di Runge--Kutta}
+I metodi che abbiamo visto in precedenza sono tutti casi particolari dei metodi di Runge--Kutta. Per il metodo di Eulero esplicito abbiamo $s=1$ e tavola di Butcher
 \[
 \begin{array}{c|c}
 0 & 0\\
@@ -4242,17 +4291,7 @@ e per il metodo dei trapezi $s=2$ (difatti ci sono due diverse valutazioni di fu
 \]
 Per derivare le tavole degli ultimi due metodi abbiamo dovuto risostituire la relazione finale per scrivere il termine $\y_{n+1}$ che compare dentro $\mathbf{f}_{n+1}$ nella forma $\y_n + h(\dots)$.
 
-Un metodo di Runge--Kutta è \emph{esplicito} se nella tavola di Butcher la matrice
-\[
-    A = \begin{bmatrix}
-        a_{11} & \dots & a_{1s}\\
-        \vdots & \ddots & \ddots\\
-        a_{s1} & \dots & a_{ss}
-    \end{bmatrix}
-\]
-è strettamente triangolare superiore, cioè $a_{ij}=0$ se $i \leq j$ (inclusi gli elementi sulla diagonale). In questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo. Altrimenti abbiamo un metodo \emph{implicito}: è necessario risolvere un sistema di equazioni non-lineari per calcolare i $\mathbf{k}_i$, analogamente a quello che succede nel metodo di Eulero implicito.
-
-Nella pratica, questi metodi sono usati con scelte particolari dei coefficienti fatte in modo da ottenere un alto ordine di consistenza (e quindi di convergenza). Per esempio Matlab utilizza in una delle sue funzioni per risolvere equazioni differenziali (\lstinline{ode45}) un metodo con tavola di Butcher
+Nella pratica, i metodi di Runge--Kutta sono usati con scelte particolari dei coefficienti fatte in modo da ottenere un alto ordine di consistenza (e quindi di convergenza). Per esempio Matlab utilizza in una delle sue funzioni per risolvere equazioni differenziali (\lstinline{ode45}) un metodo con tavola di Butcher
 \[
 \begin{array}{c|ccccccc}
     0\\
@@ -4327,12 +4366,12 @@ Per il metodo di Eulero esplicito, $R(q)= 1+q$; quindi la regione di stabilità 
     \begin{tikzpicture}
         \draw[thick,->] (-2,0) -- (2,0);
         \draw[thick,->] (0,-2) -- (0,2);
-        \draw[red, fill=red, opacity=0.5] (-1,0) circle (1);
+        \draw[red, fill=red, opacity=0.5] (-0.5,0) circle (0.5);
     \end{tikzpicture}
     \begin{tikzpicture}[even odd rule]
         \draw[thick,->] (-2,0) -- (2,0);
         \draw[thick,->] (0,-2) -- (0,2);
-        \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (2,2) (1,0) circle (1);
+        \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (2,2) (0.5,0) circle (0.5);
     \end{tikzpicture}
     \begin{tikzpicture}
         \draw[thick,->] (-2,0) -- (2,0);
