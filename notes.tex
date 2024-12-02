@@ -4043,7 +4043,33 @@ Questa può essere vista come una formula che ci permette di calcolare $\y_{n+1}
 \end{equation}
 dove abbiamo posto $\f_n = \f(t_n, \y_n)$ per brevità.
 
+Il metodo di Eulero esplicito, quindi, consiste nel calcolare una dopo l'altra le seguenti quantità:
+\begin{align*}
+    \y_0 & \text{dato},\\
+    \y_1 &= \y_0 + h \f(t_0,\y_0),\\
+    \y_2 &= \y_1 + h \f(t_1,\y_1),\\
+    \vdots& \quad \vdots\\
+    \y_N &= \y_{N-1} + h \f(t_{N-1},\y_{N-1}).
+\end{align*}
 Il costo computazionale è di $N$ valutazioni di $\f$, più $\mathcal{O}(mN)$ operazioni aritmetiche. Come per altri metodi, l'operazione più costosa qui è la valutazione della funzione, quindi sostanzialmente il costo è di $N$ valutazioni della funzione, una per passo.
+
+Vediamo con delle formule più esplicite il comportamento del metodo in un caso semplice, quello del problema test~\eqref{testproblem}. Si ha
+\[
+    y_{n+1} = y_n + hf(t_n,y_n) = y_n + h\lambda y_n = (1+h\lambda)y_n,
+\]
+quindi ad ogni passo il valore precedente viene moltiplicato per $(1+h\lambda)$. Otteniamo
+\[
+y_0 = 1, \quad y_1 = (1+h\lambda), \quad y_2 = (1+h\lambda)^2, \quad \dots \quad y_N = (1+h\lambda)^N.
+\]
+Abbiamo quindi, ricordando anche che in questo caso $h = \frac{b-a}{N} = 1/N$,
+\[
+    y_N = \left(1+\frac{\lambda}{N}\right)^N.
+\]
+Questa quantità è l'approssimazione prodotta dal metodo per $y(t_N) = y(1) = e^{\lambda}$. Per un limite notevole che avete visto nel corso di analisi,
+\[
+    \lim_{N\to \infty} y_N = \lim_{N\to \infty} \left(1+\frac{\lambda}{N}\right)^N = e^{\lambda}.
+\]
+Questa osservazione mostra che, almeno per questo problema semplice, il valore di $y_N$ converge al valore esatto di $y(t_N)$. Vedremo più avanti che il metodo converge anche per molti altri problemi.
 
 \paragraph{Metodo di Eulero implicito}
 
@@ -4079,7 +4105,7 @@ In ogni caso, si chiama \emph{metodo di Eulero implicito} il metodo in cui si ca
 \begin{equation} \label{mettrapezi}
     \y_{n+1} = \y_n + h\left(\frac12 \f_n + \frac12 \f_{n+1}\right).    
 \end{equation}
-È una sorta di ``media'' tra il metodo di Eulero esplicito e di quello implicito. Ha questo nome perché si può ottenere scrivendo
+Al membro di destra abbiamo una sorta di ``media'' tra il metodo di Eulero esplicito e di quello implicito. Il metodo ha questo nome perché si può ottenere scrivendo
 \[
 \y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \y'(t) dt = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt
 \]
@@ -4087,7 +4113,6 @@ e approssimando l'integrale con la formula dei trapezi otteniamo la~\eqref{mettr
 \[
     \y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt = \y(t_n) + \frac{h}{2}(\f_n + \f_{n+1}) + \mathcal{O}(h^3).
 \]
-
 \paragraph{Convergenza del metodo di Eulero esplicito (*)}
 Vedremo tra poco l'enunciato di un risultato generale che dice che le sequenze di approssimazioni prodotte da questi metodi convergono alla soluzione esatta dell'equazione~\eqref{cauchy}. Vogliamo però dare una dimostrazione esplicita della convergenza almeno per il caso più semplice, quello del metodo di Eulero esplicito per un problema scalare con $m=1$.
 
@@ -4144,11 +4169,11 @@ Chiaramente tra tutti questi termini il più grande è l'ultimo; quindi ci basta
 \[
     (A^{N-1}+ \dots + A^2 + A + 1) = \frac{A^N-1}{A-1} = \frac{(1+hL)^N-1}{1+hL-1} = \frac{\left(1+\frac{(b-a)L}{N}\right)^N-1}{hL}.
 \]
-Ricordiamo ora che esiste il limite notevole
+Riconosciamo di nuovo la possibilità di applicare il limite notevole
 \[
     \lim_{N\to \infty} \left(1+\frac{x}{N}\right)^N = e^{x}.
 \]
-Nei corsi di analisi probabilmente avete anche dimostrato che questa successione tende a $e^{x}$ dal basso, quindi si ha
+Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tende a $e^{x}$ \emph{dal basso}, quindi si ha per ogni $N$
 \[
     \left(1+\frac{(b-a)L}{N}\right)^N \leq e^{(b-a)L}.
 \]
@@ -4175,7 +4200,7 @@ T_N = \max_{n=0,1,\dots,N-1} \norm{\boldsymbol{\tau}_n}, \quad \boldsymbol{\tau}
 \]
 cioè la differenza tra il valore esatto della soluzione $\y(t_{n+1})$ e il valore $\y(t_n) + h\Phi(t_n, \y(t_n))$ calcolato tramite un passo dell'algoritmo a partire dal valore esatto $\y(t_n)$. Anche questa è una quantità che compariva nella nostra dimostrazione.
 
-Un metodo si dice \emph{consistente di ordine $p$} se $T_N = \mathcal{O}(h^{p+1})$ nel limite quando il numero di passi tende a $N\to \infty$ (e quindi $h \to 0$). La logica dietro a questa definizione è la stessa dietro a quella delle formule per l'errore nelle formule di integrazione: visto che stiamo considerando un intervallo di lunghezza $h$, diciamo che l'ordine del metodo è $p$ se la distanza tra $\y(t_{n+1})$ e $\y(t_n) - h\Phi(t_n, \y(t_n))$ si scrive nella forma $h \cdot \mathcal{O}(h^p)$.
+Un metodo si dice \emph{consistente di ordine $p$} se $T_N = \mathcal{O}(h^{p+1})$ nel limite quando il numero di passi tende a $N\to \infty$ (e quindi $h \to 0$). La logica dietro a questa definizione è la stessa dietro a quella delle formule per l'errore nelle formule di integrazione: visto che stiamo considerando un intervallo di lunghezza $h$, ci aspettiamo di avere un fattore pari alla lunghezza $h$ dell'intervallo nella formula dell'errore, e quindi per definire l'ordine consideriamo solo l'altro fattore: diciamo che l'ordine di un metodo è $p$ se la distanza tra $\y(t_{n+1})$ e $\y(t_n) - h\Phi(t_n, \y(t_n))$ si scrive nella forma $h \cdot \mathcal{O}(h^p)$.
 
 Queste definizioni si applicano quando abbiamo un'equazione differenziale con soluzione $\y(t)$ sufficientemente regolare; per esempio, ci serve avere una funzione di classe almeno $\mathcal{C}^2$ per scrivere la~\eqref{euleroesp_taylor}.
 
@@ -4335,7 +4360,7 @@ Le cose però si complicano per problemi in più variabili, in cui possono compa
     u(t)\\ v(t)\\ w(t)
 \end{bmatrix}}_{\y(t)},
 \]
-con $\lambda_1 < \lambda_2 < \lambda_3 < 0$: la norma $\norm{\y(t)}$ tende a zero come l'esponente più vicino a zero $e^{\lambda_3 t}$, ma il passo massimo che possiamo scegliere dipende dall'esponente più lontano da zero $\lambda_1$. Quindi per approssimare la soluzione con il metodo di Eulero esplicito dobbiamo scegliere per un passo molto piccolo rispetto alla scala del problema.
+con $\lambda_1 < \lambda_2 < \lambda_3 < 0$: la norma $\norm{\y(t)}$ tende a zero come l'esponente più vicino a zero $e^{\lambda_3 t}$, ma il passo massimo che possiamo scegliere dipende dall'esponente più lontano da zero $\lambda_1$. Quindi per approssimare la soluzione senza oscillazioni catastrofiche siamo costretti a scegliere per un passo molto piccolo rispetto alla scala del problema.
 
 Le cose diventano ancora più complicate per problemi non lineari; spesso non è possibile fare un'analisi esatta e possiamo solo confrontare il comportamento con quello di problemi lineari dal comportamento simile. In generale, esistono problemi per cui il metodo di Eulero (e con lui molti altri metodi) presenta oscillazioni eccessive a meno che la scelta del passo sia estremamente piccola; questi si chiamano \emph{problemi stiff}, o in italiano \emph{rigidi}. Una definizione precisa è complicata; in generale questo fenomeno è associato a:
 \begin{itemize}
@@ -4486,7 +4511,7 @@ In particolare, vale il seguente risultato.
     \item Se (e solo se) tutti gli zeri del polinomio $p_1(z)$ hanno valore assoluto minore o uguale a $1$, e in più tutte le radici di modulo $1$ sono semplici (molteplicità $=1$), allora per ogni scelta dei valori iniziali $y_0, y_1,\dots, y_{k-1}$ la soluzione della~\eqref{ricorrenza} è limitata, cioè $\sup_{n\in\mathbb{N}} \abs{y_n}$ è finito.
 \end{itemize}
 \end{theorem}
-La seconda di queste condizioni si chiama \emph{condizione delle radici} (root condition).
+La seconda di queste condizioni si chiama \emph{condizione delle radici} (in inglese \emph{root condition}).
 
 \paragraph{Zero-stabilità}
 Quando gli $\alpha_i$ sono i coefficienti di un metodo a più passi~\eqref{linearmultistep}, il polinomio caratteristico $p_1(z)$ definito sopra si chiama \emph{primo polinomio caratteristico} del metodo.
@@ -4504,9 +4529,7 @@ Possiamo ora enunciare un teorema di convergenza per i metodi a più passi.
 \begin{theorem}
 Consideriamo un metodo lineare a più passi~\eqref{linearmultistep}, con una scelta compatibile dei dati iniziali. Se il metodo è zero-stabile e consistente, allora è convergente. Inoltre, su un problema con soluzione $\y \in \mathcal{C}^{p+1}([a,b])$, se un metodo è consistente di ordine $p$ allora è anche convergente di ordine $p$.
 \end{theorem}
-La dimostrazione è complicata, quindi ci accontentiamo dell'enunciato.
-
-Le famiglie di metodi che vengono usate in pratica sono tutte zero-stabili.
+La dimostrazione di questo risultato è complicata, quindi ci accontentiamo dell'enunciato. Le famiglie di metodi che vengono usate in pratica sono tutte zero-stabili.
 
 \paragraph{A-stabilità}
 
