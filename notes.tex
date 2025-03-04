@@ -1313,7 +1313,7 @@ Dato un numero di macchina normalizzato positivo $x = \beta^p \sum_{i=1}^t c_i \
 
 \paragraph{Approssimazione con numeri di macchina}
 
-\begin{theorem} Dato un numero reale $x \in [-\Omega, -\omega] \cup [\omega, \Omega]$, esiste un numero di macchina $\tilde{x}$ tale che
+\begin{theorem} \label{th:precmacchina} Dato un numero reale $x \in [-\Omega, -\omega] \cup [\omega, \Omega]$, esiste un numero di macchina $\tilde{x}$ tale che
 \begin{equation} \label{roundingerror}
     \frac{\abs{\tilde{x}-x}}{\abs{x}} < \beta^{1-t}.    
 \end{equation}
@@ -1349,17 +1349,22 @@ Su un computer, una variabile può assumere anche alcuni valori speciali, oltre 
 \end{itemize}
 
 \paragraph{Numeri a doppia precisione}
-Esiste uno standard (IEEE 754) per l'aritmetica di macchina che specifica quali parametri scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}. Corrisponde a $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene rappresentato in 64 bit (=valori 0/1). Con questi valori ogni numero compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ viene rappresentato con errore relativo $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
+Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene rappresentato in 64 bit (=valori 0/1). Con questi valori ogni numero compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ viene rappresentato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
-C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha un errore relativo di $\approx 10^{-8}$. È più impreciso, ma permette di memorizzare più numeri nello stesso spazio (32 bit l'uno).
+C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha precisione di macchina $\mathsf{u}\approx 10^{-8}$. Quindi gli errori relativi sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno).
 
-Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì
+Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì il numero in base 2
+\[
+\tilde{x} = 0.010011001100110011001100110011001100110011001100110011
+\]
+cioè, in base 10,
 \[
 \tilde{x} = 0.2\underbrace{999999999999999}_{\text{15 volte 9}}88897769753748434595763683319091796875,
 \]
-che ha un errore relativo minore di $2.2 \cdot 10^{-16}$ in valore assoluto, come promesso dal teorema.
+che ha un errore relativo $\abs{\tilde{x}- 0.3} / 0.3$ minore di $\mathsf{u} = 
+2.2 \cdot 10^{-16}$, come promesso dal Teorema~\ref{th:precmacchina}.
 
-Per fare qualche esperimento: \url{https://www.exploringbinary.com/floating-point-converter/}.
+Un buon sito che potete usare per fare qualche esperimento è \url{https://www.exploringbinary.com/floating-point-converter/}.
 
 \paragraph{Operazioni di macchina}
 
@@ -1593,23 +1598,23 @@ Rispetto al caso dei vettori, abbiamo aggiunto una proprietà che lega la norma 
 
 \paragraph{Norme matriciali indotte}
 
-È possibile costruire una norma matriciale a partire da ogni norma vettoriale in questo modo. Fissata una norma vettoriale $\norm{\cdot}$ (per esempio le norme $1,2,\infty$) definiamo
+È possibile costruire una norma matriciale a partire da ogni norma vettoriale in questo modo. Fissata una norma vettoriale $\norm{\cdot}_p$ (per esempio quelle con $p = 1,2,\infty$ viste sopra) definiamo
 \begin{equation} \label{normamatriciale}
-    \norm{A}_p = \max_{\substack{\mathbf{u}\in\mathbb{R}^n \\ \norm{\mathbf{u}}_p=1}} \norm{Au}_p.
+    \norm{A}_p = \max_{\substack{\mathbf{u}\in\mathbb{R}^n \\ \norm{\mathbf{u}}_p=1}} \norm{A\mathbf{u}}_p.
 \end{equation}
 In generale la matrice $A$ manderà gli infiniti vettori con norma uguale a $1$ in vettori di lunghezza diversa; prendiamo il più lungo, e definiamolo come la norma. Si può dimostrare (non lo faremo) che questa definizione soddisfa tutte le proprietà di una norma matriciale.
 
 La definizione fatta in questo modo serve per assicurare un'ulteriore proprietà.
 \begin{theorem}[compatibilità della norma matriciale indotta] \label{thm:compatibilita}
-La norma matriciale $\norm{A}_p$ definita qui sopra soddisfa $\norm{Av}_p \leq \norm{A}_p\norm{v}_p$ per ogni matrice $A\in\mathbb{C}^{n\times n}$ e vettore $v\in\mathbb{C}^n$.
+La norma matriciale $\norm{A}_p$ definita qui sopra soddisfa $\norm{A\mathbf{v}}_p \leq \norm{A}_p\norm{\mathbf{v}}_p$ per ogni matrice $A\in\mathbb{C}^{n\times n}$ e vettore $\mathbf{v}\in\mathbb{C}^n$.
 \end{theorem}
 Notare che mi serve usare \emph{la stessa} norma: per esempio se misuro i vettori in una norma $p$ con $p\in\{1,2,\infty\}$, dovrò usare la norma matriciale costruita usando la norma $p$ nella~\eqref{normamatriciale}.
 \begin{proof}
-Prima un caso particolare: se $v=0$, allora anche $Av=0$ e sia il membro di sinistra che quello di destra si annullano. Possiamo quindi proseguire considerando $v\neq 0$, e quindi $\norm{v}_p \neq 0$.
+Prima un caso particolare: se $\mathbf{v}=0$, allora anche $A\mathbf{v}=0$ e sia il membro di sinistra che quello di destra si annullano. Possiamo quindi proseguire considerando il caso $\mathbf{v}\neq 0$, e quindi $\norm{\mathbf{v}}_p \neq 0$.
 
-Mi basta considerare il vettore $u = v \frac{1}{\norm{v}_p}$. Questo vettore ha norma uguale a 1, per le proprietà delle norme vettoriali (considerandolo come il prodotto dello scalare $\frac{1}{\norm{v}_p}$ e del vettore $v$); quindi
+Mi basta considerare il vettore $\mathbf{u} = \mathbf{v} \frac{1}{\norm{\mathbf{v}}_p}$. Questo vettore ha norma uguale a 1, per le proprietà delle norme vettoriali (considerandolo come il prodotto dello scalare $\frac{1}{\norm{\mathbf{v}}_p}$ e del vettore $\mathbf{v}$); quindi
 \[
-\frac{1}{\norm{v}}_p \norm{Av}_p  = \norm{Au}_p \leq \norm{A}_p,
+\frac{1}{\norm{\mathbf{v}}}_p \norm{A\mathbf{v}}_p  = \norm{A\mathbf{u}}_p \leq \norm{A}_p,
 \]
 ed eliminando il denominatore otteniamo la tesi.
 \end{proof}
@@ -1620,15 +1625,15 @@ Non tutte le norme matriciali si ottengono da questa costruzione. Un altro esemp
 \[
 \norm{A}_F = \sqrt{\sum_{i,j=1}^n \abs{A_{ij}}^2}.
 \]
-Questa funzione soddisfa tutte le proprietà di una norma matriciale, ma non è una norma matriciale \emph{indotta}. Un modo veloce di vederlo è considerando la norma della matrice identità: $\norm{I}_F = \sqrt{n}$, ma per una norma matriciale indotta segue dalla definizione che $\norm{I} = 1$.
+Questa funzione soddisfa tutte le proprietà di una norma matriciale, ma non è una norma matriciale \emph{indotta}. Un modo veloce di vederlo è considerando la norma della matrice identità: $\norm{I}_F = \sqrt{n}$, ma per una norma matriciale indotta segue dalla definizione che $\norm{I}_p = 1$.
 
 \paragraph{Norme, autovalori e raggio spettrale}
 
-Data una matrice quadrata $A$, ricordiamo che quando $Av = v\lambda$ per un qualche vettore $v\in\mathbb{C}^n$ (diverso dal vettore nullo!) e scalare $\lambda \in \mathbb{C}$ si dice che $\lambda$ è un \emph{autovalore} e $v$ è un \emph{autovettore} di $A$. Avete visto ad algebra lineare diverse proprietà degli autovalori. Prendendo norme, abbiamo che
+Data una matrice quadrata $A$, ricordiamo che quando $A\mathbf{v} = \mathbf{v}\lambda$ per un qualche vettore $\mathbf{v}\in\mathbb{C}^n$ (diverso dal vettore nullo!) e scalare $\lambda \in \mathbb{C}$ si dice che $\lambda$ è un \emph{autovalore} e $\mathbf{v}$ è un \emph{autovettore} di $A$. Avete visto ad algebra lineare diverse proprietà degli autovalori. Prendendo norme, abbiamo che
 \[
-\norm{v}_p \abs{\lambda} = \norm{v\lambda}_p = \norm{Av}_p \leq \norm{A}_p \norm{v}_p.
+\norm{\mathbf{v}}_p \abs{\lambda} = \norm{\mathbf{v}\lambda}_p = \norm{A\mathbf{v}}_p \leq \norm{A}_p \norm{\mathbf{v}}_p.
 \]
-Possiamo semplificare $\norm{v}_p \neq 0$, quindi $\abs{\lambda} \leq \norm{A}$ per ogni autovalore.
+Possiamo semplificare $\norm{\mathbf{v}}_p \neq 0$, quindi $\abs{\lambda} \leq \norm{A}$ per ogni autovalore.
 
 Data una matrice $A \in \mathbb{C}^{n\times n}$ (quindi gli autovalori esistono sempre), si chiama \emph{spettro} l'insieme dei suoi autovalori, e \emph{raggio spettrale} (e si indica $\rho(A)$) il valore assoluto più grande degli autovalori, $\rho(A) = \max_{\lambda \text{ autoval.}} \abs{\lambda}$. Notate che il raggio spettrale non è per forza un autovalore: per esempio potremmo avere $A$ con autovalori $\{-2, i, -i\}$, e quindi $\rho(A)=2$ non è un autovalore.
 
@@ -2011,7 +2016,7 @@ Vogliamo dimostrare che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di 
 Per dimostrare questa proprietà, ci serve introdurre una famiglia di matrici che permette di vedere l'eliminazione di Gauss come una sequenza di moltiplicazioni.
 
 \paragraph{Matrici elementari di Gauss} Possiamo notare che effettuare un passo di eliminazione di Gauss si può vedere come una moltiplicazione a sinistra per una matrice: $U_{k+1} = E_k U_k$. La matrice $E_k$ è
-\[
+\begin{equation} \label{Ekgauss}
 E_k = \begin{bmatrix}
     1 \\
     & 1\\
@@ -2022,8 +2027,10 @@ E_k = \begin{bmatrix}
     & & & \vdots & & & \ddots \\
     & & & -L_{n,k} & & & & 1
 \end{bmatrix}
-\]
-(ricordiamo la convenzione: gli elementi che non scriviamo sono zero). La possiamo anche scrivere come
+\end{equation}
+(ricordiamo la convenzione: gli elementi che non scriviamo sono zero). Una matrice della forma~\eqref{Ekgauss} è detta \emph{matrice elementare di Gauss}.
+
+La possiamo anche scrivere come
 \[
 E_k = I - \boldsymbol{\ell}_k \mathbf{e}_k^T,
 \]
@@ -2196,13 +2203,15 @@ if not(m == n)
 end
 
 L = eye(n); % qui scriveremo i moltiplicatori
-U = A;      % qui scriveremo U1, U2, ... U(n-1)
+U = A;      % qui scriveremo U1, U2, ... Un
 for k = 1:n-1
+    % ad ogni passo di questo ciclo vale L*U = A
+
     if U(k,k) == 0
         error('Pivot nullo');
     end
     L(k+1:n, k) = U(k+1:n, k) / U(k, k);
-    % sappiamo che questi elementi diventano 0varranno 
+    % sappiamo che questi elementi diventano zero
     U(k+1:n, k) = 0;
     % aggiorniamo le righe una ad una
     for i = k+1:n
@@ -2224,8 +2233,8 @@ Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di
 \paragraph{Soluzione di sistemi lineari tramite la fattorizzazione LU} 
 Una volta calcolata $A = LU$, abbiamo decomposto $A$ in un prodotto di matrici più semplici, e possiamo usare questa decomposizione per risolvere sistemi lineari. 
 
-Notiamo inoltre che la matrice $L$ è sempre invertibile (perché ha 1 sulla diagonale), e in più abbiamo $\det(A) = \det(LU) = \det(L) \det(U)$, quindi $U$ è invertibile se e solo se $A$ lo è. Quindi possiamo risolvere sistemi lineari con matrici $L$ e $U$. Abbiamo $\b = A\x = LU\x$.
 
+Notiamo inoltre che la matrice $L$ è sempre invertibile (perché ha 1 sulla diagonale), e in più abbiamo $\det(A) = \det(LU) = \det(L) \det(U)$, quindi $U$ è invertibile se e solo se $A$ lo è. Quindi possiamo risolvere sistemi lineari con matrici $L$ e $U$. Abbiamo $\b = A\x = LU\x$.
 L'algoritmo è composto di tre passi:
 \begin{enumerate}
     \item Calcolo la fattorizzazione $A=LU$.
@@ -3778,9 +3787,62 @@ Come prima, un ragionamento più accurato porta a
 \]
 Quindi questa formula restituisce un risultato più \emph{grande} di $I$ per funzioni convesse, e più \emph{piccolo} per funzioni concave; cosa che è evidente anche da un disegno (TODO).
 
-\paragraph{Formule di Newton--Cotes} La dimostrazione che abbiamo fatto suggerisce una strategia generale: per calcolare un integrale, possiamo scegliere un grado $d$, fissare a nostro piacere $d+1$ nodi in $[a,b]$, calcolare il polinomio di interpolazione $p(x)$ su questi nodi, e rimpiazzare $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Questo ci fornisce una formula con ordine almeno $d+1$, visto che se $f(x)$ è un polinomio di grado al più $d$ allora coincide con il suo polinomio di interpolazione, $f(x)=p(x)$. Le \emph{formule di Newton--Cotes} si ottengono prendendo $n = d+1$ nodi \emph{equispaziati} $x_0=a, x_1=a+h,\dots x_{d}=b$, con $h = \frac{b-a}{d}$.
+La dimostrazione che abbiamo fatto suggerisce una generalizzazione: per calcolare un integrale, possiamo scegliere un grado $d$, fissare $d+1$ nodi in $[a,b]$, calcolare il polinomio di interpolazione $p(x)$ su questi nodi, e rimpiazzare $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Vediamo come farlo nei prossimi paragrafi.
 
-Utilizzando la forma di Lagrange del polinomio di interpolazione, abbiamo
+\paragraph{Suddivisione di un intervallo in sottointervalli uguali} Un'operazione che ci servirà fare diverse volte nel seguito sarà suddividere un intervallo $[a,b]$ in tanti sottointervalli uguali. Vediamo qui delle formule che permettono di dare un'espressione per i punti risultanti. Per aiutarci, mostriamo un esempio con $d=5$ sottointervalli.
+\begin{center}
+    \begin{tikzpicture}
+    % Define points a and b
+    \coordinate (a) at (0,0);
+    \coordinate (b) at (10,0);
+
+    % Draw the main segment a..b
+    \draw[thick] (a) -- (b);
+    
+    % Number of subdivisions
+
+    \def\d{5}
+
+    % Calculate the length of each subdivision
+    \pgfmathsetmacro{\subdivLength}{10/\d}
+
+    % Draw the subdivisions
+    \foreach \i in {1,...,\numexpr\d-1\relax}
+    {
+        \coordinate (subdiv\i) at (\i*\subdivLength,0);
+        \fill (subdiv\i) circle (2pt);
+        \node[below] at (subdiv\i) {$x_{\i}$};    
+    }
+    \fill (a) circle (2pt);
+    \fill (b) circle (2pt);
+    % Label the points a and b
+    \node[below] at (a) {$a=x_0$};
+    \node[below] at (b) {$b=x_5$};
+\end{tikzpicture}
+\end{center}
+
+La prima osservazione è che quando suddividiamo un intervallo $[a,b]$ in $d$ segmenti uguali (con $d$ intero positivo), ogni sottointervallo è lungo $h = \frac{b-a}{d}$, cioè $\frac{1}{d}$ della lunghezza dell'intervallo di partenza. La seconda osservazione è che $d$ sottointervalli determinano $d+1$ punti (attenzione, non $d$) che sono i loro estremi; possiamo chiamarli $x_0, x_1,\dots, x_d$. Questi punti sono \emph{equispaziati}, cioè alla stessa distanza l'uno dall'altro. Più precisamente, ogni punto sta a una distanza $h$ da quello precedente, quindi abbiamo
+\[
+    x_0=a,\, x_1=a+h,\, x_2 = a+2h,\, \dots, \,x_d = a+dh = a + d\frac{b-a}{d} = b.
+\]
+o genericamente
+\[
+    x_k = a + kh, \quad k=0,1,2,\dots,d.
+\]
+Queste formule permettono di dare un'espressione esplicita per i punti della suddivisione.
+
+\paragraph{Formule di Newton--Cotes} Le \emph{formule di Newton--Cotes} si ottengono in questo modo:
+\begin{itemize}
+    \item Fissiamo un grado $d$;
+    \item Suddividiamo l'intervallo $[a,b]$ in $d$ sottointervalli uguali, ottenendo punti $x_0,x_1,\dots,x_d$;
+    \item Calcoliamo il polinomio di interpolazione $p(x)$ sui nodi $x_0,x_1,\dots,x_d$ risultanti da questa suddivisione;
+    \item Approssimiamo $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Questo è l'integrale di un polinomio, che è semplice da calcolare.
+\end{itemize}
+Possiamo pensare al metodo del punto medio come al caso $d=1$ di questa formula: dividiamo $[a,b]$ in \emph{un} sottointervallo, otteniamo due punti $x_0=a$ e $x_1=b$, e calcoliamo il polinomio di interpolazione di grado $1$ su questi due punti, cioè la retta che passa per i punti $(a,f(a))$ e $(b,f(b))$.
+
+Questo procedimento produce una formula di quadratura che ha ordine almeno $d+1$: difatti, se $f(x)$ è un polinomio di grado al più $d$, allora coincide con il suo polinomio di interpolazione, $f(x)=p(x)$.
+
+Utilizzando la forma di Lagrange del polinomio di interpolazione, possiamo scrivere la formula di quadratura risultante come
 \[
     \tilde{I}_d = \int_a^b p(x) dx = \int_a^b \sum_{k=0}^d L_k(x)f(x_k) dx = \sum_{k=0}^d f(x_k) \underbrace{\int_a^b L_k(x) dx}_{=w_k}.
 \]
@@ -3788,31 +3850,35 @@ Utilizzando la forma di Lagrange del polinomio di interpolazione, abbiamo
 Calcoliamo per esempio i pesi che risultano per $[a,b]=[-1,1]$ e $d=2$ intervalli: i tre punti equispaziati sono $x_0=-1,x_1=0,x_2 = 1$, e 
 \begin{align*}
 L_0(x) &= \frac{(x-0)(x-1)}{(-1-0)(-1-1)} = \frac{x(x-1)}{2}, & w_0 = \int_{-1}^1 L_0(x) = \frac13, \\
-L_1(x) &= \frac{(x+1)(x-1)}{(0+1)(0-1)} = 1-x^2, & w_1 = \int_{-1}^1 L_0(x) = \frac43, \\
-L_2(x) &= \frac{(x+1)(x-0)}{(1+1)(1-0)}  = \frac{(x+1)x}{2}, & w_2 = \int_{-1}^1 L_0(x) = \frac13.
+L_1(x) &= \frac{(x+1)(x-1)}{(0+1)(0-1)} = 1-x^2, & w_1 = \int_{-1}^1 L_1(x) = \frac43, \\
+L_2(x) &= \frac{(x+1)(x-0)}{(1+1)(1-0)}  = \frac{(x+1)x}{2}, & w_2 = \int_{-1}^1 L_2(x) = \frac13.
 \end{align*}
+Quindi la formula di Newton--Cotes di grado $d=2$ sull'intervallo $[-1,1]$ è data da 
+\[
+I \approx \tilde{I}_2 = \frac{1}{3}f(-1) + \frac{4}{3}f(0) + \frac{1}{3}f(1).
+\]
 
-\paragraph{Cambio di variabile} A priori, sembrerebbe che per ogni scelta dell'intervallo $[a,b]$ dobbiamo ricalcolare da capo queste formule. È possibile però fare un cambio di variabile lineare che ci permette di ricondurre un generico intervallo $[a,b]$ all'intervallo $[-1,1]$. Definiamo come in precedenza $c=\frac{a+b}{2}$ il punto medio di $[a,b]$, e $x = c + \frac{b-a}{2}y$. È semplice verificare che $y=-1,y=1$ corrispondono a $x=a,x=b$ rispettivamente. 
+\paragraph{Cambio di variabile} A priori, sembrerebbe che per ogni scelta dell'intervallo $[a,b]$ dobbiamo ricalcolare da capo i pesi di queste formule. È possibile però fare un cambio di variabile lineare che ci permette di ricondurre un generico intervallo $[a,b]$ all'intervallo $[-1,1]$. Definiamo come in precedenza $c=\frac{a+b}{2}$ il punto medio di $[a,b]$, e $x = c + \frac{b-a}{2}y$. È semplice verificare che $y=-1,y=1$ corrispondono a $x=a,x=b$ rispettivamente. Inoltre, se $y_0,y_1,\dots,y_d$ sono punti equispaziati tra $-1$ e $1$, allora
+\[
+    x_k = c + \frac{b-a}{2}y_k
+\]
+sono $k$ punti equispaziati tra $a$ e $b$.
 
 Quindi abbiamo $dx = \frac{b-a}{2}dy$ e 
 \[
-\int_{a}^b f(x)dx = \frac{b-a}{2}\int_{-1}^1 \underbrace{f\left(c+\frac{b-a}{2}y\right)}_{:=g(y)} dy.
+\int_{a}^b L_k(x)dx = \frac{b-a}{2}\int_{-1}^1 \underbrace{L_k\left(c+\frac{b-a}{2}y\right)}_{:=M_k(y)} dy.
 \]
-Applicando la formula di Newton-Cotes di grado $d$ per approssimare il valore di $\int_{-1}^1 g(y) \, dy$, abbiamo
-\[
-\int_{a}^b f(x)dx =\int_{-1}^1 g(y)\, dy \approx \frac{b-a}{2}\left( w_0 g(y_0) + w_1 g(y_1) + \dots + w_d g(y_d) \right).
-\]
-I valori $g(0),g(1),\dots,g(d)$ sono i valori assunti dalla funzione $g$ in $d+1$ punti equispaziati tra $-1$ e $1$, ossia, una volta fatto il cambio di variabile, i valori della funzione $f$ in $d+1$ punti equispaziati tra $a$ e $b$. Quindi, detti $w_0,w_1,\dots,w_d$ i pesi relativi all'intervallo $[-1,1]$, i pesi corrispondenti a un generico intervallo $[a,b]$ si ottengono moltiplicandoli per $\frac{b-a}{2}$. È possibile verificare che questo procedimento produce gli stessi pesi che avremmo ottenuto ricalcolando i polinomi $L_k(x)$ e i loro integrali sull'intervallo $[a,b]$.
+Il polinomio $M_k(y)$ è il $k$-esimo polinomio di Lagrange su $[-1,1]$. Quindi, per ottenere i pesi sull'intervallo $[a,b]$, ci basta prendere quelli per l'intervallo $[-1,1]$ e moltiplicarli per $\frac{b-a}{2}$.
 
 In particolare, per $d=2$ si hanno i pesi
 \[
 w_0 = \frac16(b-a), \quad w_1 = \frac46 (b-a), \quad w_2 = \frac16 (b-a).
 \]
-e quindi la formula
+e quindi la formula di Newton--Cotes di grado $d=2$ su un generico intervallo $[a,b]$ è
 \[
-I \approx \tilde{I}_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right),
+I \approx \tilde{I}_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right).
 \]
-che è nota anche come \emph{formula di Cavalieri--Simpson}. Analogamente è possibile costruire formule di Newton--Cotes di grado più alto.
+Questa formula è nota anche come \emph{formula di Cavalieri--Simpson}. Nello stesso modo è possibile calcolare i pesi delle formule di Newton--Cotes di grado più alto.
 
 \paragraph{Ordine delle formule di Newton--Cotes}
 
@@ -3833,23 +3899,24 @@ Per il metodo dei trapezi ($d=1$), già sappiamo che $\kappa_1 = \frac{1}{12}$. 
 
 In realtà, utilizzare formule di Newton--Cotes con valori grandi di $d$ non è una buona idea, visto che si incorre negli stessi problemi di cattivo condizionamento che abbiamo visto con l'interpolazione polinomiale. Tipicamente, si scelgono formule di grado al massimo 4, e se si vuole ridurre ancora l'errore si usa una strategia diversa.
 
-Dividiamo l'intervallo $[a,b]$ in $N$ intevalli uguali, scegliendo gli $N+1$ punti equispaziati
+Dividiamo l'intervallo $[a,b]$ in $N$ sottointervalli uguali, scegliendo gli $N+1$ punti equispaziati
 \[
 x_0=a, x_1=a+h, \dots,x_n = a+nh,\dots, x_N=b,
 \]
-con $h= \frac{b-a}{N}$ la lunghezza di ogni intevallo. (Stiamo riutilizzando la stessa notazione della sezione precedente, anche se qui utilizziamo in modo diverso gli $N$ sottointervalli uguali in cui abbiamo diviso $[a,b]$.)
+con $h= \frac{b-a}{N}$ la lunghezza di ogni intervallo. Questa volta, però, utilizziamo questa suddivisione in modo diverso.
 
-Abbiamo
+Possiamo scrivere l'integrale $I$ come somma di tanti integrali sugli intervalli $[x_0,x_1], [x_1,x_2],\dots,[x_{N-1},x_N]$, cioè
 \[
 \int_a^b f(x) dx = \sum_{n=1}^N \int_{x_{n-1}}^{x_n} f(x) dx.
 \]
-Poi approssimiamo ognuno degli $n$ integrali nel termine di destra con una delle formule viste al passo precedente. In questo modo otteniamo i seguenti metodi.
+Ora, approssimiamo ognuno degli $N$ integrali nel termine di destra con una delle formule viste al passo precedente. In questo modo otteniamo i seguenti metodi.
 
 \begin{description}
     \item[Metodo del punto medio composito]
 \[
     \tilde{I}_{M,N} = \sum_{n=1}^N \underbrace{(x_{n}-x_{n-1})}_{h}f\left(\frac{x_{n-1}+x_n}{2}\right) = \frac{b-a}{N} \sum_{n=1}^N f\left(\frac{x_{n-1}+x_n}{2}\right).
 \]
+
 \item[Metodo dei trapezi composito]
 \[
     \tilde{I}_{T,N} = \sum_{n=1}^N \frac{x_{n}-x_{n-1}}2 \left(f(x_{n-1})+f(x_n)\right) = \frac{b-a}{2N} \sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right).
@@ -4045,7 +4112,7 @@ dove abbiamo posto $\f_n = \f(t_n, \y_n)$ per brevità.
 
 Il metodo di Eulero esplicito, quindi, consiste nel calcolare una dopo l'altra le seguenti quantità:
 \begin{align*}
-    \y_0 & \text{dato},\\
+    \y_0 &\phantom{{}={}} \text{dato},\\
     \y_1 &= \y_0 + h \f(t_0,\y_0),\\
     \y_2 &= \y_1 + h \f(t_1,\y_1),\\
     \vdots& \quad \vdots\\
@@ -4074,9 +4141,9 @@ Questa osservazione mostra che, almeno per questo problema semplice, il valore d
 \paragraph{Metodo di Eulero implicito}
 
 Facendo invece uno sviluppo di Taylor con centro in $t_{n+1}$, abbiamo
-\[
-\y(t_n) = \y(t_{n+1}) - \y'(t_{n+1})h + \mathcal{O}(h^2),
-\]
+\begin{equation} \label{euleroimp_taylor}
+    \y(t_n) = \y(t_{n+1}) - \y'(t_{n+1})h + \mathcal{O}(h^2),    
+\end{equation}
 che operando nello stesso modo conduce alla relazione
 \begin{equation} \label{euleroimplicito}
     \y_{n+1} = \y_n + h \underbrace{\f(t_{n+1}, \y_{n+1})}_{\f_{n+1}}.    
@@ -4100,6 +4167,10 @@ che (sperabilmente) converge a una soluzione $\lim_{k\to\infty} \z_k = \y_{n+1}$
 
 In ogni caso, si chiama \emph{metodo di Eulero implicito} il metodo in cui si calcola $\y_{n+1}$ a partire da $\y_n$ risolvendo la~\eqref{euleroimplicito} (in qualche modo) ad ogni passo per $n=0,1,2,\dots,N-1$. Il costo computazionale dipende dal modo in cui risolviamo la~\eqref{euleroimplicito}.
 
+%%
+% Spostare più avanti, e usare come esempio introduttivo per parlare di ordine di consistenza / convergenza?
+%%
+
 \paragraph{Metodo dei trapezi}
 È il metodo
 \begin{equation} \label{mettrapezi}
@@ -4110,9 +4181,9 @@ Al membro di destra abbiamo una sorta di ``media'' tra il metodo di Eulero espli
 \y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \y'(t) dt = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt
 \]
 e approssimando l'integrale con la formula dei trapezi otteniamo la~\eqref{mettrapezi}. Il vantaggio di questo metodo rispetto ai due metodi di Eulero è che l'errore che commettiamo è minore: difatti, applicando il metodo dei trapezi per integrare una funzione su un intervallo di lunghezza $h$, commettiamo un errore dell'ordine di $\mathcal{O}(h^3)$:
-\[
+\begin{equation} \label{trapezi_taylor}
     \y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt = \y(t_n) + \frac{h}{2}(\f_n + \f_{n+1}) + \mathcal{O}(h^3).
-\]
+\end{equation}
 \paragraph{Convergenza del metodo di Eulero esplicito (*)}
 Vedremo tra poco l'enunciato di un risultato generale che dice che le sequenze di approssimazioni prodotte da questi metodi convergono alla soluzione esatta dell'equazione~\eqref{cauchy}. Vogliamo però dare una dimostrazione esplicita della convergenza almeno per il caso più semplice, quello del metodo di Eulero esplicito per un problema scalare con $m=1$.
 
@@ -4146,7 +4217,7 @@ C_2 = \max_{t\in [a,b]} \abs{y''(t)}.
 \]
 Andiamo quindi a enunciare il nostro risultato di convergenza.
     
-Siamo interessati a stimare la quantità $e_n = \abs{y_n - y(t_n)}$ per ogni $n=0,1,\dots,N$. Chiaramente $e_0 = \abs{y_0 - y(t_0)} = 0$. Possiamo scrivere
+Siamo interessati a stimare la quantità $e_n = \abs{y_n - y(t_n)}$ per ogni passo $n=0,1,\dots,N$. Per fare questo, utilizziamo una strategia che abbiamo già visto in altre dimostrazioni del corso: cerchiamo di scrivere $e_{n+1}$ in funzione di $e_n$. Per farlo, scriviamo
 \begin{align*}
 y_{n+1} &= y_n + h f(t_n, y_n),\\
 y(t_{n+1}) &= y(t_n) + h \underbrace{y'(t_n)}_{=f(t_n,y(t_n))} + \frac{h^2}{2} y''(\xi),
@@ -4157,7 +4228,7 @@ dove la seconda equazione è uno sviluppo di Taylor. Sottraendo membro a membro 
             & \leq \abs*{y_n - y(t_n)} + h \abs*{f(t_n,y_n) - f(t_n,y(t_n))} + \frac{h^2}{2} \abs*{y''(\xi)}\\
             & \leq e_n + hL e_n + \frac{h^2}{2}C_2 = (1+hL) e_n + \frac{h^2}{2}C_2.
 \end{align*}
-Per semplificare la notazione nei passaggi successivi, introduciamo le due costanti $A = 1+hL$ e $B = \frac{h^2}{2}C_2$, in questo modo la relazione precedente diventa $e_{n+1} \leq A e_n + B$. Possiamo dare una limitazione dell'errore non ricorsiva ragionando per passi successivi: poiché $e_0 = y_0 - y(0) = 0$, abbiamo
+Per semplificare la notazione nei passaggi successivi, poniamo $A = 1+hL$ e $B = \frac{h^2}{2}C_2$; in questo modo la relazione che abbiamo trovato diventa $e_{n+1} \leq A e_n + B$. Possiamo dare una limitazione dell'errore non ricorsiva ragionando per passi successivi: partendo da $e_0 = y_0 - y(0) = 0$, abbiamo
 \begin{align*}
     e_1 &\leq B,\\
     e_2 &\leq Ae_1 + B = (A + 1)B,\\    
@@ -4165,7 +4236,11 @@ Per semplificare la notazione nei passaggi successivi, introduciamo le due costa
     \vdots & \quad\quad\vdots\\
     e_N &\leq (A^{N-1}+ \dots + A^2 + A + 1)B.
 \end{align*}
-Chiaramente tra tutti questi termini il più grande è l'ultimo; quindi ci basta trovare una limitazione per quello. Stabilire il comportamento di questa espressione quando $N\to \infty$ non è immediato, visto che $A$ e $B$ sono funzioni di $h = \frac{b-a}{N}$ e anche il numero di termini nella somma dipende da $N$. Cominciamo col semplificare la quantità
+Chiaramente tra tutti questi termini il più grande è l'ultimo; quindi vale la disuguaglianza
+\[
+E_N = \max(e_1,e_2,\dots,e_N) \leq (A^{N-1}+ \dots + A^2 + A + 1)B.
+\]
+Vogliamo ora determinare qual è il limite di $(A^{N-1}+ \dots + A^2 + A + 1)B$ quando $N\to\infty$; questo non è immediato, visto che non solo $A$ e $B$ sono funzioni di $h = \frac{b-a}{N}$, ma anche il numero di termini nella somma dipende da $N$. Cominciamo col semplificare la quantità
 \[
     (A^{N-1}+ \dots + A^2 + A + 1) = \frac{A^N-1}{A-1} = \frac{(1+hL)^N-1}{1+hL-1} = \frac{\left(1+\frac{(b-a)L}{N}\right)^N-1}{hL}.
 \]
@@ -4177,11 +4252,11 @@ Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tend
 \[
     \left(1+\frac{(b-a)L}{N}\right)^N \leq e^{(b-a)L}.
 \]
-Pertanto rimettendo tutto insieme abbiamo per ogni $n=1,2,\dots,N$
+Pertanto rimettendo insieme tutti i pezzi abbiamo per ogni $n=1,2,\dots,N$
 \[
-e_n \leq (A^{N-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
+E_n \leq (A^{N-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
 \]
-Le quantità $C_2, L, b-a$ non dipendono più da $N$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
+Le quantità $C_2, L, b-a$ sono costanti che non dipendono da $N$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
 \end{proof}
 
 \paragraph{Metodi generali a un passo}
@@ -4198,7 +4273,7 @@ Oltre all'errore globale $E_N$ definito più sopra, definiamo anche l'\emph{erro
 \[
 T_N = \max_{n=0,1,\dots,N-1} \norm{\boldsymbol{\tau}_n}, \quad \boldsymbol{\tau}_n = \y(t_{n+1}) - \y(t_n) - h\Phi(t_n, \y(t_n)) ,
 \]
-cioè la differenza tra il valore esatto della soluzione $\y(t_{n+1})$ e il valore $\y(t_n) + h\Phi(t_n, \y(t_n))$ calcolato tramite un passo dell'algoritmo a partire dal valore esatto $\y(t_n)$. Anche questa è una quantità che compariva nella nostra dimostrazione.
+cioè la differenza tra il valore esatto della soluzione $\y(t_{n+1})$ e il valore $\y(t_n) + h\Phi(t_n, \y(t_n))$ calcolato tramite un passo dell'algoritmo a partire dal valore esatto $\y(t_n)$. Abbiamo già incontrato questa quantità nella derivazione dei tre metodi che abbiamo visto: è il termine $\mathcal{O}(n^2)$ che compare nelle equazioni~\eqref{euleroesp_taylor} e~\eqref{euleroimp_taylor}, e il termine $\mathcal{O}(n^3)$ che compare nella~\eqref{trapezi_taylor}.
 
 Un metodo si dice \emph{consistente di ordine $p$} se $T_N = \mathcal{O}(h^{p+1})$ nel limite quando il numero di passi tende a $N\to \infty$ (e quindi $h \to 0$). La logica dietro a questa definizione è la stessa dietro a quella delle formule per l'errore nelle formule di integrazione: visto che stiamo considerando un intervallo di lunghezza $h$, ci aspettiamo di avere un fattore pari alla lunghezza $h$ dell'intervallo nella formula dell'errore, e quindi per definire l'ordine consideriamo solo l'altro fattore: diciamo che l'ordine di un metodo è $p$ se la distanza tra $\y(t_{n+1})$ e $\y(t_n) - h\Phi(t_n, \y(t_n))$ si scrive nella forma $h \cdot \mathcal{O}(h^p)$.
 
@@ -4215,7 +4290,7 @@ quindi
 Stessa cosa per il metodo di Eulero implicito. Invece il metodo dei trapezi è consistente di ordine $2$.
 
 \paragraph{Convergenza dei metodi a un passo}
-Vale il seguente risultato. Non lo dimostriamo, ma la dimostrazione è simile a quella che abbiamo visto sopra per il metodo di Eulero esplicito e $m=1$.
+Vale il seguente risultato. Non lo dimostriamo, ma la dimostrazione è simile a quella che abbiamo visto sopra per il metodo di Eulero esplicito.
 \begin{theorem}
 Supponiamo di avere un metodo a un passo in cui la funzione $\Phi(t,\y)$ sia continua in $[a,b] \times \mathbb{R}^m$ e Lipschitziana nella $\y$, con una costante $L$ che non dipende da $h$.
 Allora, un metodo è convergente di ordine~$p$ se e solo se è consistente di ordine~$p$.
@@ -4337,6 +4412,10 @@ Esistono molte altre possibili scelte dei coefficienti; si veda per esempio \hre
 
 \paragraph{Problemi stiff}
 
+%%
+% Questi risultati si spiegano molto più facilmente avendo a disposizione delle immagini illustrative e/o codice Matlab per generarle.
+%%
+
 Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h \to 0$; però ci sono differenze importanti tra un metodo e l'altro che riguardano quello che succede con un valore \emph{finito} di $h$. In particolare, non è difficile osservare in esperimenti numerici che prendendo $h$ troppo grande il metodo di Eulero esplicito produce sequenze $\y_n$ oscillanti anche quando la soluzione vera converge a zero in modo monotono.
 
 Un modo per investigare cosa succede è attraverso il ``problema test'', \eqref{testproblem}. Prendiamo un problema test con $\lambda < 0$; la soluzione esatta $y(t) = e^{\lambda t}$ quindi è decrescente e ha $\lim_{t\to+\infty} y(t) = 0$. Applicando il metodo di Eulero esplicito a questo problema, come abbiamo già visto, otteniamo $y_n = (1+h\lambda)^n$. Se $\lambda < -\frac{2}{h}$, abbiamo $\abs{1+h\lambda} > 1$, quindi il metodo produce iterate $y_n$ che diventano sempre più grandi in valore assoluto, e magari oscillano con segni alterni. Questo succede quando scegliamo un passo $h$ troppo grande, e la limitazione esatta dipende dal valore di $\lambda$: più grande è $\lambda$, più piccolo dev'essere $h$. Notiamo però anche che se $\lambda$ è negativo e molto grande la funzione $y(t) = e^{\lambda t}$ tende a zero molto rapidamente. Potremmo quindi pensare che la ``scala'' di $h$ sia dettata dal grafico della funzione, in un qualche senso.
@@ -4412,24 +4491,24 @@ La regione di stabilità del metodo dei trapezi è precisamente il semipiano sin
 \]
 e questo è il rapporto tra le distanze del punto $\frac12q$ da $1$ e da $-1$. Se $q$ sta nel semipiano sinistro, allora è più vicino a $-1$ che a $1$, e quindi il rapporto è minore di $1$.
 
+Potete calcolare come esercizio la regione di stabilità del metodo di Eulero implicito, e verificare che essa è l'\emph{esterno} di un cerchio di centro $1$ e raggio $1$; in particolare anche questo metodo è A-stabile. Anzi, è anche ``troppo stabile'', visto che $y_n$ converge a zero anche in casi in cui $\lambda$ sta nel semipiano destro e quindi $y(t) = e^
+{\lambda t}$ dovrebbe tendere a infinito per $t\to+\infty$. La definizione che abbiamo dato non cattura questo problema però.
 
-Potete calcolare come esercizio la regione di stabilità del metodo di Eulero implicito, e verificare che essa è l'\emph{esterno} di un cerchio di centro $1$ e raggio $1$; in particolare anche questo metodo è A-stabile. Anzi, è anche ``troppo stabile'', visto che $y_n$ converge a zero anche in casi in cui $\lambda$ sta nel semipiano destro e quindi $y(t) = e^{\lambda t}$ dovrebbe tendere a infinito per $t\to+\infty$. La definizione che abbiamo dato non cattura questo problema però.
-
-Il risultato principale (che non dimostriamo) è il seguente:
+\paragraph{A-Stabilità e metodi impliciti} Vale questo risultato (che non dimostriamo).
 \begin{theorem}
 Nessun metodo di Runge--Kutta esplicito è $A$-stabile.
 \end{theorem}
-Quindi in presenza di un problema stiff è solitamente meglio usare un metodo implicito; altrimenti il metodo potrebbe richiedere un passo $h$ molto piccolo per fornire risultati non oscillanti. Questo giustifica l'utilità dei metodi impliciti, che utilizzano un metodo più complicato per calcolare $\y_{n+1}$ ad ogni passo rispetto a quelli espliciti.
+Quindi in presenza di un problema stiff è solitamente meglio usare un metodo implicito; altrimenti il metodo potrebbe richiedere un passo $h$ molto piccolo per fornire risultati non oscillanti. Questo giustifica l'utilità dei metodi impliciti, che utilizzano un metodo più complicato per calcolare $\y_{n+1}$ ad ogni passo rispetto a quelli espliciti: sono gli unici che possono fornire garanzie di A-stabilità, quindi assenza di oscillazioni catastrofiche indipententemente dal problema.
 
 \section{Metodi a più passi}
 
 Vediamo ora un'altra famiglia di metodi, i \emph{metodi a più passi} (o \emph{multistep} in inglese). In particolare ci concentriamo sui \emph{metodi lineari a più passi}.
 
-L'idea è la seguente: i metodi di Runge--Kutta ci consentono di ottenere metodi con alto ordine di convergenza, ma al costo di avere $s>1$ valutazioni della $\mathbf{f}$ all'interno di ogni passo $n$. Possiamo però ottenere ordini più alti a costo computazionale minore con un'altra strategia: quella di riutilizzare anche i valori precedenti già calcolati di $\y_{n-1}, \y_{n-2}, \dots$ e $\f_{n-1},\f_{n-2},\dots$ per ottenere una migliore approssimazione. Per esempio, il metodo
+L'idea è la seguente: i metodi di Runge--Kutta ci consentono di ottenere metodi con alto ordine di convergenza, ma al costo di avere $s>1$ valutazioni della $\mathbf{f}$ all'interno di ogni passo $n$. Possiamo però ottenere ordini più alti a costo computazionale minore con un'altra strategia: quella di riutilizzare anche i valori precedenti già calcolati di $\y_{n-1}, \y_{n-2}, \dots$ e $\f_{n-1},\f_{n-2},\dots$ per ottenere una migliore approssimazione. Per esempio, vedremo che il metodo
 \begin{equation} \label{ab2}
     \y_{n+2} = \y_{n+1} + h\left(\frac32 \f_{n+1} - \frac12 \f_n\right)    
 \end{equation}
-è tale che $\y(t_{n+2}) - \y_{n+2} = h\mathcal{O}(h^2)$ (ordine $p=2$), se $\y_{n+1}$ e $\y_n$ sono approssimazioni sufficientemente accurate di $\y(t_{n+1})$ e $\y(t_n)$ \footnote{Una dimostrazione sta su \url{https://en.wikiversity.org/wiki/Adams-Bashforth_and_Adams-Moulton_methods}. L'idea è usare uno sviluppo di Taylor di $\y'(t)$ in $t_{n+1}$ per scrivere $\f_n$, e uno sviluppo di Taylor di ordine 2 in $t_{n+1}$ per scrivere $\y(t_{n+2})$.}. Se supponiamo di avere a disposizione \emph{due} valori iniziali $\y_0, \y_1$, anziché uno solo, possiamo usare la~\eqref{ab2} per $n=0,1,2,\dots$ per calcolare tutti i valori successivi con un errore locale di troncamento migliore del metodo di Eulero (ordine 2 anziché 1), mantenendone comunque il costo di una sola nuova valutazione della $\f$ per passo.
+ha ordine $p=2$. Se supponiamo di avere a disposizione \emph{due} valori iniziali $\y_0, \y_1$, anziché uno solo, possiamo usare la~\eqref{ab2} per $n=0,1,2,\dots$ per calcolare tutti i valori successivi con un errore locale di troncamento migliore del metodo di Eulero (ordine 2 anziché 1), mantenendone comunque il costo di una sola nuova valutazione della $\f$ per passo.
 
 In generale, definiamo un \emph{metodo lineare a $k$ passi} con una formula del tipo
 \begin{equation} \label{linearmultistep}
@@ -4439,10 +4518,14 @@ dove abbiamo posto $\f_i := \f(t_i, \y_i)$ come già fatto in passato, per un'op
 
 \paragraph{Scelta dei valori iniziali} Per poter applicare il metodo~\eqref{linearmultistep}, abbiamo bisogno di opportuni valori iniziali $\y_1,\y_2,\dots, \y_{k-1}$, in aggiunta a $\y_0$. Questi non sono tra i dati iniziali del problema, quindi vanno calcolati in qualche modo. Solitamente si utilizza un metodo a un passo per calcolarli; quindi ogni metodo a più passi ha bisogno di essere ``inizializzato'' calcolando questi primi valori tramite un opportuno metodo a un passo.
 
-Perché il metodo possa convergere alla soluzione esatta, è necessario imporre una condizione su come questi valori iniziali vengono scelti. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{k-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_k) \to \y_0$. Diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{k-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
+Perché il metodo possa convergere alla soluzione esatta quando $N\to\infty$, è necessario imporre una condizione su come vengono scelti questi valori iniziali. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{k-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_k) \to \y_0$. Per questo, diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{k-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
 \[
 \lim_{N\to\infty} \y_i = \y_0, \quad i=1,2,\dots,k-1.
 \]
+
+%%
+% Aggiungi struttura del metodo (ordine in cui si calcolano le cose) e costo computazionale
+%%
 
 \paragraph{Famiglie di metodi} Ci sono diverse famiglie di metodi lineari a più passi: tra queste i \emph{metodi di Adams--Bashforth} (tra cui ricade anche il nostro primo esempio~\eqref{ab2}), espliciti, e i \emph{metodi di Adams--Moulton} e le \emph{Backward differentiation formulas (BDF)}, entrambi impliciti. Per esempio, i primi metodi della famiglia BDF sono
 \begin{align*}
@@ -4469,6 +4552,10 @@ Analogamente, un metodo si dice \emph{convergente di ordine $p$} se l'errore glo
 Possiamo dimostrare che (sotto opportune ipotesi) questi due concetti sono equivalenti, proprio come nei metodi a un passo.
 
 Ci serve però prima introdurre uno strumento tecnico che permette di studiare le successioni prodotte dal metodo.
+
+%%
+% Tagliare questa parte, ed essere più vaghi in futuro su 0-stabilità e A-stabilità dei metodi a più passi?
+%%
 
 \paragraph{Equazioni alle differenze}
 
