@@ -2644,6 +2644,10 @@ function [L, D] = fattorizzazioneLDL(A)
 if not(m == n)
     error('A deve essere quadrata');
 end
+if not(isequal(A, A'))
+    % controlla che tutti gli elementi di A e A' siano uguali
+    error('A deve essere simmetrica);
+end
 
 L = eye(n);
 U = A;     
