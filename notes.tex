@@ -4,6 +4,7 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usetikzlibrary{decorations.pathmorphing}
 
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily}
@@ -11,9 +12,10 @@
 \usepackage{algorithm2e}
 \usepackage{booktabs}
 \usepackage[italian]{babel}
-
+\usepackage{subcaption}
 
 \usepackage{hyperref}
+\usepackage{microtype}
 
 \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
@@ -48,8 +50,7 @@
 
 Queste note sono pensate per fare da `scaletta' della lezione per il corso per me mentre tengo le lezioni, e non necessariamente per essere usate come dispense o documento a sé stante.
 
-Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini.
-
+Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini. Un Large Language Model (GPT 4.1) è stato utilizzato per scrivere il codice Latex che genera alcune delle immagini.
 
 \chapter{Motivazione}
 
@@ -1652,7 +1653,7 @@ per ogni norma matriciale indotta.
 \end{align*}
 (Qui $\rho(\cdot)$ è di nuovo il raggio spettrale.)
 
-Esempio: calcolare le tre norme (quattro con Frobenius) sulla matrice
+Esempio: calcolare queste tre norme (e anche la norma di Frobenius) sulla matrice
 \[
 A = \begin{bmatrix}
     -2 & -1\\
@@ -4039,9 +4040,9 @@ Un esempio famoso di un'equazione differenziale con più variabili è l'\emph{eq
         v' = (Cu-D)v,
     \end{cases}
 \]
-per certe costanti $A,B,C,D>0$. Notiamo che qui non abbiamo scritto esplicitamente $u(t)$ ma solo $u$, anche se $u$ è una funzione del tempo; questo è abbastanza comune
+per certe costanti $A,B,C,D>0$. Notiamo che qui non abbiamo scritto esplicitamente $u(t)$ ma solo $u$, anche se $u$ è una funzione del tempo (e lo stesso per $v(t)$); questo è abbastanza comune quando si parla di equazioni differenziali.
 
-Più grande è il numero di predatori $v$, e più lentamente cresce il numero di prede $u$. Più grande è il numero di prede $u$, e più velocemente cresce la popolazione dei predatori. Ponendo
+Questo sistema di due equazioni mostra come variano le derivate del numero di predatori $v(t)$ e del numero di prede $u(t)$: più grande è il numero di predatori $v$, e più lentamente cresce il numero di prede $u$. Più grande è il numero di prede $u$, e più velocemente cresce la popolazione dei predatori. Le due funzioni quindi sono collegate e variano l'una in funzione dell'altra. Possiamo riscrivere questa relazione in termine di una sola funzione incognita che è un vettore con due elementi: ponendo
 \[
     \y(t) = 
     \begin{bmatrix}
@@ -4053,14 +4054,18 @@ Più grande è il numero di predatori $v$, e più lentamente cresce il numero di
         v(t)
     \end{bmatrix},
 \]
-Abbiamo
+abbiamo
 \[
     \frac{d}{dt} \y(t) = \f(t,\y) = \begin{bmatrix}
         (A-By_2)y_1,\\
         (Cy_1-D)y_2,
     \end{bmatrix}.
 \]
-Notiamo che negli esempi che abbiamo visto finora la funzione $\f(t,\y)$ dipende solo dalla $\y$ e non dal tempo $t$; questo è abbastanza comune nelle equazioni differenziali.
+Notiamo che negli esempi che abbiamo visto finora la funzione $\f(t,\y)$ dipende solo dalla $\y$ e non dal tempo $t$; questo è abbastanza comune nelle equazioni differenziali. Esistono però anche problemi in cui c'è dipendenza dal tempo, per esempio
+\[
+y'(t) = 2 t y(t),
+\]
+che ha soluzione $y(t) = e^{t^2}$, è nella forma $y'(t) = f(t,y)$, con la funzione $f: (t,y) \mapsto 2ty$.
 
 Equazioni che contengono derivate di ordine superiore si possono sempre riscrivere nella forma~\eqref{cauchy} introducendo variabili ausiliarie: per esempio, l'equazione scalare di ordine 2
 \[
@@ -4088,11 +4093,47 @@ diventa, ponendo $\mathbf{y}(t) = \begin{bmatrix}
 \]
 Questa volta la funzione $\f(t,\y)$ al membro di destra dipende sia dalla $t$ che dagli elementi del vettore $\y$.
 
-La maggior parte degli algoritmi che vedremo mirano a calcolare un'approssimazione dei valori assunti dalla soluzione $\y(t)$ su una griglia di punti equispaziati in $[a,b]$: useremo la notazione già vista nel capitolo scorso
+La maggior parte degli algoritmi che vedremo calcolano un'approssimazione dei valori assunti dalla soluzione $\y(t)$ su una griglia di punti equispaziati in $[a,b]$: useremo la notazione già vista nel capitolo scorso
 \[
 h = \frac{b-a}{N}, \quad t_n = a + nh, \quad n = 0,1,2,\dots,N.
 \]
-Chiameremo questi valori $\y_i \approx \y(t_i)$, per $t = 1,2,\dots, N$.
+Chiameremo queste approssimazioni $\y_i \approx \y(t_i)$, per $t = 1,2,\dots, N$. Vediamo un esempio qui sotto. Notare che i punti neri \emph{non} stanno esattamente sul grafico della funzione.
+
+\begin{tikzpicture}
+  % Plot the smooth function
+  \begin{axis}[
+      domain=0:6.28,
+      samples=100,
+      width=10cm,
+      height=6cm,
+      axis lines=left,
+      ymin=0, ymax=1,
+      xmin=0, xmax=1,
+      ytick={-1,0,1},
+      xtick={0,0.2,0.4,0.6,0.8,1},
+      xticklabels={$a=t_0$,$t_1$,$t_2$,$t_3$,$t_4$,$t_5=b$},
+      legend style={at={(0.97,0.97)},anchor=north east}
+    ]
+    % Smooth function
+    \addplot [blue, thick, domain=0:1, samples=200] {exp(-x)};
+    \addlegendentry{soluzione $y(t)$}
+    
+    % Zigzag approximation points
+    \addplot [
+      mark=*,
+      only marks,
+      black,
+    ]  coordinates {
+      (0,1) (0.2,0.8) (0.4, 0.7) (0.6, 0.6) (0.8, 0.4) (1, 0.3)
+    };
+    \addlegendentry{approssimazioni $y_i$}
+
+    \node[pin=below:{$y_4$}] at (axis cs:0.8,0.4) {};
+    \node[pin=above:{$y(t_4)$}] at (axis cs:0.8,0.4493) {};
+    \addplot[only marks, blue, mark=*] coordinates {(0.8,0.4493)};
+
+  \end{axis}
+\end{tikzpicture}
 
 Vediamo subito alcuni algoritmi particolarmente semplici.
 
@@ -4108,7 +4149,7 @@ Se ignoriamo il resto $\mathcal{O}(h^2)$ e rimpiazziamo $\y(t_n), \y(t_{n+1})$ c
 \[
 \y_{n+1} = \y_n + h \f(t_n, \y_n).
 \]
-Questa può essere vista come una formula che ci permette di calcolare $\y_{n+1}$ a partire da $\y_n$. Otteniamo quindi il \emph{metodo di Eulero esplicito}
+Questa formula definisce una sequenza di valori approssimati $y_i$: ci permette di calcolare $\y_{n+1}$ a partire da $\y_n$. Otteniamo quindi il \emph{metodo di Eulero esplicito}
 \begin{equation} \label{euleroesplicito}
     \y_{n+1} = \y_n + h \f_n, \quad n = 0,1,2,\dots,N-1,
 \end{equation}
@@ -4124,7 +4165,7 @@ Il metodo di Eulero esplicito, quindi, consiste nel calcolare una dopo l'altra l
 \end{align*}
 Il costo computazionale è di $N$ valutazioni di $\f$, più $\mathcal{O}(mN)$ operazioni aritmetiche. Come per altri metodi, l'operazione più costosa qui è la valutazione della funzione, quindi sostanzialmente il costo è di $N$ valutazioni della funzione, una per passo.
 
-Vediamo con delle formule più esplicite il comportamento del metodo in un caso semplice, quello del problema test~\eqref{testproblem}. Si ha
+Calcoliamo esplicitamente la successione generata dal metodo in un caso semplice, il problema test~\eqref{testproblem}. Si ha
 \[
     y_{n+1} = y_n + hf(t_n,y_n) = y_n + h\lambda y_n = (1+h\lambda)y_n,
 \]
@@ -4132,7 +4173,7 @@ quindi ad ogni passo il valore precedente viene moltiplicato per $(1+h\lambda)$.
 \[
 y_0 = 1, \quad y_1 = (1+h\lambda), \quad y_2 = (1+h\lambda)^2, \quad \dots \quad y_N = (1+h\lambda)^N.
 \]
-Abbiamo quindi, ricordando anche che in questo caso $h = \frac{b-a}{N} = 1/N$,
+Abbiamo quindi, ricordando che $h = \frac{b-a}{N} = 1/N$,
 \[
     y_N = \left(1+\frac{\lambda}{N}\right)^N.
 \]
@@ -4140,7 +4181,7 @@ Questa quantità è l'approssimazione prodotta dal metodo per $y(t_N) = y(1) = e
 \[
     \lim_{N\to \infty} y_N = \lim_{N\to \infty} \left(1+\frac{\lambda}{N}\right)^N = e^{\lambda}.
 \]
-Questa osservazione mostra che, almeno per questo problema semplice, il valore di $y_N$ converge al valore esatto di $y(t_N)$. Vedremo più avanti che il metodo converge anche per molti altri problemi.
+Questo limite ci dice che, almeno per questo problema semplice, il valore di $y_N$ converge al valore esatto di $y(t_N)$, quando $N$ tende a infinito. Vedremo più avanti che il metodo converge anche per molti altri problemi.
 
 \paragraph{Metodo di Eulero implicito}
 
@@ -4152,13 +4193,13 @@ che operando nello stesso modo conduce alla relazione
 \begin{equation} \label{euleroimplicito}
     \y_{n+1} = \y_n + h \underbrace{\f(t_{n+1}, \y_{n+1})}_{\f_{n+1}}.    
 \end{equation}
-La differenza importante è che questa volta la $\y_{n+1}$ compare anche al secondo termine, eventualmente nascosta dentro il termine $\f_{n+1}$. Quindi non possiamo calcolare direttamente $\y_{n+1}$ a partire da $\y_n$. Invece, l'equazione \eqref{euleroimplicito} è un'equazione che definisce implicitamente $\y_{n+1}$. È necessario risolverla per calcolare $\y_{n+1}$. 
+La differenza importante è che questa volta la $\y_{n+1}$ compare anche al secondo termine, nascosta dentro il termine $\f_{n+1}$. Quindi non possiamo calcolare direttamente $\y_{n+1}$ a partire da $\y_n$: ci servirebbe conoscere $\y_{n+1}$ per calcolare $\f_{n+1}$. L'equazione \eqref{euleroimplicito} è un'equazione che definisce implicitamente $\y_{n+1}$. È necessario risolverla per calcolare $\y_{n+1}$. 
 
 Per alcune equazioni differenziali, questa equazione è semplice da risolvere. Per esempio, consideriamo il problema test~\eqref{testproblem}: si ha
 \[
     y_{n+1} = y_n + h\lambda y_{n+1};
 \]
-questa è un'equazione di grado 1 nella $y_{n+1}$, quindi possiamo risolverla facilmente ottenendo
+questa è un'equazione di grado 1 nella $y_{n+1}$; risolvendola otteniamo
 \[
 y_{n+1} = \frac{1}{1-h\lambda} y_n.
 \]
@@ -4470,23 +4511,39 @@ Ogni volta che $\lambda$ è un numero complesso con $\operatorname{Re}(\lambda) 
 La successione $y_n = R(q)^n y_0$ converge a zero se e solo se $\abs{R(q)} < 1$. Si definisce \emph{regione di (assoluta) stabilità} del metodo l'insieme $S_A = \{z \in \mathbb{C} : \abs{R(z)}<1\}$. Quindi $y_n$ converge a zero (per il problema test) se e solo se $h$ è scelto in modo che $h\lambda \in S_A$. La soluzione esatta del problema test $y(t) = e^{\lambda t}$ invece converge a zero se (e solo se) $\lambda$ sta nel semipiano sinistro. Questo motiva una definizione: un metodo di Runge--Kutta si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro $\{z\in \mathbb{C} : \operatorname{Re}(z) < 0\}$. Esistono diverse varianti di questa definizione: per esempio un metodo si dice \emph{$A_0$-stabile} se la regione di stabilità contiene la semiretta reale negativa $\{z\in\mathbb{R}: z<0\}$; imparare tutti i loro nomi non è importante.
 
 Per il metodo di Eulero esplicito, $R(q)= 1+q$; quindi la regione di stabilità $\{q\in\mathbb{C} \colon \abs{1+q}<1\}$ è un cerchio di centro $-1$ e raggio $1$. Essa \emph{non} contiene tutto il semipiano sinistro, e difatti già abbiamo visto che questo metodo non è $A$-stabile.
-\begin{figure}
-    \begin{tikzpicture}
-        \draw[thick,->] (-2,0) -- (2,0);
-        \draw[thick,->] (0,-2) -- (0,2);
-        \draw[red, fill=red, opacity=0.5] (-0.5,0) circle (0.5);
-    \end{tikzpicture}
-    \begin{tikzpicture}[even odd rule]
-        \draw[thick,->] (-2,0) -- (2,0);
-        \draw[thick,->] (0,-2) -- (0,2);
-        \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (2,2) (0.5,0) circle (0.5);
-    \end{tikzpicture}
-    \begin{tikzpicture}
-        \draw[thick,->] (-2,0) -- (2,0);
-        \draw[thick,->] (0,-2) -- (0,2);
-        \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (0,2);
-    \end{tikzpicture}
-    \caption{Regioni di stabilità del metodo di Eulero esplicito, Eulero implicito, e dei trapezi.}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw[thick,->] (-2,0) -- (2,0);
+            \draw[thick,->] (0,-2) -- (0,2);
+            \draw[red, fill=red, opacity=0.5] (-0.5,0) circle (0.5);
+        \end{tikzpicture}
+        \caption{Eulero esplicito}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[even odd rule]
+            \draw[thick,->] (-2,0) -- (2,0);
+            \draw[thick,->] (0,-2) -- (0,2);
+            \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (2,2) (0.5,0) circle (0.5);
+        \end{tikzpicture}
+        \caption{Eulero implicito}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw[thick,->] (-2,0) -- (2,0);
+            \draw[thick,->] (0,-2) -- (0,2);
+            \draw[red, fill=red, opacity=0.5] (-2,-2) rectangle (0,2);
+        \end{tikzpicture}
+        \caption{trapezi}
+    \end{subfigure}
+    \caption{Regioni di stabilità (in rosa) di tre metodi a un passo.}
 \end{figure}
 
 La regione di stabilità del metodo dei trapezi è precisamente il semipiano sinistro; possiamo dimostrarlo con un ragionamento geometrico. Si ha
