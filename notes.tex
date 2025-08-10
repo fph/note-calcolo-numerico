@@ -9,13 +9,19 @@
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily}
 
+\usepackage[italian]{babel}
+
 \usepackage{algorithm2e}
 \usepackage{booktabs}
-\usepackage[italian]{babel}
 \usepackage{subcaption}
 
 \usepackage{hyperref}
 \usepackage{microtype}
+
+\addto\captionsitalian{%
+  \renewcommand{\algorithmcfname}{Algoritmo}%
+  \renewcommand{\listalgorithmcfname}{Elenco degli algoritmi}%
+}
 
 \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
@@ -133,11 +139,15 @@ Se per assurdo esistessero due punti $a,b \in [0,\infty)$ tali che $f(a) = f(b) 
 
 È un metodo che funziona con poche ipotesi sulla $f$: serve solo che $f \in \mathcal{C}^0([a,b])$, e che $[a,b]$ sia un intervallo di separazione.
 
-\paragraph{Descrizione del metodo} L'idea del metodo è la seguente: voglio costruire una sequenza di intervalli di separazione $[a_k,b_k]$ sempre più piccoli. Parto ponendo $a_1 = a, b_1 = b$. A questo punto, calcolo $c_1 = \frac{a_1+b_1}{2}$, il punto medio tra $a_1$ e $b_1$. Se $f(c_1) = 0$, allora ho trovato uno zero e posso terminare. Altrimenti, uno dei due intervalli $[a_1,c_1]$ e $[c_1,b_1]$ è un intervallo di separazione, come si può vedere facilmente considerando i casi possibili per i segni. Quindi pongo $[a_2,b_2] = [a_1,c_1]$ oppure $[c_1,b_1]$. A questo punto posso ripetere la procedura a partire da $[a_2,b_2]$ e continuare.
+\paragraph{Descrizione del metodo} L'idea del metodo è la seguente: voglio costruire una sequenza di intervalli di separazione sempre più piccoli. Per prima cosa, calcolo $c = \frac{a+b}{2}$, il punto medio tra $a$ e $b$. Se $f(c) = 0$, allora ho trovato uno zero della funzione e posso fermarmi. Altrimenti, uno dei due intervalli $[a,c]$ e $[c,b]$ è un intervallo di separazione, come si può vedere facilmente considerando i casi possibili per i segni. A questo punto, posso ripetere la procedura per questo intervallo e continuare.
+
+Associamo degli indici ai punti con cui lavoriamo, in modo da poter parlare più agevolmente dei punti $a,b,c$ in passi diversi. Chiameremo $a_0 = a$, $b_0=b$ i due punti iniziali, e $c_0$ il loro punto medio. A questo punto, dopo aver fatto il primo passo abbiamo i punti $[a_1,b_1] = [a_0,c_0]$ oppure $[c_0,b_0]$. Chiamiamo $c_1$ il loro punto medio, e così via.
+
+Questa convenzione è particolarmente comoda per ragionare teoricamente sui passi dell'algoritmo: l'indice $0$ si usa per i punti di partenza, da cui iniziamo l'algoritmo, e l'indice $k$ denota i punti calcolati al $k$-esimo passo. (Vedremo però che il linguaggio di programmazione che usiamo, Matlab, in alcuni casi ci costringerà a partire da $1$ anziché da $0$.)
 
 \begin{algorithm}
-$a_1=a,b_1=b$\;
-\For{$k=1,2,\dots$}{
+$a_0=a,b_0=b$\;
+\For{$k=0,1,\dots$}{
     $c_k = \frac{a_k + b_k}{2}$\;
     \uIf{$f(c_k) = 0$}{
         $\alpha = c_k$\;
@@ -160,59 +170,57 @@ $a_1=a,b_1=b$\;
         \toprule
         $k$ & $a_k$ & $c_k$ & $b_k$ & $f(a_k)$ & $f(c_k)$ & $f(b_k)$\\
         \midrule
-        1 & 0 & 1 & 2 & -2 & -1 & 2\\
-        2 & 1 & 1.5 & 2 & -1 & 0.25 & 2\\
-        3 & 1 & 1.25 & 1.5 & -1 & -0.4375 & 0.25\\
+        0 & 0 & 1 & 2 & -2 & -1 & 2\\
+        1 & 1 & 1.5 & 2 & -1 & 0.25 & 2\\
+        2 & 1 & 1.25 & 1.5 & -1 & -0.4375 & 0.25\\
         $\vdots$\\
         \bottomrule
     \end{tabular}
 \end{center}
 
-\paragraph{Costo computazionale} Come vedremo, una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? In particolare, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni che lo compongono. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ somme; calcolare $1+2+3+\dots+20$ richiede $19$ somme, cioè circa il doppio, e ci aspettiamo che ci metta il doppio del tempo.
+\paragraph{Costo computazionale} Una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? Approssimativamente, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni coinvolte. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ somme; calcolare $1+2+3+\dots+20$ richiede $19$ somme, cioè circa il doppio, e quindi ci aspettiamo che ci metta il doppio del tempo.
 
 Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare la $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene va calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche poche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
 
-Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale in cui abbiamo calcolato la $f$ tre volte, in $a_1,b_1,c_1$, in ogni passo successivo abbiamo calcolato il valore in \emph{un} solo nuovo punto, cioè $c_k$. Difatti, i valori di $f(a_k)$ e $f(b_k)$ sono già noti dal passo precedente, e ci è bastato ricopiarli dalla riga precedente della tabella.
+Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale in cui abbiamo calcolato la $f$ tre volte, in $a_0,b_0,c_0$, in ogni passo successivo abbiamo calcolato il valore in \emph{un} solo nuovo punto, cioè $c_k$. Difatti, i valori di $f(a_k)$ e $f(b_k)$ sono già noti dal passo precedente, e ci è bastato ricopiarli dalla riga precedente della tabella.
 
 Per questo diciamo che il costo per passo del metodo di bisezione è di una valutazione della funzione.
 
-\paragraph{Criterio di arresto} Si può dimostrare formalmente (noi non lo faremo) che le successioni $a_k,b_k,c_k$ convergono a un valore $\alpha$ che è uno zero di $f$. A noi però interessa poco cosa succede al limite, perché possiamo fare solo un numero finito di passi.
-
-%%
-% enunciare un teorema?
-%%
-
-Supponiamo di voler determinare il valore $\alpha$ a meno di una tolleranza $\varepsilon$; in questo paragrafo vediamo come è possibile scegliere quanti passi fare in base a questo requisito.
+\paragraph{Criterio di arresto}
+Vogliamo arrestare il metodo quando siamo sicuri di poter determinare il valore di uno zero $\alpha$ della funzione $f$ (non per forza l'unico!) a meno di una tolleranza $\varepsilon$; in questo paragrafo vediamo come è possibile scegliere quanti passi fare in base a questo requisito.
 
 È semplice vedere che ad ogni passo la lunghezza dell'intervallo si dimezza:
-\[
-b_{k+1} - a_{k+1} = \frac{b_{k} - a_{k}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{1} - a_{1}}{2^k}
-\]
-Quindi se ci fermiamo dopo $n$ iterazioni del metodo abbiamo un intervallo di ampiezza $\frac{b_1-a_1}{2^{n-1}}$ che contiene \emph{uno} zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore che sia la migliore approssimazione possibile (con le informazioni a disposizione) di $\alpha$, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti se $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_1-a_1}{2^{n-1}}$, la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è $\ell$.
+\begin{align*}
+    b_1 - a_1 &= \frac{b_0-a_0}{2}\\
+    b_2 - a_2 &= \frac{b_1-a_1}{2} = \frac{b_0-a_0}{4}\\
+    b_3 - a_3 &= \frac{b_2-a_2}{2} = \frac{b_1-a_1}{4} = \frac{b_0-a_0}{8}\\
+    \vdots \,\,&= \,\,\vdots\\
+    b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
+\end{align*}
+Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
+        \draw (2,0) node[below] {$a_n$} circle (2pt);
         \draw [->] (0,0) -- (10,0);
-        \draw (2,0) node[below] {$a$} circle (2pt);
-        \draw (8,0) node[below] {$b$} circle (2pt);
-        \draw (5,0) node[below] {$c$} circle (2pt);
-        \draw (2.5,0) node[below] {$\alpha$} circle (2pt);
+        \draw (8,0) node[below] {$b_n$} circle (2pt);
+        \draw (5,0) node[below] {$c_n$} circle (2pt);
+        \draw (2.5,0) node[above] {$\alpha$} circle (2pt);
         \end{tikzpicture}\\
         \begin{tikzpicture}[scale=0.5]
             \draw [->] (0,0) -- (10,0);
-            \draw (2,0) node[below] {$a$} circle (2pt);
-            \draw (8,0) node[below] {$b$} circle (2pt);
-            \draw (5,0) node[below] {$c$} circle (2pt);
-            \draw (7.5,0) node[below] {$\alpha$} circle (2pt);
+            \draw (2,0) node[below] {$a_n$} circle (2pt);
+            \draw (8,0) node[below] {$b_n$} circle (2pt);
+            \draw (5,0) node[below] {$c_n$} circle (2pt);
+            \draw (7.5,0) node[above] {$\alpha$} circle (2pt);
             \end{tikzpicture}
 \end{center}
-
-Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, sappiamo che esiste uno zero $\alpha$ di $f$ tale che 
+Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
 \[
-\abs{c_n - \alpha} \leq \frac{b_1-a_1}{2^{n}}.
+\abs{c_n - \alpha} \leq \frac{b_0-a_0}{2^{n+1}}.
 \]
 Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono necessarie perché il termine di destra di questa uguaglianza sia minore di $\varepsilon$. Questo succede per il primo intero $n$ tale che
 \[
-\frac{b_1 - a_1}{2^n} \leq \varepsilon \iff 2^n \geq \frac{b_1 - a_1}{\varepsilon} \iff n \geq \log_2 \frac{b_1 - a_1}{\varepsilon}.
+\frac{b_0 - a_0}{2^{n+1}} \leq \varepsilon \iff 2^{n+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff n \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
 \]
 
 \paragraph{Criterio di arresto euristico} Un'altra idea naturale è fermarsi quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
@@ -244,7 +252,7 @@ Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in
         \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
     \end{tikzpicture}
 \end{center}
-È utile cercare di avere un criterio di arresto che non dipenda dal valore della funzione, perché questi possono variare molto a seconda delle applicazioni: se la funzione di cui cerchiamo uno zero ha a che vedere con le distanze tra gli atomi di una molecola, per esempio, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
+È utile cercare di avere un criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti dalla funzione possono variare molto a seconda delle applicazioni: se la funzione di cui cerchiamo uno zero ha a che vedere con le distanze tra gli atomi di una molecola, per esempio, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
 
 Ci manca ancora un ingrediente per completare questo criterio di arresto. Il valore di $f(c_k)$ viene calcolato lungo l'algoritmo, ma $f'(c_k)$ no, e calcolarlo può essere molto più complicato. Possiamo però rimpiazzarlo con un'altra approssimazione: se $c_k \in [a_k, b_k]$, allora
 \[
@@ -257,7 +265,7 @@ Difatti questo è un rapporto incrementale fatto tra due punti sufficientemente 
         f'(\xi) = \frac{f(b)-f(a)}{b-a}.
     \]
 \end{theorem}
-(Enunciamo questa versione per semplicità, in realtà forse nel corso di analisi avete visto il teorema con delle ipotesi leggermente diverse e meno restrittive). Questo dice che la quantità che stiamo calcolando è la derivata di $f$ in un punto $\xi$, diverso da $c_k$ (e dallo $\xi$ del teorema precedente!), ma non troppo lontano da esso.
+(Mettiamo ``di classe $\mathcal{C}^1$'' tra le ipotesi per semplicità, ma forse nel corso di analisi avete visto questo teorema con delle ipotesi leggermente diverse.) Questo risultato dice che la quantità che stiamo calcolando è la derivata di $f$ in un punto $\xi$, diverso da $c_k$ (e dallo $\xi$ del teorema precedente!), ma non troppo lontano da esso.
 
 Quindi un possibile criterio di arresto è: se vogliamo calcolare $\alpha$ con un errore (circa) $\varepsilon$, possiamo fermare il metodo quando vale la disuguaglianza 
 \[
