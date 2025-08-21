@@ -34,6 +34,7 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Osservazione}
 \newtheorem{esercizio}[theorem]{Esercizio}
+\newtheorem{esempio}[theorem]{Esempio}
 
 \newcommand{\x}{\mathbf{x}}
 \newcommand{\e}{\mathbf{e}}
@@ -116,7 +117,7 @@ Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume mo
 \[
     \frac{RT}{x-B} - \frac{A}{x^2} - P = 0.
 \]
-Lavorando con problemi ingegneristici è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio perché si riconduce a trovare uno zero di un polinomio di grado $2$); ma in generale sarebbe utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anhce più complicate.
+Lavorando con applicazioni dell'ingegneria è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio quando si riconduce a un'equazione di secondo grado); ma in generale è utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anche più complicate.
 
 \paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{a}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - a$.
 
@@ -139,11 +140,37 @@ Se per assurdo esistessero due punti $a,b \in [0,\infty)$ tali che $f(a) = f(b) 
 
 È un metodo che funziona con poche ipotesi sulla $f$: serve solo che $f \in \mathcal{C}^0([a,b])$, e che $[a,b]$ sia un intervallo di separazione.
 
-\paragraph{Descrizione del metodo} L'idea del metodo è la seguente: voglio costruire una sequenza di intervalli di separazione sempre più piccoli. Per prima cosa, calcolo $c = \frac{a+b}{2}$, il punto medio tra $a$ e $b$. Se $f(c) = 0$, allora ho trovato uno zero della funzione e posso fermarmi. Altrimenti, uno dei due intervalli $[a,c]$ e $[c,b]$ è un intervallo di separazione, come si può vedere facilmente considerando i casi possibili per i segni. A questo punto, posso ripetere la procedura per questo intervallo e continuare.
+\paragraph{Descrizione del metodo} L'idea del metodo è la seguente: voglio costruire una sequenza di intervalli di separazione sempre più piccoli. Per prima cosa, calcolo il punto medio tra $a$ e $b$, che chiameremo $c$. Se $f(c) = 0$, allora ho trovato uno zero della funzione e posso fermarmi. Altrimenti, uno dei due intervalli $[a,c]$ e $[c,b]$ è un intervallo di separazione, come si può vedere facilmente considerando i casi possibili per i segni. A questo punto, posso ripetere la procedura per questo intervallo e continuare.
+
+\begin{center}
+    \begin{tikzpicture}[scale=0.5]
+    \draw [->, very thick] (0,0) -- (10,0);
+    \fill (2,0) node[below] {$\mathstrut a$} circle (3pt);
+    \fill (8,0) node[below] {$\mathstrut b$} circle (3pt);
+    \fill (5,0) node[below] {$\mathstrut c$} circle (3pt);
+\end{tikzpicture}
+\end{center}
 
 Associamo degli indici ai punti con cui lavoriamo, in modo da poter parlare più agevolmente dei punti $a,b,c$ in passi diversi. Chiameremo $a_0 = a$, $b_0=b$ i due punti iniziali, e $c_0$ il loro punto medio. A questo punto, dopo aver fatto il primo passo abbiamo i punti $[a_1,b_1] = [a_0,c_0]$ oppure $[c_0,b_0]$. Chiamiamo $c_1$ il loro punto medio, e così via.
 
 Questa convenzione è particolarmente comoda per ragionare teoricamente sui passi dell'algoritmo: l'indice $0$ si usa per i punti di partenza, da cui iniziamo l'algoritmo, e l'indice $k$ denota i punti calcolati al $k$-esimo passo. (Vedremo però che il linguaggio di programmazione che usiamo, Matlab, in alcuni casi ci costringerà a partire da $1$ anziché da $0$.)
+
+Due semplici formule saranno fondamentali per proseguire:
+\begin{itemize}
+    \item La formula che dà il punto medio tra due numeri reali $a$ e $b$ è $c = \frac{a+b}{2}$;
+    \item La formula che dà la distanza tra $a$ e $b$ è $b-a$ (supponendo che $b$ sia il punto più a destra; altrimenti possiamo scrivere $\abs{b-a}$).
+\end{itemize}
+\begin{center}
+    \begin{tikzpicture}[scale=0.5]
+    \draw [->, very thick] (0,0) -- (10,0);
+    \fill (2,0) node[below] {$\mathstrut a$} circle (3pt);
+    \fill (8,0) node[below] {$\mathstrut b$} circle (3pt);
+    \fill (5,0) node[below] {$\mathstrut c=\tfrac{a+b}{2}$} circle (3pt);
+    \draw (2,0.5) -- (2,1.2) -- (8,1.2) -- (8,0.5);
+    \node at (5,1.8) {$b-a$};
+\end{tikzpicture}
+\end{center}
+
 
 \begin{algorithm}
 $a_0=a,b_0=b$\;
@@ -200,19 +227,19 @@ Vogliamo arrestare il metodo quando siamo sicuri di poter determinare il valore 
 Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
-        \draw (2,0) node[below] {$a_n$} circle (2pt);
-        \draw [->] (0,0) -- (10,0);
-        \draw (8,0) node[below] {$b_n$} circle (2pt);
-        \draw (5,0) node[below] {$c_n$} circle (2pt);
-        \draw (2.5,0) node[above] {$\alpha$} circle (2pt);
-        \end{tikzpicture}\\
-        \begin{tikzpicture}[scale=0.5]
-            \draw [->] (0,0) -- (10,0);
-            \draw (2,0) node[below] {$a_n$} circle (2pt);
-            \draw (8,0) node[below] {$b_n$} circle (2pt);
-            \draw (5,0) node[below] {$c_n$} circle (2pt);
-            \draw (7.5,0) node[above] {$\alpha$} circle (2pt);
-            \end{tikzpicture}
+        \draw [very thick, ->] (0,0) -- (10,0);
+        \fill (2,0) node[below] {$\mathstrut a_n$} circle (3pt);
+        \fill (8,0) node[below] {$\mathstrut b_n$} circle (3pt);
+        \fill (5,0) node[below] {$\mathstrut c_n$} circle (3pt);
+        \fill[red] (2.5,0) node[above] {$\alpha$} circle (3pt);
+    \end{tikzpicture}\\
+    \begin{tikzpicture}[scale=0.5]
+        \draw [very thick, ->] (0,0) -- (10,0);
+        \fill (2,0) node[below] {$\mathstrut a_n$} circle (3pt);
+        \fill (8,0) node[below] {$\mathstrut b_n$} circle (3pt);
+        \fill (5,0) node[below] {$\mathstrut c_n$} circle (3pt);
+        \fill[red] (7.5,0) node[above] {$\alpha$} circle (3pt);
+    \end{tikzpicture}
 \end{center}
 Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
 \[
@@ -305,61 +332,79 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
 
-% \paragraph{Comportamento al limite (*)} Possiamo cercare di capire (non formalmente) come si comporta il metodo facendo uno sviluppo di Taylor in $\alpha$:
-% \[
-% x_{n+1} - \alpha = \Phi(x_n) - \alpha = \underbrace{\Phi(\alpha)}_{=\alpha} + \Phi'(\alpha)(x_n - \alpha) + \mathcal{O}((x_n-\alpha)^2) - \alpha \approx \Phi'(\alpha)(x_n - \alpha).
-% \]
-% Quindi ad ogni passo la distanza $x_n - \alpha$ è moltiplicata (approssimativamente) per $\Phi'(\alpha)$. Possiamo distinguere diversi casi:
-% \begin{itemize}
-%     \item Se $\Phi'(\alpha) \in (0,1)$, allora ci aspettiamo che le iterate si avvicinino ad $\alpha$, comportandosi come una progressione geometrica.
-%     \item Se $\Phi'(\alpha) \in (-1,0)$, allora succede qualcosa di simile, ma le differenze $x_n-\alpha$ hanno segno che cambia ad ogni passo, quindi le iterate $x_n$ stanno una a sinistra e una a destra di $\alpha$, alternativamente.
-%     \item Se $\abs{\Phi'(\alpha)} > 1$, la distanza delle iterate da $\alpha$ aumenta, anziché diminuire, quindi il metodo non converge.
-%     \item Se $\Phi'(\alpha) = 0$, il metodo sembra convergere in un passo. In realtà questo vuol dire che la nostra scelta di trascurare $\mathcal{O}((x_n-\alpha)^2)$ non funziona bene, e dovremmo tener conto di quel termine.
-%     \item  Se $\Phi'(\alpha) = 1$, similmente, la distanza $x_n - \alpha$ resta invariata nella nostra approssimazione, e ci tocca considerare anche il termine che abbiamo trascurato per capire se effettivamente le iterate si avvicinano o si allontanano da $\alpha$.
-% \end{itemize}
+\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è particolarmente importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $r>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $r$, che possiamo scrivere in due modi:
+\[
+    I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\} = [\alpha-r, \alpha + r].
+\]
+La situazione è analoga a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che qui i protagonisti sono il centro e il raggio.
 
-% Tutte queste osservazioni però non sono rigorose visto che abbiamo trascurato un termine $\mathcal{O}((x_n-\alpha)^2)$. 
+\begin{center}
+    \begin{tikzpicture}[scale=0.5]
+    \draw [->, very thick] (0,0) -- (10,0);
+    \fill (2,0) node[below] {$\mathstrut \alpha-r$} circle (3pt);
+    \fill (8,0) node[below] {$\mathstrut \alpha+r$} circle (3pt);
+    \fill (5,0) node[below] {$\mathstrut \alpha$} circle (3pt);
+    \draw (2,0.5) -- (2,1.2) -- (4.95,1.2) -- (4.95,0.5);
+    \node at (3.5,1.8) {$r$};
+    \draw (5.05,0.5) -- (5.05,1.2) -- (8,1.2) -- (8,0.5);
+    \node at (6.5,1.8) {$r$};
+\end{tikzpicture}
+\end{center}
 
-\paragraph{Teorema del punto fisso} Possiamo dimostrare questo risultato di convergenza:
+
 \begin{theorem}[Convergenza locale del metodo del punto fisso] \label{thm:puntofisso}
-Sia $\Phi \in \mathcal{C}^1([a,b])$, e $\alpha \in (a,b)$ un suo \emph{punto fisso}, cioè un punto tale che $\Phi(\alpha) = \alpha$. Supponiamo che esista un intervallo chiuso $I = [\alpha-\rho, \alpha+\rho] \subseteq [a,b]$ tale che $\abs{\Phi'(x)} < 1$ per ogni $x \in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
+Siano dati $\alpha\in\mathbb{R}$, $r>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\}$, e supponiamo inoltre che $\abs{\Phi'(x)}<1$ per ogni $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
 \begin{itemize}
-    \item $x_n \in I$ per ogni $n \geq 0$ (e quindi la successione è ben definita);
-    \item $\lim_{n\to\infty} x_n = \alpha$.
+    \item $x_k \in I$ per ogni $k \geq 0$;
+    \item $\lim_{k\to\infty} x_k = \alpha$.
 \end{itemize}
 \end{theorem}
+Notare che il primo punto è importante perché il metodo sia ben definito: altrimenti, $\Phi$ potrebbe non essere definita nel punto $x_k$!
 
 %%
 % Aggiungere qui un terzo punto su |x_{k+1}-\alpha| / |x_k-\alpha| \to |f'(\alpha)| ?
 %%
 
 \begin{proof}
-Sia $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (in quanto composizione di $\abs{\cdot}$ e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$) e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
-
-Vogliamo dimostrare per induzione che 
-\begin{equation} \label{fpindu}
-    \abs{x_n - \alpha} \leq L^n \rho \quad \text{ per ogni $n \geq 0$}.    
-\end{equation}
-Per $n=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. Supponiamo la~\eqref{fpindu} vera per un certo $n$, e dimostriamola per $n+1$:
-\begin{equation} \label{fpindu2}
-    \abs{x_{n+1} - \alpha} = \abs{\Phi(x_n) - \Phi(\alpha)} = \abs{\Phi'(\xi_n)} \abs{x_n - \alpha} \leq L L^n r = L^{n+1}\rho,    
-\end{equation}
-dove abbiamo usato il teorema di Lagrange, che dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_n$ e $\alpha$ (in qualunque ordine essi siano) tale che $\Phi'(\xi_n) = \frac{\Phi(x_n) - \Phi(\alpha)}{x_n - \alpha}$. Visto che $x_n$ e $\alpha$ stanno entrambi in $I$, anche $\xi_n \in I$ e quindi $\abs{\Phi'(\xi_n)} \leq L$. 
-
-Questo completa la dimostrazione della~\eqref{fpindu}. Da questa relazione si ha che $x_n \in I$, visto che $\abs{x_n - \alpha} \leq L^n \rho \leq \rho$. Inoltre
+Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$: si ha
 \[
-0 \leq \abs{x_n - \alpha} \leq L^n \rho
+\frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
+    \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)}.
 \]
-da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_n = \alpha$.
+Qui abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
+
+Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che questa quantità sia minore di $1$, ma vogliamo dare un nome al massimo valore che può assumere. Definiamo $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (è composizione della funzione valore assoluto e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$), e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
+
+Con questi ingredienti a disposizione, ora vogliamo dimostrare per induzione che per ogni $k\geq 0$ si ha
+\begin{equation} \label{fpindu}
+    \abs{x_k - \alpha} \leq L^k r.
+\end{equation}
+\begin{itemize}
+    \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq r$, che è vera perché è equivalente a dire che $x_0 \in I$. 
+    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k r$; poiché $L<1$, si ha anche $L^kr < r$ e quindi $\abs{x_k - \alpha}<r$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo anche $\Phi'(\xi_k) \leq L$. Ma allora si ha, per il calcolo visto sopra, 
+    \begin{equation} \label{fpindu2}
+        \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k r = L^{k+1}r.
+    \end{equation}  
+\end{itemize}
+Questo completa la dimostrazione della~\eqref{fpindu}. Da questa relazione si ha che $x_k \in I$ per ogni $k$, come abbiamo già osservato nella dimostrazione. Inoltre
+\[
+0 \leq \abs{x_k - \alpha} \leq L^k r
+\]
+da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_k = \alpha$.
 \end{proof}
 
-\paragraph{Esempio} Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Se prendiamo $\rho = 0.5$, abbiamo che su tutto l'intervallo
+\begin{esempio}
+Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Se prendiamo $r = 0.5$, abbiamo che su tutto l'intervallo
 \[
-    [\alpha-\rho,\alpha+\rho] \approx [1.26-0.5,1.26+0.5]
+    [\alpha-r,\alpha+r] \approx [1.26-0.5,1.26+0.5]
 \]
-si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che il metodo converge per ogni scelta di $x_0$ in questo intervallo. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $\rho < 2 - \sqrt[3]{2} \approx 0.74$ e la soluzione è analoga.
+si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che il metodo converge per ogni scelta di $x_0$ in questo intervallo. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $r < 2 - \sqrt[3]{2} \approx 0.74$ e la soluzione è analoga.
+\end{esempio} 
 
+\begin{esempio}
 Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come punto fisso $x=\sqrt[3]{2}$. Questa volta si ha $\Phi'(x) = -\frac{4}{x^3}$, quindi $\Phi'(\alpha) = -2$. Non riusciremo mai a trovare un intervallo in cui applicare il teorema, perché già nel centro dell'intervallo non abbiamo $\abs{\Phi'(x)}< 1$. Si può difatti vedere che il metodo di punto fisso con questa funzione non converge ad $\alpha$, anzi, anche se partiamo da un $x_0$ molto vicino ad $\alpha$ (ma diverso da esso) le iterate si allontanano sempre di più.
+\end{esempio}
+
 
 \begin{remark} \label{oss:corpuntofisso}
     Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha$, allora per continuità possiamo prendere un $\rho$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
