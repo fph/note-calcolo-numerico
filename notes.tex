@@ -366,12 +366,12 @@ Notare che il primo punto è importante perché il metodo sia ben definito: altr
 %%
 
 \begin{proof}
-Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$: si ha
+Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
 \[
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
     \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)}.
 \]
-Qui abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
+(chiariremo tra poco cosa indica $\xi_k$.) Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
 
 Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che questa quantità sia minore di $1$, ma vogliamo dare un nome al massimo valore che può assumere. Definiamo $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (è composizione della funzione valore assoluto e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$), e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
 
@@ -379,14 +379,15 @@ Con questi ingredienti a disposizione, ora vogliamo dimostrare per induzione che
 \begin{equation} \label{fpindu}
     \abs{x_k - \alpha} \leq L^k r.
 \end{equation}
+Ricordandoci come è fatta una dimostrazione per induzione, dobbiamo dimostrare queste due cose:
 \begin{itemize}
     \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq r$, che è vera perché è equivalente a dire che $x_0 \in I$. 
-    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k r$; poiché $L<1$, si ha anche $L^kr < r$ e quindi $\abs{x_k - \alpha}<r$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo anche $\Phi'(\xi_k) \leq L$. Ma allora si ha, per il calcolo visto sopra, 
+    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k r$; poiché $L<1$, si ha anche $L^kr < r$ e quindi $\abs{x_k - \alpha}<r$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Ma allora si ha, per il calcolo visto sopra, 
     \begin{equation} \label{fpindu2}
         \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k r = L^{k+1}r.
     \end{equation}  
 \end{itemize}
-Questo completa la dimostrazione della~\eqref{fpindu}. Da questa relazione si ha che $x_k \in I$ per ogni $k$, come abbiamo già osservato nella dimostrazione. Inoltre
+Questo completa la dimostrazione per induzione della~\eqref{fpindu}. Da questa relazione si ha che $x_k \in I$ per ogni $k$, come abbiamo già osservato nella dimostrazione. Inoltre
 \[
 0 \leq \abs{x_k - \alpha} \leq L^k r
 \]
@@ -410,10 +411,9 @@ Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come pu
     Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha$, allora per continuità possiamo prendere un $\rho$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
 \end{remark}
     
-\paragraph{Esempio}
-
+\begin{esercizio}
 Esercizio: consideriamo l'equazione di punto fisso $x = \cos x$ (con $x$ in radianti). Quante soluzioni positive ha? Sappiamo individuare esplicitamente un intervallo $I$ in cui si applica il teorema del punto fisso?
-
+\end{esercizio}
 %%
 % un po' palloso
 %%
@@ -722,9 +722,9 @@ Molti metodi hanno un comportamento simile a questo al limite, quindi introducia
 \begin{equation} \label{tassoconv}
     \lim_{n \to \infty }\frac{e_{n+1}}{e_n} = r \in (0,1).    
 \end{equation}
-Questo vuol dire che per $n$ sufficientemente grande (c'è un limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
+Questo vuol dire che per $n$ sufficientemente grande (la~\eqref{tassoconv} contiene un simbolo di limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
 
-La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza} (in inglese \emph{convergence rate}), o più informalmente spesso si usa \emph{velocità di convergenza}; difatti più piccolo è $r$, più ripida è la retta di coefficiente angolare $\log r$.
+La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
 
 \paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
 \[
@@ -736,7 +736,7 @@ Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo `
 \[
     \lim_{n\to\infty} \frac{e_{n+1}}{e_n} = 0.
 \]
-Questo comportamento implica una convergenza con una pendenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo $n$ in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui pendenza tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+Questo comportamento implica una convergenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo $n$ in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui derivata tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -1532,11 +1532,11 @@ Una funzione che ha un numero di condizionamento grande viene detta \emph{mal co
 
 \paragraph{Errore inerente, algoritmico, e stabilità (*)}
 
-Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore otteniamo una funzione diversa $\tilde{\gamma}$:
+Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore otteniamo un risultato $\tilde{\gamma}$ diverso:
 \[
     \tilde{\gamma} = \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y}).
 \]
-Se calcoliamo l'errore di macchina a partire da questa formulazione, otterremo un'espressione diversa dalla~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
+Se calcoliamo l'errore di macchina a partire da questa espressione, otterremo un risulatto diverso da quello in~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni sul calcolatore, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
 
 I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nel nostro esempio~\eqref{esempiox2y2}, l'errore algoritmico è composto dai termini contenenti $\varepsilon_1,\varepsilon_2,\varepsilon_3$. Notiamo che in questo esempio l'errore algoritmico non può mai essere sensibilmente più grande dell'errore inerente: la quantità
 $
@@ -2029,7 +2029,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
         * & * & * & *\\
         * & * & * & *\\
         * & * & * & *\\
-    \end{bmatrix},\\[3ex]
+    \end{bmatrix},\\[6ex]
     L_2 = \begin{bmatrix}
         1 & 0 & 0 & 0\\
         * & 1 & 0 & 0\\
@@ -2040,7 +2040,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
         0 & * & * & *\\
         0 & * & * & *\\
         0 & * & * & *\\
-    \end{bmatrix},\\[3ex]
+    \end{bmatrix},\\[6ex]
     L_3 = \begin{bmatrix}
         1 & 0 & 0 & 0\\
         * & 1 & 0 & 0\\
@@ -2051,7 +2051,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
         0 & * & * & *\\
         0 & 0 & * & *\\
         0 & 0 & * & *\\
-    \end{bmatrix},\\[3ex]
+    \end{bmatrix},\\[6ex]
     L_4 = \begin{bmatrix}
         1 & 0 & 0 & 0\\
         * & 1 & 0 & 0\\
@@ -2065,7 +2065,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
     \end{bmatrix}.
     \end{array}
 \]
-Vogliamo dimostrare che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere questa identità.
+Vogliamo dimostrare che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere queste uguaglianze.
 
 Per dimostrare questa proprietà, ci serve introdurre una famiglia di matrici che permette di vedere l'eliminazione di Gauss come una sequenza di moltiplicazioni.
 
@@ -2109,7 +2109,7 @@ E_k \begin{bmatrix}
     x_n - L_{n,k}x_k
 \end{bmatrix},
 \]
-quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+1$-esima in poi un multiplo della $k$-esima, per la precisione $L_{i,k}$ volte la $k$-esima riga.
+quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+1$-esima in poi un multiplo della $k$-esima, per la precisione alla $i$-esima riga viene sommata $L_{i,k}$ volte la $k$-esima riga, per ogni $i=k+1,\dots,n$.
 
 Dimostriamo innanzitutto alcune proprietà di queste matrici.
 \begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
@@ -2276,7 +2276,7 @@ end
 
 \paragraph{Costo computazionale dell'eliminazione di Gauss}
 
-Il grosso del costo è dato dall'aggiornamento del blocco $A_{k+1:n, k+1:n}$ ad ogni passo del ciclo for; questo richiede $2(n-1)^2$ operazioni al primo passo, $2(n-2)^2$ al secondo, \dots $2\cdot 1^2$ al $n-2$-esimo passo, $2\cdot 0^2$ al $n-1$-esimo passo. Un'identità algebrica (che possiamo dimostrare per induzione) ci dice che
+Il grosso del costo è dato dall'aggiornamento del blocco $U_{k+1:n, k+1:n}$ ad ogni passo del ciclo for; questo richiede $2(n-1)^2$ operazioni al primo passo, $2(n-2)^2$ al secondo, \dots $2\cdot 1^2$ al $n-2$-esimo passo, $2\cdot 0^2$ al $n-1$-esimo passo. Un'identità algebrica (che possiamo dimostrare per induzione) ci dice che
 \[
 0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
 \]
@@ -2301,7 +2301,7 @@ Un'altra osservazione interessante è che se dobbiamo risolvere molti sistemi li
 
 \paragraph{Esistenza della fattorizzazione LU}
 
-Cosa può andare storto? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
+Cosa può andare storto durante la fattorizzazione LU? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
 
 Definiamo le \emph{sottomatrici principali di testa} di una matrice $A$ come $A_{1:k,1:k}$. Questa notazione (che ci è familiare da Matlab) significa prendere gli elementi della matrice $A$ che stanno nelle righe dalla $1$ alla $k$ e nelle colonne dalla $1$ alla $k$, ottenendo una sottomatrice quadrata $k\times k$.
 
@@ -3441,7 +3441,7 @@ Magari abbiamo dei modelli che ci dicono che la temperatura decresce linearmente
 
 \section{Interpolazione polinomiale}
 
-Vediamo più nel dettaglio il problema dell'\emph{interpolazione polinomiale}. Fissiamo un grado massimo $d$ (si usa questa lettera dall'inglese \emph{degree}). Supponiamo di avere $d+1$ punti dati nel piano $(x_0, y_0), (x_1, y_1), \dots, (x_{d}, y_{d})$ (attenzione: per comodità con gli indici partiamo da $0$ questa volta) e di voler trovare un polinomio di grado minore o uguale a $d$ il cui grafico passa esattamente per questi punti; cioè, stiamo cercando coefficienti incogniti $\alpha_0, \alpha_1, \dots, \alpha_d$ tali che il polinomio
+Vediamo più nel dettaglio il problema dell'\emph{interpolazione polinomiale}. Fissiamo un grado massimo $d$; si usa questa lettera dall'inglese \emph{degree}. Supponiamo di avere $d+1$ punti dati nel piano $(x_0, y_0), (x_1, y_1), \dots, (x_{d}, y_{d})$ (attenzione: per comodità con gli indici partiamo da $0$ questa volta) e di voler trovare un polinomio di grado minore o uguale a $d$ il cui grafico passa esattamente per questi punti; cioè, stiamo cercando coefficienti incogniti $\alpha_0, \alpha_1, \dots, \alpha_d$ tali che il polinomio
 \[
 p(x) = \alpha_0 + \alpha_1 x + \alpha_2 x^2 + \dots + \alpha_d x^d
 \]
