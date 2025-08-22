@@ -726,6 +726,23 @@ Questo vuol dire che per $n$ sufficientemente grande (la~\eqref{tassoconv} conti
 
 La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
 
+Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non vanno a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_n = 1/n$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
+\begin{esempio}
+    Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{n+1} = x + \frac{1}{2} (x^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_n = \abs{x_n - \alpha}$ prodotti dal metodo, otteniamo
+    \begin{lstlisting}
+3.4142    2.4142    2.9142    2.7892    2.8439    2.8219    
+2.8311    2.8273    2.8289    2.8282    2.8285    2.8284
+2.8284    2.8284    2.8284    2.8284    ...
+    \end{lstlisting}
+    e quindi i valori assunti da $\frac{e_{n+1}}{e_n}$ sono
+\begin{lstlisting}
+0.5000    1.5000    0.9167    1.0398    0.9846    1.0065    
+0.9973    1.0011    0.9995    1.0002    0.9999    1.0000
+1.0000    1.0000    1.0000    1.0000    ...
+\end{lstlisting}
+In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a 1, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma a un'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
+\end{esempio}
+
 \paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
 \[
 \lim_{n \to \infty} \frac{\abs{x_{n+1} - \alpha}}{\abs{x_n - \alpha}} = \lim_{n\to\infty} \abs{\Phi'(\xi_n)} = \abs{\Phi'(\alpha)} \in [0,1).
@@ -863,7 +880,7 @@ Diciamo che un metodo numerico converge con ordine \emph{almeno $p$} se vale
 \[
 \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in [0,\infty).
 \]
-Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Notare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dalle parole che abbiamo usato: se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto, che non vediamo, è analoga alla~\eqref{almeno}.)
+Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto, che non vediamo, è analoga alla~\eqref{almeno}.)
 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton] \label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_n = \abs{x_n - \alpha}$ soddisfa
@@ -1429,10 +1446,23 @@ Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}
 
 \paragraph{Underflow/overflow} Ci sono due casi particolari da citare: eseguendo operazioni con numeri di macchina, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
-\paragraph{Esempi} Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al più vicino)? $0.1 \ominus 0.001$; $1.01 \ominus 1.01$; $(0.77 \oplus 0.44) \oplus 1$; $0.077 \oplus (0.044 \oplus 1)$; $(1 \oslash 3) \otimes 3$; $500 \oplus 500$; $0.001 \odot 0.001$; $50 \oplus 0.01$.
+\begin{esercizio} \label{ese: miscellanea numeri di macchina}
+Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al più vicino)? $1 \ominus 0.001$; $1.01 \ominus 1.01$; $(0.71 \oplus 0.044) \oplus 1$; $0.71 \oplus (0.044 \oplus 1)$; $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3)$; $500 \oplus 500$; $0.001 \odot 0.001$; $50 \oplus 0.01$.
+\end{esercizio}
+Soluzioni:
+\begin{itemize}
+    \item $1 \ominus 0.001$ è il numero di macchina più vicino al risultato esatto $1 - 0.001 = 0.999$, cioè $1$.
+    \item $1.01 \ominus 1.01$ è il numero di macchina più vicino  al risultato esatto $1.01-1.01 = 0$, cioè $0$ stesso.
+    \item Il risultato di $0.71 \oplus 0.044$ è il numero di macchina più vicino a $0.71+0.044 = 0.754$, cioè $0.76$. Il risultato di $ 0.76\oplus 1$ è $1.8$.
+    \item Ora dobbiamo fare le operazioni in ordine diverso, in base alle parentesi. Il risultato di $0.044 \oplus 1$ è il numero di macchina più vicino a $1.044$, cioè $1$. Il risultato di $0.71\oplus 1$ è il numero di macchina più vicino a $1.71$, cioè $1.7$. È interessante notare come fare le operazioni in ordine diverso produce risultati diversi: per l'operazione $\oplus$ non vale sempre la proprietà associativa!
+    \item $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3) = 0.33 \oplus 0.33 \oplus 0.33 = 0.99$, che è diverso dal risultato esatto $1/3 + 1/3 + 1/3 = 1$.
+    \item $500 \oplus 500 = +\infty$, visto che il risultato esatto supera il più grande numero di macchina $\Omega = 990$.
+    \item $0.001 \odot 0.001 = 0$, visto che il risultato esatto $0.001 \cdot 0.001 = 10^{-6}$ è più piccolo del più piccolo numero di macchina positivo $\omega = 0.0001$.
+\end{itemize}
 
 
-\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi che sono rappresentabili esattamente (ma i denominatori diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano presto \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine il sistema dei numeri di macchina è quello che si è affermato negli anni come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
+
+\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi che sono rappresentabili esattamente (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine il sistema dei numeri di macchina è quello che si è affermato negli anni come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
 
 \chapter{Analisi dell'errore}
 
@@ -1447,7 +1477,9 @@ Il secondo errore che commettiamo è il cosiddetto \emph{errore di macchina}, do
     \tilde{x}_{n+1} = \tilde{x}_n \ominus (\tilde{x}_n\odot \tilde{x}_n \ominus 2) \oslash (2\odot \tilde{x}_n).
 \end{cases}
 \]
-Questo processo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. (Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina.) È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere più grande a causa dell'accumulo di molti errori successivi (come nell'esempio $1\oslash 3 \oplus 1\oslash 3 \oplus 1\oslash 3 \neq 1$). Definiamo l'errore di macchina come
+Questo processo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. (Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina.) È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere più grande a causa dell'accumulo di molti errori successivi (come in uno degli esempi precedenti: $1\oslash 3 \oplus 1\oslash 3 \oplus 1\oslash 3 \neq 1$). 
+
+Definiamo l'errore di macchina come
 \[
 e_{mac} = \frac{\tilde{\gamma} - \gamma}{\gamma}.
 \]
@@ -1481,22 +1513,22 @@ Questo risultato è già sufficiente a spiegare qualitativamente il comportament
 \paragraph{Approssimazione al prim'ordine dell'errore di macchina}
 In realtà l'errore di macchina $\varepsilon_{mac}$ non è sempre dell'ordine di $10^{-16}$: l'accumulo di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzare questo errore su un esempio semplice. Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, calcoliamo
 \begin{align*}
-\tilde{\gamma} = \tilde{f}(\tilde{x}, \tilde{y}) &= \tilde{x} \otimes \tilde{x} \ominus \tilde{y} \otimes \tilde{y} \\
+\tilde{\gamma} &= \tilde{f}(\tilde{x}, \tilde{y}) = \tilde{x} \otimes \tilde{x} \ominus \tilde{y} \otimes \tilde{y} \\
 &= x(1+\varepsilon_x) \otimes x(1+\varepsilon_x) \ominus y(1+\varepsilon_y) \otimes (1+\varepsilon_y)\\
 &= x^2(1+\varepsilon_x)^2(1+\varepsilon_1) \ominus y^2(1+\varepsilon_y^2)(1+\varepsilon_2)\\
 &= \left( x^2(1+\varepsilon_x)^2(1+\varepsilon_1) - y^2(1+\varepsilon_y^2)(1+\varepsilon_2) \right)(1+\varepsilon_3) \\
 & \doteq \underbrace{x^2-y^2}_{\text{valore esatto $f(x,y)$}} {}+{} x^2 \cdot 2\varepsilon_x + x^2 \varepsilon_1 - y^2 \cdot 2\varepsilon_y - y^2\varepsilon_2 + (x^2-y^2)\varepsilon_3.
 \end{align*}
-Nell'ultima uguaglianza, notiamo il punto sopra l'uguale: espandendo il prodotto, abbiamo ignorato tutte le quantità ``del secondo ordine'', vale a dire che contengono il prodotto di due (o più) $\varepsilon_i$: visto che sappiamo che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, queste quantità sono dell'ordine di $\mathsf{u}^2$ e sono presumibilmente molto più piccole di tutti gli altri numeri coinvolti.
+Nell'ultima uguaglianza, notiamo il punto sopra l'uguale: espandendo il prodotto, abbiamo ignorato tutte le quantità ``del secondo ordine'', vale a dire che contengono il prodotto di due (o più) $\varepsilon_i$: visto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, questi prodotti sono dell'ordine di $\mathsf{u}^2$, e quindi presumibilmente molto più piccoli di tutti gli altri termini.
 
-Visto che tutto quello che sappiamo su questi errori è che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare sull'errore è quella che otteniamo usando la disuguaglianza triangolare: dividendo tutto per $\gamma$, abbiamo
+Usando solo il fatto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare sull'errore è quella che otteniamo usando la disuguaglianza triangolare: dividendo tutto per $\gamma$, abbiamo
 \begin{align}
-    \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} \stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
-    \leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{y^2}{\abs{x^2-y^2}} \mathsf{u} + \mathsf{u}. \label{esempiox2y2}
+    \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
+    &\leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{y^2}{\abs{x^2-y^2}} \mathsf{u} + \mathsf{u}. \label{esempiox2y2}
 \end{align}
-Questo calcolo ci mostra quando possiamo aspettarci che l'errore di macchina sia grande: le quantità che compaiono di fronte alle prime quattro $\mathsf{u}$ diventano grandi quando $x$ e $y$ sono vicini tra loro, perché in questo caso $x^2-y^2$ è molto più piccolo di $x^2$ e $y^2$. Quindi, nel calcolo di questa espressione, l'errore di macchina è grande quando $x\approx y$. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando ci troviamo a dover fare sottrazioni tra due numeri molto vicini.
+Questo calcolo ci mostra quando possiamo aspettarci che l'errore di macchina sia grande: i coefficienti che moltiplicano la $\mathsf{u}$ diventano grandi quando $x$ e $y$ sono vicini tra loro, perché in questo caso $x^2-y^2$ è molto più piccolo di $x^2$ e $y^2$. Quindi, nel calcolo di questa espressione, l'errore di macchina è grande quando $x\approx y$. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando facciamo sottrazioni tra due numeri molto vicini tra loro.
 
-La stima dell'errore che abbiamo effettuato però è abbastanza lunga e macchinosa anche per un'espressione molto semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare più facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
+La stima dell'errore che abbiamo effettuato è abbastanza lunga e macchinosa anche per un'espressione molto semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
 
 \paragraph{Numero di condizionamento} Concentriamoci sull'errore $\varepsilon_x$, e supponiamo per un attimo di ignorare gli errori $\varepsilon_y, \varepsilon_1,\varepsilon_2,\varepsilon_3$, ponendoli uguali a zero. Allora, possiamo notare che quello che stiamo calcolando è $\tilde{\gamma} = f(\tilde{x},y)$: l'unico errore che commettiamo è quello dovuto a rimpiazzare il valore iniziale $x$ con $\tilde{x}$, e tutte le altre operazioni sono esatte. Abbiamo a disposizione uno strumento dell'analisi per dare un'espressione approssimata di questo errore: lo sviluppo di Taylor. Consideriamo la funzione $g(x) = f(x,y)$, dove nascondiamo la dipendenza dalla $y$ perché la stiamo considerando costante. Se questa funzione è di classe $\mathcal{C}^1$, possiamo farne uno sviluppo di Taylor in $x$ per ottenere
 \[
@@ -1531,14 +1563,36 @@ Questa quantità è grande quando $x\approx 1$. Un errore relativo piccolo sull'
 Una funzione che ha un numero di condizionamento grande viene detta \emph{mal condizionata}.
 
 \paragraph{Errore inerente, algoritmico, e stabilità (*)}
-
-Notare che l'errore algoritmico dipende non dalla funzione in sé, ma dalla sequenza di operazioni che usiamo per calcolarlo: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore otteniamo un risultato $\tilde{\gamma}$ diverso:
+Notare che l'errore di macchina dipende non dalla funzione che vogliamo calcolare, ma dalla sequenza di operazioni che usiamo per calcolarla: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore possiamo ottenere un risultato $\tilde{\gamma}$ diverso:
 \[
     \tilde{\gamma} = \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y}).
 \]
-Se calcoliamo l'errore di macchina a partire da questa espressione, otterremo un risulatto diverso da quello in~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni sul calcolatore, e quindi sono soggetti a errori diversi. Tuttavia, una parte del calcolo resterà invariata: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, difatti, questi coefficienti sono pari al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che stiamo calcolando, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo; quindi l'espressione analoga alla~\eqref{esempiox2y2} avrà gli stessi coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Quindi all'interno dell'espressione per l'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolarla: quella dovuta all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle operazioni, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
+non è per forza uguale alla quantità che avevamo chiamato $\tilde{\gamma}$ in precedenza: abbiamo visto nell'Esercizio~\ref{ese: 
+miscellanea numeri di macchina} che anche solo facendo operazioni di macchina in ordine diverso possiamo ottenere risultati diversi.
 
-I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nel nostro esempio~\eqref{esempiox2y2}, l'errore algoritmico è composto dai termini contenenti $\varepsilon_1,\varepsilon_2,\varepsilon_3$. Notiamo che in questo esempio l'errore algoritmico non può mai essere sensibilmente più grande dell'errore inerente: la quantità
+Calcoliamo l'approssimazione al prim'ordine dell'errore di macchina anche per questa formulazione:
+\begin{align*}
+    \tilde{\gamma} &= \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y})\\
+    &= (x(1+\varepsilon_x)\oplus y(1+\varepsilon_y))\odot((1+\varepsilon_x)\ominus y(1+\varepsilon_y))\\
+    &= (x(1+\varepsilon_x)+ y(1+\varepsilon_y))(1+\varepsilon_1) \odot ((1+\varepsilon_x)- y(1+\varepsilon_y))(1+\varepsilon_2)\\
+    &= (x(1+\varepsilon_x)+ y(1+\varepsilon_y))(1+\varepsilon_1)((1+\varepsilon_x)- y(1+\varepsilon_y))(1+\varepsilon_2)(1+\varepsilon_3)\\
+    &\doteq (x+y)(x-y) + \biggl(x(x-y) + (x+y)x\biggr) \varepsilon_x + \biggl(y(x-y) - (x+y)y\biggr) \varepsilon_y \\
+    & \quad\quad + (x^2-y^2)(\varepsilon_1+\varepsilon_2+\varepsilon_3)
+\end{align*}
+Di nuovo, abbiamo ottenuto l'ultima uguaglianza espandendo i prodotti ma ignorando tutti i termini che contengono il prodotto di due o più termini $\varepsilon$. Possiamo semplificare l'ultima espressione in
+\[
+    \tilde{\gamma} = \underbrace{x^2-y^2}_{\text{valore esatto $f(x,y)$}} + 2x^2 \varepsilon_x = 2y^2 \varepsilon_y + (x^2-y^2)(\varepsilon_1+\varepsilon_2+\varepsilon_3)
+\]
+e quindi ottenere la stima disuguaglianza sull'errore
+\begin{align}
+    \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} 
+    + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y}
+    + \abs{\varepsilon_1}+\abs{\varepsilon_2}+\abs{\varepsilon_3} \nonumber\\
+    &\leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + 3\mathsf{u}. \label{esempiox2y2bis}
+\end{align}
+Abbiamo ottenuto un risultato diverso da quello in~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni sul calcolatore, e quindi sono soggetti a errori diversi. Tuttavia, una parte del risultato è la stessa: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, questi coefficienti sono uguali al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che vogliamo calcolare, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo. Quindi all'interno dell'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolare il risultato: sono quelli dovuti all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle variabili, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
+
+I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nella~\eqref{esempiox2y2bis}, l'errore algoritmico è minore o uguale di $3\mathsf{u}$, quindi è sempre dello stesso ordine di grandezza della precisione di macchina, a parte un piccolo fattore moltiplicativo; questo è quanto di meglio possiamo sperare per un algoritmo. Nella~\eqref{esempiox2y2} invece l'errore algoritmico è composto dai termini contenenti $\varepsilon_1,\varepsilon_2,\varepsilon_3$. Anche in questo caso però l'errore algoritmico non può mai essere molto più grande dell'errore inerente: la quantità
 $
 \frac{2x^2}{\abs{x^2-y^2}}\mathsf{u}
 $
@@ -1553,12 +1607,10 @@ $
 $
 \frac{y^2}{\abs{x^2-y^2}}\mathsf{u},
 $
-e la loro somma è sempre almeno uguale a $\mathsf{u}$.
-
-Un algoritmo in cui l'errore algoritmico è sempre dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: in un certo senso ci dice che l'algoritmo non fa mai un errore molto più grande dell'errore inerente, che è inevitabile perché dipende solo dalla funzione che vogliamo calcolare. Informalmente, possiamo pensare che per un algoritmo stabile l'errore che c'è è tutto ``colpa'' della funzione da calcolare, non dell'algoritmo che la calcola; quindi anche rimpiazzandolo con un algoritmo diverso non potremo mai avere un errore molto minore.
+e la loro somma è sempre almeno uguale a $\mathsf{u}$. Un algoritmo in cui l'errore algoritmico è sempre al più dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente che è inevitabile. Quindi un algoritmo stabile (informalmente) restituisce il minore errore possibile, almeno come ordine di grandezza.
 
 \paragraph{Esempio di un algoritmo instabile (*)}
-Consideriamo di nuovo la Funzione
+Consideriamo di nuovo la funzione
 \[
     f(x) = \frac{x}{1-x} = 1 - \frac{1}{1-x}.
 \]
