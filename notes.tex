@@ -352,7 +352,7 @@ La situazione è analoga a quella che avevamo nel metodo di bisezione, con un se
 \end{center}
 
 
-\begin{theorem}[Convergenza locale del metodo del punto fisso] \label{thm:puntofisso}
+\begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
 Siano dati $\alpha\in\mathbb{R}$, $r>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\}$, e supponiamo inoltre che $\abs{\Phi'(x)}<1$ per ogni $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
 \begin{itemize}
     \item $x_k \in I$ per ogni $k \geq 0$;
@@ -706,7 +706,7 @@ questo è importante in modo da poter confrontare metodi diversi. Abbiamo una su
     \end{axis}
     \end{tikzpicture}
     \end{center}
-\caption{Convergenza di diversi metodi iterativi per trovare uno zero di $f(x) = x^3-2$.} \label{fig:iterativi}
+\caption{Convergenza di diversi metodi iterativi per trovare uno zero di $f(x) = x^3-2$.}\label{fig:iterativi}
 \end{figure}
 La prima osservazione importante è che è utile usare una \emph{scala logaritmica} sull'asse delle $y$, come nel grafico in basso: con una scala lineare, non si riesce a valutare la velocità di convergenza dei metodi se non nelle primissime iterazioni, perché poi è tutto schiacciato sullo zero.
 
@@ -882,7 +882,7 @@ Diciamo che un metodo numerico converge con ordine \emph{almeno $p$} se vale
 \]
 Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto, che non vediamo, è analoga alla~\eqref{almeno}.)
 
-\paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton] \label{thm:convnewton}
+\paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton]\label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_n = \abs{x_n - \alpha}$ soddisfa
 \[
 \lim_{n\to \infty} \frac{e_{n+1}}{e_n^2} = s \in [0,\infty).
