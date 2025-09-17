@@ -978,7 +978,7 @@ grazie alla~\eqref{hop1}.
 
 Con questi risultati, possiamo dimostrare che se $\alpha$ è uno zero di molteplicità $m>1$, la convergenza del metodo di Newton è più lenta.
 \begin{theorem}
-    Sia $f(x) \in \mathcal{C}^2([a,b])$ una funzione con uno zero $\alpha \in (a,b)$ di molteplicità $m>1$.
+    Sia $f(x) \in \mathcal{C}^m([a,b])$ una funzione con uno zero $\alpha \in (a,b)$ di molteplicità $m>1$.
     Allora, il metodo di Newton converge localmente ad $\alpha$, e la sua velocità di convergenza è lineare.
 \end{theorem}
 \begin{proof}
@@ -1041,7 +1041,7 @@ Esempio: metodo di Newton su $f(x) = x^2$: lo zero è di ordine 2, e la converge
 
 Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza quadratica (converge di nuovo in un passo).
 
-\paragraph{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata della funzione $f$. Per questo esistono alcune varianti del metodo di Newton che cercano di evitare di calcolare derivate.
+\section{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata della funzione $f$. Per questo esistono alcune varianti del metodo di Newton che cercano di evitare di calcolare derivate.
 \begin{description}
     \item[Metodo delle corde] Si ottiene rimpiazzando la derivata $f'(x_n)$ con un valore costante fissato $c$:
         \[
