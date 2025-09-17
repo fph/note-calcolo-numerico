@@ -155,7 +155,7 @@ Se per assurdo esistessero due punti $a,b \in [0,\infty)$ tali che $f(a) = f(b) 
 
 Associamo degli indici ai punti con cui lavoriamo, in modo da poter parlare più agevolmente dei punti $a,b,c$ in passi diversi. Chiameremo $a_0 = a$, $b_0=b$ i due punti iniziali, e $c_0$ il loro punto medio. A questo punto, dopo aver fatto il primo passo abbiamo i punti $[a_1,b_1] = [a_0,c_0]$ oppure $[c_0,b_0]$. Chiamiamo $c_1$ il loro punto medio, e così via.
 
-Questa convenzione è particolarmente comoda per ragionare teoricamente sui passi dell'algoritmo: l'indice $0$ si usa per i punti di partenza, da cui iniziamo l'algoritmo, e l'indice $k$ denota i punti calcolati al $k$-esimo passo. (Vedremo però che il linguaggio di programmazione che usiamo, Matlab, in alcuni casi ci costringerà a partire da $1$ anziché da $0$.)
+Questa convenzione è particolarmente comoda per ragionare teoricamente sui passi dell'algoritmo: l'indice $0$ si usa per i punti di partenza, da cui iniziamo l'algoritmo, e l'indice $k$ denota i punti calcolati al $k$-esimo passo. (Vedremo però che il linguaggio di programmazione che usiamo, Matlab, spesso ci costringerà a partire da $1$ anziché da $0$.)
 
 Due semplici formule saranno fondamentali per proseguire:
 \begin{itemize}
@@ -202,7 +202,7 @@ $a_0=a,b_0=b$\;
         0 & 0 & 1 & 2 & -2 & -1 & 2\\
         1 & 1 & 1.5 & 2 & -1 & 0.25 & 2\\
         2 & 1 & 1.25 & 1.5 & -1 & -0.4375 & 0.25\\
-        $\vdots$\\
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ &$\vdots$ \\
         \bottomrule
     \end{tabular}
 \end{center}
@@ -252,7 +252,7 @@ Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono neces
 \frac{b_0 - a_0}{2^{n+1}} \leq \varepsilon \iff 2^{n+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff n \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
 \]
 
-\paragraph{Criterio di arresto euristico} Un'altra idea naturale è fermarsi quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
+\paragraph{Criterio di arresto euristico} Un'altra idea naturale è che possiamo fermarci quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
 
 Supponiamo di avere calcolato la funzione in un punto $c_k$, ottenendo $f(c_k)$. Una delle idee fondamentali dell'analisi è che se ``zoomiamo il grafico'' e ne guardiamo una sezione sufficientemente piccola, una funzione $f$ che sia \emph{differenziabile} si avvicina molto alla sua retta tangente. Pertanto, se $f$ è differenziabile in $c_k$,
 \begin{equation} \label{fapprox}
@@ -270,13 +270,14 @@ Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di va
 \]
 Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però: può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
 
-Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore piccolo, ma $c_k$ e $\alpha$ sono lontani.
+Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore $f(c_k)$ piccolo, ma $c_k$ è lontano da $\alpha$.
 \begin{center}
     \begin{tikzpicture}
         \draw[->] (-2,0) -- (5,0) node[right] {$x$};
         \draw[->] (0,-1) -- (0,2) node[above] {$y$};
-        \draw (4.5,0) node[below] {$c_k$} circle (1pt);
-        \draw (2,0) node[below] {$\alpha$} circle (1pt);
+        \fill (4.5,0) node[below] {$c_k$} circle (1pt);
+        \fill (2,0) node[below] {$\alpha$} circle (1pt);
+        \fill (4.5,0.125) node[above] {$f(c_k)$} circle (1pt);
         
         \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
     \end{tikzpicture}
@@ -334,7 +335,7 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
 
-\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è particolarmente importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $r>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $r$, che possiamo scrivere in due modi:
+\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $r>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $r$, che possiamo scrivere in due modi:
 \[
     I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\} = [\alpha-r, \alpha + r].
 \]
@@ -1449,7 +1450,17 @@ Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}
 \paragraph{Underflow/overflow} Ci sono due casi particolari da citare: eseguendo operazioni con numeri di macchina, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
 \begin{esercizio} \label{ese: miscellanea numeri di macchina}
-Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al più vicino)? $1 \ominus 0.001$; $1.01 \ominus 1.01$; $(0.71 \oplus 0.044) \oplus 1$; $0.71 \oplus (0.044 \oplus 1)$; $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3)$; $500 \oplus 500$; $0.001 \odot 0.001$; $50 \oplus 0.01$.
+Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al numero di macchina più vicino)? 
+\begin{itemize}
+    \item $1 \ominus 0.001$;
+    \item $1.01 \ominus 1.01$;
+    \item $(0.71 \oplus 0.044) \oplus 1$;
+    \item $0.71 \oplus (0.044 \oplus 1)$;
+    \item $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3)$;
+    \item $500 \oplus 500$; 
+    \item $0.001 \odot 0.001$;
+    \item $50 \oplus 0.01$.
+\end{itemize}
 \end{esercizio}
 Soluzioni:
 \begin{itemize}
@@ -4386,6 +4397,56 @@ Quindi, quando sommiamo su tutti gli intervalli $[x_k,x_{k+1}]$, otteniamo
 \tilde{I}_{M,n} &= \sum_{k=0}^{n-1} (x_{k+1}-x_k) f\left(\frac{x_k + x_{k+1}}{2}\right) \\
 &= h \left(f\left(\frac{x_0 + x_{1}}{2}\right) + f\left(\frac{x_1 + x_{2}}{2}\right) + \dots + f\left(\frac{x_{n-1} + x_{n}}{2}\right)\right).
 \end{align*}
+
+\begin{tikzpicture}
+  % Define nonlinear function
+  \def\func{0.5*x^2 + 1}
+  \def\nrect{12} % number of rectangles
+  \def\xmin{0}
+  \def\xmax{4}
+  \def\deltax{(\xmax-\xmin)/\nrect}
+
+  % Axis
+  \begin{axis}[
+    domain=0:4,
+    samples=100,
+    axis lines=middle,
+    ymin=0, ymax=10,
+    xmin=0, xmax=4.3,
+    xtick={},
+    ytick={},
+    width=10cm,
+    height=6cm,
+    legend style={at={(0.98,0.98)},anchor=north east}
+  ]
+
+    % Draw midpoint rectangles
+    \foreach \i in {0,...,11} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\xmid}{\xi + 0.5*\deltax}
+      \pgfmathsetmacro{\width}{\deltax}
+      \pgfmathsetmacro{\height}{0.5*\xmid*\xmid + 1}
+      \addplot [
+        fill=red!10,
+        draw=red!80!black,
+        area legend
+      ] coordinates {(\xi,0) (\xi,\height) (\xi+\width,\height) (\xi+\width,0)} -- cycle;
+    }
+    % Plot the nonlinear function
+    \addplot[thick,blue,domain=\xmin:\xmax] {\func};
+
+    % Add points for midpoints
+    \foreach \i in {0,...,11} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\xmid}{\xi + 0.5*\deltax}
+      \pgfmathsetmacro{\yi}{0.5*\xmid*\xmid + 1}
+      \addplot[only marks,mark=*,color=red] coordinates {(\xmid,\yi)};
+    }
+  \end{axis}
+\end{tikzpicture}
+
+
+
 Riprendiamo l'esempio di sopra: approssimiamo l'integrale $I = \int_0^1 x^2\, dx$ con $n=5$ punti, e otteniamo
 \[
 I_{M,5} = \frac{1}{5}\left(0.1^2+0.3^2+0.5^2+0.7^2+0.9^2\right) = 0.33,
@@ -4491,6 +4552,56 @@ Sommando lungo tutti i sottointervalli quindi abbiamo l'approssimazione
     \tilde{I}_{T,n} &= \sum_{k=0}^{n-1 }\frac{h}{2}(f(x_k)+f(x_{k+1}))\\
     &= \frac{h}{2}\biggl(f(x_0)+f(x_1) + f(x_1)+f(x_2) + f(x_2)+f(x_3) + \dots + f(x_{n-1})+f(x_n)\biggr).    
 \end{align*}
+
+Nella figura qui sotto, vediamo che per una funzione che non ha grosse oscillazioni è difficile distinguere i lati obliqui dei trapezi dal grafico della funzione stessa.
+
+\begin{tikzpicture}
+  % Define nonlinear function
+  \def\func{0.5*x^2 + 1}
+  \def\nrect{12} % number of subintervals
+  \def\xmin{0}
+  \def\xmax{4}
+  \def\deltax{(\xmax-\xmin)/\nrect}
+
+  % Axis
+  \begin{axis}[
+    domain=0:4,
+    samples=100,
+    axis lines=middle,
+    ymin=0, ymax=10,
+    xmin=0, xmax=4.3,
+    xtick={},
+    ytick={},
+    width=10cm,
+    height=6cm,
+    legend style={at={(0.98,0.98)},anchor=north east}
+  ]
+
+    % Draw trapezoids
+    \foreach \i in {0,...,11} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\xnext}{\xi+\deltax}
+      \pgfmathsetmacro{\yi}{0.5*\xi*\xi + 1}
+      \pgfmathsetmacro{\ynext}{0.5*\xnext*\xnext + 1}
+      \addplot [
+        fill=red!10,
+        draw=red!80!black,
+        area legend
+      ] coordinates {(\xi,0) (\xi,\yi) (\xnext,\ynext) (\xnext,0)} -- cycle;
+    }
+
+    % Plot the nonlinear function
+    \addplot[thick,blue,domain=\xmin:\xmax] {\func};
+
+    % Add points at trapezoid vertices (endpoints of function values)
+    \foreach \i in {0,...,12} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\yi}{0.5*\xi*\xi + 1}
+      \addplot[only marks,mark=*,color=red] coordinates {(\xi,\yi)};
+    }
+  \end{axis}
+\end{tikzpicture}
+
 A parte il primo e l'ultimo, ogni addendo della forma $f(x_i)$ compare due volte: prima come $f(x_{k+1})$, poi come $f(x_k)$ del termine successivo della sommatoria. Quindi possiamo riscrivere la formula come
 \begin{align*}
     \tilde{I}_{T,n} = h\biggl(\frac{1}{2} f(x_0) + f(x_1) + f(x_2) + \dots + f(x_{n-1}) + \frac{1}{2}f(x_n)  \biggr),
