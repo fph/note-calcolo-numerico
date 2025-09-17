@@ -15,6 +15,8 @@
 \usepackage{booktabs}
 \usepackage{subcaption}
 
+\usepackage{pgfplotstable}
+
 \usepackage{hyperref}
 \usepackage{microtype}
 
@@ -4100,9 +4102,9 @@ Sappiamo già che la soluzione del problema è unica. Basta verificare che $p(x_
 In alcuni casi, sappiamo che i punti da interpolare $(x_i,y_i)$ appartengono esattamente al grafico di una certa funzione $f$, cioè, $y_i = f(x_i)$ per ogni $i=0,\dots,d$. Si parla in questo caso di ``polinomio di interpolazione della funzione $f$''. Questa $f$ tipicamente non è un polinomio, ma potrebbe essere una funzione definita da una formula più complicata. Ha senso quindi cercare di ``rimpiazzarla'' con un polinomio più semplice, se possiamo assicurarci che l'errore commesso nell'interpolazione è piccolo. Il risultato seguente ci dà un modo di stimare questo errore, in funzione delle derivate della funzione $f$.
 \begin{theorem}[Resto dell'interpolazione]
 Sia $f\in \mathcal{C}^{d+1}([a,b])$, $x_0,x_1,\dots,x_d$ nodi distinti in $[a,b]$, e $p(x)$ il polinomio di interpolazione (di grado al più $d$) di $f$ sui nodi dati. Allora per ogni $x\in [a,b]$ esiste un punto $\xi \in (a,b)$ tale che
-\[
-f(x) - p(x) = \frac{f^{(d+1)}(\xi)}{(d+1)!} (x-x_0)(x-x_1) \dots (x-x_d).
-\]
+\begin{equation} \label{resto dell'interpolazione}
+    f(x) - p(x) = \frac{f^{(d+1)}(\xi)}{(d+1)!} (x-x_0)(x-x_1) \dots (x-x_d).    
+\end{equation}
 \end{theorem}
 Non lo dimostriamo ma facciamo qualche commento. Notare che questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Qui abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, e nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$.
 
@@ -4199,194 +4201,7 @@ dove $w_i$ sono detti \emph{pesi} e $x_i$ \emph{nodi} della formula, e sono scel
 
 Il costo computazionale di applicare una formula di quadratura con $n$ pesi e nodi è di $n$ valutazioni della funzione $f$, più poche altre operazioni ($2n-1$ per la precisione). Poiché il calcolo della funzione $f$ richiede un numero variabile di operazioni (e potenzialmente molto grande), esprimiamo il costo computazionale in termini di qaunte volte va valutata la funzione, esattamente come abbiamo fatto in passato per gli algoritmi per risolvere equazioni non lineari.
 
-% Spesso a queste formule chiediamo che siano esatte su alcune funzioni semplici; per esempio, polinomi di grado basso. Notiamo che una formula è esatta sulla funzione $f(x) \equiv 1$ se $\sum_{i=1}^n w_n = b-a$, per esempio.
-Partiamo analizzando due formule semplici.
-
-\paragraph{Formula del punto medio}
-È la formula
-\[
-\tilde{I}_M = (b-a)f(c),
-\]
-dove $c=\frac{a+b}{2}$ è il punto medio dell'intervallo di integrazione. Corrisponde a rimpiazzare l'integrale con l'area del rettangolo di base $[a,b]$ e altezza $f(m)$, quindi una somma di Riemann con un solo rettangolo. 
-\begin{center}
-\begin{tikzpicture}
-    % Draw axes
-    \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
-    \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
-    
-    \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
-    \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
-      (1, 0)
-      -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
-      -- (4, 0)
-      -- cycle;
-    
-    \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,3.0625) -- (1,3.0625) -- cycle;
-    
-    \node at (1,-0.3) {$a$};
-    \node at (4,-0.3) {$b$};
-    \node at (2.5,-0.3) {$c$};
-%    \node at (\midpoint,0) {$c$};
-
-\end{tikzpicture}
-\end{center}
-In questo disegno, così come nei successivi, evidenziamo in blu l'integrale eatto $I$ (area sotto la curva), e in rosso la sua approssimazione con una formula di quadratura, in questo caso $I_M$.
-
-
-Esempio: per calcolare l'integrale di $f(x)=x^2$ su $[a,b]=[0,1]$, 
-la formula del punto medio fornisce
-\[
-    \tilde{I}_M = (b-a)f(c) = (1-0)f(0.5) = \frac{1}{4}.
-\]
-Questo risultato è inferiore al valore esatto 
-\[
-    I = \int_0^1 x^2\, dx = \frac{1}{3}.
-\]
-Su questo problema, la formula del punto medio quindi commette un errore pari a $\abs{\tilde{I}_M - I} \approx 0.0833$.
-
-Notiamo che se $f(x)$ è una funzione lineare (polinomio di grado 1), allora questa formula restituisce il valore esatto dell'integrale, con un errore $\tilde{I}_M - I = 0$. Difatti, nella figura qui sotto, i due triangolini che abbiamo indicato con le lettere $A$ e $B$ sono uguali: quindi hanno la stessa area, e pertanto l'area della figura rossa e di quella blu sono uguali.
-\begin{center}
-    \begin{tikzpicture}
-        % Draw axes
-        \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
-        \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
-        
-        \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{0.5*\x + 1});
-        \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
-          (1, 0)
-          -- plot ({\x},{0.5*\x + 1})
-          -- (4, 0)
-          -- cycle;
-        
-        \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,2.25) -- (1,2.25) -- cycle;
-        
-        \node at (1,-0.3) {$a$};
-        \node at (4,-0.3) {$b$};
-        \node at (2.5,-0.3) {$c$};
-        \node at (1.5,2) {$A$};
-        \node at (3.5,2.5) {$B$};
-    %    \node at (\midpoint,0) {$c$};
-    \end{tikzpicture}
-    \end{center}
-Questo ragionamento geometrico mostra che la formula del punto medio restituisce il valore esatto dell'integrale ($I_M = I$) su tutti i polinomi di grado $0$ o $1$. Invece, esiste almeno un polinomio di grado $2$ su cui commette un errore ($1/4 \neq 1/3$!).
-
-Diremo che una formula di integrazione numerica ha \emph{ordine} $p$ se $p$ è il grado del polinomio di grado più basso su cui la formula \emph{non} restituisce il valore esatto dell'integrale. Quindi, la formula del punto medio ha ordine $p = 2$.
-
-Talvolta, anziché di ordine si parla di \emph{grado di esattezza} (o anche \emph{di precisione, di accuratezza}): una formula ha grado di esattezza $p-1$ se restituisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $p-1$ (ma non su tutti i polinomi di grado $p$). Con questa definizione, la formula del punto medio ha grado di esattezza $p-1 = 1$. 
-
-Possiamo dare una limitazione per l'errore $\tilde{I}_M-I$ in termini della derivata seconda di $f$.
-\begin{theorem}
-Sia $f\in\mathcal{C}^2([a,b])$. Allora,
-\[
-\abs{\tilde{I}_M-I} \leq \frac{1}{24}C_2 (b-a)^3,
-\]
-dove $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$.
-\end{theorem}
-La presenza della derivata seconda non è soprendente: difatti, già abbiamo osservato che se $C_2 = 0$ (cioè $f(x)$ è un polinomio di grado $0$ o $1$), allora l'errore è uguale a zero.
-\begin{proof}
-Scriviamo uno sviluppo di Taylor in $c$ di ordine 2,
-\[
-f(x) = f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2.
-\]
-Ora sostituiamo
-\begin{align*}
-    \tilde{I}_M - I &= f(c)(b-a) - \int_{a}^b \left(f(c) + f'(c)(x-c) + \frac12 f''(\xi)(x-c)^2\right)dx\\
-    &= \underbrace{f(c)(b-a) - \int_{a}^b \biggl(f(c) + f'(c)(x-c)\biggr)dx}_{=0} - \int_a^b \frac12 f''(\xi)(x-c)^2dx.
-\end{align*}
-Il primo termine si annulla: difatti, la funzione $g(x) = f(c) + f'(c)(x-c)$ è una funzione polinomiale di grado 1, e quindi possiamo calcolare il suo integrale esattamente con la formula del punto medio:
-\[
-\int_a^b g(x)\, dx = (b-a)g(c) = (b-a)f(c).
-\]
-Possiamo allora stimare l'errore come
-\begin{align*}
-\abs{\tilde{I}_M - I} &= \abs*{\int_a^b \frac12 f''(\xi)(x-c)^2 dx}
-    \leq \int_a^b \frac12 \abs{f''(\xi)}(x-c)^2 
-    \\ &\leq \frac12  \int_a^b C_2(x-c)^2 dx = \frac1{24}C_2 (b-a)^3,
-\end{align*}
-visto che $\int_a^b (x-c)^2 dx = \frac{1}{12}(b-a)^3$ (la primitiva di $(x-c)^2$ è $\frac{1}{3}(x-c)^3$).
-\end{proof}
-Con un po' più di attenzione, possiamo dimostrare un risultato più forte: se $m \leq f''(x) \leq M$ (cioè $m$ e $M$ sono il minimo e il massimo di $f''(x)$) allora
-\[
-\frac{m}{12}(b-a)^3 \leq \int_a^b m(x-c)^2 dx \leq \int_a^b f''(x)(x-c)^2 dx \leq \int_a^b M(x-c)^2 dx \leq \frac{M}{12}(b-a)^3,
-\]
-e quindi (per la continuità di $f''$) esiste un valore di $\xi$ per cui
-\[
-    \tilde{I}_M - I = -\frac{f''(\xi)}{24}(b-a)^3.
-\]
-Questa formula ci dà anche informazioni sul segno: se la derivata seconda di $f$ è sempre positiva (cioè $f$ è convessa), allora $\tilde{I}_M < I$; e al contrario se la derivata seconda è sempre negativa e $f$ è concava, allora $\tilde{I}_M > I$.
-
-\paragraph{Formula dei trapezi}
-È la formula che si ottiene rimpiazzando $\int_a^b f(x)\, dx$ con l'integrale della funzione che si ottiene congiungendo $(a,f(a))$ e $(b,f(b))$ con un segmento di retta.
-\begin{center}
-    \begin{tikzpicture}
-        % Draw axes
-        \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
-        \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
-        
-        \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
-        \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
-          (1, 0)
-          -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
-          -- (4, 0)
-          -- cycle;
-        
-        \fill[red, opacity=0.2] (1,0) -- (4,0) -- (4,4) -- (1,1) -- cycle;
-        
-        \node at (1,-0.3) {$a$};
-        \node at (4,-0.3) {$b$};
-        \node at (2.5,-0.3) {altezza};
-        \node[rotate=90] at (0.7, 0.5) {base};
-        \node[rotate=90] at (4.3, 2) {base};
-    \end{tikzpicture}
-    \end{center}
-Girando la testa verso sinistra, possiamo vedere che la figura in rosso è un trapezio rettangolo con due basi (in verticale!) lunghe $f(a)$ e $f(b)$, e altezza (in orizzontale!) lunga $b-a$. Pertanto, usando la formula per l'area di un trapezio si ha
-\[
-    \tilde{I}_T = \frac{f(a)+f(b)}{2}(b-a) = \frac{b-a}{2}f(a) + \frac{b-a}{2}f(b).
-\]
-Questa formula ha due pesi $w_1=w_2=\frac{b-a}{2}$ e due nodi $x_1=a,x_2=b$. 
-
-Esempio: $I = \int_0^1 x^2\, dx = 1/3$. La formula dei trapezi fornisce
-\[
-    \tilde{I}_T = \frac{b-a}{2}(f(0)+f(1)) = \frac{1-0}{2}(0^2+1^2) = \frac{1}{2}.
-\]
-Questa volta l'errore è per eccesso. Difatti $f(x)=x^2$ è una funzione convessa, e quindi sta al di sotto della retta che congiunge $(0,f(0))$ e $(1,f(1))$.
-
-Notiamo che $\tilde{I}_T$ è uguale all'integrale della retta che congiunge $(a,f(a))$ e $(b,f(b))$. Se $f(x)$ è una funzione lineare, questa retta è propiro il grafico della funzione, e quindi la formula restituisce il valore esatto dell'integrale, $I_T = I$. Da quanto detto sopra perciò possiamo concludere che l'ordine di questa formula è $p=2$.
-
-Più in generale, questa retta è il polinomio di interpolazione $p(x)$ alla funzione sui nodi $x_0=a$ e $x_1=b$. Questa osservazione ci permette di dimostrare un risultato analogo a quello visto poco fa per il metodo del punto medio.
-\begin{theorem}
-Sia $f\in\mathcal{C}^2([a,b])$. Allora,
-\[
-\abs{\tilde{I}_T-I} \leq \frac{1}{12}C_2 (b-a)^3,
-\]
-dove $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$.
-\end{theorem}
-Notare che il coefficiente è il doppio di quello ottenuto per la formula del punto medio.
-\begin{proof}
-Scriviamo la formula del resto dell'interpolazione,
-\[
-f(x) - p(x) = \frac{f''(\xi)}{2}(x-a)(x-b),
-\]
-dove $p(x)$ è il polinomio di grado $d=1$ (cioè la retta) che interpola $f(x)$ nei due nodi $a$ e $b$; abbiamo detto poco fa che $\tilde{I}_T = \int_a^b p(x) dx$. Allora,
-\[
-    \tilde{I}_T - I = \int_a^b (p(x)-f(x)) dx = \int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx,
-\]
-dove abbiamo cambiato segno a $x-b$. Scegliendo i segni in questo modo, $(x-a)(b-x)\geq 0$ per ogni $x\in [a,b]$, e quindi è sempre uguale al suo valore assoluto. Ora possiamo scrivere
-\begin{align*}
-\abs{\tilde{I}_T - I} &= \abs*{\int_a^b \frac{f''(\xi)}{2}(x-a)(b-x) dx} \leq \int_a^b \frac{\abs{f''(\xi)}}{2}(x-a)(b-x) dx \\
-& \leq \frac{C_2}{2} \int_a^b (x-a)(b-x)dx = \frac{C_2}{12}(b-a)^3,
-\end{align*}
-visto che $\int_a^b (x-a)(x-b)dx = \frac{1}{6}(b-a)^3$ (di nuovo è un conto su un integrale di un polinomio di grado 2).
-\end{proof}
-Come prima, un ragionamento più accurato porta a
-\[
-    \tilde{I}_T - I = \frac{f''(\xi)}{12}(b-a)^3.
-\]
-Quindi questa formula restituisce un risultato più \emph{grande} di $I$ per funzioni convesse, e più \emph{piccolo} per funzioni concave; cosa che è evidente anche da un disegno (TODO).
-
-La dimostrazione che abbiamo fatto suggerisce una generalizzazione: per calcolare un integrale, possiamo scegliere un grado $d$, fissare $d+1$ nodi in $[a,b]$, calcolare il polinomio di interpolazione $p(x)$ su questi nodi, e rimpiazzare $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Vediamo come farlo nei prossimi paragrafi.
-
-\paragraph{Suddivisione di un intervallo in sottointervalli uguali} Un'operazione che ci servirà fare diverse volte nel seguito sarà suddividere un intervallo $[a,b]$ in tanti sottointervalli uguali. Vediamo qui delle formule che permettono di dare un'espressione per i punti risultanti. Per aiutarci, mostriamo un esempio con $d=5$ sottointervalli.
+\paragraph{Suddivisione di un intervallo in sottointervalli uguali} Un'operazione che ci servirà fare diverse volte nel seguito sarà quella di suddividere un intervallo $[a,b]$ in un certo numero di sottointervalli uguali. Vediamo qui delle formule che permettono di dare un'espressione per i punti risultanti. Per aiutarci, mostriamo un esempio con $n=5$ sottointervalli.
 \begin{center}
     \begin{tikzpicture}
     % Define points a and b
@@ -4418,26 +4233,461 @@ La dimostrazione che abbiamo fatto suggerisce una generalizzazione: per calcolar
 \end{tikzpicture}
 \end{center}
 
-La prima osservazione è che quando suddividiamo un intervallo $[a,b]$ in $d$ segmenti uguali (con $d$ intero positivo), ogni sottointervallo è lungo $h = \frac{b-a}{d}$, cioè $\frac{1}{d}$ della lunghezza dell'intervallo di partenza. La seconda osservazione è che $d$ sottointervalli determinano $d+1$ punti (attenzione, non $d$) che sono i loro estremi; possiamo chiamarli $x_0, x_1,\dots, x_d$. Questi punti sono \emph{equispaziati}, cioè alla stessa distanza l'uno dall'altro. Più precisamente, ogni punto sta a una distanza $h$ da quello precedente, quindi abbiamo
+La prima osservazione è che quando suddividiamo un intervallo $[a,b]$ in $n$ sottointervalli uguali (con $n$ intero positivo), ogni sottointervallo è lungo $h = \frac{b-a}{n}$, cioè $\frac{1}{n}$ della lunghezza dell'intervallo di partenza. La seconda osservazione è che $n$ sottointervalli determinano $n+1$ punti (attenzione, non $n$) che sono i loro estremi; possiamo chiamarli $x_0, x_1,\dots, x_n$, partendo da $0$. Questi punti sono \emph{equispaziati}, cioè alla stessa distanza l'uno dall'altro. Più precisamente, ogni punto sta a una distanza $h$ da quello precedente, quindi abbiamo
 \[
-    x_0=a,\, x_1=a+h,\, x_2 = a+2h,\, \dots, \,x_d = a+dh = a + d\frac{b-a}{d} = b.
+    x_0=a,\, x_1=a+h,\, x_2 = a+2h,\, \dots, \,x_n = a+nh = a + n\frac{b-a}{n} = b.
 \]
 o genericamente
 \[
-    x_k = a + kh, \quad k=0,1,2,\dots,d.
+    x_k = a + kh, \quad k=0,1,2,\dots,n.
 \]
-Queste formule permettono di dare un'espressione esplicita per i punti della suddivisione.
+\paragraph{Somme di Riemann}
+Nel definire l'integrale, probabilmente avete usato una strategia basata sul rimpiazzare l'area sotto la funzione con una somma di rettangoli, come nell'esempio seguente.
+\begin{center}
+\begin{tikzpicture}
+  % Define nonlinear function
+  \def\func{0.5*x^2 + 1}
+  \def\nrect{12} % number of rectangles
+  \def\xmin{0}
+  \def\xmax{4}
+  \def\deltax{(\xmax-\xmin)/\nrect}
 
-\paragraph{Formule di Newton--Cotes} Le \emph{formule di Newton--Cotes} si ottengono in questo modo:
+  % Axis
+  \begin{axis}[
+    domain=0:4,
+    samples=100,
+    axis lines=middle,
+    ymin=0, ymax=10,
+    xmin=0, xmax=4.3,
+    xtick={},
+    ytick={},
+    width=10cm,
+    height=6cm,
+    legend style={at={(0.98,0.98)},anchor=north east}
+  ]
+    % Plot the nonlinear function
+    \addplot[thick,blue,domain=\xmin:\xmax] {\func};
+
+    % Draw left Riemann rectangles
+    \foreach \i in {0,...,11} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\width}{\deltax}
+      \pgfmathsetmacro{\height}{0.5*\xi*\xi + 1}
+      \addplot [
+        fill=red!10,
+        draw=red!80!black,
+        area legend
+      ] coordinates {(\xi,0) (\xi,\height) (\xi+\width,\height) (\xi+\width,0)} -- cycle;
+    }
+
+    % Add points for left endpoints
+    \foreach \i in {0,...,11} {
+      \pgfmathsetmacro{\xi}{\xmin + \i*\deltax}
+      \pgfmathsetmacro{\yi}{0.5*\xi*\xi + 1}
+      \addplot[only marks,mark=*,color=red] coordinates {(\xi,\yi)};
+    }
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+Nel dettaglio, suddividiamo l'intervallo $[a,b]$ in $n$ intervalli uguali, come descritto sopra; poi calcoliamo le aree dei rettangoli: il $k$-esimo rettangolo ha base $[x_{k},x_{k+1}]$, quindi con lunghezza $x_{k+1}-x_k=h$, e altezza $f(x_k)$: abbiamo scelto di prendere come altezza il valore della funzione nel punto a \emph{sinistra} dell'intervallo. Questo dobbiamo farlo per $k=0,1,2,\dots,n-1$, in modo che il primo intervallo sia $[x_0,x_1]$ e l'ultimo $[x_{n-1},x_n]$; la formula che dà la somma delle loro aree quindi è
+\[
+\tilde{I}_{L,n} = \sum_{k=0}^{n-1} hf(x_k) = \frac{b-a}{n} \biggl( f(x_0) + f(x_1) + \dots + f(x_{n-1}) \biggr).
+\]
+La somma contiene il valore della funzione su $n$ degli $n+1$ punti della suddivisione, tutti tranne l'ultimo.
+
+Possiamo definire questa approssimazione dell'integrale anche quando $f(x)$ assume valori negativi, anche se la nostra intuizione basata sul disegno è meno chiara: sarebbe necessario parlare in qualche modo di rettangoli con area negativa\dots
+
+Abbiamo usato l'indice $L$ per sinistra, dall'inglese \emph{left}. Analogamente possiamo definire un'approssimazione prendendo le somme sull'estremo destro di ogni rettangolo, 
+\[
+\tilde{I}_{R,n} = \sum_{k=0}^{n-1} hf(x_{k+1}) = \frac{b-a}{n} \biggl( f(x_1) + f(x_2) + \dots + f(x_{n}) \biggr).
+\]
+
+Un esempio semplice: consideriamo la funzione $f(x)=x^2$, e approssimiamo il suo integrale su $[0,1]$, suddividendo l'intervallo in $n=5$ sottointervalli uguali. Si ha $h=1/5$,
+\[
+x_0 = 0, \quad x_1 = 0.2, \quad x_2=0.4,\quad x_3=0.6,\quad x_4 = 0.8,\quad x_5=1
+\]
+e
+\begin{align*}
+    \tilde{I}_{L,5} &= h (x_0^2+x_1^2+x_2^2+x_3^2+x_4^2) = \frac{1}{5}\left(0^2+0.2^2+0.4^2+0.6^2+0.8^2\right) = 0.24,\\
+    \tilde{I}_{R,5} &= h (x_1^2+x_2^2+x_3^2+x_4^2+x_5^2) = \frac{1}{5}\left(0.2^2+0.4^2+0.6^2+0.8^2+1^2\right) = 0.44.\\
+\end{align*}
+Queste non sono approssimazioni particolarmente accurate del valore esatto $I=\frac{1}{3}$, perché il numero di punti che abbiamo usato è molto basso. Però al crescere di $n$ l'errore scende. Possiamo dimostrare questo fatto.
+\paragraph{Errore delle somme di Riemann}
+\begin{theorem}
+Sia $f$ una funzione di classe $\mathcal{C}^1$ su $[a,b]$, e definiamo $C_1 = \max_{x\in [a,b]} \abs{f'(x)}$. Allora,
+\begin{equation} \label{Riemann sum error}
+    \abs{I - \tilde{I}_{L,n}} \leq \frac{1}{2} (b-a) C_1 h
+\end{equation}
+\end{theorem}
+\begin{proof}
+    Riduciamo il problema a un singolo sottointervallo della nostra suddivisione. Per questo scriviamo l'integrale di $f$ come somma sui sottointervalli:
+    \[
+    I = \int_a^b f(x)\, dx = \sum_{k=0}^{n-1} \int_{x_k}^{x_{k+1}}f(x)\, dx.
+    \]
+    Per ogni sottointervallo vogliamo valutare l'errore $\int_{x_k}^{x_{k+1}}f(x)\, dx - f(x_k)(x_{k+1}-x_k)$. Usiamo uno sviluppo di Taylor di ordine 1 centrato in $x_k$:
+    \begin{align*}
+    \int_{x_k}^{x_{k+1}}f(x)\, dx &= \int_{x_k}^{x_{k+1}} \biggl(f(x_k) + f'(\xi_k)(x - x_k) \biggr)\, dx\\
+    &= \underbrace{\int_{x_k}^{x_{k+1}} f(x_k) \, dx}_{=f(x_k)(x_{k+1}-x_k)} + \underbrace{\int_{x_k}^{x_{k+1}}f'(\xi_k)(x - x_k)\, dx}_{=R_k}.
+    \end{align*}
+    Il primo addendo è l'integrale di una funzione costante, ed è proprio l'area del rettangolo. Per il secondo, che abbiamo chiamato $R_k$ (da ``resto''), abbiamo
+    \begin{align*}
+        \abs{R_k} &= \abs*{\int_{x_k}^{x_{k+1}}f'(\xi_k)(x - x_k)\, dx}\\
+        & \leq \int_{x_k}^{x_{k+1}}\abs{f'(\xi_k)(x - x_k)}\, dx\\
+        & \leq \int_{x_k}^{x_{k+1}} C_1 (x - x_k)\, dx\\
+        &= C_1\frac{1}{2}(x-x_k)^2\bigg|_{x_k}^{x_{k+1}} = \frac{C_1}{2} h^2.
+    \end{align*}
+    In questo calcolo abbiamo tolto il valore assoluto da $\abs{x-x_k}$, poiché questa espressione è maggiore o uguale a zero per ogni punto dell'intervallo $[x_k,x_{k+1}]$.
+
+    Ora possiamo sommare gli errori su tutti i sottointervalli:
+    \begin{align*}
+        \abs{I - \tilde{I}_{L,n}} &= \abs*{\sum_{k=0}^{n-1} \int_{x_k}^{x_{k+1}}f(x)\, dx - f(x_k)(x_{k+1}-x_k)}\\
+        & \leq \sum_{k=0}^{n-1} \abs{R_k}\\
+        & \leq n \cdot \frac{C_1}{2} h^2,
+    \end{align*}
+    e ricordando che $h = \frac{b-a}{n}$ vediamo che questa espressione è uguale a quella nel testo del teorema.
+\end{proof}
+Per le somme destre $\tilde{I}_{R,n}$ vale la stessa disuguaglianza, che si dimostra in modo analogo.
+
+Ci può venire qualche dubbio che la funzione $f'(\xi_k)(x - x_k)$ sia integrabile, visto che i teoremi sullo sviluppo di Taylor non ci dicono nulla su come è scelto $\xi_k$, ma possiamo notare che $f'(\xi_k)(x - x_k) = f(x) - f(x_k)$, e la funzione a destra dell'uguale è sicuramente continua in $x$.
+
+La formula~\eqref{Riemann sum error} ci dice che quando usiamo valori più grandi di $n$ abbiamo valori di $h$ più piccoli, e $\tilde{I}_{L,n}$ converge al valore esstto dell'integrale $I$ quando $n\to \infty$. L'errore è proporzionale a $h$, quindi possiamo scriverlo cone $\mathcal{O}(h)$. Vediamo ora che una piccola modifica al metodo ci permette di ottenere una convergenza più veloce (e quindi un errore più piccolo).
+
+\paragraph{Formula del punto medio}
+In questo metodo, invece di prendere come altezza del rettangolo il valore della funzione nell'estremo sinistro o destro dell'intervallo, usiamo il valore nel punto medio:
+\begin{equation} \label{formula del punto medio}
+    \int_{x_k}^{x_{k+1}} f(x) \, dx \approx \underbrace{(x_{k+1}-x_k)}_{=h} f\left(\frac{x_k + x_{k+1}}{2}\right).    
+\end{equation}
+\begin{center}
+\begin{tikzpicture}
+    % Draw axes
+    \draw[->] (-0.5,0) -- (5.5,0);
+    \draw[->] (0,-0.5) -- (0,4);
+
+    \draw[draw=red!80!black, fill=red!10] (1,0) -- (4,0) -- (4,3.0625) -- (1,3.0625) -- cycle;
+
+    \draw[domain=1:4,smooth,variable=\x,blue,thick] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+    
+    % \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+    %   (1, 0)
+    %   -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+    %   -- (4, 0)
+    %   -- cycle;
+    
+    \node at (1,-0.3) {$x_k$};
+    \node at (4,-0.3) {$x_{k+1}$};
+    \node at (2.5,-0.3) {$\frac{x_k + x_{k+1}}{2}$};
+%    \node at (\midpoint,0) {$c$};
+    \fill[red] (2.5,3.0625) circle (2pt);
+\end{tikzpicture}
+\end{center}
+
+Quindi, quando sommiamo su tutti gli intervalli $[x_k,x_{k+1}]$, otteniamo
+\begin{align*}
+\tilde{I}_{M,n} &= \sum_{k=0}^{n-1} (x_{k+1}-x_k) f\left(\frac{x_k + x_{k+1}}{2}\right) \\
+&= h \left(f\left(\frac{x_0 + x_{1}}{2}\right) + f\left(\frac{x_1 + x_{2}}{2}\right) + \dots + f\left(\frac{x_{n-1} + x_{n}}{2}\right)\right).
+\end{align*}
+Riprendiamo l'esempio di sopra: approssimiamo l'integrale $I = \int_0^1 x^2\, dx$ con $n=5$ punti, e otteniamo
+\[
+I_{M,5} = \frac{1}{5}\left(0.1^2+0.3^2+0.5^2+0.7^2+0.9^2\right) = 0.33,
+\]
+che è un'approssimazione dell'integrale esatto $I=\frac{1}{3}$ molto migliore di quelle trovate in precedenza.
+
+\paragraph{Errore della formula del punto medio}
+\begin{theorem} \label{thm: errore metodo punto medio}
+    Sia $f$ una funzione di classe $\mathcal{C}^2$ su $[a,b]$, e definiamo $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$. Allora,
+    \begin{equation} \label{midpoint method error}
+        \abs{I - \tilde{I}_{M,n}} \leq \frac{1}{24} (b-a) C_2 h^2.
+    \end{equation}
+\end{theorem}
+\begin{proof}
+    Come nella dimostrazione precedente, consideriamo l'errore del metodo su un singolo sottointervallo; questa volta, facciamo uno sviluppo di Taylor di ordine 2, centrato nel punto medio $m = \frac{x_k+x_{k+1}}{2}$
+    \begin{align*}
+        \int_{x_k}^{x_{k+1}} f(x)\, dx &= \int_{x_k}^{x_{k+1}} \biggl(f(m)+f'(m)(x-m) +\frac{f''(\xi_k)}{2}(x-m)^2 \biggr)dx\\
+        &= \underbrace{\int_{x_k}^{x_{k+1}} f(m)\, dx}_{=f(m)(x_{k+1}-x_k)} + \underbrace{\int_{x_k}^{x_{k+1}} f'(m)(x-m)\, dx}_{=0}
+        + \underbrace{\int_{x_k}^{x_{k+1}} \frac{f''(\xi_k)}{2}(x-m)^2 \,dx}_{=R_k}.
+    \end{align*}
+    Di nuovo, il primo addendo è l'area del rettangolo che stiamo considerando. Il secondo addendo vale 0: lo vediamo dalla primitiva
+    \[
+    \int_{x_k}^{x_{k+1}} f'(m)(x-m)\, dx = f'(m)\frac{(x-m)^2}{2}\bigg|_{x_k}^{x_{k+1}} = f'(m)\frac{(x_{k+1}-m)^2}{2} - f'(m)\frac{(x_k-m)^2}{2}:
+    \]
+    poiché $m$ è il punto medio tra $x_k$ e $x_{k+1}$, si ha $x_{k+1}-m = m-x_k = \frac{h}{2}$. Oppure anche geometricamente: stiamo calcolando l'integrale della funzione raffigurata qui sotto.
+\begin{center}
+\begin{tikzpicture}
+    % Draw axes
+    \draw[->] (-0.5,0) -- (5.5,0);
+    \draw[->] (0,-2) -- (0,2);
+
+    \draw[draw=red!80!black, fill=red!10] (1,0) -- (4,0) -- (4,1.5) -- (1,-1.5) -- cycle;
+
+    \draw[domain=1:4,smooth,variable=\x,blue,thick] plot ({\x},{\x-2.5});
+    
+    % \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+    %   (1, 0)
+    %   -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+    %   -- (4, 0)
+    %   -- cycle;
+    
+    \node at (1,-0.3) {$x_k$};
+    \node at (4,-0.3) {$x_{k+1}$};
+    \node at (2.5,-0.3) {$m$};
+%    \node at (\midpoint,0) {$c$};
+\end{tikzpicture}
+\end{center}
+L'integrale fa $0$ per simmetria: i due triangoli sono uguali; quello a sinistra ha area che va contata col segno meno perché è al di sotto dell'asse delle ascisse, e quello a destra ha area che va contata col segno più.
+
+Di nuovo, diamo una limitazione per l'area del resto $R_k$:
+\begin{align*}
+    \abs{R_k} &= \abs*{\int_{x_k}^{x_{k+1}} \frac{f''(\xi_k)}{2}(x-m)^2 \,dx}\\
+    &\leq \int_{x_k}^{x_{k+1}} \abs*{\frac{f''(\xi_k)}{2}(x-m)^2} \, dx\\
+    &\leq \int_{x_k}^{x_{k+1}} \frac{C_2}{2} (x-m)^2 \\
+    & = \frac{C_2}{6} (x-m)^3\bigg|_{x_k}^{x_{k+1}}\\
+    &= \frac{C_2}{6} \left(\frac{h}{2}\right)^3 - \frac{C_2}{6}\left(-\frac{h}{2}\right)^3 = \frac{1}{24}C_2 h^3.
+\end{align*}
+Abbiamo usato di nuovo il fatto che $x_{k+1}-m = m-x_k = \frac{h}{2}$. Come nella dimostrazione precedente, sommiamo questi errori lungo tutti i sottointervalli per ottenere
+\begin{align*}
+    \abs{I - \tilde{I}_{M,n}} &= \abs*{\sum_{k=0}^{n-1} \int_{x_k}^{x_{k+1}} f(x)\, dx - f\left(\frac{x_k+x_{k+1}}{2}\right)(x_{k+1}-x_k) }\\
+    &\leq \sum_{k=0}^{n-1} \abs{R_k} \leq n \cdot \frac{C_2}{24}h^3 = (b-a)\frac{C_2}{24}h^2. \qedhere
+\end{align*}
+\end{proof}
+Questa volta l'errore è limitato da una costante (non dipendente da $n$) moltiplicata per $h^2$, cioè $\mathcal{O}(h^2)$. Quando $n\to\infty$, e quindi $h\to 0$, questo errore va a zero come il \emph{quadrato} di $h$, quindi più velocemente che non l'errore delle somme di Riemann~\eqref{Riemann sum error}, che era dell'ordine di $h$. 
+
+\paragraph{Formula dei trapezi} Un altro metodo classico si ottiene con una variante di questa idea. Invece che con un rettangolo, approssimiamo l'integrale su ogni singolo sottointervallo con l'area del trapezio che si forma tracciando il segmento che unisce i punti $(x_{k}, f(x_k))$ e $(x_{k+1}, f(x_{k+1}))$.
+
+\begin{center}
+    \begin{tikzpicture}
+        % Draw axes
+        \draw[->] (-0.5,0) -- (5.5,0);
+        \draw[->] (0,-0.5) -- (0,4);
+        
+
+        \draw[draw=red!80!black, fill=red!10] (1,0) -- (4,0) -- (4,4) -- (1,1) -- cycle;
+
+        \draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+        % \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+        %   (1, 0)
+        %   -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+        %   -- (4, 0)
+        %   -- cycle;
+        
+        
+        \node at (1,-0.3) {$x_k$};
+        \node at (4,-0.3) {$x_{k+1}$};
+        \node[red!80!black] at (2.5,-0.3) {altezza};
+        \node[rotate=90,red!80!black] at (0.7, 0.5) {base};
+        \node[rotate=90,red!80!black] at (4.3, 2) {base};
+
+        \fill[red] (1,1) circle (2pt);
+        \fill[red] (4,4) circle (2pt);
+    \end{tikzpicture}
+    \end{center}
+Girando la testa verso sinistra, vediamo che la figura in rosso è un trapezio rettangolo con due basi (in verticale) lunghe $f(x_k)$ e $f(x_{k+1})$, e altezza (in orizzontale) lunga $x_{k+1}-x_k = h$. Pertanto, usando la formula per l'area di un trapezio, l'approssimazione che abbiamo è
+\begin{equation} \label{trapezi semplice}
+    \int_{x_k}^{x_{k+1}} f(x)\, dx \approx \frac{f(x_k)+f(x_{k+1})}{2}h.
+\end{equation}
+Occhio alle differenze tra questa formula e la~\eqref{formula del punto medio}: in questa formula prima si applica la $f$ e poi si fa la media, nell'altra formula viceversa.
+
+Sommando lungo tutti i sottointervalli quindi abbiamo l'approssimazione
+\begin{align*}
+    \tilde{I}_{T,n} &= \sum_{k=0}^{n-1 }\frac{h}{2}(f(x_k)+f(x_{k+1}))\\
+    &= \frac{h}{2}\biggl(f(x_0)+f(x_1) + f(x_1)+f(x_2) + f(x_2)+f(x_3) + \dots + f(x_{n-1})+f(x_n)\biggr).    
+\end{align*}
+A parte il primo e l'ultimo, ogni addendo della forma $f(x_i)$ compare due volte: prima come $f(x_{k+1})$, poi come $f(x_k)$ del termine successivo della sommatoria. Quindi possiamo riscrivere la formula come
+\begin{align*}
+    \tilde{I}_{T,n} = h\biggl(\frac{1}{2} f(x_0) + f(x_1) + f(x_2) + \dots + f(x_{n-1}) + \frac{1}{2}f(x_n)  \biggr),
+\end{align*}
+dove i coefficienti $\frac{1}{2}$ compaiono solo davanti al primo e all'ultimo termine. In questo modo la formula è molto simile a quelle per le somme di Riemann $\tilde{I}_{L,n}$ e $\tilde{I}_{R,n}$ che abbiamo visto più sopra.
+
+In questo metodo abbiamo $n+1$ pesi e $n+1$ nodi nella formula, e ci serve valutare la funzione $f$ $n+1$ volte per calcolare $\tilde{I}_{T,n}$.
+
+Riprendiamo l'esempio già visto: per $I = \int_0^1 x^2\, dx = 1/3$, con $n=5$ punti, l'approssimazione data da questa formula è
+\begin{equation} \label{esempio trapezi composito}
+    \tilde{I}_{T,n} = \frac{1}{5} \left(\frac{1}{2}0^2 + 0.2^2 + 0.4^2 + 0.6^2 + 0.8^2 + \frac{1}{2}1^2\right) = 0.34.    
+\end{equation}
+Di nuovo, anche con pochi punti siamo molto vicini al valore esatto dell'integrale. Possiamo di nuovo determinare una formula per l'errore.
+
+\paragraph{Errore della formula dei trapezi} 
+\begin{theorem}
+    Sia $f$ una funzione di classe $\mathcal{C}^2$ su $[a,b]$, e definiamo $C_2 = \max_{x\in [a,b]} \abs{f''(x)}$. Allora,
+    \begin{equation} \label{trapezoid formula error}
+        \abs{I - \tilde{I}_{T,n}} \leq \frac{1}{12} (b-a) C_2 h^2.
+    \end{equation}
+\end{theorem}
+Notiamo che il membro di destra è il doppio di quello che avevamo ottenuto per il metodo del punto medio, visto che al denominatore abbiamo $12$ anziché $24$.
+\begin{proof}
+    Di nuovo, iniziamo studiando l'errore del metodo su ogni singolo sottointervallo. Questa volta non è utile uno sviluppo di Taylor, visto che nella formula~\eqref{trapezi semplice} la funzione viene valutata in due punti. Però, osserviamo che l'approssimazione prodotta dal metodo è uguale all'integrale della funzione $p(x)$, dove $p(x)$ è il segmento di retta (polinomio di grado 1) che congiunge i due punti $(x_k, f(x_k))$ e $(x_{k+1},f(x_{k+1}))$. Con la terminologia del capitolo precedente, questa funzione $p(x)$ è il polinomio di approssimazione della funzione $f(x)$ nei due nodi $x_k$ e $x_{k+1}$. 
+    
+    Questa osservazione ci permette di usare la formula per il resto dell'interpolazione~\eqref{resto dell'interpolazione}. Applicando quella formula per $d=1$ e i due nodi $x_k,x_{k+1}$ abbiamo
+    \begin{align*}
+    \int_{x_k}^{x_{k+1}} f(x)\, dx &= \int_{x_k}^{x_{k+1}} \left(p(x) + \frac{f''(\xi)}{2}(x-x_k)(x-x_{k+1}) \right)\, dx\\
+    &= \underbrace{\int_{x_k}^{x_{k+1}} p(x)\, dx}_{=h\frac{f(x_k)+f(x_{k+1})}{2}} +
+    \underbrace{\int_{x_k}^{x_{k+1}} \frac{f''(\xi)}{2}(x-x_k)(x-x_{k+1}) \, dx}_{=R_k}.
+    \end{align*}
+    Dobbiamo quindi dare una limitazione al valore di
+    \begin{align*}
+        \abs{R_k} &= \abs*{\int_{x_k}^{x_{k+1}} \frac{f''(\xi)}{2}(x-x_k)(x-x_{k+1}) \, dx}\\
+        & \leq \int_{x_k}^{x_{k+1}} \abs*{\frac{f''(\xi)}{2}(x-x_k)(x-x_{k+1})}\, dx\\
+        & \leq \int_{x_k}^{x_{k+1}} \frac{C_2}{2} (x-x_k)(x_{k+1}-x)\, dx\\
+        & = \frac{C_2}{12}h^3.
+    \end{align*}
+    Questa volta abbiamo tolto il valore assoluto cambiando segno a $x - x_{k+1}$: visto che $x$ sta nell'intervallo $[x_k,x_{k+1}]$, questa quantità è sempre minore o uguale a zero. L'ultimo passaggio è stato calcolare l'integrale di una funzione che è un polinomio di grado 2 in $x$: non abbiamo scritto tutti i dettagli, perché è un po' più macchinoso che nei casi precedenti trovare una primitiva e svolgere l'integrale, ma sono tutti passaggi che sappiamo fare. Da qui procediamo come nella dimostrazione dell'errore del metodo del punto medio.
+\end{proof}
+
+\paragraph{Formule semplici e composite}
+Le formule di quadratura che abbiamo visto hanno una struttura comune:
+\begin{itemize}
+    \item troviamo una strategia, anche con un'approssimazione molto rozza, per approssimare l'integrale sull'intervallo $[x_k,x_{k+1}]$, per esempio rimpiazzandolo con l'area di un rettangolo o di un trapezio;
+    \item suddividiamo $[a,b]$ in $n$ sottointervalli uguali e applichiamo la strategia su ogni sottointervallo.
+\end{itemize}
+Questa prima strategia a volte è definita la versione \emph{semplice} della formula di integrazione: per esempio, approssimare $\int_0^1 x^2$ con la \emph{formula dei trapezi semplice} significa usare la strategia senza suddividere $[0,1]$ in sottointervalli, ossia con un solo trapezio ($n=1$):
+\[
+\tilde{I}_{T,1} = (b-a)\frac{f(a)+f(b)}{2} = (1-0)\frac{0^2+1^2}{2} = \frac{1}{2}.
+\]
+Quando è necessario distinguerla dalla formula semplice corrispondente, la formula di integrazione ottenuta ripetendo questa strategia su ogni sottointervallo di una suddivisione è detta \emph{formula composita} (o anche \emph{metodo composito}); quindi per esempio la formula vista in~\eqref{esempio trapezi composito} è la formula dei trapezi composita con $n=5$ sottointervalli.
+
+\paragraph{Ordine del metodo e convergenza a zero dell'errore}
+Le formule che abbiamo visto per la stima dell'errore seguono tutte la stessa strategia di dimostrazione: prima mostriamo che la versione semplice del metodo, applicata su un intervallo di lunghezza $h$, ha un errore che si può limitare con un'espressione del tipo
+\begin{equation} \label{ordine locale quadratura}
+    \abs*{\int_{x_k}^{x_{k+1}} f(x)\, dx - (\text{formula semplice})} = \abs{R_k} \leq K C_p h^{p+1},    
+\end{equation}
+dove $C_p$ è il massimo della derivata $p$-esima (in valore assoluto) e $K$ è una costante opportuna; poi da questa disuguaglianza deduciamo che
+\begin{equation} \label{ordine globale quadratura}
+    \abs*{I - \tilde{I}} \leq K (b-a) C_p h^p.
+\end{equation}
+La costante $p$, che vale $1$ per le somme di Riemann e $2$ per la formula del punto medio e quella dei trapezi, è detta \emph{ordine del metodo}. Più precisamente, quando vale la~\eqref{ordine locale quadratura} diciamo che la formula ha \emph{errore locale di ordine $p$}, mentre quando vale la~\eqref{ordine globale quadratura} diciamo che ha \emph{errore globale di ordine $p$}. I termini ``locale'' e ``globale'' sono perché uno si riferisce a un singolo, piccolo sottointervallo, mentre l'altro si riferisce a tutto l'intervallo $[a,b]$. Il fatto che l'ordine locale e quello globale siano lo stesso è un fatto che reincontreremo anche più avanti, parlando di metodi per risolvere equazioni differenziali.
+
+Nella~\eqref{ordine locale quadratura} compare $h^{p+1}$; è utile pensare a questo termine come $h \cdot h^p$, dove il primo $h$ è l'ampiezza dell'intervallo su cui lavoriamo, per analogia con il $b-a$ che compare nella~\eqref{ordine globale quadratura}.
+
+Possiamo usare la notazione O-grande dell'analisi, e dire che per un metodo di ordine $p$ l'errore è della forma $\mathcal{O}(h^p)$ (per $n\to\infty$, o equivalentemente $h\to 0$).
+
+\paragraph{Ordine e comportamento sperimentale del metodo}
+L'ordine del metodo tipicamente rispecchia il comportamento dell'errore al variare di $n$, nella pratica. Vediamolo innanzitutto in un esempio: la tabella seguente rappresenta l'errore ottenuto approssimando $I=\int_0^1 x^4 \, dx$ con i metodi visti e diversi valori di $n$.
+%
+\begin{center}
+\pgfplotstabletypeset[
+    col sep=&, 
+    row sep=\\, 
+    sci zerofill,
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule},
+    columns/n/.style={column name=$n$},
+    columns/h/.style={column name=$h$},
+    columns/EL/.style={column name=$\abs{\tilde{I}_{L,n}-I}$},
+    columns/ER/.style={column name=$\abs{\tilde{I}_{R,n}-I}$},
+    columns/EM/.style={column name=$\abs{\tilde{I}_{M,n}-I}$},
+    columns/ET/.style={column name=$\abs{\tilde{I}_{T,n}-I}$},
+    ]{
+n & h & EL & ER & EM & ET\\
+5 & 2.00e-01 & 8.67e-02 & 1.13e-01 & 6.62e-03 & 1.33e-02\\
+10 & 1.00e-01 & 4.67e-02 & 5.33e-02 & 1.66e-03 & 3.33e-03\\
+20 & 5.00e-02 & 2.42e-02 & 2.58e-02 & 4.16e-04 & 8.33e-04\\
+40 & 2.50e-02 & 1.23e-02 & 1.27e-02 & 1.04e-04 & 2.08e-04\\
+}
+\end{center}
+%
+Ogni volta che $n$ raddoppia, la lunghezza $h$ di ogni sottointervallo dimezza. L'errore delle somme di Riemann (sinistre o destre) si riduce di circa la metà: $8.67\cdot 10^{-2} / 4.67 \cdot 10^{-2} \approx 1.8565$, mentre $2.42\cdot 10^{-2} / 1.23 \cdot 10^{-2} = 1.9675$. Questi rapporti si avvicinano sempre di più a 2 al crescere di $n$. Questo comportamento rispecchia le formule che abbiamo visto: quando $h$ dimezza, anche il membro di destra di~\eqref{Riemann sum error} si dimezza. Anche se quella che abbiamo dimostrato è solo una limitazione dall'alto all'errore, vediamo che l'errore vero $\abs{\tilde{I}-I}$ rispecchia il comportamento della formula~\eqref{Riemann sum error}.
+
+Invece, per il metodo del punto medio e per quello dei trapezi, vediamo nella tabella che l'errore si riduce circa di un fattore 4 al raddoppiare di $n$. Di nuovo, questo rispecchia le formule che abbiamo visto: quando $h$ dimezza, il membro di destra di~\eqref{midpoint method error} e di~\eqref{trapezoid formula error} si divide per un fattore $4$, visto che compare $h^2$ anziché $h$: il termine $h^2$ va rimpiazzato con $\left(\frac{h}{2}\right)^2 = \frac{h^2}{4}$. Pertanto, questi due metodi convergono al valore esatto molto più velocemente di quelli basati su somme di Riemann destre e sinistre, come si vede anche dalla tabella.
+
+Vedremo che metodi con ordine ancora più alto hanno un errore che converge a zero ancora più velocemente: in un metodo di ordine $p$, quando rimpiazziamo $n$ con $d n$, la stima dell'errore (e anche l'errore, sebbene solo approssimativamente) si riduce di un fattore $d^p$.
+
+\paragraph{Diverse nozioni di ordine di convergenza}
+Attenzione: è importante notare che questo concetto di ``ordine di convergenza'' è diverso da quello visto per i metodi iterativi. Nel caso dei metodi iterativi, la convergenza si riferiva a un numero di iterazioni $n$: convergenza di ordine $p$ significa che
+\[
+e_{n+1} = \mathcal{O}(e_n^p),
+\]
+cioè, l'errore al passo $n+1$ è dell'ordine della potenza $p$-esima di \emph{quello al passo precedente}.
+
+Questi metodi, invece, sono basati sulla suddivisione di un intervallo. Non c'è un concetto di ``iterazioni successive'', e non ha molto senso confrontare $e_{n+1}$ con $e_n$: il risultato di una formula di integrazione con $n+1$ punti non si può calcolare facilmente a partire da quello con $n$ punti, visto che tutti i punti in cui è necessario valutare la funzione sono diversi.
+
+Anche il comportamento dei due errori al crescere di $n$ è diverso. Ad esempio, supponiamo di avere un metodo iterativo con ordine di convergenza $1$; esso soddisfa
+\[
+\lim_{n\to\infty} \frac{e_{n+1}}{e_n} = r < 1,
+\]
+quindi $e_n \approx C r^n$. In particolare, passando dall'iterazione $n$ all'iterazione $2n$ l'erore si riduce di un fattore $r^n$, non di un fattore $2$.
+
+\paragraph{Grado di esattezza} Nelle formule per l'errore locale (del tipo della~\eqref{ordine locale quadratura}) compare
+\[
+    C_p = \max_{x\in [a,b]} \abs{f^{(p)}(x)},
+\]
+il massimo della derivata $p$-esima (in valore assoluto). Quando $f$ è un polinomio di grado minore di $p$, la sua derivata $p$-esima vale $0$ su tutto l'intervallo; quindi per ogni formula di ordine $p$ si ha $R_k=0$ e quindi $\abs{I-\tilde{I}}=0$. Questo mostra il seguente risultato, che vale per come abbiamo definito l'ordine di una formula di quadratura.
+\begin{theorem}
+    Ogni formula di integrazione di ordine $p$ restituisce il valore esatto dell'integrale ($\tilde{I}=I$) quando la funzione $f$ è un polinomio di grado strettamente minore di $p$.
+\end{theorem}
+In particolare:
+\begin{itemize}
+    \item Quando la funzione $f$ è della forma $f(x) = mx+q$, sia il metodo dei trapezi che quello del punto medio (di ordine $p=2$) restituiscono il valore esatto $I$ dell'integrale.
+    \item Quando la funzione $f$ è costante ($f(x)=q$), anche i due metodi basati sulle somme di Riemann (di ordine $p=1$) restituiscono il valore esatto $I$ dell'integrale.
+\end{itemize}
+Possiamo verificare questi fatti anche direttamente. Per la formula dei trapezi: se prendiamo $f(x) = mx+q$, il grafico della funzione coincide con il lato obliquo dei trapezi che consideriamo.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw axes
+        \draw[->] (-0.5,0) -- (5.5,0);
+        \draw[->] (0,-0.5) -- (0,4);
+        
+
+        \draw[draw=red!80!black, fill=red!10] (1,0) -- (4,0) -- (4,4) -- (1,1) -- cycle;
+        \draw[draw=blue, thick] (1,1) -- (4,4);
+
+        %\draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+        % \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+        %   (1, 0)
+        %   -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+        %   -- (4, 0)
+        %   -- cycle;
+        
+        
+        \node at (1,-0.3) {$x_k$};
+        \node at (4,-0.3) {$x_{k+1}$};
+
+        \fill[red] (1,1) circle (2pt);
+        \fill[red] (4,4) circle (2pt);
+    \end{tikzpicture}
+    \end{center}
+Quindi il trapezio in rosso ha area uguale all'integrale della funzione in blu. Per il metodo del punto medio, il ragionamento è simile a quello che abbiamo fatto nella dimostrazione del Teorema~\ref{thm: errore metodo punto medio}.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw axes
+        \draw[->] (-0.5,0) -- (5.5,0);
+        \draw[->] (0,-0.5) -- (0,4);
+        
+
+        \draw[draw=red!80!black, fill=red!10] (1,0) -- (4,0) -- (4,2.5) -- (1,2.5) -- cycle;
+        \draw[draw=blue, thick] (1,1) -- (4,4);
+
+        %\draw[domain=1:4,smooth,variable=\x,blue] plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16});
+        % \fill [blue, opacity=0.2, domain=1:4, smooth, variable=\x]
+        %   (1, 0)
+        %   -- plot ({\x},{3/2*\x*\x*\x - 23/2*\x*\x + 27*\x -16})
+        %   -- (4, 0)
+        %   -- cycle;
+        
+        
+        \node at (1,-0.3) {$x_k$};
+        \node at (4,-0.3) {$x_{k+1}$};
+
+        \fill[red] (2.5,2.5) circle (2pt);
+%        \fill[red] (4,4) circle (2pt);
+
+        \draw[black] (4,2.5) -- (4,4);
+
+        \node at (1.5, 2) {A};
+        \node at (3.5, 3) {B};
+
+    \end{tikzpicture}
+    \end{center}
+I due triangoli che abbiamo indicato con le lettere A e B sono uguali, quindi l'area del rettangolo in rosso coincide con l'integrale della funzione il cui grafico è il segmento di retta in blu.
+
+\paragraph{Formule di Newton--Cotes} Nela dimostrazione che abbiamo fatto per l'errore della formula dei trapezi, abbiamo interpretato il trapezio tracciato come un polinomio di interpolazione di $f$ di grado $d=1$. Questo suggerisce una generalizzazione: per approssimare un integrale, possiamo fare in questo modo:
 \begin{itemize}
     \item Fissiamo un grado $d$;
     \item Suddividiamo l'intervallo $[a,b]$ in $d$ sottointervalli uguali, ottenendo punti $x_0,x_1,\dots,x_d$;
     \item Calcoliamo il polinomio di interpolazione $p(x)$ sui nodi $x_0,x_1,\dots,x_d$ risultanti da questa suddivisione;
     \item Approssimiamo $I = \int_a^b f(x) dx$ con $I_d = \int_a^b p(x) dx$. Questo è l'integrale di un polinomio, che è semplice da calcolare.
 \end{itemize}
-Possiamo pensare al metodo del punto medio come al caso $d=1$ di questa formula: dividiamo $[a,b]$ in \emph{un} sottointervallo, otteniamo due punti $x_0=a$ e $x_1=b$, e calcoliamo il polinomio di interpolazione di grado $1$ su questi due punti, cioè la retta che passa per i punti $(a,f(a))$ e $(b,f(b))$.
+Possiamo pensare alla formula dei trapezi come al caso $d=1$ di questa formula: dividiamo $[a,b]$ in \emph{un} sottointervallo, otteniamo due punti $x_0=a$ e $x_1=b$, e calcoliamo il polinomio di interpolazione di grado $1$ su questi due punti, cioè la retta che passa per i punti $(a,f(a))$ e $(b,f(b))$.
 
-Questo procedimento produce una formula di quadratura che ha ordine almeno $d+1$: difatti, se $f(x)$ è un polinomio di grado al più $d$, allora coincide con il suo polinomio di interpolazione, $f(x)=p(x)$.
+Questo procedimento produce una formula di quadratura che ha grado di esattezza almeno $d$: difatti, se $f(x)$ è un polinomio di grado al più $d$, allora coincide con il suo polinomio di interpolazione, $f(x)=p(x)$.
 
 Utilizzando la forma di Lagrange del polinomio di interpolazione, possiamo scrivere la formula di quadratura risultante come
 \[
@@ -4473,123 +4723,67 @@ w_0 = \frac16(b-a), \quad w_1 = \frac46 (b-a), \quad w_2 = \frac16 (b-a).
 \]
 e quindi la formula di Newton--Cotes di grado $d=2$ su un generico intervallo $[a,b]$ è
 \[
-I \approx \tilde{I}_2 = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right).
+I \approx \tilde{I}_{CS} = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right).
 \]
 Questa formula è nota anche come \emph{formula di Cavalieri--Simpson}. Nello stesso modo è possibile calcolare i pesi delle formule di Newton--Cotes di grado più alto.
 
 \paragraph{Ordine delle formule di Newton--Cotes}
 
-La formula di Cavalieri--Simpson che abbiamo costruito ha necessariamente ordine almeno 3: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha ordine 4, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $\tilde{I}_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
+La formula di Cavalieri--Simpson che abbiamo costruito ha grado di esattezza almeno 2: difatti, corrisponde a prendere il polinomio di interpolazione $p(x)$ a $f(x)$ di grado al più 2, e calcolarne l'integrale; quindi se $f(x)$ è già di partenza un polinomio di grado al più $2$ riotteniamo l'integrale di partenza. La cosa sorprendente è che questa formula in realtà ha grado di esattezza 3, cioè restituisce il risultato esatto anche per polinomi di grado $3$. Possiamo verificare facilmente che per $[a,b]=[-1,1]$ e $f(x)=x^3$, per simmetria $I = \int_{a}^b f(x) dx = 0$, e la  formula di Cavalieri--Simpson fornisce $\tilde{I}_2=0$. Non vediamo i dettagli, ma poiché sia gli integrali che le nostre formule di integrazione sono lineari nella $f$, questo è sufficiente per concludere che la formula è esatta per \emph{ogni} polinomio di grado 3.
 
-Più in generale, per le formule di Newton--Cotes valgono espressioni dell'errore simili a quella dimostrata per il metodo dei trapezi.
+Più in generale, per le formule di Newton--Cotes vale questo risultato.
 \begin{theorem}
-La formula di Newton--Cotes di grado $d$ (con $d+1$ punti equispaziati) ha come ordine il più piccolo numero pari maggiore di $d$, cioè $p=d+1$ se $d$ è dispari, e $p=d+2$ se $d$ è pari.
-Inoltre abbiamo per ogni $d$ la stima per l'errore
+La formula di Newton--Cotes di grado $d$ (con $d+1$ punti equispaziati) ha come ordine il più piccolo numero pari maggiore di $d$:
 \[
-\abs{\tilde{I}_d - I} \leq \kappa_d C_{p} (b-a)^{p+1},
-\]
-dove $\kappa_d$ è un'opportuna costante che dipende dal grado.
-\end{theorem}
-Per il metodo dei trapezi ($d=1$), già sappiamo che $\kappa_1 = \frac{1}{12}$. Per il metodo di Cavalieri--Simpson, vale $\kappa_2 = \frac{1}{90}$. Non lo dimostriamo qui, così come non dimostriamo questo teorema.
-
-\section{Formule di integrazione composite}
-
-In realtà, utilizzare formule di Newton--Cotes con valori grandi di $d$ non è una buona idea, visto che si incorre negli stessi problemi di cattivo condizionamento che abbiamo visto con l'interpolazione polinomiale. Tipicamente, si scelgono formule di grado al massimo 4, e se si vuole ridurre ancora l'errore si usa una strategia diversa.
-
-Dividiamo l'intervallo $[a,b]$ in $N$ sottointervalli uguali, scegliendo gli $N+1$ punti equispaziati
-\[
-x_0=a, x_1=a+h, \dots,x_n = a+nh,\dots, x_N=b,
-\]
-con $h= \frac{b-a}{N}$ la lunghezza di ogni intervallo. Questa volta, però, utilizziamo questa suddivisione in modo diverso.
-
-Possiamo scrivere l'integrale $I$ come somma di tanti integrali sugli intervalli $[x_0,x_1], [x_1,x_2],\dots,[x_{N-1},x_N]$, cioè
-\[
-\int_a^b f(x) dx = \sum_{n=1}^N \int_{x_{n-1}}^{x_n} f(x) dx.
-\]
-Ora, approssimiamo ognuno degli $N$ integrali nel termine di destra con una delle formule viste al passo precedente. In questo modo otteniamo i seguenti metodi.
-
-\begin{description}
-    \item[Metodo del punto medio composito]
-\[
-    \tilde{I}_{M,N} = \sum_{n=1}^N \underbrace{(x_{n}-x_{n-1})}_{h}f\left(\frac{x_{n-1}+x_n}{2}\right) = \frac{b-a}{N} \sum_{n=1}^N f\left(\frac{x_{n-1}+x_n}{2}\right).
-\]
-
-\item[Metodo dei trapezi composito]
-\[
-    \tilde{I}_{T,N} = \sum_{n=1}^N \frac{x_{n}-x_{n-1}}2 \left(f(x_{n-1})+f(x_n)\right) = \frac{b-a}{2N} \sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right).
-\]
-\item[Metodo di Cavalieri--Simpson composito]
-\begin{align*}
-    \tilde{I}_{2,N} &= \sum_{n=1}^N  \frac{x_{n}-x_{n-1}}6  \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
-    &= \frac{b-a}{6N} \sum_{n=1}^N \left(f(x_{n-1})+4f\left(\frac{x_{n-1}+x_n}{2}\right) + f(x_n)\right)\\
-    &= \frac{2}{3}\tilde{I}_{M,N} + \frac13 \tilde{I}_{T,N}.
-\end{align*}
-\end{description}
-Il metodo del punto medio composito richiede $N$ valutazioni di funzione, nei punti medi di ognuno degli intervalli della suddivisione. (Più $\mathcal{O}(N)$ altre operazioni, il cui costo è solitamente trascurabile rispetto alle valutazioni di funzione.)
-
-Il metodo dei trapezi apparentemente richiede $2N$ valutazioni di funzione; però possiamo osservare che tutti i punti a parte il primo e l'ultimo compaiono due volte: una volta come estremo destro di un intervallo, una volta come estremo sinistro. Quindi possiamo riscrivere la sommatoria che compare in $I_{T,N}$ come
-\[
-\frac12\sum_{n=1}^N\left(f(x_{n-1})+f(x_n)\right) = \frac12 f(x_0) + \frac12 f(x_N) + \sum_{n=1}^{N-1} f(x_n),
-\]
-che richiede solo $N+1$ valutazioni di funzione. Lo stesso ragionamento si può applicare per il metodo di Cavalieri--Simpson, che in questo modo richiede $2N+1$ valutazioni di funzione anziché $3N$.
-
-Questo trucco per ridurre il numero di valutazioni si può applicare non solo per la formula dei trapezi e di Cavalieri--Simpson, ma tutte le volte che una formula di integrazione include come nodi i due estremi dell'intervallo di valutazione. Le formule che soddisfano questa proprietà sono dette \emph{chiuse} (per analogia con gli intervalli chiusi, che includono gli estremi).
-
-\paragraph{Errore delle formule composite}
-
-\begin{theorem}
-Se per una formula di integrazione vale una stima sull'errore del tipo $\abs{\tilde{I} - I} \leq \kappa C_{p} (b-a)^{p+1}$, allora per la sua versione composita con $N$ sottointervalli vale la stima
-\[
-\abs{\tilde{I}_N - I} \leq \kappa C_{p} \frac{(b-a)^{p+1}}{N^{p}} = \kappa (b-a) C_{p}  h^{p}.
+p = \begin{cases}
+    d+1 & \text{$d$ dispari},\\
+    d+2 & \text{$d$ pari}.
+\end{cases}
 \]
 \end{theorem}
-\begin{proof}
-È sufficiente sommare tra loro le stime degli errori sugli $N$ sottointervalli, ognuno di lunghezza $h=\frac{b-a}{N}$:
+Quindi abbiamo per ogni $d$ la stima per l'errore
+\[
+\abs{\tilde{I}_d - I} \leq K_d C_{p} (b-a)^{p+1},
+\]
+dove $K_d$ è un'opportuna costante che dipende dal grado. Per il metodo dei trapezi ($d=1$), già sappiamo che $K_1 = \frac{1}{12}$. Per il metodo di Cavalieri--Simpson ($d=2$), vale $K_2 = \frac{1}{90}$. Non dimostriamo questi risultati.
+
+\paragraph{Formule di Newton--Cotes composite}
+In realtà, utilizzare formule di Newton--Cotes con valori molto grandi di $d$ non è una buona idea: si incorre negli stessi problemi di cattivo condizionamento che abbiamo visto con l'interpolazione polinomiale. Tipicamente, si scelgono formule di grado al massimo 4, e se si vuole ridurre ancora l'errore si usano queste formule come versione semplice di una formula composita.
+
+Per esempio, per applicare il metodo di Cavalieri--Simpson composito, dividiamo l'intervallo $[a,b]$ in $n$ sottointervalli uguali, e su ognuno di essi applichiamo la formula di Cavalieri--Simpson:
+\[
+\int_{x_k}^{x_{k+1}} f(x) \, dx \approx \frac{x_{k+1}-x_k}{6}\left(f(x_k)+4f\left(\frac{x_k+x_{k+1}}{2}\right) + f(x_{k+1})\right).
+\]
+Come nel caso della formula dei trapezi, possiamo scrivere la formula risultante in modo più semplice usando il fatto che ogni termine della forma $f(x_i)$ compare due volte (tranne il primo e l'ultimo):
 \begin{align*}
-\abs{\tilde{I}_N - I} \leq \sum_{n=1}^N \abs*{\tilde{I}_{[x_{n-1},x_n]} -\int_{x_{n-1}}^{x_n} f(x)dx } \leq \sum_{n=1}^N \kappa C_{p} h^{p+1} =  N \kappa C_{p+1} \frac{(b-a)^{p+1}}{N^{p+1}}.
+    \tilde{I}_{CS,n} &= \sum_{k=0}^{n-1} \frac{x_{k+1}-x_k}{6}\left(f(x_k)+4f\left(\frac{x_k+x_{k+1}}{2}\right) + f(x_{k+1})\right)\\
+    &= \frac{h}{6} \left( f(x_0) + 4f\left(\frac{x_0+x_1}{2}\right) + f(x_1) + f(x_1) + \dots + 4f\left(\frac{x_{n-1}+x_n}{2}\right) +  f(x_n)   \right)\\
+    &= \frac{h}{6} \left(f(x_0) + 2\sum_{k=1}^{n-1}f(x_k) + f(x_n) \right) \frac{4h}{6} \sum_{k=0}^{n-1} f\left(\frac{x_{k}+x_{k+1}}{2}\right) \\
+    &= \frac13 \tilde{I}_{T,n} +\frac{2}{3}\tilde{I}_{M,n}.
 \end{align*}
-\end{proof}
+Nell'ultima riga di questa catena di uguaglianze compare il fatto interessante che il metodo di Cavalieri--Simpson si può scrivere come una media pesata del metodo del punto medio e di quello dei trapezi.
 
-\paragraph{Ordine e convergenza} Al crescere del numero di punti $N$, quindi, l'errore di una formula composita $e_N = \abs{I_N - I}$ tende a zero come la potenza $p$-esima dell'inverso del numero di punti $\frac{1}{N}$, o, equivalentemente, come $h^p$. Possiamo quindi scrivere
+Il metodo di Cavalieri--Simpson richiede di valutare la funzione $f$ in $2n+1$ punti diversi, e quindi ha un costo computazionale pari a circa il doppio di quello degli altri metodi che abbiamo visto. In cambio, però, ha ordine $4$, e quindi l'errore converge a zero molto più velocemente al crescere di $n$.
+
+Questo trucco per ridurre il numero di valutazioni si può applicare non solo per la formula dei trapezi e di Cavalieri--Simpson, ma tutte le volte che una formula di integrazione semplice include come nodi i due estremi dell'intervallo di valutazione $x_k$ e $x_{k+1}$. Le formule che soddisfano questa proprietà sono dette \emph{chiuse} (per analogia con gli intervalli chiusi, che includono gli estremi).
+
+TODO: rewriting
+
+\paragraph{Stima dell'errore per le formule composite} Sia $n$ un intero pari. Applicando una formula di integrazione composita con ordine di convergenza $p$ prima con $n$ intervalli e poi con $n/2$ sottointervalli, ci aspettiamo quindi che
 \[
-e_N = \mathcal{O}(\frac{1}{N^p}) = \mathcal{O}(h^p).
+    \tilde{I}_n = I + e_n, \quad \tilde{I}_{n/2} = I + e_{n/2} \approx I + 2^{p}e_n.
 \]
-L'ordine ci permette di prevedere come decresce l'errore al crescere del numero di punti $N$: se il numero di punti raddoppia, passando da $N$ a $2N$, cioè la distanza tra due punti successivi dimezza, passando da $h$ a $\frac{h}{2}$, allora l'errore si riduce di un fattore $2^p$ (approssimativamente, visto che la relazione è vera solo nel limite per $N\to\infty$).
+(Questa relazione è solo approssimata, perché la riduzione dell'errore non è esattamente di un fattore $2^p$.)
 
-\paragraph{Diverse nozioni di ordine di convergenza}
-Attenzione: è importante notare che questo è un concetto di ``ordine di convergenza'' diverso da quello visto per i metodi iterativi. Nel caso dei metodi iterativi, la convergenza si riferiva a un numero di iterazioni $n$: convergenza di ordine $p$ significa che
+Da queste due relazioni possiamo eliminare $I$ e ricavare approssimativamente il valore dell'errore $e_n$ come
 \[
-e_{n+1} = \mathcal{O}(e_n^p),
+\frac{\tilde{I}_{n/2} - \tilde{I}_{n}}{2^p -1} \approx \frac{I + 2^p e_n -(I+e_n)}{2^p-1} = e_n.
 \]
-cioè, l'errore al passo $n+1$ è dell'ordine della potenza $p$-esima di \emph{quello al passo precedente}.
+Questo ci permette di ottenere una stima dell'errore del metodo.
 
-Nel caso di questi metodi, invece, non c'è un concetto di ``iterazioni successive'', e non ha molto senso confrontare $e_{N+1}$ con $e_N$: il risultato di una formula di integrazione con $N+1$ punti non si può calcolare facilmente a partire da quello con $N$ punti, visto che tutti i punti necessari per calcolarla sono diversi.
+Notiamo che per la formula dei trapezi il calcolo di $\tilde{I}_{n/2}$ non richiede ulteriori valutazioni rispetto a quelle già utilizzate per il calcolo di $\tilde{I}_n$. Per esempio, se vogliamo calcolare un integrale su $[a,b]=[0,1]$ con la formula dei trapezi composita $\tilde{I}_{T,10}$, ci serve calcolare $f(0),f(0.1),f(0.2),\dots,f(0.9),f(1)$. Se vogliamo in aggiunta anche calcolare $\tilde{I}_{T,5}$, per farlo ci servono i valori $f(0),f(0.2),f(0.4),f(0.6),f(0.8),f(1)$, ma questi sono tutti punti su cui abbiamo già calcolato la funzione.
 
-Anche il comportamento dei due errori al crescere di $n$ è diverso. Ad esempio, supponiamo di avere un metodo iterativo con ordine di convergenza $1$; esso soddisfa
-\[
-\lim_{n\to\infty} \frac{e_{n+1}}{e_n} = r < 1,
-\]
-quindi $e_n \approx C r^n$. In particolare, passando dall'iterazione $n$ all'iterazione $2n$ l'erore si riduce di un fattore $r^n$, non di un fattore $2$.
-
-\paragraph{Struttura delle formule per l'errore} Notiamo che tutte le formule per l'errore che abbiamo ottenuto hanno una struttura simile: sono il prodotto di:
-\begin{itemize}
-    \item Una costante (per esempio $\frac{1}{24}$);
-    \item La lunghezza dell'intervallo su cui stiamo lavorando (tipicamente $b-a$);
-    \item La costante $C_p$, cioè, il massimo della derivata $p$-esima, dove $p$ è l'ordine della formula di integrazione;
-    \item La lunghezza $h$ dei sottointervalli su cui lavoriamo, elevata alla $p$.
-\end{itemize}
-Questo, in particolare, vale anche per le formule non composite, se immaginiamo di avere $N=1$ sottointervalli e quindi $h=b-a$; è un modo comodo per ricordarsi le potenze che compaiono nelle formule.
-
-\paragraph{Stima dell'errore per le formule composite} Sia $N$ un intero pari. Applicando una formula di integrazione composita con ordine di convergenza $p$ prima con $N$ intervalli e poi con $N/2$ sottointervalli, ci aspettiamo quindi che
-\[
-    \tilde{I}_N = I + e_N, \quad \tilde{I}_{N/2} = I + e_{N/2} \approx I + 2^{p}e_N.
-\]
-Da queste due relazioni possiamo eliminare $I$ e ricavare approssimativamente il valore di $e_N$ come
-\[
-\frac{\tilde{I}_{N/2} - \tilde{I}_{N}}{2^p -1} \approx \frac{I + 2^p e_N -(I+e_N)}{2^p-1} = e_N.
-\]
-Per le formule dei trapezi e di Cavalieri--Simpson (ma non per tutti i metodi!) il calcolo di $\tilde{I}_{N/2}$ non richiede ulteriori valutazioni rispetto a quelle già utilizzate per il calcolo di $\tilde{I}_N$; e, a patto di fare le somme in un ordine appropriato durante l'implementazione, neppure somme aggiuntive. Quindi calcolare questa stima dell'errore ha un costo aggiuntivo trascurabile, per questi due metodi.
-
+Quindi calcolare questa stima dell'errore ha un costo aggiuntivo trascurabile. Questa osservazione si applica anche ad altri metodi (ad esempio Cavalieri--Simpson), ma non a tutti i metodi: ad esempio, nel metodo del punto medio non possiamo riutilizzare gli stessi punti per calcolare $\tilde{I}_{M,10}$ e $\tilde{I}_{M,5}$; i punti in cui ci occorre calcolare la $f$ sono tutti diversi.
 
 \section{Quadratura Gaussiana}
 Ci poniamo ora (insieme a Gauss) il problema di quanto alto può essere l'ordine di una formula di quadratura, se scegliamo bene pesi e nodi. Perché una formula $\tilde{I}$ con $n$ nodi sia esatta su tutti i polinomi di grado $ < p$, è necessario e sufficiente che sia esatta su $1, x, x^2, \dots, x^{p-1}$, visto che i polinomi di grado $< p$ sono combinazioni lineari di queste funzioni. Questo porta a $p$ equazioni (non lineari!) nelle $2n$ incognite $w_1,x_1,\dots, w_n,x_n$: per esempio, con $[a,b]=[-1,1]$ abbiamo
