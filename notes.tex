@@ -252,7 +252,7 @@ Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono neces
 \frac{b_0 - a_0}{2^{n+1}} \leq \varepsilon \iff 2^{n+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff n \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
 \]
 
-\paragraph{Criterio di arresto euristico} Un'altra idea naturale è che possiamo fermarci quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
+\paragraph{Criterio di arresto euristico (**)} Un'altra idea naturale è che possiamo fermarci quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
 
 Supponiamo di avere calcolato la funzione in un punto $c_k$, ottenendo $f(c_k)$. Una delle idee fondamentali dell'analisi è che se ``zoomiamo il grafico'' e ne guardiamo una sezione sufficientemente piccola, una funzione $f$ che sia \emph{differenziabile} si avvicina molto alla sua retta tangente. Pertanto, se $f$ è differenziabile in $c_k$,
 \begin{equation} \label{fapprox}
@@ -335,38 +335,34 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
 
-\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $r>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $r$, che possiamo scrivere in due modi:
+\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
 \[
-    I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\} = [\alpha-r, \alpha + r].
+    I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\} = [\alpha-\rho, \alpha + \rho].
 \]
-La situazione è analoga a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che qui i protagonisti sono il centro e il raggio.
+La situazione è simile a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che ora le cose che ci interessano di più sono il centro e il raggio.
 
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
     \draw [->, very thick] (0,0) -- (10,0);
-    \fill (2,0) node[below] {$\mathstrut \alpha-r$} circle (3pt);
-    \fill (8,0) node[below] {$\mathstrut \alpha+r$} circle (3pt);
+    \fill (2,0) node[below] {$\mathstrut \alpha-\rho$} circle (3pt);
+    \fill (8,0) node[below] {$\mathstrut \alpha+\rho$} circle (3pt);
     \fill (5,0) node[below] {$\mathstrut \alpha$} circle (3pt);
     \draw (2,0.5) -- (2,1.2) -- (4.95,1.2) -- (4.95,0.5);
-    \node at (3.5,1.8) {$r$};
+    \node at (3.5,1.8) {$\rho$};
     \draw (5.05,0.5) -- (5.05,1.2) -- (8,1.2) -- (8,0.5);
-    \node at (6.5,1.8) {$r$};
+    \node at (6.5,1.8) {$\rho$};
 \end{tikzpicture}
 \end{center}
 
 
 \begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
-Siano dati $\alpha\in\mathbb{R}$, $r>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq r\}$, e supponiamo inoltre che $\abs{\Phi'(x)}<1$ per ogni $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
+Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che $\abs{\Phi'(x)}<1$ per ogni $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
 \begin{itemize}
     \item $x_k \in I$ per ogni $k \geq 0$;
     \item $\lim_{k\to\infty} x_k = \alpha$.
 \end{itemize}
 \end{theorem}
 Notare che il primo punto è importante perché il metodo sia ben definito: altrimenti, $\Phi$ potrebbe non essere definita nel punto $x_k$!
-
-%%
-% Aggiungere qui un terzo punto su |x_{k+1}-\alpha| / |x_k-\alpha| \to |f'(\alpha)| ?
-%%
 
 \begin{proof}
 Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
@@ -380,19 +376,19 @@ Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che qu
 
 Con questi ingredienti a disposizione, ora vogliamo dimostrare per induzione che per ogni $k\geq 0$ si ha
 \begin{equation} \label{fpindu}
-    \abs{x_k - \alpha} \leq L^k r.
+    \abs{x_k - \alpha} \leq L^k \rho.
 \end{equation}
 Ricordandoci come è fatta una dimostrazione per induzione, dobbiamo dimostrare queste due cose:
 \begin{itemize}
-    \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq r$, che è vera perché è equivalente a dire che $x_0 \in I$. 
-    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k r$; poiché $L<1$, si ha anche $L^kr < r$ e quindi $\abs{x_k - \alpha}<r$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Ma allora si ha, per il calcolo visto sopra, 
+    \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. 
+    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k \rho$; poiché $L<1$, si ha anche $L^k\rho < \rho$ e quindi $\abs{x_k - \alpha}<\rho$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Ma allora si ha, per il calcolo visto sopra, 
     \begin{equation} \label{fpindu2}
-        \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k r = L^{k+1}r.
+        \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k \rho = L^{k+1}\rho.
     \end{equation}  
 \end{itemize}
 Questo completa la dimostrazione per induzione della~\eqref{fpindu}. Da questa relazione si ha che $x_k \in I$ per ogni $k$, come abbiamo già osservato nella dimostrazione. Inoltre
 \[
-0 \leq \abs{x_k - \alpha} \leq L^k r
+0 \leq \abs{x_k - \alpha} \leq L^k \rho
 \]
 da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_k = \alpha$.
 \end{proof}
@@ -400,7 +396,7 @@ da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_k = \alpha
 \begin{esempio}
 Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Se prendiamo $r = 0.5$, abbiamo che su tutto l'intervallo
 \[
-    [\alpha-r,\alpha+r] \approx [1.26-0.5,1.26+0.5]
+    [\alpha-\rho,\alpha+\rho] \approx [1.26-0.5,1.26+0.5]
 \]
 si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che il metodo converge per ogni scelta di $x_0$ in questo intervallo. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $r < 2 - \sqrt[3]{2} \approx 0.74$ e la soluzione è analoga.
 \end{esempio} 
@@ -411,7 +407,7 @@ Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come pu
 
 
 \begin{remark} \label{oss:corpuntofisso}
-    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha$, allora per continuità possiamo prendere un $\rho$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
+    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha\in (a,b)$, allora per continuità possiamo prendere un $r$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $r$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
 \end{remark}
     
 \begin{esercizio}
@@ -421,7 +417,7 @@ Esercizio: consideriamo l'equazione di punto fisso $x = \cos x$ (con $x$ in radi
 % un po' palloso
 %%
 
-Svolgimento: una soluzione corrisponde a uno zero di $f(x) = x - \cos x$. Questa funzione è tale che $f(0) = -1$, $f(\pi/2) = \pi/2$, quindi esiste almeno uno zero in $(0,\pi/2)$. La derivata di questa funzione è $f'(x) = 1 + \sin(x) \geq 0$, che si annulla solo in punti isolati, quindi la funzione è strettamente crescente. Pertanto c'è \emph{solo} uno zero in $(0,\pi/2)$. Inoltre, non ci sono altri zeri in $[\pi/2, \infty)$ perché la funzione è strettamente positiva, $f(x) \geq x - 1 > 0$. La derivata $f'(x)$ è \emph{strettamente} minore di $1$ (in valore assoluto) al di fuori dei punti $-\pi/2, \pi/2$, e in generale tutti i punti della forma $\frac12 \pi + k\pi$, per $k\in\mathbb{Z}$. Quindi dobbiamo prendere un intervallo centrato in $\alpha \approx 0.7391$ che non contenga $-\pi/2 \approx -1.5708$ né $\pi/2 \approx 1.5708$.
+Svolgimento: una soluzione corrisponde a uno zero di $f(x) = x - \cos x$. Questa funzione è tale che $f(0) = -1$, $f(\pi/2) = \pi/2$, quindi esiste almeno uno zero in $(0,\pi/2)$. La derivata di questa funzione è $f'(x) = 1 + \sin(x) \geq 0$, che si annulla solo in punti isolati, quindi la funzione è strettamente crescente. Pertanto c'è \emph{solo} uno zero in $(0,\pi/2)$. Inoltre, non ci sono altri zeri in $[\pi/2, \infty)$ perché la funzione è strettamente positiva: su questo intervallo vale $f(x) \geq x - 1 > 0$. La derivata $\Phi'(x)$ è \emph{strettamente} minore di $1$ (in valore assoluto) al di fuori dei punti $-\pi/2, \pi/2$, e in generale tutti i punti della forma $\frac12 \pi + k\pi$, per $k\in\mathbb{Z}$. Quindi dobbiamo prendere un intervallo centrato in $\alpha \approx 0.7391$ che non contenga $-\pi/2 \approx -1.5708$ né $\pi/2 \approx 1.5708$.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Sotto quali condizioni su $m$ e $q$ il metodo converge?
@@ -775,11 +771,11 @@ Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza sec
 
 Riusciamo però a dimostrare che $e_n \leq \varepsilon_n$, dove $\varepsilon_n$ è una successione che converge linearmente: difatti abbiamo visto che
 \[
-e_n \leq \underbrace{\frac{b_1 - a_1}{2^n}}_{=\varepsilon_n},
+e_n \leq \underbrace{\frac{b_0 - a_0}{2^{n+1}}}_{=\varepsilon_n},
 \]
-e naturalmente
+e
 \[
-\lim \frac{\varepsilon_{n+1}}{\varepsilon_n} = \frac{1}{2}.
+\lim_{n\to\infty} \frac{\varepsilon_{n+1}}{\varepsilon_n} = \lim_{n\to\infty} \frac{1}{2} = \frac{1}{2}.
 \]
 Diciamo allora che il metodo di bisezione ha \emph{convergenza pressoché lineare}. Su un grafico in scala logaritmica, gli errori $e_n$ stanno al di sotto della retta data dai punti $\varepsilon_n$, e solitamente non se ne discostano troppo. Questo è confermato anche dalla nostra figura.
 
@@ -4837,6 +4833,8 @@ e quindi la formula di Newton--Cotes di grado $d=2$ su un generico intervallo $[
 I \approx \tilde{I}_{CS} = \frac{b-a}{6}\left(f(a) + 4f(c) + f(b)\right).
 \]
 Questa formula è nota anche come \emph{formula di Cavalieri--Simpson}. Nello stesso modo è possibile calcolare i pesi delle formule di Newton--Cotes di grado più alto.
+
+
 
 \paragraph{Ordine delle formule di Newton--Cotes}
 
