@@ -957,49 +957,53 @@ Quindi possiamo definire
 \]
 In questo modo la funzione $g(x)$ è continua su tutto $[a,b]$, ha $g(\alpha)\neq 0$, e soddisfa $f(x) = (x-\alpha)^m g(x)$, come richiesto.
 \end{proof}
-Dalla dimostrazione precedente ricaviamo anche un'altra conseguenza: si ha
-\begin{equation}
-    f(x) \sim C (x-\alpha)^m,
+Dalla riga~\eqref{hop1} segue anche che
+\begin{equation} \label{limnotevoli}
+\lim_{x\to\alpha} \frac{f(x)}{(x-\alpha)^{m}} = C, \quad \lim_{x\to\alpha} \frac{f'(x)}{(x-\alpha)^{m-1}} = Cm, \quad \lim_{x\to\alpha} \frac{f''(x)}{(x-\alpha)^{m-2}} = Cm(m-1).    
 \end{equation}
-dove stiamo usando una notazione dell'analisi: $a(x) \sim b(x)$ significa che $\lim a(x) / b(x) = 1$, in questo caso quando $x\to \alpha$. Questa notazione ci permette di rimpiazzare $a(x)$ con $b(x)$ quando facciamo il limite di prodotti e rapporti che lo coinvolgono: per esempio, abbiamo
-\begin{align*}
-    \lim_{x\to\alpha} \frac{f(x)}{f'(x)} &= \lim_{x\to\alpha} \frac{f(x)}{(x-\alpha)^m} \frac{(x-\alpha)^m}{f'(x)}\\
-    & = \left(\lim_{x\to\alpha} \frac{f(x)}{(x-\alpha)^m}\right) \left(\lim_{x\to\alpha} \frac{(x-\alpha)^m}{f'(x)}\right)\\
-    & = 1 \cdot \lim_{x\to\alpha} \frac{(x-\alpha)^m}{f'(x)}.
-\end{align*}
-Allo stesso modo, abbiamo anche
-\begin{equation} \label{lhopder}
-    f'(x) \sim Cm (x-\alpha)^{m-1}, \quad \quad f''(x) \sim Cm(m-1)(x-\alpha)^{m-2}
-\end{equation}
-grazie alla~\eqref{hop1}.
-
-Con questi risultati, possiamo dimostrare che se $\alpha$ è uno zero di molteplicità $m>1$, la convergenza del metodo di Newton è più lenta.
+Usando questi tre limiti, possiamo dimostrare che se $\alpha$ è uno zero di molteplicità $m>1$, la convergenza del metodo di Newton è più lenta.
 \begin{theorem}
     Sia $f(x) \in \mathcal{C}^m([a,b])$ una funzione con uno zero $\alpha \in (a,b)$ di molteplicità $m>1$.
-    Allora, il metodo di Newton converge localmente ad $\alpha$, e la sua velocità di convergenza è lineare.
+    Allora, il metodo di Newton converge localmente ad $\alpha$, e la sua velocità di convergenza è lineare con tasso $\frac{m-1}{m}$.
 \end{theorem}
 \begin{proof}
 Vogliamo applicare di nuovo i risultati di convergenza locale del metodo di punto fisso; questa volta però ci scontriamo con il problema che la funzione $\Phi(x) = x - \frac{f(x)}{f'(x)}$ non è definita in $x=\alpha$, perché il denominatore si annulla.
 
-Possiamo però estendere anche questa funzione per continuità. Notiamo che
+Possiamo però estendere anche questa funzione per continuità, cioè definire
 \[
-    \frac{f(x)}{f'(x)} \sim \frac{C(x-\alpha)^m}{Cm(x-\alpha)^{m-1}} = \frac{1}{m}(x-\alpha) \to 0.
+\Phi(x) = \begin{cases}
+    x - \frac{f(x)}{f'(x)} & x\neq \alpha,\\
+    \alpha & x=\alpha,
+\end{cases}
 \]
-Abbiamo quindi
+in modo appunto che $\alpha$ sia un punto fisso. Ci serve però che $\Phi$ sia di classe $\mathcal{C}^1$, quindi dobbiamo verificare due cose:
+\begin{itemize}
+    \item che $\Phi$ sia derivabile in $x=\alpha$, cioè che esiste il limite
+    \[
+        \lim_{x\to\alpha} \frac{\Phi(x)-\alpha}{x-\alpha};
+    \]
+    questo assicura automaticamente anche che $\Phi$ è continua in $\alpha$;
+    \item che la derivata $\Phi'$ sia una funzione continua, cioè
+    \[
+        \lim_{x\to\alpha} \Phi'(x) = \Phi'(\alpha).
+    \]
+\end{itemize}
+Partiamo dalla prima. Vogliamo utilizzare i primi due limiti calcolati in~\eqref{limnotevoli}, quindi dividiamo numeratore e denominatore per $(x-\alpha)^m$:
 \begin{align*}
-    \lim_{x\to\alpha} \Phi(x) &= \lim_{x\to\alpha} x - \frac{f(x)}{f'(x)} = \alpha - 0 = \alpha.
+    \Phi'(\alpha) = \lim_{x\to\alpha} \frac{\Phi(x)-\alpha}{x-\alpha} &= \lim_{x\to\alpha} \frac{x - \frac{f(x)}{f'(x)}-\alpha}{x-\alpha}\\
+    &= \lim_{x\to\alpha} 1 - \frac{f(x)}{f'(x)(x-\alpha)}\\
+    &= 1 - \lim_{x\to\alpha}  \frac{\frac{f(x)}{(x-\alpha)^m}}{\frac{f'(x)(x-\alpha)}{(x-\alpha)^m}}\\
+    & = 1 - \frac{C}{Cm} = \frac{m-1}{m}.
 \end{align*}
+Usando questa derivata e la~\eqref{Phiprime}, otteniamo 
+\begin{align*}
+    \lim_{x\to\alpha} \Phi'(x) &= \lim_{x\to\alpha} \frac{f(x)f''(x)}{(f'(x))^2}\\
+    &= \lim_{x\to\alpha} \frac{\frac{f(x)}{(x-\alpha)^m}\cdot \frac{f''(x)}{(x-\alpha)^{m-2}}}{\left(\frac{f'(x)}{(x-\alpha)^{m-1}}\right)^2}\\
+    &= \frac{C \cdot Cm(m-1)}{(Cm)^2} = \frac{m-1}{m} = \Phi'(\alpha).
+\end{align*}
+Nei passaggi, abbiamo diviso numeratore e denominatore per $(x-\alpha)^{2m-2}$.
 
-Usando la~\eqref{Phiprime} e la~\eqref{lhopder}, otteniamo
-\begin{align*}
-    \Phi'(x) = \frac{f(x)f''(x)}{(f'(x))^2} \sim \frac{C(x-\alpha)^m Cm(m-1)(x-\alpha)^{(m-2)}}{(Cm(x-\alpha)^{m-1})^2} = 
-    \frac{m(m-1)}{m^2} = \frac{m-1}{m}.
-\end{align*}
-Ricordando la definizione di $\sim$, questo significa
-\[
-    \lim_{x\to\alpha} \Phi'(x) = \frac{m-1}{m}.
-\]
-Quindi è possibile\footnote{Per essere completamente rigorosi, dovremmo anche dimostrare che $\Phi'(\alpha)$ esiste ed è effettivamente uguale al suo limite; qui non lo vediamo.} estendere $\Phi(x)$ a una funzione di classe $\mathcal{C}^1$ con $\Phi(\alpha)=\alpha$ e $\Phi'(\alpha) = \frac{m-1}{m} < 1$. Quindi, per il teorema del punto fisso, il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
+Quindi è possibile estendere $\Phi(x)$ a una funzione di classe $\mathcal{C}^1$ con $\Phi(\alpha)=\alpha$ e $\Phi'(\alpha) = \frac{m-1}{m} < 1$. Allora, per il teorema del punto fisso, il metodo di Newton converge (localmente) linearmente con tasso $\frac{m-1}{m}$.
 \end{proof}
 
 \paragraph{Metodo di Newton modificato} Data una funzione $f$ che ha uno zero di molteplicità $m$ in $\alpha$, abbiamo visto che la funzione
