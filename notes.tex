@@ -2044,14 +2044,14 @@ $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} +
 
 Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\in\mathbb{C}^{n\times n}$ come prodotto $A=LU$, dove $L$ è una matrice triangolare inferiore con elementi tutti uguali a $1$ sulla diagonale, e $U$ è una matrice triangolare superiore. Vediamo ora un metodo che permette di calcolare una fattorizzazione LU di una matrice $A \in \mathbb{C}^{n\times n}$; questo algoritmo è sostanzialmente una variante dell'eliminazione di Gauss che avete già visto ad algebra lineare.
 
-%%%
-% Queste parti si possono separare: prima eliminazione di Gauss (su una matrice generica A, non per forza quadrata) per introdurre le matrici elementari; poi usarla sulla A di un sistema lineare per fare la fattorizzazione LU.
-%%%
-
-\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss (senza considerare scambi di righe, per ora). Partiamo da una singola matrice quadrata ; qui \emph{non} usiamo la cosiddetta ``matrice estesa'' $\begin{bmatrix}
+\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss. Ce ne sono diverse varianti che si vedono ad algebra lineare, qui in particolare:
+\begin{itemize}
+    \item Lavoriamo solo su una matrice quadrata $A\in\mathbb{C}^{n\times n}$, \emph{non} sulla cosiddetta ``matrice estesa'' $\begin{bmatrix}
     A & \b
-\end{bmatrix}$, ma lavoriamo con la sola matrice quadrata $A\in\mathbb{R}^{n\times n}$, la matrice dei coefficienti del nostro sistema lineare.
-
+\end{bmatrix}$;
+    \item Puntiamo a fare scambi di \emph{righe} (non colonne) per trasformare $A$ in forma \emph{triangolare superiore}; non procediamo a eliminare anche gli elementi sopra il pivot per trasformare $A$ in forma diagonale, come talvolta si fa (eliminazione di Gauss--Jordan).
+    \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero, in modo da ottenere una matrice triangolare superiore con elementi diversi da zero sulla triangolare principale.
+\end{itemize}
 Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
 U_k = \begin{bmatrix}
@@ -2130,98 +2130,8 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
     \end{bmatrix}.
     \end{array}
 \]
-Vogliamo dimostrare che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere queste uguaglianze.
+Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere queste uguaglianze. Per ora notiamo solo due casi particolari di questa uguaglianza: quando $k=1$, abbiamo l'uguaglianza (ovvia) $I \cdot A = A$; e all'ultimo passo abbiamo $L_n U_n = A$, che è esattamente la fattorizzazione LU che stiamo cercando: $L_n=L$ è triangolare inferiore con 1 sulla diabonale, $U_n=U$ è triangolare superiore.
 
-Per dimostrare questa proprietà, ci serve introdurre una famiglia di matrici che permette di vedere l'eliminazione di Gauss come una sequenza di moltiplicazioni.
-
-\paragraph{Matrici elementari di Gauss} Possiamo notare che effettuare un passo di eliminazione di Gauss si può vedere come una moltiplicazione a sinistra per una matrice: $U_{k+1} = E_k U_k$. La matrice $E_k$ è
-\begin{equation} \label{Ekgauss}
-E_k = \begin{bmatrix}
-    1 \\
-    & 1\\
-    && \ddots\\
-    & & & 1\\
-    & & & -L_{k+1,k} & 1\\
-    & & & -L_{k+2,k} & & 1\\
-    & & & \vdots & & & \ddots \\
-    & & & -L_{n,k} & & & & 1
-\end{bmatrix}
-\end{equation}
-(ricordiamo la convenzione: gli elementi che non scriviamo sono zero). Una matrice della forma~\eqref{Ekgauss} è detta \emph{matrice elementare di Gauss}.
-
-La possiamo anche scrivere come
-\[
-E_k = I - \boldsymbol{\ell}_k \mathbf{e}_k^T,
-\]
-dove $\boldsymbol{\ell}_k$ è il vettore tale che 
-\[
-(\boldsymbol{\ell}_k)_i = L_{i,k} = \begin{cases}
-0 & i \leq k,\\
-\frac{(U_k)_{ik}}{(U_k)_{kk}} & i>k,
-\end{cases}
-\]
-e $\mathbf{e}_k$ è il $k$-esimo vettore della base canonica.
-
-Difatti, è semplice verificare che per ogni vettore $\x\in\mathbb{R}^n$ 
-\[
-E_k \begin{bmatrix}
-    x_1\\x_2\\ \vdots \\ x_n
-\end{bmatrix}
-=
-\begin{bmatrix}
-    x_1 \\ x_2\\ \vdots \\ x_k \\ x_{k+1} - L_{k+1,k}x_k\\
-    \vdots \\
-    x_n - L_{n,k}x_k
-\end{bmatrix},
-\]
-quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+1$-esima in poi un multiplo della $k$-esima, per la precisione alla $i$-esima riga viene sommata $L_{i,k}$ volte la $k$-esima riga, per ogni $i=k+1,\dots,n$.
-
-Dimostriamo innanzitutto alcune proprietà di queste matrici.
-\begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
-\begin{enumerate}
-    \item $E_k^{-1} = I + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
-    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
-\end{enumerate}
-\end{lemma}
-\begin{proof}
-\begin{enumerate}
-    \item Basta verificare che
-    \[
-    E_k(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = (I-\boldsymbol{\ell}_k\mathbf{e}_k^T)(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = I - \boldsymbol{\ell}_k \mathbf{e}_k^T + \boldsymbol{\ell}_k \mathbf{e}_k^T - \boldsymbol{\ell}_k\underbrace{\mathbf{e}_k^T\boldsymbol{\ell}_k}_{=0}\mathbf{e}_k^T = I.
-    \]
-    Difatti il prodotto scalare $\mathbf{e}_k^T\boldsymbol{\ell}_k$ fa zero perché $\boldsymbol{\ell}_k$ ha uno zero in posizione~$k$.
-    \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
-    \begin{align*}
-    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_{k-1} \mathbf{e}_{k-1}^T)(I+\ell_k \mathbf{e}_k^T).
-    \end{align*}
-    Ora espandiamo le parentesi e utilizziamo il fatto che $\mathbf{e}_i^T\boldsymbol{\ell}_k=0$ per $i<k$, vero perché $\boldsymbol{\ell}_k$ ha le prime componenti uguali a zero.
-\end{enumerate}
-\end{proof}
-Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$ è esattamente la matrice che abbiamo chiamato $L_{k+1}$ più sopra:
-\[
-    L_{k+1} = \begin{bmatrix}
-        1\\
-        L_{21} & \ddots\\
-        \vdots & \ddots & 1\\
-        \vdots & \vdots & L_{k+1,k} & 1\\
-        \vdots & \vdots & L_{k+2,k} & 0 & 1\\
-        \vdots & \vdots & \vdots & \vdots & \ddots & \ddots\\
-        L_{n1} & \dots & L_{n,k} & 0 & \dots & 0 & 1\\
-    \end{bmatrix}.
-\]
-
-Possiamo ora enunciare il risultato promesso.
-
-\begin{theorem}
-    Sia data una matrice $A\in\mathbb{R}^{n\times n}$, supponiamo di non incontrare mai pivot $(U_k)_{kk}$ nulli durante l'eliminazione di Gauss. Allora, dopo ogni passo dell'eliminazione si ha $L_k U_k = A$. In particolare, dopo $n-1$ passi, otteniamo la \emph{fattorizzazione LU} $A = LU = L_{n}U_{n}$, in cui $L$ è una matrice triangolare inferiore con tutti $1$ sulla diagonale, e $U$ è una matrice triangolare superiore.
-\end{theorem}
-\begin{proof}
-    All'inizio, abbiamo $L_1 U_1 = I \cdot A = A$, quindi la proprietà è vera per $k=1$. Otteniamo la matrice $U_{k+1}$ moltiplicando $A$ successivamente per le matrici elementari $E_1, E_2,\dots, E_k$, quindi (occhio all'ordine!)
-    \[
-        U_{k+1} = E_k E_{k-1} \dots E_2 E_1 A.
-    \]
-    Abbiamo già osservato al termine della dimostrazione del lemma che $L_{k+1} = E_1^{-1} E_2^{-1} \dots E_{k-1}^{-1} E_k^{-1}$, quindi il prodotto di queste due matrici fa $A$.
-\end{proof}
 % Quindi dopo il passo $k$ abbiamo
 % \begin{equation} \label{fattLU}
 % A = 
@@ -2364,6 +2274,127 @@ Il costo del primo passo è di $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritm
 
 Un'altra osservazione interessante è che se dobbiamo risolvere molti sistemi lineari con vettori $\b$ diversi ma la stessa matrice $A$, possiamo riutilizzare la stessa fattorizzazione LU più volte, e quindi effettuare il passo più costoso una volta sola.
 
+\paragraph{Matrici elementari di Gauss} Ci concentriamo ora sul dimostrare la proprietà che $L_k U_k = A$ in ogni passo $k=1,2,\dots,n$ della fattorizzazione. Per farlo, ci serve introdurre una famiglia di matrici che permette di vedere l'eliminazione di Gauss come una sequenza di moltiplicazioni.
+
+Possiamo notare che effettuare un passo di eliminazione di Gauss si può vedere come una moltiplicazione a sinistra per una matrice: $U_{k+1} = E_k U_k$. La matrice $E_k$ è
+\begin{equation} \label{Ekgauss}
+E_k = \begin{bmatrix}
+    1 \\
+    & 1\\
+    && \ddots\\
+    & & & 1\\
+    & & & -L_{k+1,k} & 1\\
+    & & & -L_{k+2,k} & & 1\\
+    & & & \vdots & & & \ddots \\
+    & & & -L_{n,k} & & & & 1
+\end{bmatrix}
+\end{equation}
+(ricordiamo la convenzione: gli elementi che non scriviamo sono zero). Una matrice della forma~\eqref{Ekgauss} è detta \emph{matrice elementare di Gauss}. Difatti, se calcoliamo il prodotto di $E_k$ per un vettore generico $\mathbf{x}$, otteniamo
+\[
+E_k \mathbf{x} = \begin{bmatrix}
+    1 \\
+    & 1\\
+    && \ddots\\
+    & & & 1\\
+    & & & -L_{k+1,k} & 1\\
+    & & & -L_{k+2,k} & & 1\\
+    & & & \vdots & & & \ddots \\
+    & & & -L_{n,k} & & & & 1
+\end{bmatrix}
+\begin{bmatrix}
+    x_1\\
+    x_2\\
+    \vdots\\
+    x_k\\
+    x_{k+1}\\
+    \vdots\\
+    x_n
+\end{bmatrix} = \begin{bmatrix}
+    x_1\\
+    x_2\\
+    \vdots\\
+    x_k\\
+    x_{k+1} - L_{k+1,k}x_k\\
+    \vdots\\
+    x_n - L_{n,k}x_k
+\end{bmatrix}.
+\]
+Quindi in ogni riga $i>k$ sottraiamo all'elemento presente sulla riga un multiplo dell'elemento sulla $k$-esima riga, con moltiplicatore $L_{i,k}$. Se immaginiamo di farlo su tutte le colonne di una matrice, questo è esattamente un passo di eliminazione di Gauss.
+
+Possiamo anche scrivere $E_k$ come
+\[
+E_k = I - \boldsymbol{\ell}_k \mathbf{e}_k^T,
+\]
+dove $\boldsymbol{\ell}_k$ è il vettore tale che 
+\[
+(\boldsymbol{\ell}_k)_i = L_{i,k} = \begin{cases}
+0 & i \leq k,\\
+\frac{(U_k)_{ik}}{(U_k)_{kk}} & i>k,
+\end{cases}
+\]
+e $\mathbf{e}_k$ è il $k$-esimo vettore della base canonica.
+
+Difatti, è semplice verificare che per ogni vettore $\x\in\mathbb{R}^n$ 
+\[
+E_k \begin{bmatrix}
+    x_1\\x_2\\ \vdots \\ x_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+    x_1 \\ x_2\\ \vdots \\ x_k \\ x_{k+1} - L_{k+1,k}x_k\\
+    \vdots \\
+    x_n - L_{n,k}x_k
+\end{bmatrix},
+\]
+quindi l'effetto della matrice $E_k$ è proprio di sommare a ogni riga dalla $k+1$-esima in poi un multiplo della $k$-esima, per la precisione alla $i$-esima riga viene sommata $L_{i,k}$ volte la $k$-esima riga, per ogni $i=k+1,\dots,n$.
+
+Dimostriamo innanzitutto alcune proprietà di queste matrici.
+\begin{lemma}[Proprietà delle matrici elementari di Gauss] Valgono le seguenti due proprietà:
+\begin{enumerate}
+    \item $E_k^{-1} = I + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
+    \item $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+\begin{enumerate}
+    \item Basta verificare che
+    \[
+    E_k(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = (I-\boldsymbol{\ell}_k\mathbf{e}_k^T)(I+\boldsymbol{\ell}_k \mathbf{e}_k^T) = I - \boldsymbol{\ell}_k \mathbf{e}_k^T + \boldsymbol{\ell}_k \mathbf{e}_k^T - \boldsymbol{\ell}_k\underbrace{\mathbf{e}_k^T\boldsymbol{\ell}_k}_{=0}\mathbf{e}_k^T = I.
+    \]
+    Difatti il prodotto scalare $\mathbf{e}_k^T\boldsymbol{\ell}_k$ fa zero perché $\boldsymbol{\ell}_k$ ha uno zero in posizione~$k$.
+    \item Possiamo verificarlo per induzione: il caso $k=1$ l'abbiamo dimostrato al passo precedente. Supponendo che sia vero per un certo $k-1$, si ha
+    \begin{align*}
+    E_1^{-1}E_2^{-1}\dots E_k^{-1} = (I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_{k-1} \mathbf{e}_{k-1}^T)(I+\ell_k \mathbf{e}_k^T).
+    \end{align*}
+    Ora espandiamo le parentesi e utilizziamo il fatto che $\mathbf{e}_i^T\boldsymbol{\ell}_k=0$ per $i<k$, vero perché $\boldsymbol{\ell}_k$ ha le prime componenti uguali a zero.
+\end{enumerate}
+\end{proof}
+Notiamo che la matrice $E_1^{-1}E_2^{-1}\dots E_k^{-1} = I + \boldsymbol{\ell}_1 \mathbf{e}_1^T + \boldsymbol{\ell}_2 \mathbf{e}_2^T + \dots + \boldsymbol{\ell}_k \mathbf{e}_k^T$ è esattamente la matrice che abbiamo chiamato $L_{k+1}$ più sopra:
+\[
+    L_{k+1} = \begin{bmatrix}
+        1\\
+        L_{21} & \ddots\\
+        \vdots & \ddots & 1\\
+        \vdots & \vdots & L_{k+1,k} & 1\\
+        \vdots & \vdots & L_{k+2,k} & 0 & 1\\
+        \vdots & \vdots & \vdots & \vdots & \ddots & \ddots\\
+        L_{n1} & \dots & L_{n,k} & 0 & \dots & 0 & 1\\
+    \end{bmatrix}.
+\]
+
+Possiamo ora enunciare il risultato promesso.
+
+\begin{theorem}
+    Sia data una matrice $A\in\mathbb{R}^{n\times n}$, supponiamo di non incontrare mai pivot $(U_k)_{kk}$ nulli durante l'eliminazione di Gauss. Allora, dopo ogni passo dell'eliminazione si ha $L_k U_k = A$. In particolare, dopo $n-1$ passi, otteniamo la \emph{fattorizzazione LU} $A = LU = L_{n}U_{n}$, in cui $L$ è una matrice triangolare inferiore con tutti $1$ sulla diagonale, e $U$ è una matrice triangolare superiore.
+\end{theorem}
+\begin{proof}
+    All'inizio, abbiamo $L_1 U_1 = I \cdot A = A$, quindi la proprietà è vera per $k=1$. Otteniamo la matrice $U_{k+1}$ moltiplicando $A$ successivamente per le matrici elementari $E_1, E_2,\dots, E_k$, quindi (attenzione all'ordine dei fattori!)
+    \[
+        U_{k+1} = E_k E_{k-1} \dots E_2 E_1 A.
+    \]
+    Abbiamo già osservato al termine della dimostrazione del lemma che $L_{k+1} = E_1^{-1} E_2^{-1} \dots E_{k-1}^{-1} E_k^{-1}$, quindi il prodotto di queste due matrici fa $A$.
+\end{proof}
+
 \paragraph{Esistenza della fattorizzazione LU}
 
 Cosa può andare storto durante la fattorizzazione LU? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
@@ -2482,9 +2513,11 @@ Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In p
 \]
 In particolare, le ultime due righe sono identiche. Pertanto al passo successivo l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice di partenza $A$ è molto lontana dall'essere singolare, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche in un esempio senza valori così estremi, possiamo vedere che quando $A_{11}$ è molto più piccolo degli altri valori presenti nella matrice dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dobbiamo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
 
-La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe. In particolare, ad ogni passo scambieremo le righe in modo da portare, ad ogni passo $k$, in posizione pivot $(k,k)$ il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$. Questo scambio lo facciamo sempre, non solo quando $(U_k)_{k,k}$ è molto piccolo.
+La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe durante la fattorizzazione. In particolare, ad ogni passo scambieremo le righe in modo da portare, ad ogni passo $k$, in posizione pivot $(k,k)$ il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$. Questo scambio lo faremo sempre, non solo quando $(U_k)_{k,k}$ è molto piccolo.
 
 Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
+
+Scambiando righe, possiamo completare l'eliminazione di Gauss, esattamente come abbiamo visto nel corso di algebra lineare. Tutte le volte che la matrice $A$ è invertibile, otterremo $n$ pivot, quindi una matrice $U$ triangolare superiore, con elementi non nulli sulla diagonale. Però per continuare il nostro algoritmo vogliamo interpretare questo processo di nuovo come una fattorizzazione; nelle prossime sezioni vediamo come farlo.
 
 \paragraph{Matrici di permutazione}
 La soluzione che vedremo per questo problema corrisponde essenzialmente a calcolare la fattorizzazione LU di una matrice ottenuta dalla $A$ permutando le righe in un ordine opportuno: quindi per esempio
@@ -2604,7 +2637,7 @@ L\mathbf{y} = P\b, \quad U\x = \mathbf{y}
 per sostituzione in avanti e all'indietro rispettivamente.
 
 La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolvere sistemi lineari su un computer; in Matlab 
-anche \lstinline{A \ b} utilizza questo algoritmo.
+anche \lstinline{A \ b} utilizza questo algoritmo. Questo algoritmo è più stabile ed efficiente di tutti gli altri che avete visto ad algebra lineare: quelli basati sull'inversa $A^{-1}$, quelli basati su varianti diverse dell'eliminazione di Gauss che comportano di eliminare elementi sopra i pivot, quelli basati su determinanti come il metodo di Cramer, \dots
 
 \paragraph{Errore algoritmico dell'eliminazione di Gauss}
 Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico (con o senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, visto che l'errore inerente è invece dell'ordine di $\kappa(A)\mathsf{u} = \norm{A}\norm{A^{-1}}\mathsf{u}$  l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
@@ -2814,9 +2847,7 @@ Una matrice $A\in\mathbb{R}^{n\times n}$ (serve che sia reale, questa volta!) si
     \item è simmetrica, cioè $A=A^T$;
     \item è positiva definita, cioè $\mathbf{x}^TA\mathbf{x} > 0$ per ogni vettore $\mathbf{x}\in \mathbb{R}^n$ tale che $\mathbf{x}\neq 0$.
 \end{enumerate}
-Spesso si dice solo ``positiva definita'' sottintendendo ``simmetrica''.
-
-Si può dimostrare il seguente risultato (non vediamo qui la dimostrazione; talvolta si fa nei corsi di algebra lineare):
+Spesso si dice solo ``positiva definita'' sottintendendo ``simmetrica''. Si può dimostrare il seguente risultato (non vediamo qui la dimostrazione; talvolta si fa nei corsi di algebra lineare):
 \begin{theorem}
 Una matrice simmetrica $A$ è definita positiva se e solo se tutti i suoi autovalori sono reali (strettamente) positivi. 
 \end{theorem}
@@ -4879,8 +4910,6 @@ Nell'ultima riga di questa catena di uguaglianze compare il fatto interessante c
 Il metodo di Cavalieri--Simpson richiede di valutare la funzione $f$ in $2n+1$ punti diversi, e quindi ha un costo computazionale pari a circa il doppio di quello degli altri metodi che abbiamo visto. In cambio, però, ha ordine $4$, e quindi l'errore converge a zero molto più velocemente al crescere di $n$.
 
 Questo trucco per ridurre il numero di valutazioni si può applicare non solo per la formula dei trapezi e di Cavalieri--Simpson, ma tutte le volte che una formula di integrazione semplice include come nodi i due estremi dell'intervallo di valutazione $x_k$ e $x_{k+1}$. Le formule che soddisfano questa proprietà sono dette \emph{chiuse} (per analogia con gli intervalli chiusi, che includono gli estremi).
-
-TODO: rewriting
 
 \paragraph{Stima dell'errore per le formule composite} Sia $n$ un intero pari. Applicando una formula di integrazione composita con ordine di convergenza $p$ prima con $n$ intervalli e poi con $n/2$ sottointervalli, ci aspettiamo quindi che
 \[
