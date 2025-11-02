@@ -2639,12 +2639,12 @@ per sostituzione in avanti e all'indietro rispettivamente.
 La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolvere sistemi lineari su un computer; in Matlab 
 anche \lstinline{A \ b} utilizza questo algoritmo. Questo algoritmo è più stabile ed efficiente di tutti gli altri che avete visto ad algebra lineare: quelli basati sull'inversa $A^{-1}$, quelli basati su varianti diverse dell'eliminazione di Gauss che comportano di eliminare elementi sopra i pivot, quelli basati su determinanti come il metodo di Cramer, \dots
 
-\paragraph{Errore algoritmico dell'eliminazione di Gauss}
-Non vediamo un'analisi completa dell'errore algoritmico dell'eliminazione di Gauss, poiché è abbastanza complessa; diciamo solo che si può dimostrare che l'errore algoritmico (con o senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A}^{-1} \mathsf{u}$. In particolare, visto che l'errore inerente è invece dell'ordine di $\kappa(A)\mathsf{u} = \norm{A}\norm{A^{-1}}\mathsf{u}$  l'algoritmo è stabile a patto che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
+\paragraph{Errore algoritmico nella soluzione di sistemi lineari}
+Non vediamo un'analisi completa dell'errore algoritmico della soluzione di sistemi lineari con la fattorizzazione LU, poiché è abbastanza complessa; ma si può dimostrare che l'errore algoritmico (sia con che senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A^{-1}} \mathsf{u}$. In particolare, visto che l'errore inerente è invece dell'ordine di $\kappa(A)\mathsf{u} = \norm{A}\norm{A^{-1}}\mathsf{u}$  l'algoritmo è stabile a patto che l'algoritmo produca matrici $L$ e $U$ tali che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
 
-Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile, cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
+Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile: cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
 
-\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficace di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
+\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficiente di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
 
 \begin{theorem}
 Sia $PA = LU$ una fattorizzazione LU con pivoting della matrice $A \in \mathbb{C}^{n \times n}$. Allora,
@@ -3320,7 +3320,7 @@ Questo produce il metodo
 \x^{(k+1)} = \x^{(k)} - \left(J_F(\x^{(k)})\right)^{-1} F(\x^{(k)}), & k=0,1,2,\dots.
 \end{cases}
 \]
-Valgono risultati analoghi a quelli del caso scalare: su funzioni sufficientemente regolari, il metodo converge a patto di prendere $\x^{(0)}$ sufficientemente vicino a una soluzione $\x$, e la convergenza è quadratica se la matrice $J_F(\x)$ è invertibile. 
+Si possono dimostrare (noi qui non lo facciamo) risultati analoghi a quelli del caso scalare: su funzioni sufficientemente regolari, il metodo converge a patto di prendere $\x^{(0)}$ sufficientemente vicino a una soluzione $\x$, e la convergenza è quadratica se la matrice $J_F(\x)$ è invertibile. 
 
 Ad ogni passo, dobbiamo risolvere un sistema lineare con matrice $J_F(\x^{(k)})$. Nella pratica, possiamo evitare di calcolare esplicitamente la matrice inversa: calcoliamo la matrice $J_F(\x^{(k)})$, e poi risolviamo il sistema lineare
 \[
