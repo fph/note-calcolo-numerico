@@ -2966,9 +2966,9 @@ Questo suggerisce di impostare un'iterazione di punto fisso
     \x^{(k+1)} = M^{-1}(N\x^{(k)} + \mathbf{b}) & k=1,2,3,\dots
     \end{cases}
 \end{equation}
-Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo un modo efficiente di risolvere il sistema lineare $M\x^{(k+1)} = N\x^{(k)} + \b$: per esempio, se $M$ è triangolare possiamo usare un processo di sostituzione. Tipicamente \emph{non} vogliamo calcolare $M^{-1}$ (né tantomeno $M^{-1}N$), perché questo andrebbe a costare più di quello che possiamo permetterci.
+Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo un modo efficiente di risolvere il sistema lineare $M\x^{(k+1)} = N\x^{(k)} + \b$: per esempio, se $M$ è triangolare possiamo usare un processo di sostituzione. Tipicamente \emph{non} vogliamo calcolare $M^{-1}$ (né tantomeno $M^{-1}N$), perché questo sarebbe troppo costoso.
 
-La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $\x_{k+1} = \Phi(\x_k)$ che abbiamo già visto. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo.
+La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $\x_{k+1} = \Phi(\x_k)$ che abbiamo già visto. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo. Questa è una conseguenza della linearità.
 
 \paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità. Il \emph{metodo di Jacobi} si ottiene scegliendo come $M$ una matrice diagonale che ha elementi diagonali uguali a quelli di $A$, cioè
 \[
@@ -2984,7 +2984,7 @@ M = \begin{bmatrix}
     A_{n1} & A_{n2} & \dots & 0
 \end{bmatrix}.
 \]
-(Notiamo che, una volta scelta la $M$, la matrice $N = M-A$ è determinata univocamente.) Con questa scelta, la soluzione di sistemi lineari con $M$ è particolarmente veloce perché $M$ è diagonale. Questo metodo è applicabile tutte le volte che gli elementi sulla diagonale di $A$ sono diversi da zero, visto che ci serve che $M$ sia invertibile.
+(Notiamo che, una volta scelta la $M$, la matrice $N = M-A$ è determinata univocamente.) Con questa scelta, la soluzione di sistemi lineari con $M$ è molto veloce perché $M$ è diagonale. Questo metodo è applicabile tutte le volte che gli elementi sulla diagonale di $A$ sono diversi da zero, visto che ci serve che $M$ sia invertibile.
 
 Il \emph{metodo di Gauss--Seidel} si ottiene scegliendo come $M$ una matrice triangolare inferiore che ha entrate uguali a quelle di $A$ nella parte triangolare inferiore, cioè
 \[
@@ -3257,14 +3257,6 @@ nel caso del metodo di Gauss--Seidel (la parte triangolare inferiore è moltipli
 \]
 e il membro di destra (quando $\abs{\lambda} \geq 1$) è più grande del termine corrispondente agli elementi fuori dalla diagonale di $N-\lambda M$.
 \end{proof}
-
-% \section{Laboratorio su metodi iterativi per sistemi lineari}
-
-% \begin{itemize}
-%     \item Fatto insieme: scrivere una funzione che esegue $k$ iterazioni del metodo di Jacobi. Lasciato a voi: cambiare criterio di arresto; scrivere il metodo di Gauss--Seidel. Fornire matrici di test.
-%     \item Controllo della condizione di convergenza per le matrici date (con \lstinline{M = tril(A)} e \lstinline{M = diag(diag(A))}).
-%     \item Esercizio: scrivere una versione dei due metodi per matrici tridiagonali.
-% \end{itemize}
 
 \section{Sistemi di equazioni non lineari}
 
