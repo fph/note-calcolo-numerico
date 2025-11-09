@@ -2523,26 +2523,41 @@ Scambiando righe, possiamo completare l'eliminazione di Gauss, esattamente come 
 La soluzione che vedremo per questo problema corrisponde essenzialmente a calcolare la fattorizzazione LU di una matrice ottenuta dalla $A$ permutando le righe in un ordine opportuno: quindi per esempio
 \[
 A = \begin{bmatrix}
-    \hspace{1em} A_{1,:} \hspace{1em}  \\
+    \begin{array}{c}
+    \phantom{AS}A_{1,:}\phantom{AS} \\
+    \hline
     A_{2,:} \\
+    \hline
     A_{3,:} \\
-    A_{4,:}
+    \hline
+    A_{4,:}    
+    \end{array}
 \end{bmatrix}, \quad
 PA = \begin{bmatrix}
-    \hspace{1em} A_{4,:} \hspace{1em}\\
+    \begin{array}{c}
+    \phantom{AS}A_{4,:}\phantom{AS}\\
+    \hline
     A_{2,:}\\
+    \hline
     A_{1,:}\\
+    \hline
     A_{3,:}
+    \end{array}
 \end{bmatrix}.
 \]
 Abbiamo indicato la matrice di destra con $PA$ perché effettivamente si verifica che si può ottenere moltiplicando la matrice $A$ a sinistra per una matrice $P\in\mathbb{R}^{n\times n}$: la matrice ottenuta dalla matrice identità applicando alcuni scambi di righe (gli stessi applicati in $A$); ad esempio,
 \[
 P = 
 \begin{bmatrix}
-    \mathbf{e}_4^T\\
+    \begin{array}{c}
+    \phantom{AS}\mathbf{e}_4^T\phantom{AS}\\
+    \hline
     \mathbf{e}_2^T\\
+    \hline
     \mathbf{e}_1^T\\
-    \mathbf{e}_3^T
+    \hline
+    \mathbf{e}_3^T        
+    \end{array}
 \end{bmatrix}
 =
 \begin{bmatrix}
@@ -2952,23 +2967,21 @@ già dopo il primo passaggio otteniamo una matrice con molti più non-zeri di qu
 \]
 Esistono metodi per risolvere sistemi lineari che riescono a sfruttare il fatto che $A$ sia una matrice sparsa, ottenendo un minore costo computazionale rispetto a $\mathcal{O}(n^3)$. Questi metodi sono molto simili a quelli che abbiamo visto nella prima sezione: producono, passo dopo passo, una successione di vettori, $\x^{(1)}, \x^{(2)}, \x^{(3)},\dots,\x^{(3)}, \dots$ (ogni $\x^{(i)}$ è un vettore; mettiamo l'indice in alto per non confonderci con gli elementi). Sotto condizioni opportune (che vedremo), questa successione converge alla soluzione $\x$ di $A\x=\b$.
 
-\paragraph{Metodi iterativi generici}
-
-Descriviamo ora un modo per ottenere un metodo iterativo a partire da uno \emph{splitting} della matrice $A$, cioè una scrittura del tipo $A = M - N$, dove $M\in\mathbb{C}^{n\times n}$ è una matrice invertibile. La soluzione $\x\in\mathbb{C}^{n\times n}$ del sistema lineare soddisfa
+\paragraph{Metodi iterativi basati su splitting} Descriviamo ora un modo per ottenere un metodo iterativo a partire da uno \emph{splitting} della matrice $A$, cioè una scrittura del tipo $A = M - N$, dove $M\in\mathbb{C}^{n\times n}$ è una matrice invertibile. La soluzione $\x\in\mathbb{C}^{n\times n}$ del sistema lineare soddisfa
 \begin{equation} \label{solsistema}
-    A\x = \b \iff (M-N)\x=\b \iff M\x = N\x + \b \iff \x = M^{-1}(N\x + \b)
+    A\x = \b \iff (M-N)\x=\b \iff M\x = \b + N\x  \iff \x = M^{-1}(\b + N\x)
 %    \underbrace{M^{-1}N}_{=H}x + \underbrace{M^{-1}b}_{=c}.
 \end{equation}
 Questo suggerisce di impostare un'iterazione di punto fisso
 \begin{equation} \label{iterlin}
     \begin{cases}
-    \x^{(1)} \in \mathbb{C}^n & \text{fissato};\\
-    \x^{(k+1)} = M^{-1}(N\x^{(k)} + \mathbf{b}) & k=1,2,3,\dots
+    \x^{(0)} \in \mathbb{C}^n & \text{fissato};\\
+    \x^{(k+1)} = M^{-1}(N\x^{(k)} + \mathbf{b}) & k=0,1,2,\dots
     \end{cases}
 \end{equation}
-Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo un modo efficiente di risolvere il sistema lineare $M\x^{(k+1)} = N\x^{(k)} + \b$: per esempio, se $M$ è triangolare possiamo usare un processo di sostituzione. Tipicamente \emph{non} vogliamo calcolare $M^{-1}$ (né tantomeno $M^{-1}N$), perché questo sarebbe troppo costoso.
+Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo un modo efficiente di risolvere il sistema lineare $M\x^{(k+1)} = \b + N\x^{(k)}$: per esempio, se $M$ è triangolare possiamo usare un processo di sostituzione. Tipicamente \emph{non} vogliamo calcolare $M^{-1}$, né tantomeno $M^{-1}N$, perché questo sarebbe troppo costoso.
 
-La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $\x_{k+1} = \Phi(\x_k)$ che abbiamo già visto. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo. Questa è una conseguenza della linearità.
+La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $x_{k+1} = \Phi(x_k)$ che abbiamo già visto per equazioni non lineari. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo. Questa è una conseguenza della linearità.
 
 \paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità. Il \emph{metodo di Jacobi} si ottiene scegliendo come $M$ una matrice diagonale che ha elementi diagonali uguali a quelli di $A$, cioè
 \[
@@ -3050,7 +3063,7 @@ x_i^{(k+1)} = \frac{b_i - \sum_{\substack{j=1\\ j \neq i}}^n A_{ij}x_j^{(k)}}{A_
 Con queste formule possiamo calcolare uno ad uno gli elementi di $\x^{(k+1)}$ a partire da quelli $\x^{(k)}$. Questo costituisce un'iterazione del metodo.
 
 Il costo computazionale è di $2n$ operazioni aritmetiche per ogni $i$, quindi in totale $2n^2$ per ogni iterazione (il numero di iterazioni che servono per ottenere convergenza non è noto a priori, anzi, il metodo potrebbe non convergere del tutto). Inoltre, se
- so a priori che alcuni elementi $A_{ij}$ sono zero, posso restringere la somma agli elementi non-nulli; questo modifica il costo totale in $2nnz(A)$.
+ sappiamo a priori che alcuni elementi $A_{ij}$ sono zero, possiamo restringere la somma agli elementi non-nulli; questo modifica il costo totale in $2nnz(A)$.
 
 \paragraph{Implementazione del metodo di Gauss--Seidel}
 
@@ -3099,7 +3112,7 @@ Risolvendola per $x_{i}^{(k+1)}$ otteniamo
 \end{equation}
 Possiamo risolvere queste equazioni una dopo l'altra per $i=1,2,\dots,n$ (in quest'ordine!) per calcolare tutti gli elementi di $\x^{(k+1)}$. Questo corrisponde a risolvere il sistema lineare $M\x^{(k+1)} = \b + N\x^{(k)}$ per sostituzione in avanti; il sistema è triangolare inferiore, quindi non ci stupisce che questo sia possibile!
 
-La~\eqref{GS} differisce dalla corrispondente formula per il metodo di Jacobi solo per il fatto che abbiamo $x_j^{(k+1)}$ anziché $x_j^{(k)}$ nella prima sommatoria. Questo corrisponde ad usare immediatamente gli elementi più nuovi $x_j^{(k+1)}$ appena li abbiamo calcolati invece di aspettare l'iterazione successiva del metodo. Intuitivamente, questo metodo fornisce un'approssimazione migliore della soluzione, perché usiamo approssimazioni più accurate ad ogni passo. Questa intuizione non sempre corrisponde a realtà: esistono matrici per cui il metodo di Jacobi converge più velocemente di quello di Gauss--Seidel. (Lo vedremo in laboratorio.)
+La~\eqref{GS} differisce dalla corrispondente formula per il metodo di Jacobi solo per il fatto che abbiamo $x_j^{(k+1)}$ anziché $x_j^{(k)}$ nella prima sommatoria. Questo corrisponde ad usare immediatamente gli elementi più nuovi $x_j^{(k+1)}$ appena li abbiamo calcolati, invece di aspettare l'iterazione successiva del metodo. Intuitivamente, questo metodo fornisce un'approssimazione migliore della soluzione, perché usiamo approssimazioni più accurate ad ogni passo. Questa intuizione non sempre corrisponde a realtà: esistono matrici per cui il metodo di Jacobi converge più velocemente di quello di Gauss--Seidel. (Lo vedremo in laboratorio.)
 
 Un'osservazione interessante è che il metodo di Gauss--Seidel può essere implementato in Matlab usando \emph{una sola} variabile (vettore) $\x$ che contiene ad ogni passo le approssimazioni più recenti degli elementi di $\x$; ad ogni passo $i=1,2,\dots,n$ rimpiazziamo un elemento $x_i^{(k)}$ con $x_i^{(k+1)}$:
 \[
@@ -3147,7 +3160,7 @@ Lavorando in questo modo, in ogni passo abbiamo a disposizione tutti gli element
 
 Lo stesso trucco non funziona per il metodo di Jacobi: non possiamo cancellare $x_1^{(k)}$ rimpiazzandolo con $x_1^{(k+1)}$, perché quell'elemento ci serve anche successivamente quando calcoliamo $x_2^{(k+1)}, \dots, x_n^{(k+1)}$.
 
-\paragraph{Convergenza dei metodi iterativi} Dimostriamo ora dei risultati che ci dicono quando un metodo iterativo converge. Partiamo introducendo una definizione. Diciamo che il metodo iterativo è \emph{convergente} se \emph{per ogni scelta} di $\x^{(1)}\in\mathbb{C}^n$ la successione generata dal metodo converge alla soluzione $\x$ del sistema lineare.
+\paragraph{Convergenza dei metodi iterativi} Dimostriamo ora dei risultati che ci dicono quando un metodo iterativo converge. Partiamo introducendo una definizione. Diciamo che il metodo iterativo è \emph{convergente} se \emph{per ogni scelta} del punto iniziale $\x^{(0)}\in\mathbb{C}^n$ la successione generata dal metodo converge alla soluzione $\x$ del sistema lineare.
 
 Per studiare la convergenza, definiamo $\e^{(k)} = \x^{(k)} - \x$ l'errore (assoluto) al passo $k$. Usando la~\eqref{solsistema} e la~\eqref{iterlin} abbiamo per ogni $k=1,2,\dots$
 \begin{equation} \label{ekiter}
@@ -3161,25 +3174,29 @@ Il metodo iterativo~\eqref{iterlin} è convergente se e solo se $\rho(H) < 1$.
 \begin{proof}
 In questo corso dimostriamo il teorema solo nel caso particolare in cui $H$ è diagonalizzabile (ma in realtà è vero sempre).
 
-Usando ripetuatamente la~\eqref{ekiter} is ha
-\[
-\e^{(k+1)} = H\e^{(k)} = H H \e^{(k-1)} = \dots = H^{k} \e^{(1)}.
-\]
+Usando ripetutamente la~\eqref{ekiter} si ha
+\begin{align*}
+  \e^{(1)} &= H \e^{(0)},\\
+  \e^{(2)} &= H \e^{(1)} = H^2 \e^{(0)},\\
+  \vdots\\
+  \e^{(k)} &= H^k \e^{(0)}.
+\end{align*}
 Supponiamo che la matrice $H$ sia diagonalizzabile, cioè che esistano una matrice $V$ invertibile e $D$ diagonale tali che $H = VDV^{-1}$; sappiamo dall'algebra lineare che gli elementi diagonali di $D$ sono proprio gli autovalori di $H$. Possiamo scrivere
 \[
-H^k = \underbrace{(VDV^{-1})(VDV^{-1}) \dots (VDV^{-1})}_{\text{$k$ volte}} = VD^kV^{-1}.
+H^k = \underbrace{(VDV^{-1})(VDV^{-1}) \dots (VDV^{-1})}_{\text{$k$ volte}} = VD^kV^{-1},
 \]
-Se $\rho(H) < 1$, allora $\abs{D_{ii}} < 1$ per ogni $i=1,2,\dots,n$, e quindi $\lim_{k\to\infty} D^k = 0$. Allora anche
+semplificando le coppie $V^{-1}V=I$ che compaiono. Se $\rho(H) < 1$, allora $\abs{D_{ii}} < 1$ per ogni $i=1,2,\dots,n$, e quindi $\lim_{k\to\infty} D^k = 0$. Allora anche
 \[
-\lim_{k\to\infty} \mathbf{e}^{(k+1)} = \lim H^k \mathbf{e}^{(1)} = \lim VD^k V^{-1} \mathbf{e}^{(1)} = 0.
+\lim_{k\to\infty} \mathbf{e}^{(k)} = \lim H^k \mathbf{e}^{(0)} = \lim VD^k V^{-1} \mathbf{e}^{(0)} = 0.
 \]
-
-Questo conclude (con l'ipotesi aggiuntiva che $k$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta. Per fare questo, ci basta dimostrare che se $H$ ha un autovalore $H\mathbf{v} = \mathbf{v} \lambda$, $\abs{\lambda} \geq 1$, allora esiste \emph{almeno una} scelta di $\x^{(1)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Per farlo, prendiamo $\x^{(1)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(1)} = \x^{(1)} - \x = \mathbf{v}$, e 
-\begin{equation} \label{nonconverge}
-    \e^{(k+1)} = H^k \mathbf{v} = \mathbf{v} \lambda^k    
-\end{equation}
-(notare infatti che ogni volta che facciamo un prodotto $H\mathbf{v}$ otteniamo il vettore $\mathbf{v}\lambda$, quindi\dots)
-
+Questo conclude (con l'ipotesi aggiuntiva che $k$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta: se $\rho(H)\geq 1$, allora il metodo non converge (per ogni scelta del punto iniziale $\x^{(0)}$). Per fare questo, ci basta dimostrare che se $H$ ha un autovalore e un autovettore $H\mathbf{v} = \mathbf{v} \lambda$, con $\abs{\lambda} \geq 1$, allora esiste \emph{almeno una} scelta di $\x^{(0)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Prendiamo $\x^{(0)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(0)} = \x^{(0)} - \x = \mathbf{v}$, e 
+\begin{align*} \label{nonconverge}
+    \e^{(1)} &= He^{(0)} = H\mathbf{v} = \mathbf{v}\lambda,\\
+    \e^{(2)} &= He^{(1)} = H\mathbf{v}\lambda = \mathbf{v}\lambda^2,\\
+    \vdots\\
+    \e^{(k)} &= H e^{(k-1)} = \mathbf{v} \lambda^k.
+\end{align*}
+(Ogni volta che facciamo un prodotto $H\mathbf{v}$ otteniamo il vettore $\mathbf{v}\lambda$.)
 
 Se $\abs{\lambda} \geq 1$ (e $\mathbf{v}\neq 0$, visto  che $\mathbf{v}$ è un autovettore), allora la quantità $\mathbf{v} \lambda^k$ non converge a zero, che era quello che volevamo dimostrare.
 \end{proof}
@@ -3193,7 +3210,7 @@ Questo \emph{non} è un ``se e solo se''! In particolare, possiamo anche avere s
 \[
 \lim_{k\to\infty} \frac{\norm{\e^{(k+1)}}}{\norm{\e^{(k)}}} \leq \rho(H),
 \]
-con uguaglianza per quasi tutti i vettori di partenza $\x^{(1)}$. Pertanto il metodo converge linearmente. La convergenza è tanto più veloce (pendenza della retta in scala logaritmica più vicina a $-\infty$) quanto più $\rho(H)$ è piccolo.
+con uguaglianza per quasi tutti i vettori di partenza $\x^{(0)}$. Pertanto il metodo converge linearmente. La convergenza è tanto più veloce (pendenza della retta in scala logaritmica più vicina a $-\infty$) quanto più $\rho(H)$ è piccolo.
 
 \paragraph{Criteri di arresto per metodi iterativi per sistemi lineari}
 Abbiamo due scelte naturali come criteri di arresto per il metodo:
@@ -3275,7 +3292,7 @@ Questo è un sistema (\emph{non} lineare) di due equazioni in due incognite; una
 
 Un sistema di questo tipo è un problema molto più complicato che non un sistema lineare; tanto per cominciare, in generale si possono avere zero soluzioni, una, più di una, o anche infinite, e non c'è un criterio generale per capire quando questi casi si verificano.
 
- Non c'è un modo facile di estendere a sistemi di più equazioni il metodo di bisezione, più che altro perché non abbiamo un analogo facile del teorema di Weierstrass in più dimensioni: anche se $F(\mathbf{x})$ ha tutte le componenti $<0$ e $F(\mathbf{y})$ ha tutte le componenti $>0$, non è detto che ci sia una soluzione simultanea di tutte le equazioni né nella retta che congiunge $(x_1,x_2)$ a $(y_1,y_2)$ né nel ``rettangolo'' che li comprende. I metodi di punto fisso invece si riescono a generalizzare facilmente, come abbiamo già visto: possiamo calcolare la successione $\x_{k+1} = \Phi(\x_k)$ anche per una funzione in più variabili $\Phi: \mathbb{R}^n \to \mathbb{R}^n$. In particolare ci concentriamo su un metodo del punto fisso particolarmente efficiente, il metodo di Newton.
+ Non c'è un modo facile di estendere a sistemi di più equazioni il metodo di bisezione, più che altro perché non abbiamo un analogo facile del teorema di Weierstrass in più dimensioni: anche se $F(\mathbf{a})$ ha tutte le componenti $<0$ e $F(\mathbf{b})$ ha tutte le componenti $>0$, non è detto che ci sia una soluzione simultanea di tutte le equazioni né nella retta che congiunge $(a_1,a_2)$ e $(b_1,b_2)$ né nel ``rettangolo'' che li comprende. I metodi di punto fisso invece si riescono a generalizzare facilmente, come abbiamo già visto: possiamo calcolare la successione $\x_{k+1} = \Phi(\x_k)$ anche per una funzione in più variabili $\Phi: \mathbb{R}^n \to \mathbb{R}^n$. In particolare ci concentriamo su un metodo del punto fisso particolarmente efficiente, il metodo di Newton.
 
 \paragraph{Metodo di Newton multivariato}
 Possiamo definire, generalizzando la derivata prima di una funzione, la \emph{matrice Jacobiana}
@@ -4140,11 +4157,17 @@ Sia $f\in \mathcal{C}^{d+1}([a,b])$, $x_0,x_1,\dots,x_d$ nodi distinti in $[a,b]
     f(x) - p(x) = \frac{f^{(d+1)}(\xi)}{(d+1)!} (x-x_0)(x-x_1) \dots (x-x_d).    
 \end{equation}
 \end{theorem}
-Non lo dimostriamo ma facciamo qualche commento. Notare che questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Qui abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, e nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$.
+Non lo dimostriamo ma facciamo qualche commento.
+\begin{itemize}
+    \item Questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Qui abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, e nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$. (Questo è un ottimo modo per ricordarsi la formula.)
+    \item Non ci stupisce che ci siano dei fattori $(x-x_i)$ nel membro di destra: difatti, se sostituiamo $x=x_i$, per un qualche $i=0,1,\dots,d$, il termine di sinistra si annulla, quindi deve annullarsi anche quello di destra.
+    \item Un caso speciale in cui possiamo verificare il risultato direttamente è quello in cui $f(x)$ è essa stessa un polinomio di grado minore o uguale a $d$. In questo caso il polinomio di interpolazione coincide con $f(x)$ stessa, quindi il termine di sinistra è nullo per ogni $x$; e anche il termine di destra si annulla perché per un polinomio di grado al più $d$ abbiamo $f^{(d+1)} \equiv 0$.
+\end{itemize}
 
-Non ci stupisce che ci siano dei fattori $(x-x_i)$ nel membro di destra: difatti, se sostituiamo $x=x_i$, per un qualche $i=0,1,\dots,d$, il termine di sinistra si annulla, quindi deve annullarsi anche quello di destra.
 
-Un altro caso speciale in cui possiamo verificare il risultato direttamente è quello in cui $f(x)$ è essa stessa un polinomio di grado minore o uguale a $d$. In questo caso il polinomio di interpolazione coincide con $f(x)$ stessa, quindi il termine di sinistra è nullo per ogni $x$; e anche il termine di destra si annulla perché per un polinomio di grado al più $d$ abbiamo $f^{(d+1)} \equiv 0$.
+
+
+
 
 \paragraph{Errore dell'interpolazione} Dal teorema del resto dell'interpolazione segue una stima per l'errore massimo (differenza tra $f(x)$ e $p(x)$), cioè
 \[
@@ -4155,6 +4178,34 @@ dove $C_{d+1} = \max_{x\in [a,b]} \abs{f^{(d+1)}(x)}$.
 %% TODO: esempio
 
 \section{Altri problemi di interpolazione e approssimazione}
+
+\paragraph{Approssimazione / fit} Come abbiamo visto, quando il grado $d$ è alto, il polinomio di interpolazione può avere forti oscillazioni, e la matrice di Vandermonde $V$ può essere mal condizionata. In molti casi, anche se abbiamo tanti punti $(x_0,y_0), \dots, (x_m,y_m)$, conviene prendere un grado $d<m$ [TODO: WIP]
+
+
+Il caso più comune però è che $m>n$, e quindi ho più equazioni che incognite. Posso risolvere il sistema nel senso dei minimi quadrati come visto nella sezione precedente; questo corrisponde a risolvere questo problema: sono date delle coppie $(x_i,y_i)$ che soddisfano approssimativamente $\phi(x_i) \approx y_i$, per una funzione $\phi$ come in~\eqref{phi}, e voglio trovare i coefficienti $\alpha_1,\dots,\alpha_n$ che risolvono il problema di minimo
+\[
+\min_{\alpha \in \mathbb{R}^n} (\phi(x_i) - y_i)^2.
+\]
+Questo problema si chiama \emph{approssimazione} di funzioni, o, dall'inglese, \emph{fitting}. 
+
+I problemi di interpolazione e di approssimazione si risolvono utilizzando gli algoritmi per risolvere sistemi lineari e sistemi sovradeterminati, che abbiamo visto nella sezione precedente; non ci servono strumenti nuovi. Vediamo un po' di casi particolari.
+
+\paragraph{Retta dei minimi quadrati} Corrisponde a trovare la retta che approssima meglio un insieme di punti dati (disegno, mostrando che lo scarto misurato è ``in verticale''). In questo caso, le funzioni sono $\phi_1(x) = 1, \phi_2(x) = x$. A differenza dell'interpolazione polinomiale, però, i punti sono solitamente più di due, e quindi non esiste una retta che passa esattamente per tutti questi punti. Quindi
+\[
+X = \begin{bmatrix}
+    1 & x_1\\
+    1 & x_2\\
+    \vdots & \vdots\\
+    1 & x_m
+\end{bmatrix}, \quad \alpha = (X^TX)^{-1} X^T y,
+\]
+dove l'ultima formula corrisponde ad usare le equazioni normali per risolvere questo problema. Possiamo ottenere una formula più esplicita espandendo i conti e usando la formula per l'inversa di una matrice $2\times 2$; questo spesso viene fatto se avete già visto la retta di interpolazione in altri corsi; per noi rifare questo conto non è particolarmente interessante.
+
+%%% TODO: inserire un esempio %%%
+
+
+
+
 Quello dell'interpolazione polinomiale è un problema che sorprendentemente si riduce a un sistema lineare: anche se nella formulazione del problema compaiono polinomi di grado più alto di 1, la dipendenza dai coefficienti incogniti $\alpha_0,\dots, \alpha_d$ è lineare. 
 
 Possiamo risolvere nello stesso modo anche un problema più generale: fissiamo $n$ funzioni $\phi_1(x), \dots, \phi_n(x)$, e cerchiamo coefficienti incogniti $\alpha_1,\dots,\alpha_n$ in modo da ottenere una funzione
@@ -4183,27 +4234,6 @@ Se imponiamo le condizioni $\phi(x_i) = y_i$ per $i=1,2,\dots, m$, abbiamo il se
 \end{bmatrix}}_{=\mathbf{y}}
 \]
 Se $m=n$, cioè se ho tanti punti quante funzioni incognite, questo è un sistema lineare quadrato e posso risolverlo esattamente (ammesso che la matrice $X$ sia invertibile). Questa problema si chiama \emph{interpolazione} di funzioni. 
-
-\paragraph{Approssimazione / fit} Il caso più comune però è che $m>n$, e quindi ho più equazioni che incognite. Posso risolvere il sistema nel senso dei minimi quadrati come visto nella sezione precedente; questo corrisponde a risolvere questo problema: sono date delle coppie $(x_i,y_i)$ che soddisfano approssimativamente $\phi(x_i) \approx y_i$, per una funzione $\phi$ come in~\eqref{phi}, e voglio trovare i coefficienti $\alpha_1,\dots,\alpha_n$ che risolvono il problema di minimo
-\[
-\min_{\alpha \in \mathbb{R}^n} (\phi(x_i) - y_i)^2.
-\]
-Questo problema si chiama \emph{approssimazione} di funzioni, o, dall'inglese, \emph{fitting}. 
-
-I problemi di interpolazione e di approssimazione si risolvono utilizzando gli algoritmi per risolvere sistemi lineari e sistemi sovradeterminati, che abbiamo visto nella sezione precedente; non ci servono strumenti nuovi. Vediamo un po' di casi particolari.
-
-\paragraph{Retta dei minimi quadrati} Corrisponde a trovare la retta che approssima meglio un insieme di punti dati (disegno, mostrando che lo scarto misurato è ``in verticale''). In questo caso, le funzioni sono $\phi_1(x) = 1, \phi_2(x) = x$. A differenza dell'interpolazione polinomiale, però, i punti sono solitamente più di due, e quindi non esiste una retta che passa esattamente per tutti questi punti. Quindi
-\[
-X = \begin{bmatrix}
-    1 & x_1\\
-    1 & x_2\\
-    \vdots & \vdots\\
-    1 & x_m
-\end{bmatrix}, \quad \alpha = (X^TX)^{-1} X^T y,
-\]
-dove l'ultima formula corrisponde ad usare le equazioni normali per risolvere questo problema. Possiamo ottenere una formula più esplicita espandendo i conti e usando la formula per l'inversa di una matrice $2\times 2$; questo spesso viene fatto se avete già visto la retta di interpolazione in altri corsi; per noi rifare questo conto non è particolarmente interessante.
-
-%%% TODO: inserire un esempio %%%
 
 \paragraph{Approssimazione polinomiale}
 Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare un grado massimo $d$, e trovare il polinomio di grado al più $d$ che meglio approssima una sequenza di punti. Questo corrisponde a scegliere le $n = d+1$ funzioni di base
