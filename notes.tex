@@ -59,7 +59,7 @@
 
 Queste note sono pensate per fare da `scaletta' della lezione per il corso per me mentre tengo le lezioni, e non necessariamente per essere usate come dispense o documento a sé stante.
 
-Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini. Un Large Language Model (GPT 4.1) è stato utilizzato per scrivere il codice Latex che genera alcune delle immagini.
+Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini. Dei Large Language Model (GPT 4.1 e GPT 5) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini.
 
 \chapter{Motivazione}
 
@@ -4176,47 +4176,112 @@ Non lo dimostriamo ma facciamo qualche commento.
 dove $C_{d+1} = \max_{x\in [a,b]} \abs{f^{(d+1)}(x)}$.
 
 %% TODO: esempio
-
 \section{Altri problemi di interpolazione e approssimazione}
 
-\paragraph{Approssimazione / fit} Come abbiamo visto, quando il grado $d$ è alto, il polinomio di interpolazione può avere forti oscillazioni, e la matrice di Vandermonde $V$ può essere mal condizionata. In molti casi, anche se abbiamo tanti punti $(x_0,y_0), \dots, (x_m,y_m)$, conviene prendere un grado $d<m$ [TODO: WIP]
+\paragraph{Approssimazione / fit} Come abbiamo visto, quando il grado $d$ è alto, il polinomio di interpolazione può avere forti oscillazioni, e la matrice di Vandermonde $V$ può essere mal condizionata. In molti casi, anche se abbiamo tanti punti $(x_0,y_0), \dots, (x_m,y_m)$, conviene fissare un grado $d<m$ e prendere il polinomio di grado minore o uguale a $d$ che più si avvicina ai punti dati. Questo corrisponde a risolvere un sistema lineare sovradeterminato nel senso dei minimi quadrati: difatti, si ha
+\begin{align*}
+&\min_{\alpha \in \mathbb{R}^{d+1}} \, \abs{p(x_0)-y_0}^2 + \abs{p(x_1)-y_1}^2 + \dots + \abs{p(x_m)-y_m}^2\\
+&= 
+\min_{\alpha \in \mathbb{R}^{d+1}}\, \norm*{\begin{bmatrix}
+    1 & x_0 & x_0^2 & \dots & x_0^d\\
+    1 & x_1 & x_1^2 & \dots & x_1^d\\
+    1 & x_2 & x_2^2 & \dots & x_2^d\\
+    \vdots & \vdots & \vdots & \ddots & \vdots\\
+    1 & x_m & x_m^2 & \dots & x_m^d\\
+\end{bmatrix}
+\begin{bmatrix}
+    \alpha_0\\
+    \alpha_1\\
+    \alpha_2\\
+    \vdots\\
+    \alpha_d
+\end{bmatrix} - \begin{bmatrix}
+    y_0\\
+    y_1\\
+    y_2\\
+    \vdots\\
+    y_m
+\end{bmatrix}
+}_2^2.    
+\end{align*}
+Vediamo in figura un esempio con quattro punti e un polinomio di grado $d=1$. La retta non passa esattamente per i punti dati, ma vicino ad essi, in modo da minimizzare (al variare di tutte le possibili rette) la somma dei segmenti verticali disegnati in verde, i residui.
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+  % Axes
+  \draw[->] (-0.5,0) -- (4.5,0) node[right] {$x$};
+  \draw[->] (0,-0.5) -- (0,4.5) node[above] {$y$};
 
+  % Data points
+  \fill[blue] (0,1.3) circle (2pt);
+  \fill[blue] (1,1.7) circle (2pt);
+  \fill[blue] (2,3.4) circle (2pt);
+  \fill[blue] (3,4.2) circle (2pt);
 
-Il caso più comune però è che $m>n$, e quindi ho più equazioni che incognite. Posso risolvere il sistema nel senso dei minimi quadrati come visto nella sezione precedente; questo corrisponde a risolvere questo problema: sono date delle coppie $(x_i,y_i)$ che soddisfano approssimativamente $\phi(x_i) \approx y_i$, per una funzione $\phi$ come in~\eqref{phi}, e voglio trovare i coefficienti $\alpha_1,\dots,\alpha_n$ che risolvono il problema di minimo
-\[
-\min_{\alpha \in \mathbb{R}^n} (\phi(x_i) - y_i)^2.
-\]
-Questo problema si chiama \emph{approssimazione} di funzioni, o, dall'inglese, \emph{fitting}. 
+  \node[anchor=south east] at (0,1.3) {$(x_1,\,y_1)$};
+  \node[anchor=north west] at (1,1.7) {$(x_2,\,y_2)$};
+  \node[anchor=south east] at (2,3.4) {$(x_3,\,y_3)$};
+  \node[anchor=south east] at (3,4.2) {$(x_4,\,y_4)$};
 
-I problemi di interpolazione e di approssimazione si risolvono utilizzando gli algoritmi per risolvere sistemi lineari e sistemi sovradeterminati, che abbiamo visto nella sezione precedente; non ci servono strumenti nuovi. Vediamo un po' di casi particolari.
+  % Best-fit line (approximate linear regression)
+  % Example: y = 1.0 + 1.0x
+  \draw[thick,red,domain=0:3.5,samples=2] plot(\x,{1 + 1.0*\x});
+  % \node[red,anchor=west] at (3.6,4.2) {$y = a + bx$};
 
-\paragraph{Retta dei minimi quadrati} Corrisponde a trovare la retta che approssima meglio un insieme di punti dati (disegno, mostrando che lo scarto misurato è ``in verticale''). In questo caso, le funzioni sono $\phi_1(x) = 1, \phi_2(x) = x$. A differenza dell'interpolazione polinomiale, però, i punti sono solitamente più di due, e quindi non esiste una retta che passa esattamente per tutti questi punti. Quindi
+  % Vertical residuals (distances between points and the line)
+  \foreach \x/\y in {0/1.3, 1/1.7, 2/3.4, 3/4.2} {
+    \draw[very thick,green!50!black] (\x,\y) -- (\x,{1 + 1.0*\x});
+  }
+
+  % Small labels for residuals
+%   \foreach \x/\y/\i in {0/1/1, 1/1.8/2, 2/3.4/3, 3/4/4} {
+%     \node[gray,anchor=west] at (\x+0.05,{(\y + (1 + 1.0*\x))/2}) {$r_{\i}$};
+%   }
+
+  % Legend
+  \draw[blue,fill=blue] (5.7,3.2) circle (2pt);
+  \node[right] at (5.8,3.2) {Valori osservati};
+  \draw[thick,red] (5.7,2.9) -- (6.1,2.9);
+  \node[right] at (6.1,2.9) {Retta di regressione};
+  \draw[very thick,green!50!black] (5.7,2.6) -- (6.1,2.6);
+  \node[right] at (6.1,2.6) {Residui};
+\end{tikzpicture}
+\end{center}
+Questo problema si chiama \emph{approssimazione} di funzioni, o, dall'inglese, \emph{fitting}.  Il problema risultante è un problema ai minimi quadrati, e si può risolvere con gli algoritmi che abbiamo già visto: equazioni normali, fattorizzazione QR, funzione ``backslash'' di Matlab.
+
+\paragraph{Retta dei minimi quadrati} Vediamo come esempio il caso particolare $d=1$, in cui il polinomio è una retta, detta a volte \emph{retta dei minimi quadrati} o \emph{retta di regressione}. A differenza del problema dell'interpolazione, i punti sono più di due, quindi non esiste una retta che passa esattamente per tutti questi punti. Abbiamo
 \[
 X = \begin{bmatrix}
+    1 & x_0\\
     1 & x_1\\
     1 & x_2\\
     \vdots & \vdots\\
     1 & x_m
-\end{bmatrix}, \quad \alpha = (X^TX)^{-1} X^T y,
+\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}
+y_0\\
+y_1\\
+y_2\\
+\vdots\\
+y_m
+\end{bmatrix}, \quad \boldsymbol{\alpha} = \begin{bmatrix}
+\alpha_1\\
+\alpha_2
+\end{bmatrix} = (X^TX)^{-1} X^T \mathbf{y},
 \]
-dove l'ultima formula corrisponde ad usare le equazioni normali per risolvere questo problema. Possiamo ottenere una formula più esplicita espandendo i conti e usando la formula per l'inversa di una matrice $2\times 2$; questo spesso viene fatto se avete già visto la retta di interpolazione in altri corsi; per noi rifare questo conto non è particolarmente interessante.
+dove l'ultima formula corrisponde ad usare le equazioni normali per risolvere questo problema. Possiamo ottenere una formula più esplicita espandendo i conti e usando la formula per l'inversa di una matrice $2\times 2$. Potreste aver visto queste formule se avete già incontrato la retta di regressione lineare in altri corsi, per esempio parlando di statistica; per noi rifare questo conto non è particolarmente interessante.
 
 %%% TODO: inserire un esempio %%%
 
-
-
-
-Quello dell'interpolazione polinomiale è un problema che sorprendentemente si riduce a un sistema lineare: anche se nella formulazione del problema compaiono polinomi di grado più alto di 1, la dipendenza dai coefficienti incogniti $\alpha_0,\dots, \alpha_d$ è lineare. 
+\paragraph{Approfondimento: interpolazione con funzioni più generali} Quello dell'interpolazione polinomiale è un problema apparentemente non-lineare, ma che sorprendentemente si riduce a un sistema di equazioni lineari: anche se nella formulazione del problema compaiono polinomi di grado più alto di 1, la dipendenza dai coefficienti incogniti $\alpha_0,\dots, \alpha_d$ è lineare. 
 
 Possiamo risolvere nello stesso modo anche un problema più generale: fissiamo $n$ funzioni $\phi_1(x), \dots, \phi_n(x)$, e cerchiamo coefficienti incogniti $\alpha_1,\dots,\alpha_n$ in modo da ottenere una funzione
 \begin{equation} \label{phi}
     \phi(x) = \alpha_1 \phi_1(x) + \alpha_2 \phi_2(x) + \dots + \alpha_n \phi_n(x)    
 \end{equation}
-che rispetti certe condizioni.
+che passi per certi punti.
 
-Più nel dettaglio, supponiamo di avere a disposizione $m$ coppie di valori $(x_1,y_1), \dots, (x_m,y_m)$. Di nuovo, assumiamo che gli $x_i$ siano \emph{distinti}.
+Più nel dettaglio, supponiamo di avere $m$ coppie di valori $(x_1,y_1), \dots, (x_m,y_m)$. Di nuovo, assumiamo che gli $x_i$ siano \emph{distinti}.
 
-Se imponiamo le condizioni $\phi(x_i) = y_i$ per $i=1,2,\dots, m$, abbiamo il seguente sistema lineare di $m$ equazioni in $n$ incognite
+Se imponiamo le condizioni $\phi(x_i) = y_i$ per $i=1,2,\dots, m$, abbiamo il sistema lineare di $m$ equazioni in $n$ incognite
 \[
 \underbrace{
 \begin{bmatrix}
@@ -4228,20 +4293,14 @@ Se imponiamo le condizioni $\phi(x_i) = y_i$ per $i=1,2,\dots, m$, abbiamo il se
 \underbrace{\begin{bmatrix}
     \alpha_1\\ \alpha_2 \\ \vdots \\ \alpha_n
 \end{bmatrix}
-}_{=\mathbf{\alpha}}
+}_{=\boldsymbol{\alpha}}
 = \underbrace{\begin{bmatrix}
     y_1\\ y_2 \\ \vdots \\ y_m
-\end{bmatrix}}_{=\mathbf{y}}
+\end{bmatrix}}_{=\mathbf{y}}.
 \]
-Se $m=n$, cioè se ho tanti punti quante funzioni incognite, questo è un sistema lineare quadrato e posso risolverlo esattamente (ammesso che la matrice $X$ sia invertibile). Questa problema si chiama \emph{interpolazione} di funzioni. 
+Se $m=n$, cioè se ho tanti punti quante funzioni incognite, questo è un sistema lineare quadrato e posso risolverlo esattamente (ammesso che la matrice $X$ sia invertibile) (\emph{interpolazione}). Se $m>n$, allora ho un sistema con più equazioni che incognite, e posso risolverlo nel senso dei minimi quadrati (\emph{approssimazione/fit}), calcolando $\min \norm{X\boldsymbol{\alpha}-\mathbf{y}}$. Vediamo un esempio.
 
-\paragraph{Approssimazione polinomiale}
-Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare un grado massimo $d$, e trovare il polinomio di grado al più $d$ che meglio approssima una sequenza di punti. Questo corrisponde a scegliere le $n = d+1$ funzioni di base
-\begin{equation} \label{basepolinomi}
-    \phi_1(x) = 1, \quad \phi_2(x) = x, \quad \phi_3(x) = x^2,\quad \dots,\quad \phi_{d+1}(x) = x^{d}.    
-\end{equation}
-
-\paragraph{Polinomi trigonometrici} Se desideriamo interpolare (o approssimare) una funzione che sappiamo essere periodica di periodo $\pi$, viene naturale scegliere una base composta di funzioni che sono anch'esse periodiche, per esempio
+\paragraph{Polinomi trigonometrici} Se desideriamo interpolare (o approssimare) una funzione che sappiamo essere periodica di periodo $2\pi$, viene naturale scegliere una base composta di funzioni che sono anch'esse periodiche, per esempio
 \begin{align*}
 \phi_1(x) &= 1,\\
 \phi_2(x) &= \sin x, & \phi_3(x) &= \cos x,\\
@@ -4249,7 +4308,7 @@ Analogamente a quanto fatto con la retta dei minimi quadrati, possiamo fissare u
 \vdots & & \vdots &\\
 \phi_{2k}(x) &= \sin kx, & \phi_{2k+1}(x) &= \cos kx.
 \end{align*}
-Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che forse avrete occasione di incontrare in futuro in altri corsi.
+Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $2\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che forse avrete occasione di incontrare in futuro in altri corsi.
 
 \section{Formule di quadratura}
 
@@ -4960,7 +5019,7 @@ Per ogni scelta di $n$ quindi possiamo quindi trovare nodi e pesi $x_1,\dots,x_n
 \[
 x_1 = \frac{1}{\sqrt{3}} = 0.57735\dots, \quad x_2 = -\frac{1}{\sqrt{3}} = -0.57735\dots, w_1=w_2=1
 \]
-che sono i nodi e i pesi dell'unica formula di quadratura su $[-1,1]$ con ordine $4$, che fornisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $3$. Con un cambio di variabile simile a quello visto sopra è possibile adattarle ad altri intervalli. Non essendo formule chiuse, tipicamente non vengono usate nella versione composita, ma sono particolarmente utili nella loro versione non composita, quando basta un'approssimazione dell'integrale con bassa precisione ma calcolabile con poche valutazioni di funzione.
+che sono i nodi e i pesi dell'unica formula di quadratura su $[-1,1]$ con due punti di ordine $4$, che fornisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $3$. Con un cambio di variabile simile a quello visto sopra è possibile adattarle ad altri intervalli. Non essendo formule chiuse, tipicamente non vengono usate nella versione composita, ma sono particolarmente utili nella loro versione semplice (non composita), quando basta un'approssimazione dell'integrale con bassa precisione ma calcolabile con poche valutazioni di funzione.
 
 \chapter{Equazioni differenziali ordinarie}
 
