@@ -5589,7 +5589,7 @@ dove abbiamo posto $\f_i := \f(t_i, \y_i)$ come già fatto in passato, per un'op
 
 \paragraph{Scelta dei valori iniziali} Per poter applicare il metodo~\eqref{linearmultistep}, abbiamo bisogno di opportuni valori iniziali $\y_1,\y_2,\dots, \y_{s-1}$, in aggiunta a $\y_0$. Questi non sono tra i dati iniziali del problema, quindi vanno calcolati in qualche modo. Solitamente si utilizza un metodo a un passo per calcolarli; quindi ogni metodo a più passi ha bisogno di essere ``inizializzato'' calcolando questi primi valori tramite un opportuno metodo a un passo.
 
-Perché il metodo possa convergere alla soluzione esatta quando $n\to\infty$, è necessario imporre una condizione su come vengono scelti questi valori iniziali. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{s-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_s-1) \to \y_0$. Per questo, diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{s-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
+Perché il metodo possa convergere alla soluzione esatta quando $n\to\infty$, è necessario imporre una condizione su come vengono scelti questi valori iniziali. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{s-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_{s-1}) \to \y_0$. Per questo, diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{s-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
 \[
 \lim_{n\to\infty} \y_k = \y_0, \quad k=1,2,\dots,s-1.
 \]
