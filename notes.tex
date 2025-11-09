@@ -5104,9 +5104,9 @@ Questa volta la funzione $\f(t,\y)$ al membro di destra dipende sia dalla $t$ ch
 
 La maggior parte degli algoritmi che vedremo calcolano un'approssimazione dei valori assunti dalla soluzione $\y(t)$ su una griglia di punti equispaziati in $[a,b]$: useremo la notazione già vista nel capitolo scorso
 \[
-h = \frac{b-a}{N}, \quad t_n = a + nh, \quad n = 0,1,2,\dots,N.
+h = \frac{b-a}{n}, \quad t_k = a + kh, \quad n = 0,1,2,\dots,n.
 \]
-Chiameremo queste approssimazioni $\y_i \approx \y(t_i)$, per $t = 1,2,\dots, N$. Vediamo un esempio qui sotto. Notare che i punti neri \emph{non} stanno esattamente sul grafico della funzione.
+Chiameremo queste approssimazioni $\y_k \approx \y(t_k)$, per $k = 1,2,\dots, n$. Vediamo un esempio qui sotto. Notare che i punti neri \emph{non} stanno esattamente sul grafico della funzione.
 
 \begin{tikzpicture}
   % Plot the smooth function
@@ -5135,7 +5135,7 @@ Chiameremo queste approssimazioni $\y_i \approx \y(t_i)$, per $t = 1,2,\dots, N$
     ]  coordinates {
       (0,1) (0.2,0.8) (0.4, 0.7) (0.6, 0.6) (0.8, 0.4) (1, 0.3)
     };
-    \addlegendentry{approssimazioni $y_i$}
+    \addlegendentry{approssimazioni $y_k$}
 
     \node[pin=below:{$y_4$}] at (axis cs:0.8,0.4) {};
     \node[pin=above:{$y(t_4)$}] at (axis cs:0.8,0.4493) {};
@@ -5150,19 +5150,19 @@ Vediamo subito alcuni algoritmi particolarmente semplici.
 
 \paragraph{Metodo di Eulero esplicito}
 
-Facendo uno sviluppo di Taylor in $t_n$, abbiamo
+Facendo uno sviluppo di Taylor in $t_k$, abbiamo
 \begin{equation} \label{euleroesp_taylor}
-    \y(t_{n+1}) = \y(t_n) + \y'(t_n)h + \mathcal{O}(h^2) = \y(t_n) + \f(t_n, \y_n)h + \mathcal{O}(h^2)
+    \y(t_{k+1}) = \y(t_k) + \y'(t_k)h + \mathcal{O}(h^2) = \y(t_k) + \f(t_k, \y_k)h + \mathcal{O}(h^2)
 \end{equation}
-Se ignoriamo il resto $\mathcal{O}(h^2)$ e rimpiazziamo $\y(t_n), \y(t_{n+1})$ con le loro approssimazioni sui punti della griglia, otteniamo
+Se ignoriamo il resto $\mathcal{O}(h^2)$ e rimpiazziamo $\y(t_k), \y(t_{k+1})$ con le loro approssimazioni sui punti della griglia, otteniamo
 \[
-\y_{n+1} = \y_n + h \f(t_n, \y_n).
+\y_{k+1} = \y_k + h \f(t_k, \y_k).
 \]
-Questa formula definisce una sequenza di valori approssimati $y_i$: ci permette di calcolare $\y_{n+1}$ a partire da $\y_n$. Otteniamo quindi il \emph{metodo di Eulero esplicito}
+Questa formula definisce una sequenza di valori approssimati $y_k$: ci permette di calcolare $\y_{k+1}$ a partire da $\y_k$. Otteniamo quindi il \emph{metodo di Eulero esplicito}
 \begin{equation} \label{euleroesplicito}
-    \y_{n+1} = \y_n + h \f_n, \quad n = 0,1,2,\dots,N-1,
+    \y_{k+1} = \y_k + h \f_k, \quad k = 0,1,2,\dots,n-1,
 \end{equation}
-dove abbiamo posto $\f_n = \f(t_n, \y_n)$ per brevità.
+dove abbiamo posto $\f_k = \f(t_k, \y_k)$ per brevità.
 
 Il metodo di Eulero esplicito, quindi, consiste nel calcolare una dopo l'altra le seguenti quantità:
 \begin{align*}
@@ -5170,56 +5170,56 @@ Il metodo di Eulero esplicito, quindi, consiste nel calcolare una dopo l'altra l
     \y_1 &= \y_0 + h \f(t_0,\y_0),\\
     \y_2 &= \y_1 + h \f(t_1,\y_1),\\
     \vdots& \quad \vdots\\
-    \y_N &= \y_{N-1} + h \f(t_{N-1},\y_{N-1}).
+    \y_n &= \y_{n-1} + h \f(t_{n-1},\y_{n-1}).
 \end{align*}
-Il costo computazionale è di $N$ valutazioni di $\f$, più $\mathcal{O}(mN)$ operazioni aritmetiche. Come per altri metodi, l'operazione più costosa qui è la valutazione della funzione, quindi sostanzialmente il costo è di $N$ valutazioni della funzione, una per passo.
+Il costo computazionale è di $n$ valutazioni di $\f$, più $\mathcal{O}(mn)$ operazioni aritmetiche. Come per altri metodi, l'operazione più costosa qui è la valutazione della funzione, quindi sostanzialmente il costo è di $n$ valutazioni della funzione, una per passo.
 
 Calcoliamo esplicitamente la successione generata dal metodo in un caso semplice, il problema test~\eqref{testproblem}. Si ha
 \[
-    y_{n+1} = y_n + hf(t_n,y_n) = y_n + h\lambda y_n = (1+h\lambda)y_n,
+    y_{k+1} = y_k + hf(t_k,y_k) = y_k + h\lambda y_k = (1+h\lambda)y_k,
 \]
 quindi ad ogni passo il valore precedente viene moltiplicato per $(1+h\lambda)$. Otteniamo
 \[
-y_0 = 1, \quad y_1 = (1+h\lambda), \quad y_2 = (1+h\lambda)^2, \quad \dots \quad y_N = (1+h\lambda)^N.
+y_0 = 1, \quad y_1 = (1+h\lambda), \quad y_2 = (1+h\lambda)^2, \quad \dots \quad y_n = (1+h\lambda)^n.
 \]
-Abbiamo quindi, ricordando che $h = \frac{b-a}{N} = 1/N$,
+Abbiamo quindi, ricordando che $h = \frac{b-a}{n} = 1/n$,
 \[
-    y_N = \left(1+\frac{\lambda}{N}\right)^N.
+    y_n = \left(1+\frac{\lambda}{n}\right)^n.
 \]
-Questa quantità è l'approssimazione prodotta dal metodo per $y(t_N) = y(1) = e^{\lambda}$. Per un limite notevole che avete visto nel corso di analisi,
+Questa quantità è l'approssimazione prodotta dal metodo per $y(t_n) = y(1) = e^{\lambda}$. Per un limite notevole che avete visto nel corso di analisi,
 \[
-    \lim_{N\to \infty} y_N = \lim_{N\to \infty} \left(1+\frac{\lambda}{N}\right)^N = e^{\lambda}.
+    \lim_{n\to \infty} y_n = \lim_{n\to \infty} \left(1+\frac{\lambda}{n}\right)^n = e^{\lambda}.
 \]
-Questo limite ci dice che, almeno per questo problema semplice, il valore di $y_N$ converge al valore esatto di $y(t_N)$, quando $N$ tende a infinito. Vedremo più avanti che il metodo converge anche per molti altri problemi.
+Questo limite ci dice che, almeno per questo problema semplice, il valore di $y_n$ converge al valore esatto di $y(t_n)$, quando il numero di sottointervalli $n$ tende a infinito. Vedremo più avanti che il metodo converge anche per molti altri problemi.
 
 \paragraph{Metodo di Eulero implicito}
 
-Facendo invece uno sviluppo di Taylor con centro in $t_{n+1}$, abbiamo
+Facendo invece uno sviluppo di Taylor con centro in $t_{k+1}$, abbiamo
 \begin{equation} \label{euleroimp_taylor}
-    \y(t_n) = \y(t_{n+1}) - \y'(t_{n+1})h + \mathcal{O}(h^2),    
+    \y(t_k) = \y(t_{k+1}) - \y'(t_{k+1})h + \mathcal{O}(h^2),    
 \end{equation}
 che operando nello stesso modo conduce alla relazione
 \begin{equation} \label{euleroimplicito}
-    \y_{n+1} = \y_n + h \underbrace{\f(t_{n+1}, \y_{n+1})}_{\f_{n+1}}.    
+    \y_{k+1} = \y_k + h \underbrace{\f(t_{k+1}, \y_{k+1})}_{\f_{k+1}}.    
 \end{equation}
-La differenza importante è che questa volta la $\y_{n+1}$ compare anche al secondo termine, nascosta dentro il termine $\f_{n+1}$. Quindi non possiamo calcolare direttamente $\y_{n+1}$ a partire da $\y_n$: ci servirebbe conoscere $\y_{n+1}$ per calcolare $\f_{n+1}$. L'equazione \eqref{euleroimplicito} è un'equazione che definisce implicitamente $\y_{n+1}$. È necessario risolverla per calcolare $\y_{n+1}$. 
+La differenza importante è che questa volta la $\y_{k+1}$ compare anche al secondo termine, nascosta dentro il termine $\f_{k+1}$. Quindi non possiamo calcolare direttamente $\y_{k+1}$ a partire da $\y_k$: ci servirebbe conoscere $\y_{k+1}$ per calcolare $\f_{k+1}$. L'equazione \eqref{euleroimplicito} è un'equazione che definisce implicitamente $\y_{k+1}$. È necessario risolverla per calcolare $\y_{k+1}$. 
 
 Per alcune equazioni differenziali, questa equazione è semplice da risolvere. Per esempio, consideriamo il problema test~\eqref{testproblem}: si ha
 \[
-    y_{n+1} = y_n + h\lambda y_{n+1};
+    y_{k+1} = y_k + h\lambda y_{k+1};
 \]
-questa è un'equazione di grado 1 nella $y_{n+1}$; risolvendola otteniamo
+questa è un'equazione di grado 1 nella $y_{k+1}$; risolvendola otteniamo
 \[
-y_{n+1} = \frac{1}{1-h\lambda} y_n.
+y_{k+1} = \frac{1}{1-h\lambda} y_k.
 \]
 
-Per equazioni differenziali più complicate, possiamo per esempio vedere la~\eqref{euleroimplicito} come un'equazione di punto fisso: per ogni $n$ fissato generiamo una successione
+Per equazioni differenziali più complicate, possiamo per esempio vedere la~\eqref{euleroimplicito} come un'equazione di punto fisso: per ogni $k$ fissato generiamo una successione
 \[
-\z_0 = \y_n, \quad \z_{k+1} = \y_n + h \f(t_{n+1}, \z_k), \quad k=0,1,2,\dots
+\z_0 = \y_k, \quad \z_{j+1} = \y_k + h \f(t_{k+1}, \z_j), \quad j=0,1,2,\dots
 \]
-che (sperabilmente) converge a una soluzione $\lim_{k\to\infty} \z_k = \y_{n+1}$. Oppure possiamo utilizzare il metodo di Newton. 
+che (sperabilmente) converge a una soluzione $\lim_{j\to\infty} \z_j = \y_{k+1}$. Oppure possiamo utilizzare il metodo di Newton. 
 
-In ogni caso, si chiama \emph{metodo di Eulero implicito} il metodo in cui si calcola $\y_{n+1}$ a partire da $\y_n$ risolvendo la~\eqref{euleroimplicito} (in qualche modo) ad ogni passo per $n=0,1,2,\dots,N-1$. Il costo computazionale dipende dal modo in cui risolviamo la~\eqref{euleroimplicito}.
+In ogni caso, si chiama \emph{metodo di Eulero implicito} il metodo in cui si calcola $\y_{k+1}$ a partire da $\y_k$ risolvendo la~\eqref{euleroimplicito} (in qualche modo) ad ogni passo per $k=0,1,2,\dots,n-1$. Il costo computazionale dipende dal modo in cui risolviamo la~\eqref{euleroimplicito}.
 
 %%
 % Spostare più avanti, e usare come esempio introduttivo per parlare di ordine di consistenza / convergenza?
@@ -5228,26 +5228,27 @@ In ogni caso, si chiama \emph{metodo di Eulero implicito} il metodo in cui si ca
 \paragraph{Metodo dei trapezi}
 È il metodo
 \begin{equation} \label{mettrapezi}
-    \y_{n+1} = \y_n + h\left(\frac12 \f_n + \frac12 \f_{n+1}\right).    
+    \y_{k+1} = \y_k + h\left(\frac12 \f_k + \frac12 \f_{k+1}\right).    
 \end{equation}
 Al membro di destra abbiamo una sorta di ``media'' tra il metodo di Eulero esplicito e di quello implicito. Il metodo ha questo nome perché si può ottenere scrivendo
 \[
-\y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \y'(t) dt = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt
+\y(t_{k+1}) = \y(t_k) + \int_{t_k}^{t_{k+1}} \y'(t) dt = \y(t_k) + \int_{t_k}^{t_{k+1}} \f(t,\y(t)) dt
 \]
 e approssimando l'integrale con la formula dei trapezi otteniamo la~\eqref{mettrapezi}. Il vantaggio di questo metodo rispetto ai due metodi di Eulero è che l'errore che commettiamo è minore: difatti, applicando il metodo dei trapezi per integrare una funzione su un intervallo di lunghezza $h$, commettiamo un errore dell'ordine di $\mathcal{O}(h^3)$:
 \begin{equation} \label{trapezi_taylor}
-    \y(t_{n+1}) = \y(t_n) + \int_{t_n}^{t_{n+1}} \f(t,\y(t)) dt = \y(t_n) + \frac{h}{2}(\f_n + \f_{n+1}) + \mathcal{O}(h^3).
+    \y(t_{k+1}) = \y(t_k) + \int_{t_k}^{t_{k+1}} \f(t,\y(t)) dt = \y(t_k) + \frac{h}{2}(\f_k + \f_{k+1}) + \mathcal{O}(h^3).
 \end{equation}
+% TODO: cambia f_k vs. f(t_k,y_k)
 \paragraph{Convergenza del metodo di Eulero esplicito (*)}
 Vedremo tra poco l'enunciato di un risultato generale che dice che le sequenze di approssimazioni prodotte da questi metodi convergono alla soluzione esatta dell'equazione~\eqref{cauchy}. Vogliamo però dare una dimostrazione esplicita della convergenza almeno per il caso più semplice, quello del metodo di Eulero esplicito per un problema scalare con $m=1$.
 
-Prima di tutto, definiamo cosa intendiamo per ``convergenza''. Data un'equazione differenziale~\eqref{cauchy} con soluzione $\y(t)$, e una sequenza di approssimazioni $\y_n \approx \y(t_n)$ su una griglia $(t_0,t_1,\dots,t_N)$, chiamiamo \emph{errore globale} la quantità
+Prima di tutto, definiamo cosa intendiamo per ``convergenza''. Data un'equazione differenziale~\eqref{cauchy} con soluzione $\y(t)$, e una sequenza di approssimazioni $\y_k \approx \y(t_k)$ su una griglia $(t_0,t_1,\dots,t_n)$, chiamiamo \emph{errore globale} la quantità
 \begin{equation} \label{globalerror}
-    E_N = \max_{n=1,2,\dots,N} e_n, \quad e_n = \norm{\y_n - \y(t_n)},
+    E_n = \max_{k=1,2,\dots,n} e_k, \quad e_k = \norm{\y_k - \y(t_k)},
 \end{equation}
-cioè il massimo tra gli errori $e_n$ calcolati su tutti punti della griglia; ognuno di questi errori è la differenza (in norma, o in valore assoluto se $m=1$) tra la sequenza e la funzione che essa vuole approssimare. Al crescere del numero di punti $N$, ci aspettiamo che l'errore globale $E_N$ ottenuto con il metodo di Eulero diminuisca.
+cioè il massimo tra gli errori $e_k$ calcolati su tutti punti della griglia; ognuno di questi errori è la differenza (in norma, o in valore assoluto se $m=1$) tra la sequenza e la funzione che essa vuole approssimare. Al crescere del numero di punti $n$, ci aspettiamo che l'errore globale $E_n$ ottenuto con il metodo di Eulero diminuisca.
 
-Intuitivamente, l'errore $e_{n+1}$ al passo $n+1$ viene da due fonti: la prima è che abbiamo un errore $e_n$ ``ereditato'' dai passi precedenti, per cui non applichiamo la nostra formula a partire dal valore esatto $\y(t_n)$, ma dalla sua approssimazione $\y_n$. La seconda è che, anche se partissimo dal valore esatto, la formula che usiamo per calcolare il passo successivo è approssimata: difatti l'abbiamo ottenuta trascurando il resto $\mathcal{O}(h^2)$ dallo sviluppo di Taylor~\eqref{euleroesp_taylor}.
+Intuitivamente, l'errore $e_{k+1}$ al passo $k+1$ viene da due fonti: la prima è che abbiamo un errore $e_k$ ``ereditato'' dai passi precedenti, per cui non applichiamo la nostra formula a partire dal valore esatto $\y(t_k)$, ma dalla sua approssimazione $\y_k$. La seconda è che, anche se partissimo dal valore esatto, la formula che usiamo per calcolare il passo successivo è approssimata: difatti l'abbiamo ottenuta trascurando il resto $\mathcal{O}(h^2)$ dallo sviluppo di Taylor~\eqref{euleroesp_taylor}.
 
 Per dimostrare il nostro teorema, chiediamo un'ipotesi sulla funzione $\f(t,\y)$ che compare nella~\ref{cauchy}. Diciamo che $\f$ è \emph{Lipschitziana} nella variabile $\y$ (con costante $L$) se esiste un numero reale $L \geq 0$ tale che per ogni $t\in [a,b]$ e $\y_1,\y_2\in\mathbb{R}^m$ vale
 \[
@@ -5261,9 +5262,9 @@ f(t, y_1) - f(t, y_2) = \frac{\partial f}{\partial y}(t,\xi) (y_1 - y_2).
 \]
 
 \begin{theorem}
-Sia dato un problema ai valori iniziali~\eqref{cauchy} con $m=1$. Supponiamo che la funzione $f$ sia Lipschitziana nella $y$ con costante $L$, e che la soluzione $y(t)$ sia di classe $\mathcal{C}^2$ su $[a,b]$. Allora, $\lim_{N\to \infty} E_N = 0$, e più precisamente $E_N = \mathcal{O}(h)$ (cioè, esiste una costante $C>0$ tale che $E_N \leq Ch$).
+Sia dato un problema ai valori iniziali~\eqref{cauchy} con $m=1$. Supponiamo che la funzione $f$ sia Lipschitziana nella $y$ con costante $L$, e che la soluzione $y(t)$ sia di classe $\mathcal{C}^2$ su $[a,b]$. Allora, $\lim_{n\to \infty} E_n = 0$, e più precisamente $E_n = \mathcal{O}(h)$ (cioè, esiste una costante $C>0$ tale che $E_n \leq Ch$).
 \end{theorem}
-Solitamente gli errori si scrivono come ordini rispetto a $h = \frac{b-a}{N}$, come qui sopra, ma visto che $b-a$ è costante questo vuol dire che al crescere del numero di punti $N$ la soluzione tende a zero come $1/N$.
+Solitamente gli errori si scrivono come ordini rispetto a $h = \frac{b-a}{n}$, come qui sopra, ma visto che $b-a$ è costante questo vuol dire che al crescere del numero di punti $n$ la soluzione tende a zero come $1/n$.
 \begin{proof}
 Innanzitutto, poiché la soluzione $y(t)$ è una funzione di classe $\mathcal{C}^2$, per il teorema di Weierstrass esiste
 \[
@@ -5271,44 +5272,44 @@ C_2 = \max_{t\in [a,b]} \abs{y''(t)}.
 \]
 Andiamo quindi a enunciare il nostro risultato di convergenza.
     
-Siamo interessati a stimare la quantità $e_n = \abs{y_n - y(t_n)}$ per ogni passo $n=0,1,\dots,N$. Per fare questo, utilizziamo una strategia che abbiamo già visto in altre dimostrazioni del corso: cerchiamo di scrivere $e_{n+1}$ in funzione di $e_n$. Per farlo, scriviamo
+Siamo interessati a stimare la quantità $e_k = \abs{y_k - y(t_k)}$ per ogni passo $k=0,1,\dots,n$. Per fare questo, utilizziamo una strategia che abbiamo già visto in altre dimostrazioni del corso: cerchiamo di scrivere $e_{k+1}$ in funzione di $e_k$. Per farlo, scriviamo
 \begin{align*}
-y_{n+1} &= y_n + h f(t_n, y_n),\\
-y(t_{n+1}) &= y(t_n) + h \underbrace{y'(t_n)}_{=f(t_n,y(t_n))} + \frac{h^2}{2} y''(\xi),
+y_{k+1} &= y_k + h f(t_k, y_k),\\
+y(t_{k+1}) &= y(t_k) + h \underbrace{y'(t_k)}_{=f(t_k,y(t_k))} + \frac{h^2}{2} y''(\xi),
 \end{align*}
 dove la seconda equazione è uno sviluppo di Taylor. Sottraendo membro a membro e prendendo valori assoluti abbiamo
 \begin{align*}
-    e_{n+1} &= \abs*{y_{n+1} - y(t_{n+1})} = \abs*{y_n - y(t_n) + h(f(t_n,y_n) - f(t_n,y(t_n))) - \frac{h^2}{2} y''(\xi)}\\
-            & \leq \abs*{y_n - y(t_n)} + h \abs*{f(t_n,y_n) - f(t_n,y(t_n))} + \frac{h^2}{2} \abs*{y''(\xi)}\\
-            & \leq e_n + hL e_n + \frac{h^2}{2}C_2 = (1+hL) e_n + \frac{h^2}{2}C_2.
+    e_{k+1} &= \abs*{y_{k+1} - y(t_{k+1})} = \abs*{y_k - y(t_k) + h(f(t_k,y_k) - f(t_k,y(t_k))) - \frac{h^2}{2} y''(\xi)}\\
+            & \leq \abs*{y_k - y(t_k)} + h \abs*{f(t_k,y_k) - f(t_k,y(t_k))} + \frac{h^2}{2} \abs*{y''(\xi)}\\
+            & \leq e_k + hL e_k + \frac{h^2}{2}C_2 = (1+hL) e_k + \frac{h^2}{2}C_2.
 \end{align*}
-Per semplificare la notazione nei passaggi successivi, poniamo $A = 1+hL$ e $B = \frac{h^2}{2}C_2$; in questo modo la relazione che abbiamo trovato diventa $e_{n+1} \leq A e_n + B$. Possiamo dare una limitazione dell'errore non ricorsiva ragionando per passi successivi: partendo da $e_0 = y_0 - y(0) = 0$, abbiamo
+Per semplificare la notazione nei passaggi successivi, poniamo $A = 1+hL$ e $B = \frac{h^2}{2}C_2$; in questo modo la relazione che abbiamo trovato diventa $e_{k+1} \leq A e_k + B$. Possiamo dare una limitazione dell'errore non ricorsiva ragionando per passi successivi: partendo da $e_0 = y_0 - y(0) = 0$, abbiamo
 \begin{align*}
     e_1 &\leq B,\\
     e_2 &\leq Ae_1 + B = (A + 1)B,\\    
     e_3 &\leq Ae_2 + B = (A^2 + A +1)B,\\
     \vdots & \quad\quad\vdots\\
-    e_N &\leq (A^{N-1}+ \dots + A^2 + A + 1)B.
+    e_n &\leq (A^{n-1}+ \dots + A^2 + A + 1)B.
 \end{align*}
 Chiaramente tra tutti questi termini il più grande è l'ultimo; quindi vale la disuguaglianza
 \[
-E_N = \max(e_1,e_2,\dots,e_N) \leq (A^{N-1}+ \dots + A^2 + A + 1)B.
+E_n = \max(e_1,e_2,\dots,e_n) \leq (A^{n-1}+ \dots + A^2 + A + 1)B.
 \]
-Vogliamo ora determinare qual è il limite di $(A^{N-1}+ \dots + A^2 + A + 1)B$ quando $N\to\infty$; questo non è immediato, visto che non solo $A$ e $B$ sono funzioni di $h = \frac{b-a}{N}$, ma anche il numero di termini nella somma dipende da $N$. Cominciamo col semplificare la quantità
+Vogliamo ora determinare qual è il limite di $(A^{n-1}+ \dots + A^2 + A + 1)B$ quando $n\to\infty$; questo non è immediato, visto che non solo $A$ e $B$ sono funzioni di $h = \frac{b-a}{n}$, ma anche il numero di termini nella somma dipende da $n$. Cominciamo col semplificare la quantità
 \[
-    (A^{N-1}+ \dots + A^2 + A + 1) = \frac{A^N-1}{A-1} = \frac{(1+hL)^N-1}{1+hL-1} = \frac{\left(1+\frac{(b-a)L}{N}\right)^N-1}{hL}.
+    (A^{n-1}+ \dots + A^2 + A + 1) = \frac{A^n-1}{A-1} = \frac{(1+hL)^n-1}{1+hL-1} = \frac{\left(1+\frac{(b-a)L}{n}\right)^n-1}{hL}.
 \]
 Riconosciamo di nuovo la possibilità di applicare il limite notevole
 \[
-    \lim_{N\to \infty} \left(1+\frac{x}{N}\right)^N = e^{x}.
+    \lim_{n\to \infty} \left(1+\frac{x}{N}\right)^n = e^{x}.
 \]
-Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tende a $e^{x}$ \emph{dal basso}, quindi si ha per ogni $N$
+Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tende a $e^{x}$ \emph{dal basso}, quindi si ha per ogni $n$
 \[
-    \left(1+\frac{(b-a)L}{N}\right)^N \leq e^{(b-a)L}.
+    \left(1+\frac{(b-a)L}{n}\right)^N \leq e^{(b-a)L}.
 \]
-Pertanto rimettendo insieme tutti i pezzi abbiamo per ogni $n=1,2,\dots,N$
+Pertanto rimettendo insieme tutti i pezzi abbiamo per ogni $k=1,2,\dots,n$
 \[
-E_n \leq (A^{N-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
+E_n \leq (A^{n-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
 \]
 Le quantità $C_2, L, b-a$ sono costanti che non dipendono da $N$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
 \end{proof}
@@ -5317,29 +5318,29 @@ Le quantità $C_2, L, b-a$ sono costanti che non dipendono da $N$, quindi possia
 
 In generale possiamo scrivere un metodo a un passo come
 \begin{equation} \label{metodoaunpasso}
-    \y_{n+1} = \y_n + h\Phi(t_n,\y_n)    
+    \y_{k+1} = \y_k + h\Phi(t_k,\y_k)    
 \end{equation}
-per un'opportuna funzione $\Phi$: anche se nella sua espressione compaiono $t_{n+1},\y_{n+1}$, ecc., possiamo comunque considerarla come una funzione di quei soli due argomenti, perché il valore $\y_{n+1}$ si può calcolare a partire dai soli $t_n$ e $\y_n$ (conoscendo il valore di $h$ e l'espressione per $\f$); non serve conoscere altre quantità come per esempio il valore di $\y_{n-1}$.
+per un'opportuna funzione $\Phi$: anche se nella sua espressione compaiono $t_{k+1},\y_{k+1}$, ecc., possiamo comunque considerarla come una funzione di quei soli due argomenti, perché il valore $\y_{k+1}$ si può calcolare a partire dai soli $t_k$ e $\y_k$ (conoscendo il valore di $h$ e l'espressione per $\f$); non serve conoscere altre quantità come per esempio il valore di $\y_{k-1}$.
 
-Vogliamo dare un risultato generale di convergenza per questi metodi. Per questo ci serve introdurre alcune definizioni. Innanzitutto, diciamo che un metodo è \emph{convergente di ordine $p$} (per un qualche $p>0$) se $E_N = \mathcal{O}(h^p)$; quindi per esempio più sopra abbiamo dimostrato che il metodo di Eulero esplicito è convergente di ordine $1$.
+Vogliamo dare un risultato generale di convergenza per questi metodi. Per questo ci serve introdurre alcune definizioni. Innanzitutto, diciamo che un metodo è \emph{convergente di ordine $p$} (per un qualche $p>0$) se $E_n = \mathcal{O}(h^p)$; quindi per esempio più sopra abbiamo dimostrato che il metodo di Eulero esplicito è convergente di ordine $1$.
 
-Oltre all'errore globale $E_N$ definito più sopra, definiamo anche l'\emph{errore locale di troncamento} come
+Oltre all'errore globale $E_n$ definito più sopra, definiamo anche l'\emph{errore locale di troncamento} come
 \[
-T_N = \max_{n=0,1,\dots,N-1} \norm{\boldsymbol{\tau}_n}, \quad \boldsymbol{\tau}_n = \y(t_{n+1}) - \y(t_n) - h\Phi(t_n, \y(t_n)) ,
+T_n = \max_{k=0,1,\dots,n-1} \norm{\boldsymbol{\tau}_k}, \quad \boldsymbol{\tau}_k = \y(t_{k+1}) - \y(t_k) - h\Phi(t_k, \y(t_k)) ,
 \]
-cioè la differenza tra il valore esatto della soluzione $\y(t_{n+1})$ e il valore $\y(t_n) + h\Phi(t_n, \y(t_n))$ calcolato tramite un passo dell'algoritmo a partire dal valore esatto $\y(t_n)$. Abbiamo già incontrato questa quantità nella derivazione dei tre metodi che abbiamo visto: è il termine $\mathcal{O}(n^2)$ che compare nelle equazioni~\eqref{euleroesp_taylor} e~\eqref{euleroimp_taylor}, e il termine $\mathcal{O}(n^3)$ che compare nella~\eqref{trapezi_taylor}.
+cioè la differenza tra il valore esatto della soluzione $\y(t_{k+1})$ e il valore $\y(t_k) + h\Phi(t_k, \y(t_k))$ calcolato tramite un passo dell'algoritmo a partire dal valore esatto $\y(t_k)$. Abbiamo già incontrato questa quantità nella derivazione dei tre metodi che abbiamo visto: è il termine $\mathcal{O}(h^2)$ che compare nelle equazioni~\eqref{euleroesp_taylor} e~\eqref{euleroimp_taylor}, e il termine $\mathcal{O}(h^3)$ che compare nella~\eqref{trapezi_taylor}.
 
-Un metodo si dice \emph{consistente di ordine $p$} se $T_N = \mathcal{O}(h^{p+1})$ nel limite quando il numero di passi tende a $N\to \infty$ (e quindi $h \to 0$). La logica dietro a questa definizione è la stessa dietro a quella delle formule per l'errore nelle formule di integrazione: visto che stiamo considerando un intervallo di lunghezza $h$, ci aspettiamo di avere un fattore pari alla lunghezza $h$ dell'intervallo nella formula dell'errore, e quindi per definire l'ordine consideriamo solo l'altro fattore: diciamo che l'ordine di un metodo è $p$ se la distanza tra $\y(t_{n+1})$ e $\y(t_n) - h\Phi(t_n, \y(t_n))$ si scrive nella forma $h \cdot \mathcal{O}(h^p)$.
+Un metodo si dice \emph{consistente di ordine $p$} se $T_n = \mathcal{O}(h^{p+1})$ nel limite quando il numero di passi tende a $n\to \infty$ (e quindi $h \to 0$). La logica dietro a questa definizione è la stessa dietro a quella delle formule per l'errore nelle formule di integrazione: visto che stiamo considerando un intervallo di lunghezza $h$, ci aspettiamo di avere un fattore pari alla lunghezza $h$ dell'intervallo nella formula dell'errore, e quindi per definire l'ordine consideriamo solo l'altro fattore: diciamo che l'ordine di un metodo è $p$ se la distanza tra $\y(t_{k+1})$ e $\y(t_k) - h\Phi(t_k, \y(t_k))$ si scrive nella forma $h \cdot \mathcal{O}(h^p)$.
 
 Queste definizioni si applicano quando abbiamo un'equazione differenziale con soluzione $\y(t)$ sufficientemente regolare; per esempio, ci serve avere una funzione di classe almeno $\mathcal{C}^2$ per scrivere la~\eqref{euleroesp_taylor}.
 
 Il metodo di Eulero esplicito è consistente di ordine $1$; difatti abbiamo ottenuto
 \[
-\y(t_{n+1}) = \y(t_n) + \y'(t_n)h + \mathcal{O}(h^2),
+\y(t_{k+1}) = \y(t_k) + \y'(t_k)h + \mathcal{O}(h^2),
 \]
 quindi
 \[
-\norm*{\y(t_{n+1}) - \y(t_n) - h \f(t_n, \y(t_n))} = \mathcal{O}(h^2) = h \cdot \mathcal{O}(h^1).
+\norm*{\y(t_{k+1}) - \y(t_k) - h \f(t_k, \y(t_k))} = \mathcal{O}(h^2) = h \cdot \mathcal{O}(h^1).
 \]
 Stessa cosa per il metodo di Eulero implicito. Invece il metodo dei trapezi è consistente di ordine $2$.
 
@@ -5351,7 +5352,7 @@ Allora, un metodo è convergente di ordine~$p$ se e solo se è consistente di or
 \end{theorem}
 
 
-\paragraph{Metodi di Runge--Kutta} I metodi di Runge--Kutta sono una classe più generale di metodi a un passo (quindi definiti da una $\Phi(t_n,\y_n)$ come nella~\eqref{metodoaunpasso}). Avendo una maggiore quantità di parametri, essi possono raggiungere ordini di consistenza e convergenza maggiori. Un metodo di Runge--Kutta si definisce tramite parametri che vengono convenzionalmente raccolti in una tabella, detta \emph{tavola} (o \emph{tableau}) \emph{di Butcher}:
+\paragraph{Metodi di Runge--Kutta} I metodi di Runge--Kutta sono una classe più generale di metodi a un passo (quindi definiti da una $\Phi(t_k,\y_k)$ come nella~\eqref{metodoaunpasso}). Avendo una maggiore quantità di parametri, essi possono raggiungere ordini di consistenza e convergenza maggiori. Un metodo di Runge--Kutta si definisce tramite parametri che vengono convenzionalmente raccolti in una tabella, detta \emph{tavola} (o \emph{tableau}) \emph{di Butcher}:
 \[
 \begin{array}{c|cccc}
 c_1 & a_{11} & a_{12} & \dots & a_{1s}\\
@@ -5362,12 +5363,12 @@ c_s & a_{s1} & a_{s2} & \dots & a_{ss}\\
 & b_1 & b_2 & \dots & b_s
 \end{array}.
 \]
-L'intero $s$ è detto \emph{numero di stadi} del metodo. A partire dai coefficienti in questa tabella possiamo definire la funzione $\Phi(t_n,y_n)$ in questo modo: definiamo
+L'intero $s$ è detto \emph{numero di stadi} del metodo. A partire dai coefficienti in questa tabella possiamo definire la funzione $\Phi(t_k,y_k)$ in questo modo: definiamo
 \begin{align*}
-    \mathbf{k}_i &= \mathbf{f}\left(t_n + c_i h, \y_n + h\left(\sum_{j=1}^s a_{ij}\mathbf{k}_j\right)\right), & i&=1,2,\dots,s,\\
-    \Phi(t_n, \mathbf{y}_n) &= \sum_{j=1}^s b_j \mathbf{k}_j.
+    \mathbf{k}_i &= \mathbf{f}\left(t_k + c_i h, \y_k + h\left(\sum_{j=1}^s a_{ij}\mathbf{k}_j\right)\right), & i&=1,2,\dots,s,\\
+    \Phi(t_k, \mathbf{y}_k) &= \sum_{j=1}^s b_j \mathbf{k}_j.
 \end{align*}
-La funzione $\Phi(t_n, \mathbf{y}_n)$ definita in questo modo è quella che compare nella definizione di metodo a un passo~\eqref{metodoaunpasso}.
+La funzione $\Phi(t_k, \mathbf{y}_k)$ definita in questo modo è quella che compare nella definizione di metodo a un passo~\eqref{metodoaunpasso}.
 
 Un metodo di Runge--Kutta è \emph{esplicito} se nella tavola di Butcher la matrice
 \[
@@ -5391,11 +5392,11 @@ Consideriamo il metodo con tavola di Butcher
 \]
 Scrivendo esplicitamente le relazioni otteniamo
 \begin{align*}
-\mathbf{k}_1 &= \mathbf{f}(t_n + 0 \cdot h, \mathbf{y}_n + h(0\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_n,\mathbf{y}_n),\\
-\mathbf{k}_2 &= \mathbf{f}(t_n + 1 \cdot h, \mathbf{y}_n + h(1\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_{n+1},\mathbf{y}_n+\mathbf{k}_1),\\
-\mathbf{y}_{n+1} &= \mathbf{y}_n + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2 = \mathbf{y}_n + \frac12 \left(\mathbf{f}(t_n,\mathbf{y}_n) + \mathbf{f}(t_{n+1},\mathbf{y}_n+ \mathbf{f}(t_n,\mathbf{y}_n))\right).
+\mathbf{k}_1 &= \mathbf{f}(t_k + 0 \cdot h, \mathbf{y}_k + h(0\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_k,\mathbf{y}_k),\\
+\mathbf{k}_2 &= \mathbf{f}(t_k + 1 \cdot h, \mathbf{y}_k + h(1\cdot \mathbf{k}_1 + 0\cdot \mathbf{k}_2)) = \mathbf{f}(t_{k+1},\mathbf{y}_k+\mathbf{k}_1),\\
+\mathbf{y}_{k+1} &= \mathbf{y}_k + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2 = \mathbf{y}_k + \frac12 \left(\mathbf{f}(t_k,\mathbf{y}_k) + \mathbf{f}(t_{k+1},\mathbf{y}_k+ \mathbf{f}(t_k,\mathbf{y}_k))\right).
 \end{align*}
-Questo metodo è noto come \emph{metodo di Heun}; si può mostrare che ha ordine $p=2$. È interessante notare che è una sorta di ``variante esplicita'' del metodo dei trapezi: al posto di $\mathbf{y}_{n+1}$ nel membro di destra usiamo la sua approssimazione $\mathbf{y}_n+ \mathbf{f}(t_n,\mathbf{y}_n)$ ottenuta con il metodo di Eulero esplicito.
+Questo metodo è noto come \emph{metodo di Heun}; si può mostrare che ha ordine $p=2$. È interessante notare che è una sorta di ``variante esplicita'' del metodo dei trapezi: al posto di $\mathbf{y}_{k+1}$ nel membro di destra usiamo la sua approssimazione $\mathbf{y}_k+ \mathbf{f}(t_k,\mathbf{y}_k)$ ottenuta con il metodo di Eulero esplicito.
 
 \paragraph{Esempio: un metodo implicito}
 Consideriamo il metodo con tavola di Butcher
@@ -5409,9 +5410,9 @@ Consideriamo il metodo con tavola di Butcher
 \]
 Scritte per esteso, questo metodo diventa
 \begin{align*}
-    \mathbf{k}_1 &= \mathbf{f}(t_n + \frac14 h, \mathbf{y}_n +  \frac14 h \mathbf{k}_1),\\
-    \mathbf{k}_2 &= \mathbf{f}(t_n + \frac34 h, \mathbf{y}_n + h(\frac12 \mathbf{k}_1 + \frac14 \mathbf{k}_2)),\\
-    \mathbf{y}_{n+1} &= \mathbf{y}_n + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2.
+    \mathbf{k}_1 &= \mathbf{f}(t_k + \frac14 h, \mathbf{y}_k +  \frac14 h \mathbf{k}_1),\\
+    \mathbf{k}_2 &= \mathbf{f}(t_k + \frac34 h, \mathbf{y}_k + h(\frac12 \mathbf{k}_1 + \frac14 \mathbf{k}_2)),\\
+    \mathbf{y}_{k+1} &= \mathbf{y}_k + \frac12 \mathbf{k}_1 + \frac12 \mathbf{k}_2.
 \end{align*}
 Questa volta il metodo è implicito: l'equazione per $\mathbf{k}_1$ contiene $\mathbf{k}_1$ stesso al membro di destra, quindi possiamo risolverla solo implicitamente; analogamente per l'equazione per $\mathbf{k}_2$. Notiamo che questo caso è un caso un po' più semplice di quello generale: visto che la prima equazione dipende solo da $\mathbf{k}_1$, possiamo risolvere un'equazione per volta, anziché considerarlo come un sistema di due equazioni nelle due incognite $\mathbf{k}_1$ e $\mathbf{k}_2$, come succederebbe nel caso più generale in cui $a_{12}\neq 0$.
 
@@ -5443,7 +5444,7 @@ e per il metodo dei trapezi $s=2$ (difatti ci sono due diverse valutazioni di fu
 & \frac12 & \frac12
 \end{array}.
 \]
-Per derivare le tavole degli ultimi due metodi abbiamo dovuto risostituire la relazione finale per scrivere il termine $\y_{n+1}$ che compare dentro $\mathbf{f}_{n+1}$ nella forma $\y_n + h(\dots)$.
+Per derivare le tavole degli ultimi due metodi abbiamo dovuto risostituire la relazione finale per scrivere il termine $\y_{k+1}$ che compare dentro $\mathbf{f}_{k+1}$ nella forma $\y_k + h(\dots)$.
 
 Nella pratica, i metodi di Runge--Kutta sono usati con scelte particolari dei coefficienti fatte in modo da ottenere un alto ordine di consistenza (e quindi di convergenza). Per esempio Matlab utilizza in una delle sue funzioni per risolvere equazioni differenziali (\lstinline{ode45}) un metodo con tavola di Butcher
 \[
@@ -5470,9 +5471,9 @@ Esistono molte altre possibili scelte dei coefficienti; si veda per esempio \hre
 % Questi risultati si spiegano molto più facilmente avendo a disposizione delle immagini illustrative e/o codice Matlab per generarle.
 %%
 
-Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h \to 0$; però ci sono differenze importanti tra un metodo e l'altro che riguardano quello che succede con un valore \emph{finito} di $h$. In particolare, non è difficile osservare in esperimenti numerici che prendendo $h$ troppo grande il metodo di Eulero esplicito produce sequenze $\y_n$ oscillanti anche quando la soluzione vera converge a zero in modo monotono.
+Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h \to 0$; però ci sono differenze importanti tra un metodo e l'altro che riguardano quello che succede con un valore \emph{finito} di $h$. In particolare, non è difficile osservare in esperimenti numerici che prendendo $h$ troppo grande il metodo di Eulero esplicito produce sequenze $\y_k$ oscillanti anche quando la soluzione vera converge a zero in modo monotono.
 
-Un modo per investigare cosa succede è attraverso il ``problema test'', \eqref{testproblem}. Prendiamo un problema test con $\lambda < 0$; la soluzione esatta $y(t) = e^{\lambda t}$ quindi è decrescente e ha $\lim_{t\to+\infty} y(t) = 0$. Applicando il metodo di Eulero esplicito a questo problema, come abbiamo già visto, otteniamo $y_n = (1+h\lambda)^n$. Se $\lambda < -\frac{2}{h}$, abbiamo $\abs{1+h\lambda} > 1$, quindi il metodo produce iterate $y_n$ che diventano sempre più grandi in valore assoluto, e magari oscillano con segni alterni. Questo succede quando scegliamo un passo $h$ troppo grande, e la limitazione esatta dipende dal valore di $\lambda$: più grande è $\lambda$, più piccolo dev'essere $h$. Notiamo però anche che se $\lambda$ è negativo e molto grande la funzione $y(t) = e^{\lambda t}$ tende a zero molto rapidamente. Potremmo quindi pensare che la ``scala'' di $h$ sia dettata dal grafico della funzione, in un qualche senso.
+Un modo per investigare cosa succede è attraverso il ``problema test'', \eqref{testproblem}. Prendiamo un problema test con $\lambda < 0$; la soluzione esatta $y(t) = e^{\lambda t}$ quindi è decrescente e ha $\lim_{t\to+\infty} y(t) = 0$. Applicando il metodo di Eulero esplicito a questo problema, come abbiamo già visto, otteniamo $y_k = (1+h\lambda)^k$. Se $\lambda < -\frac{2}{h}$, abbiamo $\abs{1+h\lambda} > 1$, quindi il metodo produce iterate $y_k$ che diventano sempre più grandi in valore assoluto, e magari oscillano con segni alterni. Questo succede quando scegliamo un passo $h$ troppo grande, e la limitazione esatta dipende dal valore di $\lambda$: più grande è $\lambda$, più piccolo dev'essere $h$. Notiamo però anche che se $\lambda$ è negativo e molto grande la funzione $y(t) = e^{\lambda t}$ tende a zero molto rapidamente. Potremmo quindi pensare che la ``scala'' di $h$ sia dettata dal grafico della funzione, in un qualche senso.
 
 Le cose però si complicano per problemi in più variabili, in cui possono comparire contemporaneamente valori diversi di $\lambda$; per esempio pensiamo al problema
 \[
@@ -5509,15 +5510,15 @@ In ogni caso, alcuni metodi sono più adatti ai problemi \emph{stiff} del metodo
 
 Possiamo replicare l'analisi fatta per il metodo di Eulero e applicarla a un metodo di Runge--Kutta generico. Scrivendo esplicitamente un qualunque metodo di Runge--Kutta per il problema test~\eqref{testproblem}, si può vedere che questo assume sempre la forma
 \[
-y_{n+1} = R(q)y_n, \quad q = h\lambda.
+y_{k+1} = R(q)y_k, \quad q = h\lambda.
 \]
 Per esempio, per il metodo dei trapezi abbiamo
 \[
-y_{n+1} = y_n + h \frac12(\lambda y_n + \lambda y_{n+1}) \iff y_{n+1} = \underbrace{\frac{1+\frac12 q}{1-\frac12q}}_{=:R(q)}y_n
+y_{k+1} = y_k + h \frac12(\lambda y_k + \lambda y_{k+1}) \iff y_{k+1} = \underbrace{\frac{1+\frac12 q}{1-\frac12q}}_{=:R(q)}y_k
 \]
-Ogni volta che $\lambda$ è un numero complesso con $\operatorname{Re}(\lambda) < 0$, abbiamo $\lim_{t\to\infty} y(t) = 0$. Ci chiediamo quindi quando la successione generata $y_n$ ha lo stesso comportamento al limite, $\lim_{n\to\infty} y_n = 0$.
+Ogni volta che $\lambda$ è un numero complesso con parte reale $\operatorname{Re}(\lambda) < 0$, abbiamo $\lim_{t\to\infty} y(t) = 0$. Ci chiediamo quindi quando la successione generata $y_k$ ha lo stesso comportamento al limite, $\lim_{k\to\infty} y_k = 0$.
 
-La successione $y_n = R(q)^n y_0$ converge a zero se e solo se $\abs{R(q)} < 1$. Si definisce \emph{regione di (assoluta) stabilità} del metodo l'insieme $S_A = \{z \in \mathbb{C} : \abs{R(z)}<1\}$. Quindi $y_n$ converge a zero (per il problema test) se e solo se $h$ è scelto in modo che $h\lambda \in S_A$. La soluzione esatta del problema test $y(t) = e^{\lambda t}$ invece converge a zero se (e solo se) $\lambda$ sta nel semipiano sinistro. Questo motiva una definizione: un metodo di Runge--Kutta si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro $\{z\in \mathbb{C} : \operatorname{Re}(z) < 0\}$. Esistono diverse varianti di questa definizione: per esempio un metodo si dice \emph{$A_0$-stabile} se la regione di stabilità contiene la semiretta reale negativa $\{z\in\mathbb{R}: z<0\}$; imparare tutti i loro nomi non è importante.
+La successione $y_k = R(q)^k y_0$ converge a zero se e solo se $\abs{R(q)} < 1$. Si definisce \emph{regione di (assoluta) stabilità} del metodo l'insieme $S_A = \{z \in \mathbb{C} : \abs{R(z)}<1\}$. Quindi $y_k$ converge a zero (per il problema test) se e solo se $h$ è scelto in modo che $h\lambda \in S_A$. La soluzione esatta del problema test $y(t) = e^{\lambda t}$ invece converge a zero se (e solo se) $\lambda$ sta nel semipiano sinistro. Questo motiva una definizione: un metodo di Runge--Kutta si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro $\{z\in \mathbb{C} : \operatorname{Re}(z) < 0\}$. Esistono diverse varianti di questa definizione: per esempio un metodo si dice \emph{$A_0$-stabile} se la regione di stabilità contiene la semiretta reale negativa $\{z\in\mathbb{R}: z<0\}$; imparare tutti i loro nomi non è importante.
 
 Per il metodo di Eulero esplicito, $R(q)= 1+q$; quindi la regione di stabilità $\{q\in\mathbb{C} \colon \abs{1+q}<1\}$ è un cerchio di centro $-1$ e raggio $1$. Essa \emph{non} contiene tutto il semipiano sinistro, e difatti già abbiamo visto che questo metodo non è $A$-stabile.
 
@@ -5561,36 +5562,36 @@ La regione di stabilità del metodo dei trapezi è precisamente il semipiano sin
 \]
 e questo è il rapporto tra le distanze del punto $\frac12q$ da $1$ e da $-1$. Se $q$ sta nel semipiano sinistro, allora è più vicino a $-1$ che a $1$, e quindi il rapporto è minore di $1$.
 
-Potete calcolare come esercizio la regione di stabilità del metodo di Eulero implicito, e verificare che essa è l'\emph{esterno} di un cerchio di centro $1$ e raggio $1$; in particolare anche questo metodo è A-stabile. Anzi, è anche ``troppo stabile'', visto che $y_n$ converge a zero anche in casi in cui $\lambda$ sta nel semipiano destro e quindi $y(t) = e^
+Potete calcolare come esercizio la regione di stabilità del metodo di Eulero implicito, e verificare che essa è l'\emph{esterno} di un cerchio di centro $1$ e raggio $1$; in particolare anche questo metodo è A-stabile. Anzi, è anche ``troppo stabile'', visto che la sequenza $y_k$ converge a zero anche in casi in cui $\lambda$ sta nel semipiano destro e quindi $y(t) = e^
 {\lambda t}$ dovrebbe tendere a infinito per $t\to+\infty$. La definizione che abbiamo dato non cattura questo problema però.
 
 \paragraph{A-Stabilità e metodi impliciti} Vale questo risultato (che non dimostriamo).
 \begin{theorem}
 Nessun metodo di Runge--Kutta esplicito è $A$-stabile.
 \end{theorem}
-Quindi in presenza di un problema stiff è solitamente meglio usare un metodo implicito; altrimenti il metodo potrebbe richiedere un passo $h$ molto piccolo per fornire risultati non oscillanti. Questo giustifica l'utilità dei metodi impliciti, che utilizzano un metodo più complicato per calcolare $\y_{n+1}$ ad ogni passo rispetto a quelli espliciti: sono gli unici che possono fornire garanzie di A-stabilità, quindi assenza di oscillazioni catastrofiche indipententemente dal problema.
+Quindi in presenza di un problema stiff è solitamente meglio usare un metodo implicito; altrimenti il metodo potrebbe richiedere un passo $h$ molto piccolo per fornire risultati non oscillanti. Questo giustifica l'utilità dei metodi impliciti, che utilizzano un metodo più complicato per calcolare $\y_{k+1}$ ad ogni passo rispetto a quelli espliciti: sono gli unici che possono fornire garanzie di A-stabilità, quindi assenza di oscillazioni catastrofiche indipententemente dal problema.
 
 \section{Metodi a più passi}
 
 Vediamo ora un'altra famiglia di metodi, i \emph{metodi a più passi} (o \emph{multistep} in inglese). In particolare ci concentriamo sui \emph{metodi lineari a più passi}.
 
-L'idea è la seguente: i metodi di Runge--Kutta ci consentono di ottenere metodi con alto ordine di convergenza, ma al costo di avere $s>1$ valutazioni della $\mathbf{f}$ all'interno di ogni passo $n$. Possiamo però ottenere ordini più alti a costo computazionale minore con un'altra strategia: quella di riutilizzare anche i valori precedenti già calcolati di $\y_{n-1}, \y_{n-2}, \dots$ e $\f_{n-1},\f_{n-2},\dots$ per ottenere una migliore approssimazione. Per esempio, vedremo che il metodo
+L'idea è la seguente: i metodi di Runge--Kutta ci consentono di ottenere metodi con alto ordine di convergenza, ma al costo di avere $s>1$ valutazioni della $\mathbf{f}$ all'interno di ogni passo $k$. Possiamo però ottenere ordini più alti a costo computazionale minore con un'altra strategia: quella di riutilizzare anche i valori precedenti già calcolati di $\y_{k-1}, \y_{k-2}, \dots$ e $\f_{k-1},\f_{k-2},\dots$ per ottenere una migliore approssimazione. Per esempio, vedremo che il metodo
 \begin{equation} \label{ab2}
-    \y_{n+2} = \y_{n+1} + h\left(\frac32 \f_{n+1} - \frac12 \f_n\right)    
+    \y_{k+2} = \y_{k+1} + h\left(\frac32 \f_{k+1} - \frac12 \f_k\right)    
 \end{equation}
-ha ordine $p=2$. Se supponiamo di avere a disposizione \emph{due} valori iniziali $\y_0, \y_1$, anziché uno solo, possiamo usare la~\eqref{ab2} per $n=0,1,2,\dots$ per calcolare tutti i valori successivi con un errore locale di troncamento migliore del metodo di Eulero (ordine 2 anziché 1), mantenendone comunque il costo di una sola nuova valutazione della $\f$ per passo.
+ha ordine $p=2$. Se supponiamo di avere a disposizione \emph{due} valori iniziali $\y_0, \y_1$, anziché uno solo, possiamo usare la~\eqref{ab2} per $k=0,1,2,\dots$ per calcolare tutti i valori successivi con un errore locale di troncamento migliore del metodo di Eulero (ordine 2 anziché 1), mantenendone comunque il costo di una sola nuova valutazione della $\f$ per passo.
 
-In generale, definiamo un \emph{metodo lineare a $k$ passi} con una formula del tipo
+In generale, definiamo un \emph{metodo lineare a $s$ passi} con una formula del tipo
 \begin{equation} \label{linearmultistep}
-    \sum_{j=0}^k \alpha_j \y_{n+j} = h\sum_{j=0}^k \beta_j \f_{n+j}, \quad n=0,1,2,\dots,    
+    \sum_{j=0}^s \alpha_j \y_{k+j} = h\sum_{j=0}^s \beta_j \f_{k+j}, \quad k=0,1,2,\dots,    
 \end{equation}
-dove abbiamo posto $\f_i := \f(t_i, \y_i)$ come già fatto in passato, per un'opportuna scelta delle costanti reali $\alpha_i, \beta_i$. Per evitare casi degeneri, supponiamo che $\alpha_0,\beta_0$ non siano entrambi nulli, così come $\alpha_k$ e $\beta_k$. Se $\beta_k=0$, allora possiamo calcolare esplicitamente $\y_{n+k}$, e il metodo si dice \emph{esplicito}; altrimenti il metodo si dice \emph{implicito} e abbiamo bisogno di un algoritmo per risolvere l'equazione~\eqref{linearmultistep} ad ogni passo $n$.
+dove abbiamo posto $\f_i := \f(t_i, \y_i)$ come già fatto in passato, per un'opportuna scelta delle costanti reali $\alpha_i, \beta_i$. Per evitare casi degeneri, supponiamo che $\alpha_0,\beta_0$ non siano entrambi nulli, così come $\alpha_s$ e $\beta_s$. Se $\beta_s=0$, allora possiamo calcolare esplicitamente $\y_{k+s}$, e il metodo si dice \emph{esplicito}; altrimenti il metodo si dice \emph{implicito} e abbiamo bisogno di un algoritmo per risolvere l'equazione~\eqref{linearmultistep} ad ogni passo $k$.
 
-\paragraph{Scelta dei valori iniziali} Per poter applicare il metodo~\eqref{linearmultistep}, abbiamo bisogno di opportuni valori iniziali $\y_1,\y_2,\dots, \y_{k-1}$, in aggiunta a $\y_0$. Questi non sono tra i dati iniziali del problema, quindi vanno calcolati in qualche modo. Solitamente si utilizza un metodo a un passo per calcolarli; quindi ogni metodo a più passi ha bisogno di essere ``inizializzato'' calcolando questi primi valori tramite un opportuno metodo a un passo.
+\paragraph{Scelta dei valori iniziali} Per poter applicare il metodo~\eqref{linearmultistep}, abbiamo bisogno di opportuni valori iniziali $\y_1,\y_2,\dots, \y_{s-1}$, in aggiunta a $\y_0$. Questi non sono tra i dati iniziali del problema, quindi vanno calcolati in qualche modo. Solitamente si utilizza un metodo a un passo per calcolarli; quindi ogni metodo a più passi ha bisogno di essere ``inizializzato'' calcolando questi primi valori tramite un opportuno metodo a un passo.
 
-Perché il metodo possa convergere alla soluzione esatta quando $N\to\infty$, è necessario imporre una condizione su come vengono scelti questi valori iniziali. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{k-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_k) \to \y_0$. Per questo, diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{k-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
+Perché il metodo possa convergere alla soluzione esatta quando $n\to\infty$, è necessario imporre una condizione su come vengono scelti questi valori iniziali. Visto che $h\to 0$ al crescere del numero di intervalli, anche $t_1,t_2,\dots,t_{s-1} \to t_0$, e quindi $\y(t_1),\dots,\y(t_s-1) \to \y_0$. Per questo, diciamo che un modo di scegliere i dati iniziali $\y_1,\y_2,\dots,\y_{s-1}$ in un metodo a più passi è \emph{compatibile} se soddisfa 
 \[
-\lim_{N\to\infty} \y_i = \y_0, \quad i=1,2,\dots,k-1.
+\lim_{n\to\infty} \y_k = \y_0, \quad k=1,2,\dots,s-1.
 \]
 
 %%
@@ -5599,13 +5600,13 @@ Perché il metodo possa convergere alla soluzione esatta quando $N\to\infty$, è
 
 \paragraph{Famiglie di metodi} Ci sono diverse famiglie di metodi lineari a più passi: tra queste i \emph{metodi di Adams--Bashforth} (tra cui ricade anche il nostro primo esempio~\eqref{ab2}), espliciti, e i \emph{metodi di Adams--Moulton} e le \emph{Backward differentiation formulas (BDF)}, entrambi impliciti. Per esempio, i primi metodi della famiglia BDF sono
 \begin{align*}
-\y_{n+1} - \y_n &= h\f_{n+1}, & \text{(Eulero implicito)}\\
-\y_{n+2} - \frac43 \y_{n+1} + \frac13 \y_n &= \frac23 h\f_{n+2},\\
-\y_{n+3} - \frac{18}{11}\y_{n+2} + \frac{9}{11}\y_{n+1} - \frac{2}{11}\y_n &= \frac{6}{11}h \f_{n+3},
+\y_{k+1} - \y_k &= h\f_{k+1}, & \text{(Eulero implicito)}\\
+\y_{k+2} - \frac43 \y_{k+1} + \frac13 \y_k &= \frac23 h\f_{k+2},\\
+\y_{k+3} - \frac{18}{11}\y_{k+2} + \frac{9}{11}\y_{k+1} - \frac{2}{11}\y_k &= \frac{6}{11}h \f_{k+3},
 \end{align*}
-e i successivi sono fatti in modo simile, con un solo valore $\beta_k\neq 0$ a destra dell'uguale e opportune combinazioni lineari delle $\y_{n+j}$ a sinistra.
+e i successivi sono fatti in modo simile, con un solo valore $\beta_s\neq 0$ a destra dell'uguale e opportune combinazioni lineari delle $\y_{k+j}$ a sinistra.
 
-In tutti questi, i valori numerici dei coefficienti sono scelti in modo da assicurare l'ordine di convergenza $p$ il più alto possibile.
+In tutti questi metodi, i valori numerici dei coefficienti sono scelti in modo da assicurare l'ordine di convergenza $p$ il più alto possibile.
 
 Per altri metodi, potete vedere per esempio \url{https://en.wikipedia.org/wiki/Linear_multistep_method} e \url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}.
 
@@ -5613,9 +5614,9 @@ Per altri metodi, potete vedere per esempio \url{https://en.wikipedia.org/wiki/L
 
 Come nei metodi a un passo, definiamo l'\emph{errore locale di troncamento}
 \[
-\boldsymbol{\tau}_n = \sum_{j=0}^k \alpha_j \y(t_{n+j}) - h\sum_{j=0}^k \beta_j \f(t_{n+j}, \y(t_{n+j})).
+\boldsymbol{\tau}_k = \sum_{j=0}^s \alpha_j \y(t_{k+j}) - h\sum_{j=0}^s \beta_j \f(t_{k+j}, \y(t_{k+j})).
 \]
-Questa quantità a volte viene normalizzata diversamente dividendola per $\alpha_k$, o per la somma dei $\beta_j$. in ogni caso, $\boldsymbol{\tau}_n$ misura di quanto $\y(t_{n+k})$ differisce dalla quantità $\y_{n+k}$ calcolata dal metodo assumendo che tutti i passi precedenti siano esatti. Come nel caso dei metodi a un passo, un metodo si dice \emph{consistente di ordine $p$} se $T = \max_{n} \norm{\boldsymbol{\tau}_n}$ è $\mathcal{O}(h^{p+1})$.
+Questa quantità a volte viene normalizzata diversamente dividendola per $\alpha_s$, o per la somma dei $\beta_j$. in ogni caso, $\boldsymbol{\tau}_k$ misura di quanto $\y(t_{k+s})$ differisce dalla quantità $\y_{k+s}$ calcolata dal metodo assumendo che tutti i passi precedenti siano esatti. Come nel caso dei metodi a un passo, un metodo si dice \emph{consistente di ordine $p$} se $T = \max_{k} \norm{\boldsymbol{\tau}_k}$ è $\mathcal{O}(h^{p+1})$.
 
 Analogamente, un metodo si dice \emph{convergente di ordine $p$} se l'errore globale~\eqref{globalerror} (definito esattamente come nei metodi a un passo) è $\mathcal{O}(h^p)$.
 
@@ -5629,43 +5630,43 @@ Ci serve però prima introdurre uno strumento tecnico che permette di studiare l
 
 \paragraph{Equazioni alle differenze}
 
-Consideriamo innanzitutto cosa succede applicando il metodo a più passi al problema (scalare, $m=1$) $y'=0$, con condizioni iniziali $y_0,y_1,\dots,y_{k-1}$ qualunque. La successione delle $y_i$ allora soddisfa la relazione
+Consideriamo innanzitutto cosa succede applicando il metodo a più passi al problema (scalare, $m=1$) $y'=0$, con condizioni iniziali $y_0,y_1,\dots,y_{s-1}$ qualunque. La successione delle $y_i$ allora soddisfa la relazione
 \begin{equation} \label{ricorrenza}
-    \alpha_0 y_n + \alpha_1 y_{n+1} + \dots + \alpha_k y_{n+k} = 0, \quad n = 0,1,2,\dots.
+    \alpha_0 y_k + \alpha_1 y_{k+1} + \dots + \alpha_s y_{k+s} = 0, \quad k = 0,1,2,\dots.
 \end{equation}
 Relazioni della forma~\eqref{ricorrenza} si chiamano \emph{equazioni alle differenze (lineari a coefficienti costanti)}; sono una sorta di analogo discreto delle equazioni differenziali lineari a coefficienti costanti. Forse l'esempio più celebre di una successione di questo tipo è quello dei numeri di Fibonacci, che soddisfano la relazione
 \[
-y_n + y_{n+1} - y_{n+2} = 0.
+y_k + y_{k+1} - y_{k+2} = 0.
 \]
 Esiste una teoria per calcolare le soluzioni delle~\eqref{ricorrenza} che è molto simile a quella per calcolare le soluzioni delle equazioni differenziali lineari a coefficienti costanti. Enunciamo cosa succede, per semplicità limitandoci al caso scalare $(m=1)$.
 
 \begin{theorem}
 Data l'equazione alle differenze~\eqref{ricorrenza}, definiamo
 \[
-p_1(z) = \alpha_0 + \alpha_1 z + \dots + \alpha_k z^k
+p_1(z) = \alpha_0 + \alpha_1 z + \dots + \alpha_s z^s
 \]
-il suo polinomio associato. 
+il suo polinomio associato (di grado $s$). 
 \begin{itemize}
-    \item Se $p_1(z)$ ha $k$ zeri distinti nel piano complesso $\lambda_1, \lambda_2,\dots, \lambda_k$, allora ogni soluzione della~\eqref{ricorrenza} si scrive come combinazione lineare delle soluzioni di base $\lambda_1^n, \lambda_2^n, \dots, \lambda_k^n$.
-    \item Per ogni zero $\lambda$ di $p_1(z)$ ripetuto con molteplicità $m>1$, come soluzioni di base invece di prendere $k$ copie di $\lambda$ dobbiamo prendere $\lambda^n, n\lambda^n, n^2\lambda^n,\dots, n^{m-1}\lambda^n$.
+    \item Se $p_1(z)$ ha $s$ zeri distinti nel piano complesso $\lambda_1, \lambda_2,\dots, \lambda_s$, allora ogni soluzione della~\eqref{ricorrenza} si scrive come combinazione lineare delle soluzioni di base $\lambda_1^k, \lambda_2^k, \dots, \lambda_s^k$.
+    \item Per ogni zero $\lambda$ di $p_1(z)$ ripetuto con molteplicità $m>1$, come soluzioni di base invece di prendere $m$ copie di $\lambda$ dobbiamo prendere $\lambda^n, n\lambda^n, n^2\lambda^n,\dots, n^{m-1}\lambda^n$.
 \end{itemize}
 \end{theorem}
 
 \paragraph{Esempi}
 \begin{itemize}
-    \item Quali sono le successioni tali che $y_{n+1} = \frac{1}{2}y_n$? Questa formula si può riscrivere come $y_{n+1}-\frac{1}{2}y_n=0$, e ha polinomio caratteristico $z-\frac{1}{2}$, con un solo zero $\lambda=\frac{1}{2}$. le sue soluzioni sono del tipo $y_n = C \frac{1}{2}^n$. Se ci viene dato un valore iniziale, per esempio $y_0=1$, possiamo determinare il valore corrispondente di $C$ (in questo caso $C=1$), esattamente come avete visto nel corso di analisi per le equazioni differenziali lineari a coefficienti costanti.
-    \item Quali sono le successioni tali che $y_{n+2} - y_{n+1} = y_{n+1}-y_n$? La successione ha come polinomio caratteristico $z^2-2z+1$, che ha uno zero doppio $\lambda=1$. Le soluzioni sono le successioni del tipo $y_n = C_1 1^n + C_2 n 1^n = C_1 + C_2 n$, cioè tutte le funzioni lineari affini.
-    \item Quali sono le successioni tali che $y_{n+2} = y_n + y_{n+1}$? Sono tutte le successioni del tipo
+    \item Quali sono le successioni tali che $y_{k+1} = \frac{1}{2}y_k$? Questa formula si può riscrivere come $y_{k+1}-\frac{1}{2}y_k=0$, e ha polinomio caratteristico $z-\frac{1}{2}$, con un solo zero $\lambda=\frac{1}{2}$. le sue soluzioni sono del tipo $y_k = C \frac{1}{2}^k$. Se ci viene dato un valore iniziale, per esempio $y_0=1$, possiamo determinare il valore corrispondente di $C$ (in questo caso $C=1$), esattamente come avete visto nel corso di analisi per le equazioni differenziali lineari a coefficienti costanti.
+    \item Quali sono le successioni tali che $y_{k+2} - y_{k+1} = y_{k+1}-y_k$ per ogni $k$? La successione ha come polinomio caratteristico $z^2-2z+1$, che ha uno zero doppio $\lambda=1$. Le soluzioni sono le successioni del tipo $y_k = C_1 1^k + C_2 k 1^k = C_1 + C_2 k$, cioè tutte le funzioni lineari affini.
+    \item Quali sono le successioni tali che $y_{k+2} = y_k + y_{k+1}$? Sono tutte le successioni del tipo
     \[
-        y_n = C_1 \left(\frac{1+\sqrt{5}}{2}\right)^n + C_2 \left(\frac{1-\sqrt{5}}{2}\right)^n.
+        y_k = C_1 \left(\frac{1+\sqrt{5}}{2}\right)^k + C_2 \left(\frac{1-\sqrt{5}}{2}\right)^k.
     \]
     Una di esse è la famosa \emph{sequenza di Fibonacci}, che è ottenuta prendendo come valori iniziali $y_0 = 0$, $y_1=1$.
 \end{itemize}
 In particolare, vale il seguente risultato.
 \begin{theorem} \label{thm:eq-differenze} Per un'equazione alle differenze~\eqref{ricorrenza}:
 \begin{itemize}
-    \item Se (e solo se) tutti gli zeri del polinomio $p_1(z)$ hanno valore assoluto strettamente minore di $1$, allora per ogni scelta dei valori iniziali $y_0, y_1,\dots, y_{k-1}$ la soluzione della~\eqref{ricorrenza} tende a zero quando $n\to\infty$.
-    \item Se (e solo se) tutti gli zeri del polinomio $p_1(z)$ hanno valore assoluto minore o uguale a $1$, e in più tutte le radici di modulo $1$ sono semplici (molteplicità $=1$), allora per ogni scelta dei valori iniziali $y_0, y_1,\dots, y_{k-1}$ la soluzione della~\eqref{ricorrenza} è limitata, cioè $\sup_{n\in\mathbb{N}} \abs{y_n}$ è finito.
+    \item Se (e solo se) tutti gli zeri del polinomio $p_1(z)$ hanno valore assoluto strettamente minore di $1$, allora per ogni scelta dei valori iniziali $y_0, y_1,\dots, y_{s-1}$ la soluzione della~\eqref{ricorrenza} tende a zero quando $k\to\infty$.
+    \item Se (e solo se) tutti gli zeri del polinomio $p_1(z)$ hanno valore assoluto minore o uguale a $1$, e in più tutte le radici di modulo $1$ sono semplici (molteplicità $=1$), allora per ogni scelta dei valori iniziali $y_0, y_1,\dots, y_{s-1}$ la soluzione della~\eqref{ricorrenza} è limitata, cioè $\sup_{k\in\mathbb{N}} \abs{y_k}$ è finito.
 \end{itemize}
 \end{theorem}
 La seconda di queste condizioni si chiama \emph{condizione delle radici} (in inglese \emph{root condition}).
@@ -5673,13 +5674,13 @@ La seconda di queste condizioni si chiama \emph{condizione delle radici} (in ing
 \paragraph{Zero-stabilità}
 Quando gli $\alpha_i$ sono i coefficienti di un metodo a più passi~\eqref{linearmultistep}, il polinomio caratteristico $p_1(z)$ definito sopra si chiama \emph{primo polinomio caratteristico} del metodo.
 
-Un metodo lineare a più passi si dice \emph{zero-stabile} se il suo primo polinomio caratteristico $p_1(z)$ soddisfa la condizione delle radici; questo in particolare implica che le successioni che genera per la soluzione del problema $y'=0$ sono sempre limitate (uniformemente in $n$), indipendentemente dalla scelta dei valori iniziali. Questo è quello che ci aspettiamo se il metodo deve ``funzionare bene'' su questa equazione, visto che tutte le soluzioni di $y'=0$ sono costanti (e quindi limitate).
+Un metodo lineare a più passi si dice \emph{zero-stabile} se il suo primo polinomio caratteristico $p_1(z)$ soddisfa la condizione delle radici; questo in particolare implica che le successioni che genera per la soluzione del problema $y'=0$ sono sempre limitate (uniformemente in $k$), indipendentemente dalla scelta dei valori iniziali. Questo è quello che ci aspettiamo se il metodo deve ``funzionare bene'' su questa equazione, visto che tutte le soluzioni di $y'=0$ sono costanti (e quindi limitate).
 
-\paragraph{Esempio} Consideriamo il metodo~\eqref{ab2}. Il primo polinomio caratteristico è $z^2-z$; difatti, $\alpha_2=1, \alpha_1=-1, \alpha_0 = 0$. Questo polinomio ha zeri $\lambda=1$ e $\lambda=0$. In particoalre, esso soddisfa la condizione delle radici, quindi il metodo è zero-stabile.
+\paragraph{Esempio} Consideriamo il metodo~\eqref{ab2}. Il primo polinomio caratteristico è $z^2-z$; difatti, $\alpha_2=1, \alpha_1=-1, \alpha_0 = 0$. Questo polinomio ha zeri $\lambda=1$ e $\lambda=0$. In particolare, esso soddisfa la condizione delle radici, quindi il metodo è zero-stabile.
 
-Notiamo che $\alpha = 1$ è sempre una radice del primo polinomio caratteristico, per ogni metodo consistente: altrimenti è impossibile che si abbia $\boldsymbol{\tau}_n \to \mathbf{0}$, già solo considerando il problema $y'=0$.
+Notiamo che $\alpha = 1$ è sempre una radice del primo polinomio caratteristico, per ogni metodo consistente: altrimenti è impossibile che si abbia $\boldsymbol{\tau}_k \to \mathbf{0}$, già solo considerando il problema $y'=0$.
 
-La zero-stabilità sembra un concetto di poco rilievo, visto che ci concentriamo su un problema molto facile e di poco interesse; in realtà ha una conseguenza importante, perché ci assicura che eventuali piccoli errori nei dati iniziali $\y_1,\dots,\y_{k-1}$ non causano errori più consistenti sulle iterate successive.
+La zero-stabilità sembra un concetto di poco rilievo, visto che ci concentriamo su un problema molto facile e di poco interesse; in realtà ha una conseguenza importante, perché ci assicura che eventuali piccoli errori nei dati iniziali $\y_1,\dots,\y_{s-1}$ non causano errori più consistenti sulle iterate successive.
 
 \paragraph{Teorema di equivalenza di Dahlquist}
 Possiamo ora enunciare un teorema di convergenza per i metodi a più passi.
@@ -5694,13 +5695,13 @@ Come nel caso dei metodi a un passo, la sola convergenza non ci dice nulla rigua
 
 Applicando il metodo~\eqref{linearmultistep} al problema test~\eqref{testproblem}, otteniamo
 \begin{equation} \label{multistep-test}
-    \sum_{j=0}^k (\alpha_j - \underbrace{\lambda h}_{:=q} \beta_j) y_{n+j} = 0.    
+    \sum_{j=0}^s (\alpha_j - \underbrace{\lambda h}_{:=q} \beta_j) y_{s+j} = 0.    
 \end{equation}
 Analogamente a quanto richiesto per i metodi a un passo, vogliamo vedere per quali valori di $q$ le successioni generate dal metodo tendono a zero, in modo da replicare il comportamento della soluzione esatta $y(t) = e^{\lambda t}$ quando $\operatorname{Re}(\lambda) < 0$.
 
 Fissato il valore di $q$, la~\eqref{multistep-test} è un'equazione alle differenze. Quindi, per il Teorema~\ref{thm:eq-differenze}, la successione generata converge a zero (per ogni scelta dei valori iniziali) quando tutte le radici del polinomio associato
 \[
-\pi_q(z) = \sum_{j=0}^k (\alpha_j - q\beta_j) z^j
+\pi_q(z) = \sum_{j=0}^s (\alpha_j - q\beta_j) z^j
 \]
 hanno modulo \emph{strettamente} minore di $1$. Il polinomio $\pi_q(z)$ (che dipende dal valore di $q$, che supponiamo fissato) si chiama \emph{polinomio di stabilità}; possiamo scriverlo come
 \[
@@ -5708,7 +5709,7 @@ hanno modulo \emph{strettamente} minore di $1$. Il polinomio $\pi_q(z)$ (che dip
 \]
 in termini del primo polinomio caratteristico (che già abbiamo incontrato) e del \emph{secondo polinomio caratteristico}
 \[
-p_2(z) = \beta_0 + \beta_1 z + \dots + \beta_k z^k.
+p_2(z) = \beta_0 + \beta_1 z + \dots + \beta_s z^s.
 \]
 Si dice \emph{regione di (assoluta) stabilità} di un metodo a più passi l'insieme
 \[
@@ -5730,19 +5731,19 @@ Possiamo calcolare le sue soluzioni (in funzione di $q$), ma la formula ottenuta
     \item Tra i metodi lineari a più passi A-stabili impliciti di ordine $p=2$, quello per cui l'errore converge a zero più velocemente è il metodo dei trapezi.
 \end{itemize}
 \end{theorem}
-Quindi nessun metodo lineare a più passi A-stabile migliora in termini di accuratezza il metodo dei trapezi (che in realtà è a un passo, $k=1$). Una famiglia di metodi (quelli BDF) in realtà si avvicina molto ad essere A-stabile, visto che le loro regioni di stabilità includono tutto il semipiano negativo tranne una regione molto piccola\footnote{Queste regioni di stabilità sono raffigurate per esempio su~\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. Questi metodi sono tra quelli più usati per problemi stiff.
+Quindi nessun metodo lineare a più passi A-stabile migliora in termini di accuratezza il metodo dei trapezi (che in realtà è a un passo, $s=1$). Una famiglia di metodi (quelli BDF) in realtà si avvicina molto ad essere A-stabile, visto che le loro regioni di stabilità includono tutto il semipiano negativo tranne una regione molto piccola\footnote{Queste regioni di stabilità sono raffigurate per esempio su~\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. Questi metodi sono tra quelli più usati per problemi stiff.
 
 \section{Solutori di equazioni differenziali in Matlab}
 
-Nel laboratorio abbiamo implementato noi da soli alcuni metodi numerici, ma Matlab contiene già al suo interno diverse funzioni che possono essere usate per risolvere numericamente problemi ai valori iniziali~\eqref{cauchy}. La più usata è \lstinline{function [T, Y] = } \lstinline{ode45(f, [a,b], y0)}. Essa prende in input una \emph{function handle} alla funzione $\f(t,\y)$ (che dev'essere \emph{sempre} una funzione di due variabili), un vettore di due elementi \lstinline{[a,b]} (attenzione: qui la sintassi è diversa rispetto alle funzioni che abbiamo scritto in laboratorio), e un valore iniziale \lstinline{y0} (scalare o vettore). Essa restituisce un vettore colonna $T$ e una matrice $Y$ che contiene le iterate $\y_n$ prodotte dal metodo come \emph{righe}; quindi essi sono i trasposti dei valori di output prodotti dalle funzioni che abbiamo scritto noi nel laboratorio.
+Nel laboratorio abbiamo implementato noi da soli alcuni metodi numerici, ma Matlab contiene già al suo interno diverse funzioni che possono essere usate per risolvere numericamente problemi ai valori iniziali~\eqref{cauchy}. La più usata è \lstinline{function [T, Y] = } \lstinline{ode45(f, [a,b], y0)}. Essa prende in input una \emph{function handle} alla funzione $\f(t,\y)$ (che dev'essere \emph{sempre} una funzione di due variabili), un vettore di due elementi \lstinline{[a,b]} (attenzione: qui la sintassi è diversa rispetto alle funzioni che abbiamo scritto in laboratorio), e un valore iniziale \lstinline{y0} (scalare o vettore). Essa restituisce un vettore colonna $T$ e una matrice $Y$ che contiene le iterate $\y_k$ prodotte dal metodo come \emph{righe}; quindi essi sono i trasposti dei valori di output prodotti dalle funzioni che abbiamo scritto noi nel laboratorio.
 
-La funzione \lstinline{ode45} utilizza un metodo di Runge--Kutta esplicito di ordine $p=5$, ma contiene uno stimatore dell'errore e lo usa per modificare la lunghezza del passo $h$, adattandola in modo da non fare mai passi più corti o più lunghi del necessario per ottenere una soluzione accurata (metodo di Dormand--Prince o RK45). Pertanto il vettore \lstinline{T} restituito non contiene una sequenza di punti equispaziati, ma una sequenza di punti opportunamente scelti. Tipicamente sono necessari più punti negli intervalli in cui la $\y(t)$ varia più velocemente. Le $\y_n$ restituite corrispondono alla funzione valutata su questa sequenza di punti, cioè $\y_n \approx \y(t_n)$.
+La funzione \lstinline{ode45} utilizza un metodo di Runge--Kutta esplicito di ordine $p=5$, ma contiene uno stimatore dell'errore e lo usa per modificare la lunghezza del passo $h$, adattandola in modo da non fare mai passi più corti o più lunghi del necessario per ottenere una soluzione accurata (metodo di Dormand--Prince o RK45). Pertanto il vettore \lstinline{T} restituito non contiene una sequenza di punti equispaziati, ma una sequenza di punti opportunamente scelti. Tipicamente sono necessari più punti negli intervalli in cui la $\y(t)$ varia più velocemente. Le $\y_k$ restituite corrispondono alla funzione valutata su questa sequenza di punti, cioè $\y_k \approx \y(t_k)$.
 
 È possibile usare il comando \lstinline{odeset} per specificare alcune opzioni, per esempio la tolleranza richiesta sulla soluzione. Si usa in questo modo:
 \begin{lstlisting}
 >> opzioni = odeset('AbsTol', 1e-6, 'RelTol', 1e-3);
 \end{lstlisting}
-specifica una tolleranza assoluta sulla soluzione calcolata di $10^{-6}$ (cioè, vogliamo che $\norm{\y_n - \y(t_n)}_\infty \leq 10^{-6}$) e una relativa di $10^{-3}$ (cioè, $\frac{\norm{\y_n - \y(t_n)}}{\norm{\y(t_n)}} \leq 10^{-3}$).
+specifica una tolleranza assoluta sulla soluzione calcolata di $10^{-6}$ (cioè, vogliamo che $\norm{\y_k - \y(t_k)}_\infty \leq 10^{-6}$) e una relativa di $10^{-3}$ (cioè, $\frac{\norm{\y_k - \y(t_k)}}{\norm{\y(t_k)}} \leq 10^{-3}$).
 
 Le opzioni impostate vengono salvate in una variabile \lstinline{opzioni} che possiamo poi passare al solutore come ultimo argomento:
 \begin{lstlisting}
@@ -5752,7 +5753,7 @@ Guardando la documentazione di \lstinline{odeset} (con il comando \lstinline{>> 
 
 Indipendentemente da questi miglioramenti, \lstinline{ode45} usa un metodo esplicito, quindi ha sempre il problema di richiedere passi $h$ molto corti (e quindi un alto numero di iterazioni e costo computazionale) per risolvere adeguatamente problemi stiff.
 
-Matlab contiene anche funzioni per risolvere equazioni differenziali che utilizzano metodi impliciti; la più comune è la funzione \lstinline{ode15s}. Essa accetta e ritorna gli stessi argomenti di \lstinline{ode45}, ma utilizza un metodo implicito e quindi è adatta anche a problemi stiff (come indica la \lstinline{s} nel nome della funzione). Utilizza diversi metodi impliciti a più passi, di ordine variabile da 1 a 5, cambiando il metodo e la lunghezza del passo a seconda dell'accuratezza richiesta. I metodi usati sono una variante dei metodi BDF che già abbiamo citato. Notare che cambiare la lunghezza del passo è più complicato per metodi a più passi, visto che non è più possibile riutilizzare direttamente i valori di $\f(t_{n+j},\y_{n+j})$ calcolati nei passi precedenti.
+Matlab contiene anche funzioni per risolvere equazioni differenziali che utilizzano metodi impliciti; la più comune è la funzione \lstinline{ode15s}. Essa accetta e ritorna gli stessi argomenti di \lstinline{ode45}, ma utilizza un metodo implicito e quindi è adatta anche a problemi stiff (come indica la \lstinline{s} nel nome della funzione). Utilizza diversi metodi impliciti a più passi, di ordine variabile da 1 a 5, cambiando il metodo e la lunghezza del passo a seconda dell'accuratezza richiesta. I metodi usati sono una variante dei metodi BDF che già abbiamo citato. Notare che cambiare la lunghezza del passo è più complicato per metodi a più passi, visto che non è più possibile riutilizzare direttamente i valori di $\f(t_{k+j},\y_{k+j})$ calcolati nei passi precedenti.
 
 \begin{lstlisting}
 >> A = [-10 -10; -10 -11];
@@ -5760,7 +5761,7 @@ Matlab contiene anche funzioni per risolvere equazioni differenziali che utilizz
 >> ode15s(f, [0,1], [1,0])
 \end{lstlisting}
 
-Nel caso dei metodi impliciti, un'opzione aggiuntiva particolarmente utile per migliorare le performance dei metodi è fornire a Matlab la matrice Jacobiana $\frac{\partial \f}{\partial \y}$. Difatti \lstinline{ode15s} (e varianti) utilizzano un metodo tipo-Newton per calcolare $\y_{n+k}$ dall'equazione implicita che lo definisce; e se lo ricordate questi metodi necessitano al loro interno della derivata della funzione che definisce l'equazione da risolvere. Lo Jacobiano può essere inserito tramite un'altra coppia di parametri \lstinline{'Jacobian', J} passati ad \lstinline{odeset}; qui \lstinline{J} può essere una matrice costante oppure una function handle \lstinline{J(t, y)}.
+Nel caso dei metodi impliciti, un'opzione aggiuntiva particolarmente utile per migliorare le performance dei metodi è fornire a Matlab la matrice Jacobiana $\frac{\partial \f}{\partial \y}$. Difatti \lstinline{ode15s} (e varianti) utilizzano un metodo tipo-Newton per calcolare $\y_{k+s}$ dall'equazione implicita che lo definisce; e se lo ricordate questi metodi necessitano al loro interno della derivata della funzione che definisce l'equazione da risolvere. Lo Jacobiano può essere inserito tramite un'altra coppia di parametri \lstinline{'Jacobian', J} passati ad \lstinline{odeset}; qui \lstinline{J} può essere una matrice costante oppure una function handle \lstinline{J(t, y)}.
 
 \begin{lstlisting}
 >> ode15s(f, [0,1], [1,0], odeset('Jacobian', A));
@@ -5769,8 +5770,8 @@ Nel caso dei metodi impliciti, un'opzione aggiuntiva particolarmente utile per m
 In questo caso il problema è comunque semplice, quindi le performance dei due metodi non cambiano di molto.
 
 Esistono anche altre funzioni, per esempio \lstinline{ode23} che utilizza un metodo di Runge--Kutta di ordine inferiore, o \lstinline{ode23s} che (come indica la \lstinline{s}) è un altro metodo adatto per problemi stiff.
-\section{Esempio: problema di Robertson}
 
+\section{Esempio: problema di Robertson}
 
 Un esempio classico di problema stiff deriva dalla modellizzazione del sistema di reazioni chimiche
 \[
