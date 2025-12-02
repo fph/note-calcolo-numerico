@@ -5467,7 +5467,7 @@ Esistono molte altre possibili scelte dei coefficienti; si veda per esempio \hre
 
 \paragraph{Problemi stiff}
 
-Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h \to 0$; però ci sono differenze importanti tra un metodo e l'altro che riguardano quello che succede con un valore \emph{finito} di $h$. In particolare, in diversi esperimenti numerici, prendendo $h$ troppo grande il metodo di Eulero esplicito produce sequenze $\y_k$ che oscillano anche quando la soluzione vera dell'equazione differenziale è una funzione monotona. Vediamo un esempio in Figura~\ref{fig: esempio Eulero esplicito problema stiff}.
+Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h \to 0$; però ci sono differenze importanti tra un metodo e l'altro che riguardano quello che succede con un valore \emph{finito} di $h$. In particolare, in diversi esperimenti numerici, riducendo il numero di passi $n$ il metodo di Eulero esplicito produce sequenze $\y_k$ che cominciano a oscillare, e poi riducendo ancora $n$ assumono valori molto grandi, anche quando la soluzione vera dell'equazione differenziale è una funzione monotona. Vediamo un esempio in Figura~\ref{fig: esempio Eulero esplicito problema stiff}.
 
 \begin{figure}
 \begin{center}
@@ -5923,7 +5923,9 @@ Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h 
 \caption{Metodo di Eulero esplicito su $\mathbf{y}' = -\begin{bsmallmatrix}101 & 100\\ 100 & 100\end{bsmallmatrix}\mathbf{y}$, prima componente, con diversi valori di $n$.} \label{fig: esempio Eulero esplicito problema stiff}
 \end{figure}
 
-% Un modo per investigare cosa succede è attraverso il ``problema test'', \eqref{testproblem}. Prendiamo un problema test con $\lambda < 0$; la soluzione esatta $y(t) = e^{\lambda t}$ quindi è decrescente e ha $\lim_{t\to+\infty} y(t) = 0$. Applicando il metodo di Eulero esplicito a questo problema, come abbiamo già visto, otteniamo $y_k = (1+h\lambda)^k$. Se $\lambda < -\frac{2}{h}$, abbiamo $\abs{1+h\lambda} > 1$, quindi il metodo produce iterate $y_k$ che diventano sempre più grandi in valore assoluto, e magari oscillano con segni alterni. Questo succede quando scegliamo un passo $h$ troppo grande, e la limitazione esatta dipende dal valore di $\lambda$: più grande è $\lambda$, più piccolo dev'essere $h$. Notiamo però anche che se $\lambda$ è negativo e molto grande la funzione $y(t) = e^{\lambda t}$ tende a zero molto rapidamente. Potremmo quindi pensare che la ``scala'' di $h$ sia dettata dal grafico della funzione, in un qualche senso.
+Un modo per investigare cosa succede è attraverso il ``problema test'', \eqref{testproblem}. Prendiamo un problema test con $\lambda < 0$; la sua soluzione esatta $y(t) = e^{\lambda t}$ è decrescente e ha $\lim_{t\to+\infty} y(t) = 0$. Applicando il metodo di Eulero esplicito a questo problema, come abbiamo già visto, otteniamo $y_k = (1+h\lambda)^k$. Se $\lambda < -\frac{2}{h}$, abbiamo $1+h\lambda < -1$, quindi il metodo produce iterate $y_k$ che diventano sempre più grandi in valore assoluto, e magari oscillano con segni alterni. Il loro comportamento quindi è completamente diverso da quello della soluzione esatta, che converge a $0$ quando $t\to\infty$. Questo succede quando scegliamo un passo $h$ troppo grande, e la limitazione esatta dipende dal valore di $\lambda$: più grande è $\lambda$, più piccolo dev'essere $h$. 
+
+% Notiamo però anche che se $\lambda$ è negativo e molto grande la funzione $y(t) = e^{\lambda t}$ tende a zero molto rapidamente. Potremmo quindi pensare che la ``scala'' di $h$ sia dettata dal grafico della funzione, in un qualche senso.
 
 % Le cose però si complicano per problemi in più variabili, in cui possono comparire contemporaneamente valori diversi di $\lambda$; per esempio pensiamo al problema
 % \[
@@ -5946,15 +5948,16 @@ Il risultato di convergenza che abbiamo visto ci dice cosa succede al limite $h 
 % \]
 % con $\lambda_1 < \lambda_2 < \lambda_3 < 0$: la norma $\norm{\y(t)}$ tende a zero come l'esponente più vicino a zero $e^{\lambda_3 t}$, ma il passo massimo che possiamo scegliere dipende dall'esponente più lontano da zero $\lambda_1$. Quindi per approssimare la soluzione senza oscillazioni catastrofiche siamo costretti a scegliere per un passo molto piccolo rispetto alla scala del problema.
 
-Per problemi più complessi del problema test, diventa complicato fare un'analisi esatta, ma possiamo intuire qualcosa sul loro comportamento confrontandoli con problemi test che ``linearizzano'' la funzioen $f(t,y)$. In generale, esistono problemi per cui il metodo di Eulero esplicito (e con lui molti altri metodi) presenta oscillazioni eccessive a meno che la scelta del passo sia molto piccola; questi si chiamano \emph{problemi stiff}, o in italiano \emph{rigidi}. Una definizione precisa è complicata; in generale questo fenomeno è associato a:
+Per problemi più complessi del problema test, diventa complicato fare un'analisi esatta come questa, ma possiamo comunque affermare qualcosa sul loro comportamento. Esistono problemi per cui il metodo di Eulero esplicito (e con lui molti altri metodi) produce successioni che hanno oscillazioni spurie e divergono, a meno che la scelta del passo sia molto piccola; questi si chiamano \emph{problemi stiff}, o in italiano \emph{rigidi}. Una definizione precisa è complicata; in generale questo fenomeno è associato a:
 \begin{itemize}
-    \item componenti della soluzione $\y$ che hanno improvvisi cambiamenti;
+    \item componenti della soluzione $\y$ che hanno improvvisi cambiamenti (come la funzione del nostro esempio in Figura~\ref{fig: esempio Eulero esplicito problema stiff}, che ha una prima parte con una discesa molto ripida e poi una con pendenza minore);
     \item fenomeni fisici che avvengono a diverse scale di tempi;
-    \item funzioni del tipo $\mathbf{f}(t,\y)=A\y$ con una matrice $A$ mal condizionata, o funzioni non lineari $\mathbf{f}(t,\y)$ con Jacobiano $\frac{\partial \mathbf{f}}{\partial \mathbf{y}}$ mal condizionato.
+    \item funzioni del tipo $\mathbf{f}(t,\y)=A\y$ (lineari nella $\y$) con una matrice $A$ mal condizionata, 
+    \item funzioni $\mathbf{f}(t,\y)$ che non sono lineari nella $\y$, ma la loro matrice Jacobiana $\frac{\partial \mathbf{f}}{\partial \mathbf{y}}$ (che ne dà un'approssimazione con una funzione lineare) è mal condizionata.
 \end{itemize}
-A differenza del mal condizionamento di sistemi lineari, non è un fenomeno che riusciamo a quantificare esattamente e misurare con un numero.
+A differenza del mal condizionamento di sistemi lineari, la ``stiffness'' di un problema non è un fenomeno che riusciamo a quantificare esattamente e misurare con un numero.
 
-Possiamo però osservare che la presenza di queste oscillazioni spurie dipende dal metodo scelto; in particolare i metodi impliciti sembrano esenti dal problema; possiamo vedere per esempio il metodo di Eulero implicito in Figura~\ref{fig: esempio Eulero implicito problema stiff}.
+La presenza di questi fenomeni dipende dal metodo scelto; in particolare i metodi impliciti sembrano esenti dal problema; possiamo vedere per esempio il metodo di Eulero implicito in Figura~\ref{fig: esempio Eulero implicito problema stiff}. Anche se l'approssimazione della soluzione non è perfetta, comunque non ci sono oscillazioni e divergenze che rendono completamente inaccurato il risultato ottenuto con $n$ piccolo.
 
 \begin{figure}
 \begin{center}
@@ -6084,21 +6087,22 @@ Possiamo però osservare che la presenza di queste oscillazioni spurie dipende d
 
 Questo esperimento suggerisce che alcuni metodi sono più adatti ai problemi \emph{stiff} di altri; e tipicamente si tratta di metodi impliciti. Facciamo un'analisi più generale per studiare questo fenomeno.
 
-\paragraph{Funzione di stabilità e A-stabilità}
-
-Possiamo replicare l'analisi fatta per il metodo di Eulero e applicarla a un metodo di Runge--Kutta generico. Scrivendo esplicitamente un qualunque metodo di Runge--Kutta per il problema test~\eqref{testproblem}, si può vedere che questo assume sempre la forma
+\paragraph{Funzione di stabilità e A-stabilità} Possiamo replicare l'analisi fatta per il metodo di Eulero e applicarla a un metodo di Runge--Kutta generico. Scrivendo esplicitamente un qualunque metodo di Runge--Kutta per il problema test~\eqref{testproblem}, si può vedere che questo assume sempre la forma
 \[
-y_{k+1} = R(q)y_k, \quad q = h\lambda.
+y_{k+1} = R(q)y_k, \quad q = h\lambda,
 \]
-Per esempio, per il metodo dei trapezi abbiamo
+per una certa funzione razionale $R(q)$. Per esempio, per il metodo dei trapezi abbiamo
 \[
 y_{k+1} = y_k + h \frac12(\lambda y_k + \lambda y_{k+1}) \iff y_{k+1} = \underbrace{\frac{1+\frac12 q}{1-\frac12q}}_{=:R(q)}y_k
 \]
-Ogni volta che $\lambda$ è un numero complesso con parte reale $\operatorname{Re}(\lambda) < 0$, abbiamo $\lim_{t\to\infty} y(t) = 0$. Ci chiediamo quindi quando la successione generata $y_k$ ha lo stesso comportamento al limite, $\lim_{k\to\infty} y_k = 0$.
 
-La successione $y_k = R(q)^k y_0$ converge a zero se e solo se $\abs{R(q)} < 1$. Si definisce \emph{regione di (assoluta) stabilità} del metodo l'insieme $S_A = \{z \in \mathbb{C} : \abs{R(z)}<1\}$. Quindi $y_k$ converge a zero (per il problema test) se e solo se $h$ è scelto in modo che $h\lambda \in S_A$. La soluzione esatta del problema test $y(t) = e^{\lambda t}$ invece converge a zero se (e solo se) $\lambda$ sta nel semipiano sinistro. Questo motiva una definizione: un metodo di Runge--Kutta si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro $\{z\in \mathbb{C} : \operatorname{Re}(z) < 0\}$. Esistono diverse varianti di questa definizione: per esempio un metodo si dice \emph{$A_0$-stabile} se la regione di stabilità contiene la semiretta reale negativa $\{z\in\mathbb{R}: z<0\}$; imparare tutti i loro nomi non è importante.
+Ogni volta che $\lambda$ è un numero complesso con parte reale $\operatorname{Re}(\lambda) < 0$, abbiamo $\lim_{t\to\infty} y(t) = 0$. Ci chiediamo quindi quando la successione generata $y_k$ ha lo stesso comportamento al limite, $\lim_{k\to\infty} y_k = 0$. Sembra infatti ragionevole chiederci da un metodo numerico che esso rispetti il comportamento generale della funzione: quando $y(t)$ tende a zero, vogliamo che anche la successione delle approssimazioni $y_k$ lo faccia.
 
-Per il metodo di Eulero esplicito, $R(q)= 1+q$; quindi la regione di stabilità $\{q\in\mathbb{C} \colon \abs{1+q}<1\}$ è un cerchio di centro $-1$ e raggio $1$: la quantità $\abs{1+q}$ rappresenta la distanza di $q\in\mathbb{C}$ dal punto $-1$. (Attenzione: stiamo cercando le soluzioni \emph{complesse} della disequazione $\abs{1+q}<1$ qui; non possiamo risolvere il problema distinguendo due casi $1+q \leq 0$ e $1+q<0$ come siamo abituati a fare nel caso reale.)
+La successione $y_k = R(q)^k y_0$ converge a zero per $k\to\infty$ se e solo se $\abs{R(q)} < 1$. Si definisce quindi \emph{regione di (assoluta) stabilità} del metodo l'insieme $S_A = \{z \in \mathbb{C} : \abs{R(z)}<1\}$. Quindi la soluzione numerica del problema test (con un certo valore di $\lambda\in\mathbb{C}$) produce una successione $y_k$ che converge a zero se e solo se $h$ è scelto in modo che $h\lambda \in S_A$.
+
+La soluzione esatta del problema test $y(t) = e^{\lambda t}$ invece converge a zero se (e solo se) $\lambda$ sta nel semipiano sinistro $\{z\in \mathbb{C} : \operatorname{Re}(z) < 0\}$. Questo motiva una definizione: un metodo di Runge--Kutta si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro. Esistono diverse varianti di questa definizione: per esempio un metodo si dice \emph{$A_0$-stabile} se la regione di stabilità contiene la semiretta reale negativa $\{z\in\mathbb{R}: z<0\}$; imparare tutti i loro nomi non è importante.
+
+Per il metodo di Eulero esplicito, $R(q)= 1+q$; quindi per determinare la regione di stabilità bisogna trovare le soluzioni della disequazione $\abs{1+q}<1$. Attenzione: stiamo cercando le soluzioni \emph{complesse} qui: non possiamo risolvere il problema distinguendo due casi $1+q \leq 0$ e $1+q<0$ come siamo abituati a fare nel caso reale. Ci può aiutare un'interpretazione geometrica: dati due numeri complessi $z_1,z_2$, la quantità $\abs{z_1-z_2}$ è la loro distanza nel piano complesso. Quindi, in particolare, $\abs{1+q}$ è la distanza tra $q\in\mathbb{C}$ e il punto $-1$. Questo ragionamento mostra che la regione di stabilità del metodo di Eulero esplicito $\{q\in\mathbb{C} \colon \abs{1+q}<1\}$ è un cerchio di centro $-1$ e raggio $1$.
 
 Essa \emph{non} contiene tutto il semipiano sinistro, e difatti già abbiamo visto che questo metodo non è $A$-stabile.
 
@@ -6209,7 +6213,7 @@ Il costo computazionale per ogni passo (a parte i pochi passi iniziali) è quell
 \end{align*}
 e i successivi sono fatti in modo simile, con un solo valore $\beta_s\neq 0$ a destra dell'uguale e opportune combinazioni lineari delle $\y_{k+j}$ a sinistra.
 
-In tutti questi metodi, i valori numerici dei coefficienti sono scelti in modo da assicurare l'ordine di convergenza $p$ il più alto possibile.
+In tutti questi metodi, i valori numerici dei coefficienti sono stati scelti in modo da assicurare l'ordine di convergenza $p$ il più alto possibile.
 
 Per altri metodi, potete vedere per esempio \url{https://en.wikipedia.org/wiki/Linear_multistep_method} e \url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}.
 
@@ -6217,23 +6221,51 @@ Per altri metodi, potete vedere per esempio \url{https://en.wikipedia.org/wiki/L
 
 Come nei metodi a un passo, definiamo l'\emph{errore locale di troncamento}
 \[
-\boldsymbol{\tau}_k = \sum_{j=0}^s \alpha_j \y(t_{k+j}) - h\sum_{j=0}^s \beta_j \f(t_{k+j}, \y(t_{k+j})).
+\boldsymbol{\tau}_k = \sum_{j=0}^s \alpha_j \y(t_{k+j}) - h\sum_{j=0}^s \beta_j \f(t_{k+j}, \y(t_{k+j})),
 \]
+cioè, la quantità che otteniamo come ``resto'' se al posto di $\y_k,\dots,\y_{k+s}$ sostituiamo i valori esatti della funzione soluzione $\y(t_k), \dots, \y(t_{k+s})$.
+
 Questa quantità a volte viene normalizzata diversamente dividendola per $\alpha_s$, o per la somma dei $\beta_j$. in ogni caso, $\boldsymbol{\tau}_k$ misura di quanto $\y(t_{k+s})$ differisce dalla quantità $\y_{k+s}$ calcolata dal metodo assumendo che tutti i passi precedenti siano esatti. Come nel caso dei metodi a un passo, un metodo si dice \emph{consistente di ordine $p$} se $T = \max_{k} \norm{\boldsymbol{\tau}_k}$ è $\mathcal{O}(h^{p+1})$.
 
 Analogamente, un metodo si dice \emph{convergente di ordine $p$} se l'errore globale~\eqref{globalerror} (definito esattamente come nei metodi a un passo) è $\mathcal{O}(h^p)$.
 
 Possiamo dimostrare che (sotto opportune ipotesi) questi due concetti sono equivalenti, proprio come nei metodi a un passo.
 
-Ci serve però prima introdurre uno strumento tecnico che permette di studiare le successioni prodotte dal metodo.
+\paragraph{Teorema di equivalenza di Dahlquist} Vale il seguente risultato, nella cui formulazione compare una condizione che non abbiamo ancora enunciato, quella di \emph{zero-stabilità}; vedremo più avanti cosa vuol dire. Per ora, ci accontentiamo di dire che i metodi a più passi che abbiamo visto finora, così come tutti quelli che vengono usati in pratica, sono zero-stabili.
+\begin{theorem}
+Consideriamo un metodo lineare a più passi~\eqref{linearmultistep}. Supponiamo che il metodo sia zero-stabile, e che la soluzione $\y(t)$ sia una funzione di classe $\mathcal{C}^{p+1}$. Allora, un metodo consistente di ordine $p$, con inizializzazione anch'essa consistente di ordine $p$, è convergente di ordine $p$.
+\end{theorem}
+La dimostrazione di questo risultato è complicata, quindi ci accontentiamo dell'enunciato. 
 
-%%
-% Tagliare questa parte, ed essere più vaghi in futuro su 0-stabilità e A-stabilità dei metodi a più passi?
-%%
+\paragraph{A-stabilità}
 
-\paragraph{Equazioni alle differenze}
+Come nel caso dei metodi a un passo, la sola convergenza non esclude che per valori piccoli e finiti di $h$ ci possa essere una divergenza catastrofica. Possiamo studiare la A-stabilità dei metodi a più passi, esattamente nello stesso modo in cui abbiamo affrontato quelli a un passo; questo ci darà informazioni su quali metodi sono adatti per problemi stiff.
 
-Consideriamo innanzitutto cosa succede applicando il metodo a più passi al problema (scalare, $m=1$) $y'=0$, con condizioni iniziali $y_0,y_1,\dots,y_{s-1}$ qualunque. La successione delle $y_i$ allora soddisfa la relazione
+Applicando il metodo~\eqref{linearmultistep} al problema test~\eqref{testproblem}, otteniamo
+\begin{equation} \label{multistep-test}
+    \sum_{j=0}^s (\alpha_j - \underbrace{\lambda h}_{:=q} \beta_j) \y_{k+j} = 0.    
+\end{equation}
+Analogamente a quanto richiesto per i metodi a un passo, $\lambda$ e $h$ compaiono in questa formula solo tramite il loro prodotto $q=h\lambda$. Una volta fissato un valore di $q$, la~\eqref{multistep-test} ci dà una relazione tra i valori di $\y_k, \y_{k+1},\dots,\y_{k+s}$, da cui possiamo ricavare $\y_{k+s}$ noti tutti i valori precedenti. I valori generati dal metodo quindi sono determinati univocamente a patto di conoscere $\y_0,\y_1,\dots,\y_{s-1}$.
+
+La \emph{regione di stabilità} di un metodo lineare a più passi è definita come l'insieme dei valori $q\in\mathbb{C}$ per cui tutte le successioni generate dalla~\eqref{multistep-test} convergono a zero, \emph{per ogni scelta} dei valori iniziali $\y_0,\y_1,\dots,\y_{s-1}$. Questa volta è più complicato ricavare dalla~\eqref{multistep-test} una formula esplicita per gli $\y_k$; non si tratta semplicemente delle potenze di una funzione $R(q)$. Vedremo nella prossima sezione come farlo.
+
+Analogamente al caso dei metodi a un passo, un metodo si dice \emph{A-stabile} se la sua regione di stabilità contiene tutto il semipiano sinistro, in modo che le approssimazioni generate dal metodo abbiano lo stesso comportamento qualitativo della soluzione esatta del problema test $y(t) = e^{\lambda t}$, che converge a zero quando $\operatorname{Re}(\lambda) < 0$. Vedremo più avanti un modo più esplicito di determinare queste regioni di stabilità.
+
+\paragraph{Barriere di Dahlquist} Anche in questo caso la A-stabilità è una condizione molto stringente, che in particolare esclude tutti i metodi espliciti. Questo è dimostrato in un teorema che contiene una serie di risultati noti come ``barriere di Dahlquist''.
+\begin{theorem} Valgono i seguenti risultati.
+\begin{itemize}
+    \item Non esistono metodi lineari a più passi \emph{espliciti} A-stabili.
+    \item I metodi lineari a più passi \emph{impliciti} A-stabili hanno ordine $p \leq 2$.
+    \item Tra i metodi lineari a più passi A-stabili impliciti di ordine $p=2$, quello per cui l'errore converge a zero più velocemente è il metodo dei trapezi.
+\end{itemize}
+\end{theorem}
+Quindi nessun metodo lineare a più passi A-stabile migliora in termini di accuratezza il metodo dei trapezi (che in realtà è a un passo, $s=1$). Una famiglia di metodi (quelli BDF) in realtà si avvicina molto ad essere A-stabile, visto che le loro regioni di stabilità includono tutto il semipiano negativo tranne una regione molto piccola\footnote{Queste regioni di stabilità sono raffigurate per esempio su~\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. Questi metodi sono tra quelli più usati per problemi stiff.
+
+\section{Equazioni alle differenze e applicazioni ai metodi a più passi (*)}
+
+In questa sezione, vogliamo studiare la teoria delle \emph{equazioni alle differenze}, un analogo di quella delle equazioni differenziali lineari che avete già visto nei corsi di analisi. Questa teoria ci permetterà di essere più precisi sulle condizioni di stabilità dei metodi lineari a più passi.
+
+Consideriamo innanzitutto cosa succede applicando un metodo a più passi al problema (scalare, $m=1$) $y'=0$, con condizioni iniziali $y_0,y_1,\dots,y_{s-1}$ qualunque. La successione delle $y_i$ allora soddisfa la relazione
 \begin{equation} \label{ricorrenza}
     \alpha_0 y_k + \alpha_1 y_{k+1} + \dots + \alpha_s y_{k+s} = 0, \quad k = 0,1,2,\dots.
 \end{equation}
@@ -6283,30 +6315,14 @@ Un metodo lineare a più passi si dice \emph{zero-stabile} se il suo primo polin
 
 Notiamo che $\alpha = 1$ è sempre una radice del primo polinomio caratteristico, per ogni metodo consistente: altrimenti è impossibile che si abbia $\boldsymbol{\tau}_k \to \mathbf{0}$, già solo considerando il problema $y'=0$.
 
-La zero-stabilità sembra un concetto di poco rilievo, visto che ci concentriamo su un problema molto facile e di poco interesse; in realtà ha una conseguenza importante, perché ci assicura che eventuali piccoli errori nei dati iniziali $\y_1,\dots,\y_{s-1}$ non causano errori più consistenti sulle iterate successive.
+La zero-stabilità sembra un concetto di poco rilievo, visto che ci concentriamo su un problema molto facile e di poco interesse; in realtà ha una conseguenza importante, perché ci assicura che piccole perturbazioni nei dati iniziali $\y_1,\dots,\y_{s-1}$ non causano errori molto più grandi sugli elementi successivi della successione. Questo è il motivo per cui compare tra le ipotesi del teorema di equivalenza di Dahlquist enunciato sopra.
 
-\paragraph{Teorema di equivalenza di Dahlquist}
-Possiamo ora enunciare un teorema di convergenza per i metodi a più passi.
-\begin{theorem}
-Consideriamo un metodo lineare a più passi~\eqref{linearmultistep}, con una scelta compatibile dei dati iniziali. Se il metodo è zero-stabile e consistente, allora è convergente. Inoltre, su un problema con soluzione $\y \in \mathcal{C}^{p+1}([a,b])$, se un metodo è consistente di ordine $p$ allora è anche convergente di ordine $p$.
-\end{theorem}
-La dimostrazione di questo risultato è complicata, quindi ci accontentiamo dell'enunciato. Le famiglie di metodi che vengono usate in pratica sono tutte zero-stabili.
-
-\paragraph{A-stabilità}
-
-Come nel caso dei metodi a un passo, la sola convergenza non ci dice nulla riguardo al passo $h$ che serve per avere un'approssimazione accettabile della soluzione. Possiamo quindi studiare la A-stabilità dei metodi a più passi, esattamente nello stesso modo in cui abbiamo affrontato quelli a un passo; questo ci dà informazioni su quali metodi sono adatti per problemi stiff.
-
-Applicando il metodo~\eqref{linearmultistep} al problema test~\eqref{testproblem}, otteniamo
-\begin{equation} \label{multistep-test}
-    \sum_{j=0}^s (\alpha_j - \underbrace{\lambda h}_{:=q} \beta_j) y_{s+j} = 0.    
-\end{equation}
-Analogamente a quanto richiesto per i metodi a un passo, vogliamo vedere per quali valori di $q$ le successioni generate dal metodo tendono a zero, in modo da replicare il comportamento della soluzione esatta $y(t) = e^{\lambda t}$ quando $\operatorname{Re}(\lambda) < 0$.
-
+\paragraph{Condizioni di A-stabilità}
 Fissato il valore di $q$, la~\eqref{multistep-test} è un'equazione alle differenze. Quindi, per il Teorema~\ref{thm:eq-differenze}, la successione generata converge a zero (per ogni scelta dei valori iniziali) quando tutte le radici del polinomio associato
 \[
 \pi_q(z) = \sum_{j=0}^s (\alpha_j - q\beta_j) z^j
 \]
-hanno modulo \emph{strettamente} minore di $1$. Il polinomio $\pi_q(z)$ (che dipende dal valore di $q$, che supponiamo fissato) si chiama \emph{polinomio di stabilità}; possiamo scriverlo come
+hanno modulo \emph{strettamente} minore di $1$. Il polinomio $\pi_q(z)$ dipende dal valore di $q$, che supponiamo fissato; esso si chiama \emph{polinomio di stabilità}; possiamo scriverlo come
 \[
 \pi_q(z) = p_1(z) - q p_2(z)
 \]
@@ -6314,11 +6330,10 @@ in termini del primo polinomio caratteristico (che già abbiamo incontrato) e de
 \[
 p_2(z) = \beta_0 + \beta_1 z + \dots + \beta_s z^s.
 \]
-Si dice \emph{regione di (assoluta) stabilità} di un metodo a più passi l'insieme
+Come conseguenza del Teorema~\ref{thm:eq-differenze}, possiamo quindi scrivere in una forma più esplicita la regione di assoluta stabilità di un metodo a più passi:
 \[
   S_A = \{q \in \mathbb{C} \colon \text{tutte le radici del polinomio $\pi_q(z)$ hanno modulo minore di $1$}\}.
 \]
-Un metodo a più passi si dice \emph{A-stabile} se $S_A$ contiene tutto il semipiano sinistro. 
 
 \paragraph{Esempio} Consideriamo di nuovo il problema~\eqref{ab2}. Il suo polinomio di stabilità è 
 \[
@@ -6326,15 +6341,7 @@ Un metodo a più passi si dice \emph{A-stabile} se $S_A$ contiene tutto il semip
 \]
 Possiamo calcolare le sue soluzioni (in funzione di $q$), ma la formula ottenuta non è particolarmente illuminante. È più interessante vedere cosa succede per qualche valore di $q$ fissato. Per $q=-1$, il polinomio diventa $\pi_{-1}(z) = z^2 - \frac12 q - \frac12$, che ha zeri $\lambda=-1$ e $\lambda=1/2$. Queste soluzioni \emph{non} sono entrambe minori di $1$, quindi $q=-1$ non appartiene alla regione di stabilità del metodo. (In particolare, questo ci dice anche che il metodo \emph{non} è A-stabile).
 
-\paragraph{Barriere di Dahlquist} Anche in questo caso la A-stabilità è una condizione abbastanza stringente, che in particolare esclude tutti i metodi espliciti. Questo è dimostrato in teorema che contiene una serie di risultati noti come ``barriere di Dahlquist''.
-\begin{theorem} Valgono i seguenti risultati.
-\begin{itemize}
-    \item Non esistono metodi lineari a più passi \emph{espliciti} A-stabili.
-    \item I metodi lineari a più passi \emph{impliciti} A-stabili hanno ordine $p \leq 2$.
-    \item Tra i metodi lineari a più passi A-stabili impliciti di ordine $p=2$, quello per cui l'errore converge a zero più velocemente è il metodo dei trapezi.
-\end{itemize}
-\end{theorem}
-Quindi nessun metodo lineare a più passi A-stabile migliora in termini di accuratezza il metodo dei trapezi (che in realtà è a un passo, $s=1$). Una famiglia di metodi (quelli BDF) in realtà si avvicina molto ad essere A-stabile, visto che le loro regioni di stabilità includono tutto il semipiano negativo tranne una regione molto piccola\footnote{Queste regioni di stabilità sono raffigurate per esempio su~\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. Questi metodi sono tra quelli più usati per problemi stiff.
+
 
 \section{Solutori di equazioni differenziali in Matlab}
 
@@ -6384,7 +6391,7 @@ Un esempio classico di problema stiff deriva dalla modellizzazione del sistema d
     B + C \stackrel{k_3}{\to} A + C.
 \end{cases}
 \]
-Qualitativamente, la prima e la terza reazione convertono la specie $A$ nella specie $B$ e viceversa, mentre la seconda reazione ``rimuove'' la specie $B$ dal sistema trasformandola irreversibilmente nella specie $C$. Quindi sul lungo periodo ci aspettiamo che le specie $A$ e $B$ vengano convertite interamente in $C$. Inoltre, la quantità totale $[A] + [B] + [C]$ è conservata.
+Qualitativamente, la prima e la terza reazione convertono la specie $A$ nella specie $B$ e viceversa, mentre la seconda reazione ``rimuove'' la specie $B$ dal sistema trasformandola irreversibilmente nella specie $C$. Quindi sul lungo periodo ci aspettiamo che le specie $A$ e $B$ vengano convertite interamente in $C$. Inoltre, la quantità totale $[A] + [B] + [C]$ (massa) è conservata.
 
 Il sistema di equazioni differenziali che fornisce la quantità delle tre specie presente rispetto al tempo è
 \[
