@@ -11,6 +11,7 @@
 
 \usepackage[italian]{babel}
 
+\usepackage{float}
 \usepackage{algorithm2e}
 \usepackage{booktabs}
 \usepackage{subcaption}
@@ -227,6 +228,7 @@ Vogliamo arrestare il metodo quando siamo sicuri di poter determinare il valore 
     b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
 \end{align*}
 Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
+\begin{figure}[H]
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
         \draw [very thick, ->] (0,0) -- (10,0);
@@ -243,6 +245,9 @@ Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza
         \fill[red] (7.5,0) node[above] {$\alpha$} circle (3pt);
     \end{tikzpicture}
 \end{center}
+\caption{Nella figura sopra, $\alpha$ è molto vicino a $a_n$, quindi $\abs{\alpha - b_n}$ è quasi uguale a $\ell$, la lunghezza dell'intervallo $[a_n,b_n]$. Nella figura sotto, invece, $\alpha$ è molto vicino a $b_n$, quindi $\abs{\alpha - a_n}$ è quasi uguale a $\ell$. In entrambi i casi, $\abs{\alpha-c_n}\leq \ell/2$.}
+\end{figure}
+
 Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
 \[
 \abs{c_n - \alpha} \leq \frac{b_0-a_0}{2^{n+1}}.
@@ -366,10 +371,10 @@ Notare che il primo punto è importante perché il metodo sia ben definito: altr
 
 \begin{proof}
 Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
-\[
+\begin{equation} \label{riduzione errore punto fisso}
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
-    \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)}.
-\]
+    \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)}.    
+\end{equation}
 (chiariremo tra poco cosa indica $\xi_k$.) Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
 
 Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che questa quantità sia minore di $1$, ma vogliamo dare un nome al massimo valore che può assumere. Definiamo $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (è composizione della funzione valore assoluto e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$), e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
@@ -381,7 +386,7 @@ Con questi ingredienti a disposizione, ora vogliamo dimostrare per induzione che
 Ricordandoci come è fatta una dimostrazione per induzione, dobbiamo dimostrare queste due cose:
 \begin{itemize}
     \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. 
-    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k \rho$; poiché $L<1$, si ha anche $L^k\rho < \rho$ e quindi $\abs{x_k - \alpha}<\rho$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Ma allora si ha, per il calcolo visto sopra, 
+    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Vogliamo usare la relazione~\eqref{riduzione errore punto fisso} per dimostrare che l'errore viene ridotto di un fattore $L$. Per questo, il punto delicato è dimostrare che $\xi_k \in I$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k \rho$; poiché $L<1$, si ha anche $L^k\rho < \rho$ e quindi $\abs{x_k - \alpha}<\rho$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Possiamo dunque scrivere usando la relazione~\eqref{riduzione errore punto fisso}
     \begin{equation} \label{fpindu2}
         \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k \rho = L^{k+1}\rho.
     \end{equation}  
@@ -1051,18 +1056,25 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
                 x_{n+1} = x_n - \frac{f(x_n)}{c}, \quad n=0,1,2,\dots.
             \end{cases}
         \]    
-    Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $4$. Visto che questo è un metodo di punto fisso, possiamo studiarne la convergenza con le tecniche che abbiamo visto; in particolare, per applicare i teoremi di convergenza è necessario scegliere $c$ in modo che $\abs{\Phi'(\alpha)} < 1$.
+    Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $4$. 
+    
+    Anche il metodo delle corde è un metodo di punto fisso, con $\Phi(x) = x - \frac{1}{c}f(x)$, quindi possiamo studiarne la convergenza locale con le tecniche che abbiamo visto: $\Phi'(x) = 1 - \frac{1}{c}f'(x)$, e per avere $\abs{\Phi'(\alpha)} < 1$ dobbiamo scegliere $c$ in modo che $f'(\alpha) \in (0,2c)$.
     \item[Metodo delle secanti] È l'iterazione che si ottiene rimpiazzando, nel metodo di Newton, $f'(x_n)$ con il rapporto incrementale calcolato sugli ultimi due punti,
     \[
     \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}.
     \]
-    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). Anche questo metodo converge localmente, e il suo di convergenza è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$ (non lo dimostriamo, è più complesso: difatti non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti). Per applicarlo, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$:
+    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). 
+    
+    Per applicare il metodo delle secanti, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$:
     \[
     \begin{cases}
         \text{$x_0$, $x_1$ dati},\\
         x_{n+1} = x_n - \frac{f(x_n) (x_n - x_{n-1})}{f(x_n) - f(x_{n-1})}, \quad n=1,2,\dots.
     \end{cases}
     \]
+    Anche questo metodo converge localmente, e il suo ordine di convergenza (sotto opportune ipotesi sulla funzione) è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$. Non dimostriamo quest'ultimo risultato, che è più complesso: difatti questo non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti. 
+    
+
 \end{description}
 
 % [Note per lezione Matlab:
@@ -1332,7 +1344,7 @@ Per esempio, $x = -764.88888\dots$ (periodico) si scrive in base $\beta=10$ come
 \[
 x = - 10^3 (7\cdot 10^{-1} + 6\cdot 10^{-2} + 4\cdot 10^{-3} + 8 \cdot 10^{-4} + 8 \cdot 10^{-5} + 8 \cdot 10^{-6} + \dots)
 \]
-Terminologia: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria si chiama \emph{mantissa}.
+Terminologia: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
 
 Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ci soffermiamo un attimo sulle questioni di unicità.
 
