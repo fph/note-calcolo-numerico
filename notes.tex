@@ -7,7 +7,28 @@
 \usetikzlibrary{decorations.pathmorphing}
 
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily}
+
+\lstdefinestyle{matlab}{
+  language=Matlab, % Use Matlab syntax highlighting
+  basicstyle=\ttfamily\small, % Font style and size for the code
+  keywordstyle=\color{blue}\bfseries, % Style for keywords
+  commentstyle=\color{green!60!black}\itshape, % Style for comments
+  stringstyle=\color{purple}, % Style for strings
+  numbers=left, % Display line numbers on the left
+  numberstyle=\tiny\color{gray}, % Style of line numbers
+  stepnumber=1, % Line number increment
+  numbersep=10pt, % Space between line numbers and code
+  breaklines=true, % Line wrapping
+  breakatwhitespace=true, % Wrap lines only at whitespace
+  showspaces=false, % Don't display spaces
+  showstringspaces=false, % Don't display string spaces
+  tabsize=4, % Set tab width to 4 spaces
+  frame=single, % Put a frame around the listings
+  rulecolor=\color{gray}, % Frame color
+  backgroundcolor=\color{gray!10}, % Background color
+  morekeywords={matlabFunction,syms,ezplot}, % Add more MATLAB-specific keywords
+}
+\lstset{style=matlab}
 
 \usepackage[italian]{babel}
 
@@ -2056,13 +2077,13 @@ $e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} +
 
 Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\in\mathbb{C}^{n\times n}$ come prodotto $A=LU$, dove $L$ è una matrice triangolare inferiore con elementi tutti uguali a $1$ sulla diagonale, e $U$ è una matrice triangolare superiore. Vediamo ora un metodo che permette di calcolare una fattorizzazione LU di una matrice $A \in \mathbb{C}^{n\times n}$; questo algoritmo è sostanzialmente una variante dell'eliminazione di Gauss che avete già visto ad algebra lineare.
 
-\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss. Ce ne sono diverse varianti che si vedono ad algebra lineare, qui in particolare:
+\paragraph{Ripasso: l'eliminazione di Gauss} Ricordiamo come funziona l'eliminazione di Gauss. Ce ne sono diverse varianti che si vedono ad algebra lineare, qui in particolare ci concentriamo su una di esse:
 \begin{itemize}
-    \item Lavoriamo solo su una matrice quadrata $A\in\mathbb{C}^{n\times n}$, \emph{non} sulla cosiddetta ``matrice estesa'' $\begin{bmatrix}
+    \item Lavoriamo solo sulla matrice quadrata $A\in\mathbb{C}^{n\times n}$, \emph{non} sulla cosiddetta ``matrice estesa'' $\begin{bmatrix}
     A & \b
 \end{bmatrix}$;
-    \item Puntiamo a fare scambi di \emph{righe} (non colonne) per trasformare $A$ in forma \emph{triangolare superiore}; non procediamo a eliminare anche gli elementi sopra il pivot per trasformare $A$ in forma diagonale, come talvolta si fa (eliminazione di Gauss--Jordan).
-    \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero, in modo da ottenere una matrice triangolare superiore con elementi diversi da zero sulla triangolare principale.
+    \item Puntiamo a fare combinazioni lineari delle \emph{righe} (non colonne) per trasformare $A$ in forma \emph{triangolare superiore}; non vogliamo eliminare anche gli elementi sopra il pivot per trasformare $A$ in una matrice diagonale, come talvolta si fa (eliminazione di Gauss--Jordan).
+    \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero; in questo modo otterremo una matrice triangolare superiore con elementi diversi da zero sulla triangolare principale.
 \end{itemize}
 Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
@@ -2077,7 +2098,7 @@ U_k = \begin{bmatrix}
 \end{bmatrix}
 \]
 (abbiamo chiamato $(A_k)_{ij}$ gli elementi della matrice $A_k$).
-Nel $k$-esimo passo, introdurremo zeri anche nella $k$-esima colonna, ottenendo una nuova matrice 
+Nel $k$-esimo passo, andiamo a introdurre zeri anche nella $k$-esima colonna, costruendo una nuova matrice 
 \[
 U_{k+1} = \begin{bmatrix}
     \ast & \dots & \ast & \ast & \ast & \dots & \ast\\
@@ -2089,7 +2110,7 @@ U_{k+1} = \begin{bmatrix}
     0& 0  &0 & 0 & \ast & \dots & \ast\\
 \end{bmatrix}.
 \]
-Lo facciamo sottraendo ogni riga $i>k$ un opportuno multiplo della $k$-esima riga (\emph{moltiplicatore}), in modo da eliminare l'elemento in posizione $(i,k)$. Tale multiplo quindi dev'essere $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe rimangono invariate.
+Per ottenere $U_{k+1}$, sottraiamo da ogni riga $i>k$ di $U_k$ un opportuno multiplo (\emph{moltiplicatore}) della $k$-esima riga; visto che vogliamo eliminare l'elemento in posizione $(i,k)$, questo multiplo dev'essere scelto pari a $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe di $U_k$ rimangono invariate.
 
 \paragraph{Moltiplicatori}
 In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicatori usati ad ogni passo, andando a scriverli separatamente in una seconda matrice. Al primo passo, partiamo da una matrice $L_1 = I$ (vedremo poi perché partiamo dalla matrice identità); poi, ad ogni passo di eliminazione di Gauss, andiamo a scrivere il moltiplicatore $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$ nella posizione $i,k$ di questa matrice. In questo modo, per esempio per una matrice $4\times 4$,  ad ogni passo la struttura delle matrici ottenute è (indicando con $*$ gli elementi diversi da zero)
@@ -2142,7 +2163,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
     \end{bmatrix}.
     \end{array}
 \]
-Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_0 = 0$: gli uni sulla diagonale sono necessari per far valere queste uguaglianze. Per ora notiamo solo due casi particolari di questa uguaglianza: quando $k=1$, abbiamo l'uguaglianza (ovvia) $I \cdot A = A$; e all'ultimo passo abbiamo $L_n U_n = A$, che è esattamente la fattorizzazione LU che stiamo cercando: $L_n=L$ è triangolare inferiore con 1 sulla diabonale, $U_n=U$ è triangolare superiore.
+Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_1 = 0$: gli uni sulla diagonale sono necessari per far valere l'uguaglianza $L_k U_k = A$. Notiamo in particolare due casi di questa uguaglianza: quando $k=1$, abbiamo l'uguaglianza (ovvia) $I \cdot A = A$; e all'ultimo passo abbiamo $L_n U_n = A$, che è esattamente la fattorizzazione LU che stiamo cercando: $L_n=L$ è triangolare inferiore con 1 sulla diagonale, $U_n=U$ è triangolare superiore.
 
 % Quindi dopo il passo $k$ abbiamo
 % \begin{equation} \label{fattLU}
@@ -2187,7 +2208,7 @@ Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$, cioè il prodott
 % \]
 % è una matrice triangolare inferiore con $1$ sulla diagonale.
 
-\paragraph{Esempio} Vediamo ora un esempio.
+\paragraph{Esempio} Vediamo innanzitutto un esempio.
 % >> rng(0)
 \begin{lstlisting}
 >> A = rand(4, 4)
@@ -2234,7 +2255,7 @@ U4 =
          0         0   -0.0212    0.4791
          0         0         0   -2.4948
 \end{lstlisting}
-Andiamo ora a scrivere in una funzione una versione più generale del metodo. Andremo ad utilizzare due sole variabili, una che chiamiamo $U$ e che contiene $U_k$ ad ogni passo, e una che chiamiamo $L$, che inizialmente è uguale alla matrice identità, e in cui scriviamo di volta in volta (senza il segno meno) i moltiplicatori usati.
+Basandoci sull'esempio, andiamo ora a scrivere in una funzione una versione generale dell'algoritmo. Vogliamo utilizzare due sole variabili: una che chiamiamo $U$ e che contiene $U_k$ ad ogni passo, e una che chiamiamo $L$, che inizialmente è uguale alla matrice identità, e in cui scriviamo di volta in volta i moltiplicatori usati.
 \begin{lstlisting}
 function [L, U] = fattorizzazioneLU(A)
 
@@ -2252,9 +2273,9 @@ for k = 1:n-1
         error('Pivot nullo');
     end
     L(k+1:n, k) = U(k+1:n, k) / U(k, k);
-    % sappiamo che questi elementi diventano zero
+    % sappiamo che questi elementi devono diventare zero
     U(k+1:n, k) = 0;
-    % aggiorniamo le righe una ad una
+    % aggiorniamo le righe di U una ad una
     for i = k+1:n
         U(i, k+1:n) = U(i, k+1:n) - L(i,k)*U(k,k+1:n);
     end
@@ -2825,7 +2846,7 @@ if not(m == n)
 end
 if not(isequal(A, A'))
     % controlla che tutti gli elementi di A e A' siano uguali
-    error('A deve essere simmetrica);
+    error('A deve essere simmetrica');
 end
 
 L = eye(n);
