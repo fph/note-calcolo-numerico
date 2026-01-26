@@ -1350,11 +1350,11 @@ Se provate a implementare i metodi precedenti su un computer con Matlab, noteret
 
 \paragraph{Rappresentazione in base}
 
-Scegliamo un intero $\beta > 1$ che sarà la \emph{base} della nostra rappresentazione. Quella che segue è sostanzialmente la notazione scientifica che già conoscete.
+Scegliamo un intero $\beta > 1$ che sarà la \emph{base} della nostra rappresentazione. Questo teorema descrive la notazione scientifica che già conoscete:
 \begin{theorem}[rappresentazione scientifica in base $\beta$]
 Fissato un intero $\beta > 1$ (la \emph{base}), ogni numero reale $x\neq 0$ si può scrivere come
 \begin{equation} \label{rapprbase}
-    x = \pm \beta^p \sum_{i=1}^\infty c_i \beta^{-i},   
+    x = \pm \beta^p \sum_{i=0}^\infty c_i \beta^{-i},
 \end{equation}
 dove i $c_i$ (\emph{cifre}) sono interi $0 \leq c_i < \beta$.
 
@@ -1362,60 +1362,61 @@ Questa scrittura è unica se aggiungiamo le condizioni che $c_1 \neq 0$, e che $
 \end{theorem}
 Per esempio, $x = -764.88888\dots$ (periodico) si scrive in base $\beta=10$ come
 \[
-x = - 10^3 (7\cdot 10^{-1} + 6\cdot 10^{-2} + 4\cdot 10^{-3} + 8 \cdot 10^{-4} + 8 \cdot 10^{-5} + 8 \cdot 10^{-6} + \dots)
+x = - 10^2 (7\cdot 10^{0} + 6\cdot 10^{-1} + 4\cdot 10^{-2} + 8 \cdot 10^{-3} + 8 \cdot 10^{-4} + 8 \cdot 10^{-5} + \dots)
 \]
+Questo è un modo più prolisso di scrivere la notazione scientifica che già conosciamo: $x= -7.6488888\ldots \cdot 10^{2}$.
+
 Terminologia: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
 
-Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ci soffermiamo un attimo sulle questioni di unicità.
+Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ci soffermiamo un attimo sulle condizioni di unicità.
 
 La prima condizione $c_1 \neq 0$ serve a escludere scritture alternative con zeri iniziali, per esempio
 \[
--764.88888 = - 10^5 (0 \cdot 10^{-1} + 0 \cdot 10^{-2} + 7\cdot 10^{-3} + 6\cdot 10^{-4} + 4\cdot 10^{-5} + \dots)
+-764.88888 = - 10^4 (0 \cdot 10^0 + 0 \cdot 10^{-1} + 7\cdot 10^{-2} + 6\cdot 10^{-3} + 4\cdot 10^{-4} + \dots) = -10^4 \cdot 0.07648\dots
 \]
-Questa rappresentazione senza zeri iniziali si chiama \emph{normalizzata}.
+La rappresentazione senza zeri iniziali si chiama \emph{normalizzata}.
 
-La seconda è per escludere scritture come $0.999999\dots$ (periodico): se vi ricordate come si sommano le serie, questa scrittura è uguale a 1, ed è un modo diverso di scriverlo che vogliamo escludere.
+La seconda condizione esclude scritture come $0.999999\dots$ (periodico): se vi ricordate come si sommano le serie, $9\cdot 10^{-1}+9\cdot 10^{-2} + 9\cdot 10^{-3}+\dots$ è uguale a 1; quindi $0.999999\dots$ è un modo diverso di scrivere il numero 1 che vogliamo escludere.
 
 \paragraph{Numeri di macchina}
 Su un computer, possiamo rappresentare solo una quantità finita di numeri.
 \begin{definition}
     L'insieme dei \emph{numeri di macchina (o floating-point) normalizzati}, $\mathbb{F}(\beta, t, m, M)$ è l'insieme dei numeri della forma
     \[
-        \pm \beta^p \sum_{i=1}^t c_i \beta^{-i}, \quad p \in \{m, m+1, \dots, M\}  
+        \pm \beta^p \sum_{i=0}^{t-1} c_i \beta^{-i}, \quad p \in \{m, m+1, \dots, M\}  
     \]
 \end{definition}
-Ci sono due grossi cambiamenti rispetto alla~\eqref{rapprbase}: $t$ cifre (anziché infinite) nella mantissa, e un range finito per gli esponenti, da $m$ a $M$.
+Ci sono due grossi cambiamenti rispetto alla~\eqref{rapprbase}: abbiamo $t$ cifre (anziché infinite) nella mantissa, e un insieme finito per gli esponenti, da $m$ a $M$.
 
-\paragraph{Esempio} Prendiamo i numeri di macchina costruiti con $\beta=10$, $t=2$, $m=-3$, $M=3$.
+\paragraph{Esempio} Prendiamo i numeri di macchina costruiti con $\beta=10$, $t=3$, $m=-2$, $M=3$.
 
-Il numero di macchina positivo più piccolo è $10^{-3}(1 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.00010$. I numeri di macchina successivi sono:
-
-si ottengono incrementando le cifre: $0.00011, 0.00012, \dots, 0.00099$. Difatti numeri intermedi, ad esempio $0.000101$, non si possono scrivere con sole due cifre più un esponente. A questo punto abbiamo elencato tutti i numeri con esponente $-3$; il numero di macchina ancora successivo ha esponente $-2$: $10^{-2}(1 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.0010$. Si prosegue in questo modo, ottenendo
+Il numero di macchina positivo più piccolo è $10^{-2}(1 \cdot 10^{0} + 0 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.0100$. I numeri di macchina successivi si ottengono incrementando le cifre: $0.0101, 0.0102, \dots, 0.0999$. Altri numeri compresi tra due di questi, ad esempio $0.01005$, non si possono scrivere con sole $t=3$ cifre significative. A questo punto abbiamo elencato tutti i numeri con esponente $-2$; il numero di macchina ancora successivo è un numero con esponente $-1$: precisamente, $10^{-1}(1 \cdot 10^{0} + \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.100$. Si prosegue in questo modo, ottenendo
 \begin{align*}
-    &0.00010, 0.00011, 0.00012, \dots, 0.00099 & & \text{esponente $p=-3$}\\
-    &0.0010, 0.0011, 0.0012, \dots, 0.0099 & & \text{esponente $p=-2$}\\
-    &0.010, 0.011, 0.012, \dots, 0.099 & & \text{esponente $p=-1$}\\
-    &0.10, 0.11, 0.12, \dots, 0.99 & & \text{esponente $p=0$}\\
-    &1.0, 1.1, 1.2, \dots, 9.9 & & \text{esponente $p=1$}\\
-    &10, 11, 12, \dots, 99 & & \text{esponente $p=2$}\\
-    &100, 110, 120, \dots, 990 & & \text{esponente $p=3$}\\
+    &0.0100, 0.0101, 0.0102 \dots, 0.0999 & & \text{esponente $p=-2$}\\
+    &0.100, 0.101, 0.102 \dots, 0.999 & & \text{esponente $p=-1$}\\
+    &1.00, 1.01, 1.02, \dots, 9.99 & & \text{esponente $p=0$}\\
+    &10.0., 10.1, 10.2, \dots, 99.9 & & \text{esponente $p=1$}\\
+    &100, 101, 102, \dots, 999 & & \text{esponente $p=2$}\\
+    &1000, 1010, 1020, \dots, 9990 & & \text{esponente $p=3$}\\
 \end{align*}
-L'elenco che abbiamo fatto qui sopra quindi riporta tutti i numeri di macchina normalizzati positivi dell'insieme $\mathbb{F}(10, 2, -3, 3)$. A questi vanno aggiunti quelli negativi, che sono gli stessi ma con un segno meno davanti.
+L'elenco che abbiamo fatto qui sopra contiene tutti i numeri di macchina normalizzati positivi dell'insieme $\mathbb{F}(10, 3, -2, 3)$. A questi vanno aggiunti quelli negativi, che sono gli stessi ma con un segno meno davanti.
 
-Notiamo che i numeri con esponente $-3$ hanno distanza $10^{-5}$ l'uno dal successivo; i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal successivo, fino ai numeri con esponente $3$ che hanno distanza $10$.
+Notiamo che i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal successivo; i numeri con esponente $-1$ hanno distanza $10^{-3}$ l'uno dal successivo, fino ai numeri con esponente $3$ che hanno distanza $10$.
 
 \begin{esercizio}
-    Qual è il più piccolo intero positivo che \emph{non} appartiene all'insieme $\mathbb{F}(10, 2, -3, 3)$ riportato qui sopra?
+    Qual è il più piccolo intero positivo che \emph{non} appartiene all'insieme $\mathbb{F}(10, 3, -2, 3)$ riportato qui sopra?
 \end{esercizio}
-    
-Se segniamo sulla retta reale i numeri di macchina quindi vediamo che i numeri più vicini allo zero ($p$ piccolo) hanno uno spazio minore tra l'uno e l'altro; non sono equispaziati. Vedremo però che queste spaziature variabili sono proprio quello che consente una buona approssimazione relativa.
 
-Se $x$ è un numero di macchina, anche $-x$ lo è; quindi per enunciare le proprietà successive ci restringiamo ai numeri positivi; sono valide anche per numeri negativi, ed è facile adattare le dimostrazioni.
+Quindi i numeri di macchina non sono equispaziati: i numeri più vicini allo zero (con $p$ piccolo) hanno una spaziatura minore tra l'uno e l'altro. Vedremo che queste spaziature variabili sono proprio quello che consente un'approssimazione con un errore \emph{relativo} basso.
 
 \paragraph{Numero di macchina più piccolo, più grande, successivo}  
-Il numero (positivo) più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte cifre $\beta-1$.
+Il numero positivo più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte cifre $\beta-1$.
 
-Dato un numero di macchina normalizzato positivo $x = \beta^p \sum_{i=1}^t c_i \beta^{-i}$, il numero di macchina immediatamente successivo è quello che si ottiene aggiungendo $1$ all'ultima cifra, cioè $x + \beta^{p-t}$. Questo è chiaro se l'ultima cifra è diversa da $\beta-1$; se l'ultima cifra è $\beta-1$, aggiungendo 1 all'ultima cifra ci sono dei riporti, e la mantissa del risultato potrebbe avere $t+1$ cifre; però l'ultima cifra è $0$ e quindi si può omettere.
+Dato un numero di macchina normalizzato positivo 
+\[
+x = \beta^p \left(c_0 \beta^0 + c_1 \beta^1 + \ldots + c_{t-1} \beta^{-(t-1)} \right),
+\]
+il numero di macchina immediatamente successivo è quello che si ottiene aggiungendo $1$ all'ultima cifra $c_{t-1}$, cioè $x + \beta^{p-(t-1)}$. Questo è chiaro se l'ultima cifra è diversa da $\beta-1$; se l'ultima cifra è $\beta-1$, aggiungendo 1 all'ultima cifra ci sono dei riporti: ad esempio, aggiungendo $0.0001$ a $0.0999$ otteniamo $0.1000$. Quando si hanno questi riporti, però, l'ultima cifra è sempre $0$, quindi siamo sempre in grado di scrivere questo numero $x + \beta^{p-(t-1)}$ come un numero di macchina, eventualmente cambiando esponente.
 
 \paragraph{Approssimazione con numeri di macchina}
 
@@ -1425,13 +1426,15 @@ Dato un numero di macchina normalizzato positivo $x = \beta^p \sum_{i=1}^t c_i \
 \end{equation}
 \end{theorem}
 \begin{proof}
-Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio). Allora $x$ è compreso tra due numeri di macchina successivi, chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$. Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x \in (\underline{x}, \overline{x})$, si ha 
+Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Allora $x$ è compreso tra due numeri di macchina successivi, chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} 7.64$.
+
+Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x$ e $\tilde{x}$ sono entrambi compresi nell'intervallo $(\underline{x}, \overline{x})$, si ha 
 \begin{equation}
-    \tilde{x}-x < \overline{x} - \underline{x} = \beta^{p-t}.
+    \abs{\tilde{x}-x} < \overline{x} - \underline{x} = \beta^{p-(t-1)}.
 \end{equation}
 Inoltre, visto che la prima cifra di $x$ è almeno $1$ e le altre sono positive o nulle,
 \begin{equation}
-    x \geq \beta^{p-1}.
+    x \geq \beta^{p}.
 \end{equation}
 Dividendo membro a membro queste due disuguaglianze (notare che i versi sono quelli giusti per farlo!) si ha la tesi.
 \end{proof}
@@ -1441,28 +1444,30 @@ Data un'approssimazione $\tilde{x}$ di un numero reale $x \neq 0$, il suo \emph{
 \begin{equation} \label{relerr}
     \varepsilon = \frac{\tilde{x}-x}{x}.    
 \end{equation}
-È un tipo di errore naturale da considerare: l'errore assoluto $\abs{\tilde{x}-x}$ da solo non dice nulla: possiamo fare degli esempi dalla vita reale di errori su lunghezze e prezzi. Per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non vuol dire nulla: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
+È un tipo di errore naturale da considerare: l'errore assoluto $\tilde{x}-x$ da solo non dice nulla: possiamo fare degli esempi dalla vita reale di errori su lunghezze e prezzi. Per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non vuol dire nulla: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
 
-Possiamo riscrivere la~\eqref{relerr} come $\tilde{x} = x(1+\varepsilon)$. Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (\emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
+Possiamo riscrivere la~\eqref{relerr} come $\tilde{x} = x(1+\varepsilon)$. Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (detta \emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
 
 \paragraph{Valori non normalizzati}
 Su un computer, una variabile può assumere anche alcuni valori speciali, oltre ai numeri di macchina visti sopra:
 \begin{itemize}
-    \item Lo zero (difficile fare senza, e non è un numero normalizzato!)
+    \item Lo zero: difficile fare senza, e non è un numero normalizzato!
     \item $+\infty, -\infty, -0$: vengono aggiunti, con regole aritmetiche ispirate dall'analisi come $1/-\infty = -0$, per far sì che gli algoritmi possano funzionare anche in alcuni casi limite.
     \item \texttt{NaN}, che viene restituito come una sorta di codice d'errore da alcune operazioni non valide come $0/0$ e $\infty-\infty$.
     \item Alcuni numeri in più compresi tra $0$ e $\omega$, chiamati \emph{numeri denormalizzati}; non ci interessano qui.
 \end{itemize}
 
 \paragraph{Numeri a doppia precisione}
-Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene rappresentato in 64 bit (=valori 0/1). Con questi valori ogni numero compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ viene rappresentato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
+Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene memorizzato in 64 bit (=valori~0 oppure~1). Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
-C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha precisione di macchina $\mathsf{u}\approx 10^{-8}$. Quindi gli errori relativi sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno).
+C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha precisione di macchina $\mathsf{u}\approx 10^{-8}$. Con questo formato gli errori relativi sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno).
 
 Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì il numero in base 2
-\[
-\tilde{x} = 0.010011001100110011001100110011001100110011001100110011
-\]
+\begin{align*}
+    \tilde{x} &= 0.010011001100110011001100110011001100110011001100110011    \\
+    &= 2^{-2} \cdot \underbrace{1.0011001100110011001100110011001100110011001100110011}_{\text{53 cifre binarie nella mantissa}}
+\end{align*}
+
 cioè, in base 10,
 \[
 \tilde{x} = 0.2\underbrace{999999999999999}_{\text{15 volte 9}}88897769753748434595763683319091796875,
@@ -1470,7 +1475,7 @@ cioè, in base 10,
 che ha un errore relativo $\abs{\tilde{x}- 0.3} / 0.3$ minore di $\mathsf{u} = 
 2.2 \cdot 10^{-16}$, come promesso dal Teorema~\ref{th:precmacchina}.
 
-Un buon sito che potete usare per fare qualche esperimento è \url{https://www.exploringbinary.com/floating-point-converter/}.
+Un buon sito che potete usare per visualizzare lo sviluppo in base 2 dei numeri e fare qualche esperimento è \url{https://www.exploringbinary.com/floating-point-converter/}.
 
 \paragraph{Operazioni di macchina}
 
@@ -1481,33 +1486,34 @@ Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}
 
 \paragraph{Underflow/overflow} Ci sono due casi particolari da citare: eseguendo operazioni con numeri di macchina, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
-\begin{esercizio} \label{ese: miscellanea numeri di macchina}
-Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=2, m=-3, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando al numero di macchina più vicino)? 
+Vediamo qui sotto alcuni esempi interessanti del risultato di operazioni di macchina.
+\begin{esempio} \label{ese: miscellanea numeri di macchina}
+Consideriamo di nuovo il sistema di numerazione con $\beta=10, t=3, m=-2, M=3$. Qual è il risultato delle seguenti operazioni (arrotondando sempre al numero di macchina più vicino)? 
 \begin{itemize}
-    \item $1 \ominus 0.001$;
+    \item $100 \ominus 0.01$;
     \item $1.01 \ominus 1.01$;
-    \item $(0.71 \oplus 0.044) \oplus 1$;
-    \item $0.71 \oplus (0.044 \oplus 1)$;
+    \item $(7.24 \oplus 0.04) \oplus 10$;
+    \item $7.24 \oplus (0.04 \oplus 10)$;
     \item $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3)$;
-    \item $500 \oplus 500$; 
-    \item $0.001 \odot 0.001$;
+    \item $5000 \oplus 5000$; 
+    \item $0.01 \odot 0.01$;
     \item $50 \oplus 0.01$.
 \end{itemize}
-\end{esercizio}
-Soluzioni:
+\end{esempio}
+Le risposte sono queste:
 \begin{itemize}
-    \item $1 \ominus 0.001$ è il numero di macchina più vicino al risultato esatto $1 - 0.001 = 0.999$, cioè $1$.
-    \item $1.01 \ominus 1.01$ è il numero di macchina più vicino  al risultato esatto $1.01-1.01 = 0$, cioè $0$ stesso.
-    \item Il risultato di $0.71 \oplus 0.044$ è il numero di macchina più vicino a $0.71+0.044 = 0.754$, cioè $0.76$. Il risultato di $ 0.76\oplus 1$ è $1.8$.
-    \item Ora dobbiamo fare le operazioni in ordine diverso, in base alle parentesi. Il risultato di $0.044 \oplus 1$ è il numero di macchina più vicino a $1.044$, cioè $1$. Il risultato di $0.71\oplus 1$ è il numero di macchina più vicino a $1.71$, cioè $1.7$. È interessante notare come fare le operazioni in ordine diverso produce risultati diversi: per l'operazione $\oplus$ non vale sempre la proprietà associativa!
-    \item $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3) = 0.33 \oplus 0.33 \oplus 0.33 = 0.99$, che è diverso dal risultato esatto $1/3 + 1/3 + 1/3 = 1$.
-    \item $500 \oplus 500 = +\infty$, visto che il risultato esatto supera il più grande numero di macchina $\Omega = 990$.
-    \item $0.001 \odot 0.001 = 0$, visto che il risultato esatto $0.001 \cdot 0.001 = 10^{-6}$ è più piccolo del più piccolo numero di macchina positivo $\omega = 0.0001$.
+    \item $100 \ominus 0.01$ è il numero di macchina più vicino al risultato esatto $99.99$, cioè $100$ stesso.
+    \item $1.01 \ominus 1.01$: poiché $1.01-1.01 = 0$, viene restituito $0$.
+    \item Il risultato di $7.24 \oplus 0.04$ è il numero di macchina più vicino a $7.24+0.04 = 7.28$, cioè $7.28$. Il risultato di $ 7.28\oplus 10$ è il numero di macchina più vicino a $17.28$, cioè $17.3$.
+    \item Ora dobbiamo fare le operazioni in ordine diverso. Il risultato di $10 \oplus 0.04$ è il numero di macchina più vicino a $10.04$, cioè $10$. Il risultato di $7.24\oplus 10$ è il numero di macchina più vicino a $17.24$, cioè $17.2$. È interessante notare che l'ordine diverso produce risultati diversi: per l'operazione $\oplus$ non vale sempre la proprietà associativa!
+    \item $(1 \oslash 3) \oplus (1 \oslash 3) \oplus (1 \oslash 3) = 0.333 \oplus 0.333 \oplus 0.333 = 0.999$, che è diverso dal risultato esatto $1/3 + 1/3 + 1/3 = 1$.
+    \item $5000 \oplus 5000 = +\infty$, visto che il risultato esatto $10000$ supera il più grande numero di macchina $\Omega = 9990$ (un esempio di overflow).
+    \item $0.01 \odot 0.01 = 0$, visto che il risultato esatto $0.01 \cdot 0.01 = 10^{-4}$ è più piccolo del più piccolo numero di macchina positivo $\omega = 0.01$ (un esempio di underflow).
 \end{itemize}
 
 
 
-\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi che sono rappresentabili esattamente (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Alla fine il sistema dei numeri di macchina è quello che si è affermato negli anni come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
+\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
 
 \chapter{Analisi dell'errore}
 
@@ -1660,6 +1666,12 @@ Consideriamo di nuovo la funzione
     f(x) = \frac{x}{1-x} = 1 - \frac{1}{1-x}.
 \]
 Le due espressioni equivalenti conducono a due algoritmi diversi per calcolare questa funzione: $\tilde{f}_A(x) = x \oslash (1 \ominus x)$, e $\tilde{f}_B(x) = 1 \ominus \left(1\oslash (1\ominus x)\right)$. Calcolando l'errore di macchina nei due casi [CALCOLO], è possibile vedere che $\tilde{f}_A(x)$ è un algoritmo stabile, mentre $\tilde{f}_B(x)$ no.
+
+\paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno notato che in alcuni casi queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, specialmente di alcuni pixel. Facendo piccole modifiche ben mirate, come quelle rappresentate nell'immagine qui sotto (\href{https://picryl.com/media/trouble-at-the-halt-4d8cc6}{fonte}), è possibile fare sì che l'immagine venga riconosciuta come un altro segnale stradale. Questo mal condizionamento può aveere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{trouble-at-the-halt-4d8cc6.jpg}
+\end{center}
+
 
 \chapter{Equazioni lineari e autovalori}
 
