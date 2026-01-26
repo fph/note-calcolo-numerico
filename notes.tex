@@ -307,7 +307,7 @@ Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in
         \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
     \end{tikzpicture}
 \end{center}
-È utile cercare di avere un criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti dalla funzione possono variare molto a seconda delle applicazioni: se la funzione di cui cerchiamo uno zero ha a che vedere con le distanze tra gli atomi di una molecola, per esempio, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
+È utile cercare di avere un criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti dalla funzione possono variare molto a seconda delle applicazioni: se la funzione $f$ per esempio misurasse le distanze tra gli atomi di una molecola, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
 
 Ci manca ancora un ingrediente per completare questo criterio di arresto. Il valore di $f(c_k)$ viene calcolato lungo l'algoritmo, ma $f'(c_k)$ no, e calcolarlo può essere molto più complicato. Possiamo però rimpiazzarlo con un'altra approssimazione: se $c_k \in [a_k, b_k]$, allora
 \[
@@ -364,7 +364,7 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
 \[
     I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\} = [\alpha-\rho, \alpha + \rho].
 \]
-La situazione è simile a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che ora le cose che ci interessano di più sono il centro e il raggio.
+La situazione è simile a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che ora le quantità che ci interessano di più sono il centro e il raggio.
 
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
@@ -393,9 +393,9 @@ Notare che il primo punto è importante perché il metodo sia ben definito: altr
 Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
 \begin{equation} \label{riduzione errore punto fisso}
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
-    \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)}.    
+    \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)},
 \end{equation}
-(chiariremo tra poco cosa indica $\xi_k$.) Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
+per un certo punto $\xi_k$. Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
 
 Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che questa quantità sia minore di $1$, ma vogliamo dare un nome al massimo valore che può assumere. Definiamo $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (è composizione della funzione valore assoluto e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$), e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
 
@@ -427,7 +427,7 @@ si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che
 \end{esempio} 
 
 \begin{esempio}
-Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come punto fisso $x=\sqrt[3]{2}$. Questa volta si ha $\Phi'(x) = -\frac{4}{x^3}$, quindi $\Phi'(\alpha) = -2$. Non riusciremo mai a trovare un intervallo in cui applicare il teorema, perché già nel centro dell'intervallo non abbiamo $\abs{\Phi'(x)}< 1$. Si può difatti vedere che il metodo di punto fisso con questa funzione non converge ad $\alpha$, anzi, anche se partiamo da un $x_0$ molto vicino ad $\alpha$ (ma diverso da esso) le iterate si allontanano sempre di più.
+Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come punto fisso $x=\sqrt[3]{2}$. Questa volta si ha $\Phi'(x) = -\frac{4}{x^3}$, quindi $\Phi'(\alpha) = -2$. Non riusciremo mai a trovare un intervallo in cui applicare il teorema, perché già nel punto $\alpha$ che deve essere il centro dell'intervallo non vale la relazione $\abs{\Phi'(x)}< 1$. Si può difatti vedere che il metodo di punto fisso con questa funzione non converge ad $\alpha$: anche partendo da un $x_0$ molto vicino ad $\alpha$ (ma diverso da esso) le iterate si allontanano da esso.
 \end{esempio}
 
 
@@ -771,7 +771,7 @@ In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a 1, ne
 \[
 \lim_{n \to \infty} \frac{\abs{x_{n+1} - \alpha}}{\abs{x_n - \alpha}} = \lim_{n\to\infty} \abs{\Phi'(\xi_n)} = \abs{\Phi'(\alpha)} \in [0,1).
 \]
-L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre dobbiamo usare il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_n\to\alpha$ allora $\abs{\Phi'(\xi_n)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
+L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre usiamo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_n\to\alpha$ allora $\abs{\Phi'(\xi_n)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
 
 Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
 \[
@@ -792,7 +792,7 @@ Dall'esercizio precedente, ricaviamo che $r \geq 1$ può essere un'indicazione c
 
 \paragraph{Tasso di convergenza del metodo di bisezione}
 
-Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo questa definizione. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
+Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo la definizione~\eqref{tassoconv}. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
 
 Riusciamo però a dimostrare che $e_n \leq \varepsilon_n$, dove $\varepsilon_n$ è una successione che converge linearmente: difatti abbiamo visto che
 \[
