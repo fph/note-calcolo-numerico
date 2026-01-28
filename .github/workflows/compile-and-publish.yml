@@ -15,19 +15,19 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: notes.tex
-          compiler: lualatex
+          compiler: pdflatex
           args: -jobname=notes
       - name: Compile LaTeX document with jobname=notes-ich
         uses: xu-cheng/latex-action@v4
         with:
           root_file: notes.tex
-          compiler: lualatex
+          compiler: pdflatex
           args: -jobname=notes-ich
       - name: Compile LaTeX document with jobname=notes-inf
         uses: xu-cheng/latex-action@v4
         with:
           root_file: notes.tex
-          compiler: lualatex
+          compiler: pdflatex
           args: -jobname=notes-inf
       - name: Verify all PDF files exist
         run: |
