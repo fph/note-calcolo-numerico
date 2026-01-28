@@ -119,6 +119,7 @@
 \IfEndWith{\jobname}{\detokenize{notes}}{
 \NewDocumentEnvironment{conditional}{o}
     {%
+    \begingroup
     \cbstart
     \IfValueT{#1}{%
         \marginpar{\raggedright\footnotesize #1}%
@@ -126,18 +127,40 @@
     }
     {%
     \cbend
+    \endgroup
     }    
 }{}
 
 
 \begin{document}
-\maketitle
 
+\begingroup\let\newpage\relax\maketitle\endgroup
 
-
-Queste note sono pensate per fare da `scaletta' della lezione per il corso per me mentre tengo le lezioni, e non necessariamente per essere usate come dispense o documento a sé stante.
+Queste note sono nate per fare da `scaletta' per me mentre tengo le lezioni; sono anche a vostra disposizione per essere usate come dispense per lo studio.
 
 Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini. Dei Large Language Model (GPT 4.1 e GPT 5) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini.
+
+\bigskip
+
+Queste note vengono generate in versioni diverse (con più o meno argomenti) a seconda del corso di laurea a cui sono destinate. 
+
+\begin{conditional}[]
+    Quella che state leggendo è una versione completa che include tutte le parti opzionali. Le parti specifiche per un solo corso di laurea sono indicate con un'etichetta come qui sotto:
+\end{conditional}
+
+\medskip
+
+\begin{conditional}[inf]
+    Quella che state leggendo è la versione per il corso di laurea in \textbf{informatica}.
+\end{conditional}
+
+\medskip
+
+\begin{conditional}[ich]
+    Quella che state leggendo è la versione per il corso di laurea in \textbf{ingegneria chimica}.
+\end{conditional}
+
+
 
 \chapter{Motivazione}
 
@@ -2873,6 +2896,8 @@ Soluzione:
     \item Dalla fattorizzazione LU calcolata, abbiamo $\det A_\alpha = \det U = 1\cdot 1 \cdot \dots \cdot 1 \cdot (1-\alpha^n) = 1-\alpha^n$. Quindi il determinante si annulla se e solo se $\alpha$ è una radice $n$-esima complessa dell'unità. Notiamo che questo risultato è coerente con quanto visto sopra con il teorema dei cerchi di Gershgorin.
 \end{enumerate}
 
+\begin{conditional}[ich]
+
 \section{Fattorizzazioni per matrici simmetriche}
 
 \paragraph{Fattorizzazione $LDL^T$}
@@ -2987,6 +3012,7 @@ dove $R$ è una matrice triangolare superiore. Abbiamo quindi scritto $A$ come i
 
 Il costo computazionale di questa fattorizzazione è di nuovo di $\frac13n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come per la $LDL^T$, con il dettaglio che tra le operazioni da fare ci sono anche $n$ radici quadrate. In Matlab, questa fattorizzazione si può calcolare con il comando \lstinline{R = chol(A)}.
 
+\end{conditional}
 
 % \section{Laboratorio su LDL ed esistenza LU}
 
@@ -3632,7 +3658,7 @@ Questo metodo è più costoso del precedente: facendo un'analisi più accurata, 
 
 \paragraph{Soluzione tramite Matlab} In Matlab, risolvere un problema ai minimi quadrati~\eqref{minimiquadrati} è semplice: basta il comando \lstinline{A \ b}, lo stesso che avreste usato per risolvere il sistema lineare se $A$ fosse quadrata. Matlab usa il metodo più stabile basato sulla fattorizzazione QR.
 
-\chapter{Interpolazione, approssimazione, e integrazione numerica}
+\chapter{Interpolazione e approssimazione}
 
 \section{Approssimazione e interpolazione}
 
@@ -4413,9 +4439,10 @@ Se $m=n$, cioè se ho tanti punti quante funzioni incognite, questo è un sistem
 \end{align*}
 Queste sono, in un certo senso, le funzioni periodiche ``più semplici'' di periodo $2\pi$. Non vediamo i dettagli qui, ma è un approccio molto usato, e collegato alla cosiddetta \emph{trasformata di Fourier}, che forse avrete occasione di incontrare in futuro in altri corsi.
 
-\section{Formule di quadratura}
-
-In questa sezione consideriamo il problema di approssimare numericamente l'integrale di una funzione, $I = \int_a^b f(x) dx$. Questo problema si chiama \emph{integrazione numerica}, o \emph{quadratura}.
+\begin{conditional}[ich]
+    
+\chapter{Integrazione numerica}
+In questo capitolo consideriamo il problema di approssimare numericamente l'integrale di una funzione, $I = \int_a^b f(x) dx$. Questo problema si chiama \emph{integrazione numerica}, o \emph{quadratura}.
 
 Sappiamo dall'analisi che il problema di calcolare il valore di un integrale è un problema difficile: a differenza delle derivate, non ci sono delle formule da applicare meccanicamente ma soltanto una serie di tecniche che a volte funzionano e a volte no. Per questo diventa prezioso avere dei metodi numerici per approssimare la soluzione.
 
@@ -4467,6 +4494,9 @@ o genericamente
 \[
     x_k = a + kh, \quad k=0,1,2,\dots,n.
 \]
+
+\section{Metodi classici}
+
 \paragraph{Somme di Riemann}
 Nel definire l'integrale, probabilmente avete usato una strategia basata sul rimpiazzare l'area sotto la funzione con una somma di rettangoli, come nell'esempio seguente.
 \begin{center}
@@ -5004,7 +5034,8 @@ Quindi il trapezio in rosso ha area uguale all'integrale della funzione in blu. 
     \end{center}
 I due triangoli che abbiamo indicato con le lettere A e B sono uguali, quindi l'area del rettangolo in rosso coincide con l'integrale della funzione il cui grafico è il segmento di retta in blu.
 
-\paragraph{Formule di Newton--Cotes} Nela dimostrazione che abbiamo fatto per l'errore della formula dei trapezi, abbiamo interpretato il trapezio tracciato come un polinomio di interpolazione di $f$ di grado $d=1$. Questo suggerisce una generalizzazione: per approssimare un integrale, possiamo fare in questo modo:
+\section{Formule di Newton--Cotes}
+Nella dimostrazione che abbiamo fatto per l'errore della formula dei trapezi, abbiamo interpretato il trapezio tracciato come un polinomio di interpolazione di $f$ di grado $d=1$. Questo suggerisce una generalizzazione: per approssimare un integrale, possiamo fare in questo modo:
 \begin{itemize}
     \item Fissiamo un grado $d$;
     \item Suddividiamo l'intervallo $[a,b]$ in $d$ sottointervalli uguali, ottenendo punti $x_0,x_1,\dots,x_d$;
@@ -5123,6 +5154,11 @@ Per ogni scelta di $n$ quindi possiamo quindi trovare nodi e pesi $x_1,\dots,x_n
 x_1 = \frac{1}{\sqrt{3}} = 0.57735\dots, \quad x_2 = -\frac{1}{\sqrt{3}} = -0.57735\dots, w_1=w_2=1
 \]
 che sono i nodi e i pesi dell'unica formula di quadratura su $[-1,1]$ con due punti di ordine $4$, che fornisce il valore esatto dell'integrale su tutti i polinomi di grado minore o uguale a $3$. Con un cambio di variabile simile a quello visto sopra è possibile adattarle ad altri intervalli. Non essendo formule chiuse, tipicamente non vengono usate nella versione composita, ma sono particolarmente utili nella loro versione semplice (non composita), quando basta un'approssimazione dell'integrale con bassa precisione ma calcolabile con poche valutazioni di funzione.
+
+\end{conditional}
+
+
+\begin{conditional}[ich]
 
 \chapter{Equazioni differenziali ordinarie}
 
@@ -6524,5 +6560,7 @@ Osservazioni numeriche:
     \item Ci sono poche speranze con metodi ``semplici'' come Eulero esplicito o implicito.
     \item Possiamo anche calcolare lo Jacobiano del sistema e fornirlo come argomento a \lstinline{ode15s}.
 \end{itemize}
+
+\end{conditional}
 
 \end{document}
