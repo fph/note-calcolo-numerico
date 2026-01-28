@@ -145,7 +145,7 @@ Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispen
 Queste note vengono generate in versioni diverse (con più o meno argomenti) a seconda del corso di laurea a cui sono destinate. 
 
 \begin{conditional}[]
-    Quella che state leggendo è una versione completa che include tutte le parti opzionali. Le parti specifiche per un solo corso di laurea sono indicate con un'etichetta come qui sotto:
+    Quella che state leggendo è una versione completa che include \textbf{tutte le parti opzionali}. Le parti specifiche per un solo corso di laurea sono indicate con un'etichetta come qui sotto:
 \end{conditional}
 
 \medskip
@@ -1666,18 +1666,24 @@ La stima dell'errore che abbiamo effettuato è abbastanza lunga e macchinosa anc
 g(\tilde{x}) \doteq g(x) + \frac{\partial g(x)}{\partial x} (\tilde{x}-x).
 \]
 La differenza $\tilde{x}-x$ è uguale a $x(1+\varepsilon_x)-x = x\varepsilon_x$, e abbiamo ignorato (con la notazione $\doteq$) il termine che dipende da $(\tilde{x}-x)^2$, perché contiene il termine $\varepsilon_x^2$ e quindi è molto più piccolo. Allora otteniamo
+\begin{equation} \label{ampliferrore}
+    \frac{\tilde{\gamma} - \gamma}{\gamma} = \frac{g(\tilde{x})-g(x)}{g(x)} \doteq \frac{\frac{\partial g(x)}{\partial x} x\varepsilon_x}{g(x)}    
+\end{equation}
+Questa formula ci dice che quando calcoliamo una funzione $g(x)$ nel punto $\tilde{x}$ anziché $x$, l'errore relativo sul risultato $\frac{\tilde{\gamma}-\gamma}{\gamma}$ è uguale (al prim'ordine) a quello sul dato in ingresso
 \[
-\frac{\abs{\tilde{\gamma} - \gamma}}{\abs{\gamma}} = \frac{\abs{g(\tilde{x})-g(x)}}{\abs{g(x)}} \doteq \frac{\abs*{\frac{\partial g(x)}{\partial x} x\varepsilon_x}}{\abs{g(x)}}
+\varepsilon_x = \frac{\tilde{x}-x}{x}
 \]
-Questo calcolo ci dice che quando calcoliamo una funzione $g(x)$ nel punto $\tilde{x}$ anziché $x$, l'errore relativo sul dato in ingresso
+moltiplicato per un fattore
 \[
-\abs{\varepsilon_x} = \frac{\abs{\tilde{x}-x}}{\abs{x}}
+\frac{\partial g(x)}{\partial x}\frac{x}{g(x)}.
 \]
-viene ``amplificato'', cioè moltiplicato per un fattore
+Il valore assoluto di questa quantità, cioè
 \[
-\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}}.
+\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}\frac{x}{g(x)}}
 \]
-La quantità $\kappa_{g,x}$ viene detta \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Possiamo quindi riconoscere nel nostro esempio~\eqref{esempiox2y2} con $g(x) = f(x,y) = x^2-y^2$ che il coefficiente davanti a $\varepsilon_x$ è proprio
+viene detto \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Esso è una sorta di `fattore di amplificazione' dell'errore, che ci dice di quanto un errore cresce (o decresce) quando effettuiamo operazioni.
+
+Possiamo riconoscere nel nostro esempio~\eqref{esempiox2y2}, con $g(x) = f(x,y) = x^2-y^2$, che il coefficiente davanti a $\varepsilon_x$ è proprio
 \[
 \kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}} = \abs{2x} \frac{\abs{x}}{\abs{x^2-y^2}}.
 \]
@@ -1747,19 +1753,215 @@ Consideriamo di nuovo la funzione
 \]
 Le due espressioni equivalenti conducono a due algoritmi diversi per calcolare questa funzione: $\tilde{f}_A(x) = x \oslash (1 \ominus x)$, e $\tilde{f}_B(x) = 1 \ominus \left(1\oslash (1\ominus x)\right)$. Calcolando l'errore di macchina nei due casi [CALCOLO], è possibile vedere che $\tilde{f}_A(x)$ è un algoritmo stabile, mentre $\tilde{f}_B(x)$ no.
 
+
 \begin{conditional}[inf]
-\paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno notato che in alcuni casi queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, specialmente di alcuni pixel. Facendo piccole modifiche mirate, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può aveere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
+\paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno osservato che queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, e specialmente di alcuni pixel in posizione chiave. Facendo piccole modifiche mirate ai segnali, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può aveere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
 \begin{center}
     % public domain: https://picryl.com/media/trouble-at-the-halt-4d8cc6
     \includegraphics[width=0.5\textwidth]{trouble-at-the-halt-4d8cc6.jpg}
 \end{center}
 \end{conditional}
 
+\begin{conditional}[inf]
+\section{Grafi computazionali per l'analisi dell'errore}
+Mostriamo ora una tecnica per calcolare l'approssimazione al primo ordine dell'errore algoritmico basata sulla rappresentazione delle operazioni eseguite come un grafo. Rappresentiamo innanzitutto le operazioni da fare come un grafo in cui le frecce collegano gli \emph{input} di un'operazione ai suoi \emph{output}; per esempio qui sotto vediamo il grafo che rappresenta il calcolo della quantità $\frac{y}{x+y}$ a partire dai due input $x$, $y$.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$x + y$};
+  \node[draw, rectangle, below of=sum] (divide) {$\frac{y}{x+y}$};
+  
+  % Edges
+  \draw[->] (x) -- (sum);
+  \draw[->] (y) -- (sum);
+  \draw[->] (y) -- (divide);
+  \draw[->] (sum) -- (divide);
+\end{tikzpicture}
+\end{center}
+
+Quando memorizziamo i due input $x,y$ come numeri di macchina, commettiamo errori $\varepsilon_x, \varepsilon_y$, come visto sopra. Inoltre, i risultati delle due operazioni (somma e divisione) sono affetti da errori $\varepsilon_1,\varepsilon_2$. Disegniamo di nuovo il grafo, ma questa volta mettiamo in ogni nodo gli errori in cui incorriamo.
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$x + y$};
+  \node[draw, rectangle, below of=sum] (divide) {$\frac{y}{x+y}$};
+
+  \node[red, above=0mm] at (x.north) {$\varepsilon_x$};
+  \node[red, above=0mm] at (y.north) {$\varepsilon_y$};
+  \node[red, above=0mm] at (sum.north) {$\varepsilon_1$};
+  \node[red, above=0mm] at (divide.north) {$\phantom{asd}\varepsilon_2$};
+
+  % Edges
+  \draw[->] (x) -- (sum);
+  \draw[->] (y) -- (sum);
+  \draw[->] (y) -- (divide);
+  \draw[->] (sum) -- (divide);
+\end{tikzpicture}
+\end{center}
+Il punto chiave ora è capire come gli errori si propagano da un nodo all'altro del grafo. Concentriamoci sulla prima addizione. Essa ha come input $x$ e $y$, e come output $x+y$. La formula~\eqref{ampliferrore} ci dice che l'errore sull'input $x$  $\varepsilon_x$ causa un errore sul risultato della somma di
+\[
+    \frac{\partial (x+y)}{\partial x} \frac{x}{x+y} \varepsilon_x = 1 \cdot \frac{x}{x+y} \varepsilon_x.
+\]
+Similmente,
+\[
+    \frac{\partial (x+y)}{\partial y} \frac{y}{x+y} \varepsilon_y = 1 \cdot \frac{y}{x+y} \varepsilon_y.
+\]
+Scriviamo i due coefficienti di amplificazione dell'errore $\frac{x}{x+y}$ e $\frac{y}{x+y}$ sui lati del grafo che collegano il risultato della somma (output) ai suoi due input $x$ e $y$:
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$x+y$};
+  
+  \node[red, above=0mm] at (x.north) {$\varepsilon_x$};
+  \node[red, above=0mm] at (y.north) {$\varepsilon_y$};
+  \node[red, above=0mm] at (sum.north) {$\varepsilon_1$};
+
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$\frac{x}{x+y}$};
+  \draw[->] (y) -- (sum) node[midway, above] {$\frac{y}{x+y}$};
+\end{tikzpicture}
+\end{center}
+Questi due coefficienti rappresentano come l'errore si propaga lungo l'operazione da fare, in questo caso una somma. L'errore relativo totale sulla quantità calcolata $x+y$ quindi è dato dalla somma dell'errore effettuato sull'operazione stessa, $\varepsilon_1$, e dei due errori propagati dai due input, $\frac{x}{x+y}\varepsilon_x + \frac{y}{x+y}\varepsilon_y$. Scriviamo questi errori nel grafo, rimpiazzando i risultati delle operazioni in modo da non avere troppe formule.
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle, blue] (x) {$\varepsilon_x$};
+  \node[draw, rectangle, below of=x, blue] (y) {$\varepsilon_y$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm, blue] (sum) {$\frac{x}{x+y}\varepsilon_x + \frac{y}{x+y}\varepsilon_y+\varepsilon_1$};
+  
+  \node[red, above=0mm] at (x.north) {$\varepsilon_x$};
+  \node[red, above=0mm] at (y.north) {$\varepsilon_y$};
+  \node[red, above=0mm] at (sum.north) {$\varepsilon_1$};
+
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$\frac{x}{x+y}$};
+  \draw[->] (y) -- (sum) node[midway, above] {$\frac{y}{x+y}$};
+\end{tikzpicture}
+\end{center}
+Procediamo in modo simile per ogni operazione contenuta nel grafo. Tutte le volte che nel grafo computazionale c'è una somma tra due quantità $a$ e $b$, sui lati corrispondenti scriveremo $\frac{a}{a+b}$ e $\frac{b}{a+b}$. Analogamente, quando abbiamo una sottrazione $g(a,b) = a-b$ (tra due numeri $a$ e $b$) i due coefficienti di amplificazione sono
+\[
+\frac{\partial g(a,b)}{\partial a} \frac{a}{g(a,b)} = 1\frac{a}{a-b} = \frac{a}{a-b}, \quad \frac{\partial g(a,b)}{\partial b} \frac{b}{g(a,b)} = -1\frac{b}{a-b} = \frac{-b}{a-b},
+\]
+e quindi andremo a scrivere
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$a$};
+  \node[draw, rectangle, below of=x] (y) {$b$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$a-b$};
+  
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$\frac{a}{a-b}$};
+  \draw[->] (y) -- (sum) node[midway, above] {$\frac{-b}{a-b}$};
+\end{tikzpicture}
+\end{center}
+Per un prodotto $g(a,b) = ab$ invece si ha
+\[
+\frac{\partial g(a,b)}{\partial a} \frac{a}{g(a,b)} = b\frac{a}{ab} = 1, \quad \frac{\partial g(a,b)}{\partial b} \frac{b}{g(a,b)} = a\frac{b}{ab} = 1
+\]
+e quindi
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$a$};
+  \node[draw, rectangle, below of=x] (y) {$b$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$ab$};
+  
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$1$};
+  \draw[->] (y) -- (sum) node[midway, above] {$1$};
+\end{tikzpicture}
+\end{center}
+e infine per una divisione $g(a,b) = a/b$
+\[
+\frac{\partial g(a,b)}{\partial a} \frac{a}{g(a,b)} = \frac{1}{b}\frac{a}{a/b} = 1, \quad \frac{\partial c}{\partial b} \frac{b}{a/b} = -\frac{a}{b^2}\frac{b}{a/b} = -1
+\]
+quindi
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$a$};
+  \node[draw, rectangle, below of=x] (y) {$b$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$a/b$};
+  
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$1$};
+  \draw[->] (y) -- (sum) node[midway, above] {$-1$};
+\end{tikzpicture}
+\end{center}
+Questi calcoli ci dicono che coefficienti scrivere su ogni arco del nostro grafo, a seconda di a quale operazione elementare esso corrisponde. Se sugli archi del nostro grafo ci fossero avere operazioni più complesse che il computer è in grado di eseguire, per esempio un elevamento a potenza o un logaritmo, a ognuna di esse possiamo associare dei coefficienti di amplificazione in base alla formula~\eqref{ampliferrore}. Completiamo quindi il calcolo per il nostro esempio: i coefficienti di amplificazione lungo i due lati rimanenti sono $1$ e $-1$, quindi
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};
+  \node[draw, rectangle, right of=x, node distance=3.5cm] (sum) {$x + y$};
+  \node[draw, rectangle, below of=sum] (divide) {$\frac{y}{x+y}$};
+
+  \node[red, above=0mm] at (x.north) {$\varepsilon_x$};
+  \node[red, above=0mm] at (y.north) {$\varepsilon_y$};
+  \node[red, above=0mm] at (sum.north) {$\varepsilon_1$};
+  \node[red, above=0mm] at (divide.north) {$\phantom{asd}\varepsilon_2$};
+
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$\frac{x}{x+y}$};
+  \draw[->] (y) -- (sum) node[midway, above] {$\frac{y}{x+y}$};
+  \draw[->] (y) -- (divide) node[midway, above] {$1$};
+  \draw[->] (sum) -- (divide) node[midway, above] {$\phantom{asd}-1$};
+\end{tikzpicture}
+\end{center}
+Quindi scrivendo in ogni nodo l'errore totale corrispondente si ha
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  % Nodes
+  \node[draw, rectangle, blue] (x) {$\varepsilon_x$};
+  \node[draw, rectangle, below of=x, blue] (y) {$\varepsilon_y$};
+  \node[draw, rectangle, right of=x, node distance=6.5cm, blue] (sum) {$\frac{x}{x+y}\varepsilon_x + \frac{y}{x+y}\varepsilon_y+\varepsilon_1$};
+  \node[draw, rectangle, below of=sum, blue] (divide) {$1\cdot \varepsilon_y - 1\cdot\left(\frac{x}{x+y}\varepsilon_x + \frac{y}{x+y}\varepsilon_y+\varepsilon_1\right) + \varepsilon_2$};
+
+  \node[red, above=0mm] at (x.north) {$\varepsilon_x$};
+  \node[red, above=0mm] at (y.north) {$\varepsilon_y$};
+  \node[red, above=0mm] at (sum.north) {$\varepsilon_1$};
+  \node[red, above=0mm] at (divide.north) {$\phantom{asd}\varepsilon_2$};
+
+  % Edges
+  \draw[->] (x) -- (sum) node[midway, above] {$\frac{x}{x+y}$};
+  \draw[->] (y) -- (sum) node[midway, above] {$\frac{y}{x+y}$};
+  \draw[->] (y) -- (divide) node[midway, above] {$1$};
+  \draw[->] (sum) -- (divide) node[midway, above] {$\phantom{asd}-1$};
+\end{tikzpicture}
+\end{center}
+Facciamo attenzione a moltiplicare i coefficienti di propagazione per l'errore ``totale'' (in blu) e non quello ``parziale'' (in rosso).
+
+Possiamo ottenere lo stesso risultato anche eseguendo le operazioni in un ordine diverso. Per determinare il coefficiente davanti a $\varepsilon_x$ nel risultato finale, moltiplichiamo tra loro tutti i coefficienti di amplificazione che compaiono lungo i lati del percorso che lo collega al risultato: $-1 \cdot \frac{x}{x+y} \cdot \varepsilon_x$, andando a ritroso. Analogamente per $\varepsilon_1$: il prodotto (questa volta con un solo coefficiente di amplificazione) è $-1 \cdot \varepsilon_1$. Nel caso di $\varepsilon_y$, i percorsi sono due, e dobbiamo sommare i loro contributi:
+\[
+1 \cdot \varepsilon_y + (-1) \cdot \frac{y}{x+y} \cdot \varepsilon_y.
+\]
+In altre parole, l'algoritmo che possiamo seguire per calcolare l'errore di macchina lungo una sequenza di operazioni è questo:
+\begin{itemize}
+    \item Rappresentiamo in un grafo la sequenza di operazioni da svolgere, collegando ogni input con il suo output;
+    \item Scriviamo sopra ogni nodo un errore $\varepsilon_k$ che rappresenta l'errore ``parziale'' in cui si incorre nell'operazione del nodo.
+    \item Scriviamo sopra ogni arco del grafo il coefficiente di propagazione corrispondente, che dice come il valore nel nodo di arrivo dipende da quello nel nodo di partenza.
+    \item Per ogni errore parziale, calcoliamo il prodotto dei coefficienti lungo il percorso che lo collega al risultato finale ( o lungo ognuno dei percorsi, se sono più di uno); esso rappresenta un addendo dell'errore di macchina $\frac{\tilde{\gamma}-\gamma}{\gamma}$.
+\end{itemize}
+\begin{remark}
+    Con un algoritmo simile a questo possiamo calcolare gli errori \emph{assoluti}, anziché relativi, cioè essenzialmente le derivate. Questa è una variante del famoso algoritmo di \emph{backpropagation} che viene utilizzato per allenare modelli di intelligenza artificiale.
+\end{remark}
+
+\end{conditional}
+
 \chapter{Equazioni lineari e autovalori}
 
 \section{Richiami di algebra lineare}
 
-Ricordiamo che il prodotto matrice-vettore $A \mathbf{x}$ è definito come $(Ax)_i = \sum_{j=1}^n A_{ij}x_j$ (riga per colonna). Più geometricamente, crea una combinazione lineare $\mathbf{v}_1 x_1 + \mathbf{v}_2 x_2 + \dots + \mathbf{v}_n x_n)$ delle colonne $\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n$ di $A$. 
+Ricordiamo che il prodotto matrice-vettore $A \mathbf{x}$ è definito come $(Ax)_i = \sum_{j=1}^n A_{ij}x_j$ (riga per colonna). Più geometricamente, crea una combinazione lineare $\mathbf{v}_1 x_1 + \mathbf{v}_2 x_2 + \dots + \mathbf{v}_n x_n$ delle colonne $\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n$ di $A$. 
 
 % Prodotto matrice-matrice: $AB$ definito come $(AB)_{ij} = \sum_{k=1}^{n} A_{ik}B_{kj}$, prodotti scalari nello stesso modo. Ben definito solo quando $A\in\mathbb{C}^{m\times n}$ e $B\in\mathbb{C}^{n\times p}$ hanno la dimensione ``interna'' uguale, e produce una matrice $AB\in\mathbb{C}^{m\times p}$. L'ordine dei fattori conta! $AB \neq BA$ (e può anche darsi che uno sia ben definito e l'altro no).
 
@@ -1783,7 +1985,7 @@ In Matlab, esiste una funzione \lstinline{inv(A)} che calcola la matrice inversa
 
 Detto informalmente, per calcolare le colonne della matrice inversa dobbiamo risolvere gli $n$ sistemi lineari $A^{-1}\mathbf{e}_1, A^{-1}\mathbf{e}_2,\dots A^{-1}\mathbf{e}_n$; quando poi calcoliamo \texttt{x = inv(A)*b} facciamo una combinazione lineare di queste soluzioni. Per questo l'errore rischia di essere maggiore di quello fatto risolvendo un solo sistema lineare.
 
-\paragraph{Determinanti} Altri algoritmi da evitare per risolvere sistemi lineari su un computer sono quelli basati su determinanti, come il \emph{metodo di Cramer}. Tipicamente i determinanti sono più lenti da calcolare, e per matrici grandi vanno spesso in overflow/underflow; per esempio, $\det(10 I_{400\times 400})$ restituisce $0$ su Matlab. Quindi i determinanti sono inaffidabili anche solo per dire se una matrice è singolare o no. 
+\paragraph{Determinanti} Altri algoritmi da evitare per risolvere sistemi lineari su un computer sono quelli basati su determinanti, come il \emph{metodo di Cramer}. Tipicamente i determinanti sono più lenti da calcolare, e per matrici grandi vanno spesso in overflow/underflow; per esempio, $\det(0.1\, I_{400\times 400})$ restituisce $0$ su Matlab. Quindi i determinanti sono inaffidabili anche solo per dire se una matrice è singolare o no. 
 
 Nelle prossime sezioni vedremo invece gli algoritmi che Matlab utilizza per risolvere sistemi lineari. Ma prima di farlo, studiamo il condizionamento di questo problema.
 
@@ -1791,7 +1993,7 @@ Nelle prossime sezioni vedremo invece gli algoritmi che Matlab utilizza per riso
 
 Partiamo studiando il condizionamento della soluzione di sistemi lineari. Per farlo, introduciamo alcuni strumenti teorici.
 
-\paragraph{Norme vettoriali} L'analisi dell'errore che abbiamo fatto nei capitoli precedenti assumeva di avere funzioni $f: \mathbb{R} \to \mathbb{R}$, funzioni $x=f(a)$ di un reale $a$. La soluzione di un sistema lineare invece è una funzione $\mathsf{x} = f(A,\mathsf{b})$ che prende una matrice e un vettore e restituisce un vettore. Potremmo studiare separatamente il condizionamento di ogni componente rispetto a ogni componente dell'input, ma si preferisce un approccio diverso che passa attraverso il misurare ``distanze'' tra vettori e matrici.
+\paragraph{Norme vettoriali} L'analisi dell'errore che abbiamo fatto nei capitoli precedenti assumeva di avere funzioni $f: \mathbb{R} \to \mathbb{R}$, funzioni $x=f(a)$ di un reale $a$. La soluzione di un sistema lineare invece è una funzione $\mathbf{x} = f(A,\mathbf{b})$ che prende una matrice e un vettore e restituisce un vettore. Potremmo studiare separatamente il condizionamento di ogni componente rispetto a ogni componente dell'input, ma si preferisce un approccio diverso che passa attraverso il misurare ``distanze'' tra vettori e matrici.
 
 Lo strumento teorico che ci serve è una \emph{norma vettoriale}, cioè una funzione che ``assomiglia al valore assoluto'' per vettori.
 
