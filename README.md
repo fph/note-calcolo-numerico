@@ -1,4 +1,8 @@
 # note-calcolo-numerico
-Note di calcolo numerico per un mio corso a ingegneria
+Note di calcolo numerico per alcuni corsi che tengo all'università di Pisa.
 
-[Scarica qui](https://github.com/fph/note-calcolo-numerico/releases/download/latest/notes.pdf) le note in formato PDF.
+* [Versione completa](https://github.com/fph/note-calcolo-numerico/releases/download/latest/notes.pdf) delle note, contenente il materiale opzionale per i diversi corsi di laurea.
+
+* [Versione per il corso di laurea in ingegneria chimica](https://github.com/fph/note-calcolo-numerico/releases/download/latest/notes-ich.pdf).
+
+* [Versione per il corso di laurea in informatica](https://github.com/fph/note-calcolo-numerico/releases/download/latest/notes-inf.pdf).
