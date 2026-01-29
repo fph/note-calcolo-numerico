@@ -1597,7 +1597,7 @@ Le risposte sono queste:
 
 \chapter{Analisi dell'errore}
 
-\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, rimpiazzeremo la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire l'errore analitico come
+\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha \neq 0$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, rimpiazzeremo la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire l'errore analitico come
 \begin{equation} \label{ean}
     e_{an} = \frac{\gamma - \alpha}{\alpha}.    
 \end{equation}
@@ -1747,12 +1747,49 @@ $
 e la loro somma è sempre almeno uguale a $\mathsf{u}$. Un algoritmo in cui l'errore algoritmico è sempre al più dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente che è inevitabile. Quindi un algoritmo stabile (informalmente) restituisce il minore errore possibile, almeno come ordine di grandezza.
 
 \paragraph{Esempio di un algoritmo instabile (*)}
-Consideriamo di nuovo la funzione
+Consideriamo la funzione $f(x) = 2x+x^2 = (1+x)^2-1$. Queste due espressioni equivalenti portano a due algoritmi per calcolare il valore della funzione:
 \[
-    f(x) = \frac{x}{1-x} = 1 - \frac{1}{1-x}.
+\tilde{f}_A(\tilde{x}) = 2\odot \tilde{x} \oplus \tilde{x}\odot \tilde{x}, \quad \tilde{f}_B(\tilde{x}) = (1\oplus \tilde{x}) \odot (1\oplus \tilde{x}) \ominus 1.
 \]
-Le due espressioni equivalenti conducono a due algoritmi diversi per calcolare questa funzione: $\tilde{f}_A(x) = x \oslash (1 \ominus x)$, e $\tilde{f}_B(x) = 1 \ominus \left(1\oslash (1\ominus x)\right)$. Calcolando l'errore di macchina nei due casi [CALCOLO], è possibile vedere che $\tilde{f}_A(x)$ è un algoritmo stabile, mentre $\tilde{f}_B(x)$ no.
-
+Studiamo l'errore di macchina del secondo algoritmo, che scriviamo per comodità con una quantità intermedia:
+\begin{lstlisting}
+z = 1 + x
+risultato = z*z - 1 
+\end{lstlisting}
+Abbiamo innanzitutto
+\begin{align*}
+\tilde{z} = 1\oplus \tilde{x} &= 1\oplus x(1+\varepsilon_x)\\
+& = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
+& = (1 + x + x\varepsilon_x)(1+\varepsilon_1)\\
+&= 1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2),
+\end{align*}
+poiché il termine $x\varepsilon_x\varepsilon_1$ contiene due fattori minori di $\mathsf{u}$. Calcoliamo anche l'espansione al primo ordine di $\tilde{z}^2$, che ci servirà più avanti:
+\begin{align*}
+    \tilde{z}^2 &= \biggl(1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)\biggl(1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)\\
+    &= (1+x)^2 + 2(1+x)(x\varepsilon_x + (1+x)\varepsilon_1) + \mathcal{O}(\mathsf{u}^2)\\
+    &= (1+x)^2 + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\\
+\end{align*}
+Poi continuiamo con
+\begin{align*}
+    \tilde{\gamma} &= \tilde{z}\odot \tilde{z} \ominus 1 \\
+    &= \tilde{z}^2 (1+\varepsilon_2) \ominus 1 \\
+    &= \biggl(\tilde{z}^2 (1+\varepsilon_2) - 1\biggr)(1+\varepsilon_3)\\
+    &= \tilde{z}^2 (1+\varepsilon_2)(1+\varepsilon_3) - 1 -\varepsilon_3\\
+    &= \tilde{z}^2 (1+\varepsilon_2 + \varepsilon_3 + \mathcal{O}(\mathsf{u}^2)) - 1 -\varepsilon_3\\
+    &=  \biggl((1+x)^2 + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)(1+\varepsilon_2 + \varepsilon_3 + \mathcal{O}(\mathsf{u}^2)) - 1 -\varepsilon_3\\
+    &= (1+x)^2 + (1+x)^2(\varepsilon_2 + \varepsilon_3) + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)- 1 -\varepsilon_3\\
+    &= \gamma + (2x+2x^2)\varepsilon_x + 2(1+x)^2\varepsilon_1 + (1+x)^2\varepsilon_2 + ((1+x)^2-1)\varepsilon_3 + \mathcal{O}(\mathsf{u}^2).
+\end{align*}
+Quindi
+\begin{align*}
+    \abs*{\frac{\tilde{\gamma}-\gamma}{\gamma}} &= \abs*{\frac{2x+2x^2}{2x+x^2}\varepsilon_x + \frac{2(1+2x+x^2)}{2x+x^2}\varepsilon_1  + \frac{1+2x+x^2}{2x+x^2}\varepsilon_2 + \frac{2x+x^2}{2x+x^2}\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)} \\
+    &\stackrel{.}{\leq} \abs*{\frac{2x+2x^2}{2x+x^2}}\mathsf{u} + \abs*{3\frac{1+2x+x^2}{2x+x^2}}\mathsf{u} + \mathsf{u}.
+\end{align*}
+Come già sappiamo, il coefficiente davanti a $\varepsilon_x$ è uguale al numero di condizionamento della funzione:
+\[
+\kappa_{f,x} = \abs*{\frac{f'(x) x}{f(x)}} = \abs*{\frac{(2+2x)x}{2x+x^2}} = \abs*{\frac{2+2x}{2+x}};
+\]
+questo numero di condizionamento diventa molto grande quando $x\approx -2$; quindi la funzione è mal condizionata intorno a questo punto. Però l'errore di macchina diventa molto grande anche quando $x\approx 0$, per colpa del termine $\frac{1+2x+x^2}{2x+x^2}$ che diverge; mentre il numero di condizionamento resta limitato attorno a questo valore. Quindi quando $x\approx 0$ l'errore algoritmico è molto più grande dell'errore inerente, e quindi l'algoritmo dato da $\tilde{f}_B$ è instabile. (Si noti che quando abbiamo esattamente $x=0$ si ha $f(x)=0$, quindi non è ben definito il concetto di errore relativo perché ci richiederebbe di dividere per $0$.)
 
 \begin{conditional}[inf]
 \paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno osservato che queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, e specialmente di alcuni pixel in posizione chiave. Facendo piccole modifiche mirate ai segnali, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può aveere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
