@@ -16,19 +16,19 @@ jobs:
         with:
           root_file: notes.tex
           compiler: latexmk
-          args: -jobname=notes
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode -jobname=notes
       - name: Compile LaTeX document with jobname=notes-ich
         uses: xu-cheng/latex-action@v4
         with:
           root_file: notes.tex
           compiler: latexmk
-          args: -jobname=notes-ich
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode -jobname=notes-ich
       - name: Compile LaTeX document with jobname=notes-inf
         uses: xu-cheng/latex-action@v4
         with:
           root_file: notes.tex
           compiler: latexmk
-          args: -jobname=notes-inf
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode -jobname=notes-inf
       - name: Verify all PDF files exist
         run: |
           test -f notes.pdf
