@@ -489,10 +489,10 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
 
-\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; è importante però considerare un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
-\[
+\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; ci sono però due protagonisti fondamentali che dobbiamo introdurre. Il primo è che dobbiamo lavorare su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
+\begin{equation} \label{intervallo centrato in alpha}
     I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\} = [\alpha-\rho, \alpha + \rho].
-\]
+\end{equation}
 La situazione è simile a quella che avevamo nel metodo di bisezione, con un segmento e il suo punto medio, solo che ora le quantità che ci interessano di più sono il centro e il raggio.
 
 \begin{center}
@@ -508,9 +508,21 @@ La situazione è simile a quella che avevamo nel metodo di bisezione, con un seg
 \end{tikzpicture}
 \end{center}
 
+Il secondo protagonista è la quantità
+\begin{equation} \label{defL}
+    L = \max_{x \in I} \, \abs{\Phi'(x)},    
+\end{equation}
+cioè il massimo (in valore assoluto) della derivata seconda di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
+\begin{theorem}[Teorema di Weierstrass / di esistenza del massimo]
+    Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classoe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
+\end{theorem}
+In questo caso, l'intervallo $I$ è chiuso e limitato, per come l'abbiamo definito in~\eqref{intervallo centrato in alpha}; se $\Phi$ è una funzione di classe $\mathcal{C}^1$, allora la sua derivata $\Phi'$ esiste ed è continua, e anche la funzione $f(x) = \abs{\Phi(x)}$ è continua, in quanto composizione di due funzioni continue: la funzione valore assoluto, e la derivata $\Phi'$. Quindi le ipotesi del teorema sono verificate e la quantità $L$ esiste.
+
+Con questi due ingredienti a disposizione, possiamo enunciare questo teorema.
+
 
 \begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
-Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che $\abs{\Phi'(x)}<1$ per ogni $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
+Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che la quantità $L$ definita in~\eqref{defL} sia strettamente minore di $1$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
 \begin{itemize}
     \item $x_k \in I$ per ogni $k \geq 0$;
     \item $\lim_{k\to\infty} x_k = \alpha$.
@@ -524,11 +536,9 @@ Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la s
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
     \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)},
 \end{equation}
-per un certo punto $\xi_k$. Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni $k$ si ha un punto $\xi_k$ diverso.
+per un certo punto $\xi_k$. Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni iterazione $k$ si ha un punto $\xi_k$ diverso.
 
-Sappiamo che quando $x\in I$ si ha $\abs{\Phi'(x)}<1$; non ci basta però che questa quantità sia minore di $1$, ma vogliamo dare un nome al massimo valore che può assumere. Definiamo $L = \max_{x\in I} \abs{\Phi'(x)}$. Questo massimo esiste per il teorema di Weierstrass: $\abs{\Phi'(x)}$ è una funzione continua (è composizione della funzione valore assoluto e della funzione $\Phi'(x)$ che è continua in quanto $\Phi \in \mathcal{C}^1$), e l'intervallo $I$ è chiuso e limitato. Inoltre $L<1$.
-
-Con questi ingredienti a disposizione, ora vogliamo dimostrare per induzione che per ogni $k\geq 0$ si ha
+Ora vogliamo trasformare la~\eqref{riduzione errore punto fisso} in una formula per l'errore esplicita, in cui l'errore al passo $k$ non dipende dall'errore al passo $k-1$. Dimostreremo per induzione che per ogni $k\geq 0$ si ha
 \begin{equation} \label{fpindu}
     \abs{x_k - \alpha} \leq L^k \rho.
 \end{equation}
@@ -561,7 +571,7 @@ Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come pu
 
 
 \begin{remark} \label{oss:corpuntofisso}
-    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha\in (a,b)$, allora per continuità possiamo prendere un $r$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $r$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
+    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha\in (a,b)$, allora per continuità possiamo prendere un $r$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
 \end{remark}
     
 \begin{esercizio}
@@ -935,9 +945,36 @@ Diciamo allora che il metodo di bisezione ha \emph{convergenza pressoché linear
 
 \paragraph{Criteri di arresto per il metodo del punto fisso}
 
-Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{n} - x_{n-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_n - \alpha} < \varepsilon$. Difatti, supponiamo per semplicità che le iterate si comportino esattamente come una successione geometrica, cioè $e_n = \abs{x_n-\alpha} = ar^n$ (almeno da un certo punto in poi). Supponiamo anche, per fissare le idee, che le iterate stiano convergendo ad $\alpha$ dal basso, cioè $x_{n-1} < x_{n} < \alpha$. Allora, $x_{n} - x_{n-1} = e_{n-1} - e_n = ar^{n-1} - ar^n = ar^{n-1}(1-r) = e_n \frac{1-r}{r}$. Se $r$ è molto vicino a $1$, $\frac{1-r}{r}$ è molto vicino a $0$. Quindi possiamo avere una situazione in cui $\abs{x_{n-1}-x_n} = e_n \frac{1-r}{r}$ è al di sotto di una certa soglia $\varepsilon$, ma l'errore vero $e_n$ è molto più grande.
+Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{n} - x_{n-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_n - \alpha} < \varepsilon$, quando $r$ è vicino a $1$ e la convergenza è lenta. Vediamo un esempio nella figura qui sotto.
 
-Quindi, quando $r$ è molto vicino a $1$, non solo il metodo converge lentamente, ma dobbiamo stare attenti a non arrestare il metodo troppo presto.
+\begin{figure}[H]
+\centering
+    \begin{tikzpicture}[scale=0.5]
+    \draw [->, very thick] (-2,0) -- (12,0);
+    \fill (10,0) node[below] {$\mathstrut x_0$} circle (3pt);
+    \fill (9,0) node[below] {$\mathstrut x_1$} circle (3pt);
+    \fill (8.1,0) node[below] {$\mathstrut x_2$} circle (3pt);
+    \fill (7.29,0) node[below] {$\mathstrut x_3$} circle (3pt);
+    \fill (6.561,0) node[below] {$\mathstrut x_4$} circle (3pt);
+    \fill (5.9049,0) node[below] {$\mathstrut x_5$} circle (3pt);
+    \foreach \k in {6,...,100} {
+        \fill ({10*pow(0.9,\k)},0) circle (3pt);
+    }
+    \fill[red] (0,0) node[below,red] {$\mathstrut \alpha$} circle (3pt);
+\end{tikzpicture}
+    \caption{Una successione di punti che convergono ad $\alpha$ con tasso di convergenza $r = 0.9$. Osserviamo che anche quando $\abs{x_{k+1}-x_k}$ è piccolo (per esempio per $k=4$), l'errore $e_k = \abs{x_k-\alpha}$ è molto più grande.}
+\end{figure}
+
+\begin{esercizio}
+    L'esempio della figura qui sopra è stato generato prendendo punti dati dalla formula $x_k = 10 \cdot 0.9^k$. Qual è il rapporto tra $\abs{x_{k+1}-x_k}$ e $\abs{x_k-\alpha}$ per questa successione? E per una successione geometrica generale $x_k = ar^k$ con tasso $r<1$?
+\end{esercizio}
+
+
+
+% Difatti, supponiamo per semplicità che le iterate si comportino esattamente come una successione geometrica, cioè $e_n = \abs{x_n-\alpha} = ar^n$ (almeno da un certo punto in poi). Supponiamo anche, per fissare le idee, che le iterate stiano convergendo ad $\alpha$ dal basso, cioè $x_{n-1} < x_{n} < \alpha$. Allora, $x_{n} - x_{n-1} = e_{n-1} - e_n = ar^{n-1} - ar^n = ar^{n-1}(1-r) = e_n \frac{1-r}{r}$. Se $r$ è molto vicino a $1$, $\frac{1-r}{r}$ è molto vicino a $0$. Quindi possiamo avere una situazione in cui $\abs{x_{n-1}-x_n} = e_n \frac{1-r}{r}$ è al di sotto di una certa soglia $\varepsilon$, ma l'errore vero $e_n$ è molto più grande.
+
+% Quando $r$ è molto vicino a $1$, non solo il metodo converge lentamente, ma dobbiamo stare attenti a non arrestarlo troppo presto.
+
 
 \paragraph{Vantaggi e svantaggi del metodo di punto fisso}
 
