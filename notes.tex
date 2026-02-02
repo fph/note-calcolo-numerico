@@ -208,21 +208,36 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
 
 \chapter{Equazioni non lineari (zeri di funzione)}
 
-%%%
-% Pannocchia dice che è più comune un'altra variante, la formula di Peng--Robinson; usare quella invece
-%%%
+\begin{conditional}[ich]
+    %%%
+    % Pannocchia dice che è più comune un'altra variante, la formula di Peng--Robinson; usare quella invece
+    %%%
+    \paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di van der Waals}
+    \[
+        P = \frac{RT}{V-B} - \frac{A}{V^2}.
+    \]
+    Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume molare'', cioè il volume occupato da una mole del gas, e $R,A,B$ sono costanti (con $A,B$ che dipendono dal gas in questione). Supponiamo di sapere la pressione $P$ e la temperatura $T$, e voler calcolare il volume occupato da un gas. Questo è equivalente a trovare il valore $x$ che risolve
+    \[
+        \frac{RT}{x-B} - \frac{A}{x^2} - P = 0.
+    \]
+    Lavorando con applicazioni dell'ingegneria è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio quando si riconduce a un'equazione di secondo grado); ma in generale è utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anche più complicate.
+\end{conditional}
 
-\paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di van der Waals}
-\[
-    P = \frac{RT}{V-B} - \frac{A}{V^2}.
-\]
-Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume molare'', cioè il volume occupato da una mole del gas, e $R,A,B$ sono costanti (con $A,B$ che dipendono dal gas in questione). Supponiamo di sapere la pressione $P$ e la temperatura $T$, e voler calcolare il volume occupato da un gas. Questo è equivalente a trovare il valore $x$ che risolve
-\[
-    \frac{RT}{x-B} - \frac{A}{x^2} - P = 0.
-\]
-Lavorando con applicazioni dell'ingegneria è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio quando si riconduce a un'equazione di secondo grado); ma in generale è utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anche più complicate.
+\begin{conditional}[inf]
+    \paragraph{Un esempio pratico} Consideriamo l'equazione
+    \[
+    T = \frac{1}{\mu - \lambda 2^{-T}}, 
+    \]
+    dove $\mu,\lambda > 0$ sono costanti, e $T$ è un'incognita che dobbiamo determinare. Questa equazione compare nella cosiddetta \emph{teoria delle code}, che si occupa di studiare sistemi che coinvolgono dei buffer. Per esempio, consideriamo un server web: ogni tanto arrivano utenti che richiedono di caricare una pagina. Il server lavora con un processo solo, cioè, risponde a una sola richiesta alla volta; se una seconda richiesta arriva quando il server sta ancora rispondendo alla prima, il client deve mettersi in attesa. Questa equazione serve per calcolare il tempo medio di attesa $T$. Il termine $\mu$ dice (raccontato molto informalmente) quanto il server è veloce a gestire richieste; e il termine $\lambda 2^{-T}$ dice quanto spesso arrivano richieste dai client. Questo termine dipende a sua volta dalla media $T$, nella nostra equazione: più un server è lento, più gli utenti si stufano e tendono ad abbandonarlo.
 
-\paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{a}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - a$.
+    Per trovare il tempo medio di attesa $T$, dobbiamo risolvere un'equazione; questa non è un'equazione né di primo né di secondo grado, ma una più complicata. Possiamo riscrivere questo problema in termini di una funzione: la soluzione è il punto in cui
+    \[
+    f(x) = \frac{1}{\mu - \lambda 2^{-x}} - x
+    \]
+    tocca l'asse delle ascisse. Questa è una famiglia di problemi molto generale, che andiamo a studiare.
+\end{conditional}
+
+\paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{K}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - K$.
 
 Ci potrebbero essere più soluzioni in un dato intervallo (a priori anche infinite!). Un modo conveniente di dimostrare che esiste \emph{almeno} una soluzione in un dato intervallo $[a,b]$ è mostrare che è un \emph{intervallo di separazione}, cioè $f(a)$ e $f(b)$ hanno segni opposti: $f(a)>0,f(b)<0$ oppure $f(a)>0,f(b)<0$. Un modo semplice di scrivere questa condizione è $f(a)f(b) < 0$. Difatti, ricordiamo questo teorema che avete visto ad analisi.
 \begin{theorem}[Teorema di esistenza degli zeri]
@@ -230,14 +245,15 @@ Sia $f \in \mathcal{C}^0([a,b])$. Se $f(a)$ e $f(b)$ hanno segno opposto (uno po
 \end{theorem}
 Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo di separazione, allora esso contiene uno zero della funzione.
 
-Questo risultato non ci assicura che lo zero sia unico. Se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, per una $f\in\mathcal{C}^1$ mostrando che $f'(x) > 0$ per ogni $x\in (a,b)$ o $f'(x) < 0$ per ogni $x\in (a,b)$).
+Questo risultato non ci assicura che lo zero sia unico. Possiamo concludere che è unico per esempio se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, usando le derivate, quando la funzione è derivabile).
 
-Esempio: per ogni $n>2, a > 0$, consideriamo la funzione $f(x) = x^n - a$. Si ha $f(0) = -a < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, $f(a) = a^n - a > 0$. Quindi $[0,a]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. La soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive di quelle che avete visto ad analisi.
-\begin{theorem}[Teorema di Rolle]
-Sia $f:[a,b] \to \mathbb{R}$ una funzione di classe $\mathcal{C}^1$. Se $f(a) = f(b)$, allora esiste almeno un punto $c\in (a,b)$ in cui $f'(c) = 0$.
-\end{theorem}
+Esempio: siano fissati $n \geq 2, K > 0$, e consideriamo la funzione $f(x) = x^n - K$. Si ha $f(0) = -K < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, se $K>1$, abbiamo $f(K) = K^n - K > 0$. Quindi $[0,K]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. Questa soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. 
+% Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive di quelle che avete visto ad analisi.
+% \begin{theorem}[Teorema di Rolle]
+% Sia $f:[a,b] \to \mathbb{R}$ una funzione di classe $\mathcal{C}^1$. Se $f(a) = f(b)$, allora esiste almeno un punto $c\in (a,b)$ in cui $f'(c) = 0$.
+% \end{theorem}
 
-Se per assurdo esistessero due punti $a,b \in [0,\infty)$ tali che $f(a) = f(b) = 0$ (supponiamo per semplicità di avere scelto i nomi in modo che $a<b$), allora esisterebbe un punto $c \in (a,b) \subset (0,\infty)$ tale che $f'(c) = 0$, ma questo è impossibile perché abbiamo detto che $f'(x) > 0$ per $x>0$.
+% Se per assurdo esistessero due punti $a,b \in [0,\infty)$ tali che $f(a) = f(b) = 0$ (supponiamo per semplicità di avere scelto i nomi in modo che $a<b$), allora esisterebbe un punto $c \in (a,b) \subset (0,\infty)$ tale che $f'(c) = 0$, ma questo è impossibile perché abbiamo detto che $f'(x) > 0$ per $x>0$.
 
 \section{Metodo di bisezione}
 
@@ -274,7 +290,6 @@ Due semplici formule saranno fondamentali per proseguire:
 \end{tikzpicture}
 \end{center}
 
-
 \begin{algorithm}
 $a_0=a,b_0=b$\;
 \For{$k=0,1,\dots$}{
@@ -308,6 +323,41 @@ $a_0=a,b_0=b$\;
     \end{tabular}
 \end{center}
 
+\begin{lstlisting}
+% Script Matlab: metodo di bisezione
+
+f = @(x) x^2 - 2;
+a = 0; b = 2;
+n = 10;
+
+fa = f(a);
+fb = f(b);
+
+if fa*fb >= 0
+    error('Non ho un intervallo di separazione')
+end
+
+for k = 1:n
+    c = (a+b) / 2;
+    fc = f(c);
+    % per visualizzare cosa sta succedendo
+    valori = [a, c, b, fa, fc, fb]
+
+    if fc == 0
+        % caso fortunato!
+        break
+    end
+    if fa*fc < 0
+        b = c; % [a,b] <-- [a,c]
+    else
+        a = c; % [a,b] <-- [c,b]
+    end
+    
+end
+x = (a+b) / 2;
+\end{lstlisting}
+
+
 \paragraph{Costo computazionale} Una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? Approssimativamente, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni coinvolte. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ somme; calcolare $1+2+3+\dots+20$ richiede $19$ somme, cioè circa il doppio, e quindi ci aspettiamo che ci metta il doppio del tempo.
 
 Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare la $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene va calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche poche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
@@ -316,10 +366,8 @@ Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale 
 
 Per questo diciamo che il costo per passo del metodo di bisezione è di una valutazione della funzione.
 
-\paragraph{Criterio di arresto}
-Vogliamo arrestare il metodo quando siamo sicuri di poter determinare il valore di uno zero $\alpha$ della funzione $f$ (non per forza l'unico!) a meno di una tolleranza $\varepsilon$; in questo paragrafo vediamo come è possibile scegliere quanti passi fare in base a questo requisito.
-
-È semplice vedere che ad ogni passo la lunghezza dell'intervallo si dimezza:
+\paragraph{Errore analitico}
+L'altra domanda chiave per un algoritmo numerico è: quanto vicino andiamo alla soluzione vera del problema? È semplice vedere che ad ogni passo la lunghezza dell'intervallo si dimezza:
 \begin{align*}
     b_1 - a_1 &= \frac{b_0-a_0}{2}\\
     b_2 - a_2 &= \frac{b_1-a_1}{2} = \frac{b_0-a_0}{4}\\
@@ -327,7 +375,7 @@ Vogliamo arrestare il metodo quando siamo sicuri di poter determinare il valore 
     \vdots \,\,&= \,\,\vdots\\
     b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
 \end{align*}
-Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. Se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
+Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. A questo punto, se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
 \begin{figure}[H]
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
@@ -349,10 +397,11 @@ Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza
 \end{figure}
 
 Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
-\[
-\abs{c_n - \alpha} \leq \frac{b_0-a_0}{2^{n+1}}.
-\]
-Dato un valore $\varepsilon > 0$ possiamo calcolare quante iterazioni sono necessarie perché il termine di destra di questa uguaglianza sia minore di $\varepsilon$. Questo succede per il primo intero $n$ tale che
+\begin{equation} \label{tolleranza bisezione}
+    \abs{c_n - \alpha} \leq \frac{b_0-a_0}{2^{n+1}}.    
+\end{equation}
+
+\paragraph{Criterio di arresto} Possiamo trasformare il calcolo fatto sopra in un criterio per scegliere quante iterazioni fare. Fissiamo una tolleranza $\varepsilon>0$; vogliamo arrestare il metodo quando siamo sicuri di aver determinato il valore di \emph{uno} zero $\alpha$ della funzione $f$ (non per forza l'unico!) a meno di questa tolleranza. Per avere questa sicurezza, il termine di destra della~\eqref{tolleranza bisezione} deve essere minore di $\varepsilon$. Quindi prendiamo il più piccolo intero $n$ tale che
 \[
 \frac{b_0 - a_0}{2^{n+1}} \leq \varepsilon \iff 2^{n+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff n \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
 \]
@@ -373,7 +422,7 @@ Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di va
 \[
 \abs{c_k-\alpha} \approx \frac{\abs{f(c_k)}}{\abs{f'(c_k)}}.
 \]
-Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti al più $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però: può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
+Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti circa $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però: può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
 
 Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore $f(c_k)$ piccolo, ma $c_k$ è lontano da $\alpha$.
 \begin{center}
