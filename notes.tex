@@ -1075,9 +1075,9 @@ Poiché $r = \Phi'(\alpha)=0$, il metodo di Newton ha convergenza superlineare.
 \paragraph{Vantaggi e svantaggi del metodo di Newton}
 Svantaggi:
 \begin{itemize}
-    \item Richiede di saper calcolare non solo $f$ ma anche $f'$: con Matlab, tipicamente dovremo passare due funzioni anziché una.
+    \item Richiede di conoscere non solo $f$ ma anche $f'$: con Matlab, tipicamente dovremo passare due funzioni anziché una.
     \item Costo computazionale maggiore: ad ogni passo, dobbiamo valutare $f$ e $f'$ una volta.
-    \item La convergenza è garantita solo localmente, come per ogni metodo di punto fisso.
+    \item La convergenza è garantita solo localmente, come per il metodo di punto fisso.
 \end{itemize}
 Vantaggi:
 \begin{itemize}
@@ -1140,7 +1140,7 @@ Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\
 \]
 \end{proof}
 
-\paragraph{Criterio di arresto per il metodo di Newton} Come per il metodo di bisezione, un criterio di arresto euristico è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine.
+\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è il criterio di arresto che avevamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
 
 \begin{conditional}[inf]
 \paragraph{Convergenza su intervalli}
@@ -1149,17 +1149,17 @@ C'è un risultato che ci permette di concludere la convergenza del metodo di New
     Sia $f$ una funzione di classe $\mathcal{C}^2$ su un intervallo $I = [a,b]$. Supponiamo che:
     \begin{itemize}
         \item $f$ abbia un solo zero $\alpha$ in un estremo dell'intervallo ($\alpha=a$ o $\alpha=b$).
-        \item $f(x)f''(x)> 0$ su tutti i punti dell'intervallo, escluso l'estremo $\alpha$.
+        \item $f(x)f''(x) \geq 0$ su tutti i punti dell'intervallo.
     \end{itemize}
     Allora, a partire da qualunque $x_0 \in [a,b]$ si ha $x_k \in I$ e $\lim_{k\to\infty} x_k = \alpha$.
 \end{theorem}
 \begin{proof}
 Visto che $f$ è continua e non ha altri zeri all'interno di $I$, dev'essere sempre positiva o sempre negativa. Quindi ci sono quattro situazioni possibili:
 \begin{enumerate}
-    \item $\alpha=a$, $f(x)>0, f''(x)> 0$ in tutti i punti di $(\alpha,b]$;
-    \item $\alpha=a$, $f(x)<0, f''(x)< 0$ in tutti i punti di $(\alpha,b]$;
-    \item $\alpha=b$, $f(x)>0, f''(x)> 0$ in tutti i punti di $[a,\alpha)$;
-    \item $\alpha=b$, $f(x)<0, f''(x)< 0$ in tutti i punti di $[a,\alpha)$.
+    \item $\alpha=a$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $(\alpha,b]$;
+    \item $\alpha=a$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $(\alpha,b]$;
+    \item $\alpha=b$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $[a,\alpha)$;
+    \item $\alpha=b$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $[a,\alpha)$.
 \end{enumerate}
 Trattiamo solo il primo: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
 e/o all'asse $y$.
