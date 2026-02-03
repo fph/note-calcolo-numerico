@@ -992,13 +992,13 @@ Vantaggi del metodo:
 
 \section{Metodo di Newton}
 
-Il \emph{metodo di Newton}, o \emph{metodo delle tangenti}, è un metodo per la ricerca di zeri che offre convergenza più veloce, ma richiede di essere in grado di calcolare non solo $f \in \mathcal{C}^1([a,b])$, ma anche la sua derivata $f'$.
+Il \emph{metodo di Newton}, o \emph{metodo delle tangenti}, è un metodo per la ricerca di zeri che offre convergenza più veloce, ma richiede di utilizzare non solo $f \in \mathcal{C}^1([a,b])$, ma anche la sua derivata $f'$.
 
-L'idea è la seguente. Ad ogni passo, data un'approssimazione $x_n$ di una soluzione, calcoliamo $x_{n+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_n$. L'equazione di questa retta è
+L'idea è una di quelle classiche dell'analisi: quando guardiamo ``abbastanza in piccolo'', ogni funzione derivabile è vicina alla sua retta tangente. Ad ogni passo, data un'approssimazione $x_n$ di una soluzione, otteniamo $x_{n+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_n$. L'equazione della retta tangente è
 \[
 y = f(x_n) + f'(x_n) (x- x_n),
 \]
-quindi definiamo come $x_{n+1}$ il punto tale che
+quindi $x_{n+1}$ è il punto tale che
 \[
 0 = f(x_n) + f'(x_n) (x_{n+1}- x_n),
 \]
@@ -1006,6 +1006,45 @@ ossia, risolvendo,
 \[
 x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}.
 \]
+
+\begin{center}
+\begin{tikzpicture}
+    % Axes
+    \draw[->] (-0.2,0) -- (8,0) node[right] {$x$};
+    \draw[->] (0,-0.3) -- (0,3) node[above] {$y$};
+
+    \draw[domain=0:8,smooth,variable=\x,blue, thick]
+        plot ({\x},{0.03*(9-\x)^2 - 0.3});
+
+    % Root
+    \fill[red] (5.8377,0) circle (1.5pt) node[above,red] {$\alpha$};
+
+    \node (x0) at (1,0) {};
+    \node (x1) at (4.375,0) {};
+    \node (x2) at (5.6064,0) {};
+    \node (fx0) at (1,1.62) {};
+    \node (fx1) at (4.375,0.3417) {};
+    \node (fx2) at (5.6064,0.04592) {};
+
+    % Newton iterates
+    \fill (x0) circle (1.5pt) node[below] {$x_0$};
+    \fill (x1) circle (1.5pt) node[below] {$x_1$};
+    \fill (x2) circle (1.5pt) node[below] {$x_2$};
+
+    % Function values
+    \fill (fx0) circle (1.5pt) node[left] {$f(x_0)$};
+    \fill (fx1) circle (1.5pt) node[right] {$f(x_1)$};
+
+    % Vertical guides
+    \draw[dashed] (x0) -- (fx0);
+    \draw[dashed] (x1) -- (fx1);
+
+    \draw[red,thick] (fx0) -- (x1);
+    \draw[red,thick] (fx1) -- (x2);
+
+\end{tikzpicture}
+\end{center}
+
 Il metodo di Newton quindi è definito dalla successione
 \[
 \begin{cases}
@@ -1082,9 +1121,9 @@ Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alp
 
 \begin{proof}
 Usiamo uno sviluppo di Taylor (con resto di Lagrange) in $x_n$ per scrivere l'uguaglianza
-\[
-0 = f(\alpha) = f(x_n) + f'(x_n)(\alpha-x_n) + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2
-\]
+\begin{equation} \label{sviluppo Taylor per dimostrazione conv. quadratica Newton}
+    0 = f(\alpha) = f(x_n) + f'(x_n)(\alpha-x_n) + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2    
+\end{equation}
 che vale per uno $\xi_n$ compreso tra $\alpha$ e $x_n$.
 
 Dividiamo per $f'(x_n)$ per ottenere
@@ -1102,6 +1141,43 @@ Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\
 \end{proof}
 
 \paragraph{Criterio di arresto per il metodo di Newton} Come per il metodo di bisezione, un criterio di arresto euristico è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine.
+
+\begin{conditional}[inf]
+\paragraph{Convergenza su intervalli}
+C'è un risultato che ci permette di concludere la convergenza del metodo di Newton su un intero intervallo, senza la condizione scomoda da verificare che il punto iniziale sia ``abbastanza vicino''. Questa volta per applicare il teorema dobbiamo usare un intervallo in cui lo zero $\alpha$ sia un estremo della funzione.
+\begin{theorem}[Convergenza su intervalli del metodo di Newton]
+    Sia $f$ una funzione di classe $\mathcal{C}^2$ su un intervallo $I = [a,b]$. Supponiamo che:
+    \begin{itemize}
+        \item $f$ abbia un solo zero $\alpha$ in un estremo dell'intervallo ($\alpha=a$ o $\alpha=b$).
+        \item $f(x)f''(x)> 0$ su tutti i punti dell'intervallo, escluso l'estremo $\alpha$.
+    \end{itemize}
+    Allora, a partire da qualunque $x_0 \in [a,b]$ si ha $x_k \in I$ e $\lim_{k\to\infty} x_k = \alpha$.
+\end{theorem}
+\begin{proof}
+Visto che $f$ è continua e non ha altri zeri all'interno di $I$, dev'essere sempre positiva o sempre negativa. Quindi ci sono quattro situazioni possibili:
+\begin{enumerate}
+    \item $\alpha=a$, $f(x)>0, f''(x)> 0$ in tutti i punti di $(\alpha,b]$;
+    \item $\alpha=a$, $f(x)<0, f''(x)< 0$ in tutti i punti di $(\alpha,b]$;
+    \item $\alpha=b$, $f(x)>0, f''(x)> 0$ in tutti i punti di $[a,\alpha)$;
+    \item $\alpha=b$, $f(x)<0, f''(x)< 0$ in tutti i punti di $[a,\alpha)$.
+\end{enumerate}
+Trattiamo solo il primo: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
+e/o all'asse $y$.
+
+Innanzitutto, dimostriamo per induzione che per ogni $n=0,1,2,\dots$ si ha $x_n \in I$. Il caso base $x_0 \in I$ è vero per ipotesi; quindi assumiamo $x_n\in I$ e dimostriamo $x_{n+1}\in I$. Consideriamo l'equazione che definisce la retta tangente in $x_n$,
+\[
+y = T(x) = f(x_n) + f'(x_n)(x-x_n).
+\]
+Ricordiamo lo sviluppo di Taylor~\eqref{sviluppo Taylor per dimostrazione conv. quadratica Newton}
+\[
+0 = f(\alpha) = f(x_n) + f'(x_n)(\alpha-x_n) + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2,
+\]
+che vale uno $\xi_n$ compreso tra $\alpha$ e $x_n$. Per le nostre ipotesi, $\frac{f''(\xi_n)}{2}(\alpha-x_n)^2 \geq 0$, quindi $f(x_n) + f'(x_n)(\alpha-x_n) = T(\alpha) \leq 0$. Poiché invece $T(x_n) = f(x_n) \geq 0$, il punto $x_{n+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_n$; quindi in particolare $x_{n+1} \in I$. Questo completa la dimostrazione per induzione.
+
+Quello che abbiamo scritto dimostra anche qualcosa di più forte: $x_{n+1} \leq x_n$ per ogni $n$. Ciò significa che la successione $x_n$ è decrescente; in particolare quindi converge, e il suo limite è necessariamente $\alpha$ perché è l'unico zero in $I$.
+\end{proof}
+\end{conditional}
+
 
 \paragraph{Zeri di molteplicità superiore a 1} Cosa succede al metodo di Newton se la funzione a cui lo applichiamo ha $f'(\alpha) = 0$? Introduciamo innanzitutto una definizione: data una funzione $f\in\mathcal{C}^m$, diciamo che \emph{$f$ ha uno zero di molteplicità $m$ in $\alpha$} se vale
 \[
