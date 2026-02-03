@@ -230,7 +230,7 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
     \]
     dove $\mu,\lambda > 0$ sono costanti, e $T$ è un'incognita che dobbiamo determinare. Questa equazione compare nella cosiddetta \emph{teoria delle code}, che si occupa di studiare sistemi che coinvolgono dei buffer. Per esempio, consideriamo un server web: ogni tanto arrivano utenti che richiedono di caricare una pagina. Il server lavora con un processo solo, cioè, risponde a una sola richiesta alla volta; se una seconda richiesta arriva quando il server sta ancora rispondendo alla prima, il client deve mettersi in attesa. Questa equazione serve per calcolare il tempo medio di attesa $T$. Il termine $\mu$ dice (raccontato molto informalmente) quanto il server è veloce a gestire richieste; e il termine $\lambda 2^{-T}$ dice quanto spesso arrivano richieste dai client. Questo termine dipende a sua volta dalla media $T$, nella nostra equazione: più un server è lento, più gli utenti si stufano e tendono ad abbandonarlo.
 
-    Per trovare il tempo medio di attesa $T$, dobbiamo risolvere un'equazione; questa non è un'equazione né di primo né di secondo grado, ma una più complicata. Possiamo riscrivere questo problema in termini di una funzione: la soluzione è il punto in cui
+    Per trovare il tempo medio di attesa $T$, dobbiamo risolvere un'equazione; questa non è un'equazione né di primo né di secondo grado, ma una più complicata, che non ammette una formula risolutiva. Nonostante questo, vogliamo comunque determinare un'approssimazione della soluzione. Possiamo riscrivere questo problema in termini di una funzione: la soluzione è il punto in cui
     \[
     f(x) = \frac{1}{\mu - \lambda 2^{-x}} - x
     \]
@@ -245,7 +245,7 @@ Sia $f \in \mathcal{C}^0([a,b])$. Se $f(a)$ e $f(b)$ hanno segno opposto (uno po
 \end{theorem}
 Detto in altro modo, se $f$ è una funzione continua e $[a,b]$ è un intervallo di separazione, allora esso contiene uno zero della funzione.
 
-Questo risultato non ci assicura che lo zero sia unico. Possiamo concludere che è unico per esempio se riusciamo a mostrare che $f$ è (strettamente) crescente o decrescente in $[a,b]$ (per esempio, usando le derivate, quando la funzione è derivabile).
+Questo risultato non ci assicura che lo zero sia unico. Possiamo concludere che è unico per esempio se riusciamo a mostrare che $f$ è strettamente crescente o decrescente in $[a,b]$; per esempio, usando le derivate, quando la funzione è derivabile.
 
 Esempio: siano fissati $n \geq 2, K > 0$, e consideriamo la funzione $f(x) = x^n - K$. Si ha $f(0) = -K < 0$, mentre per $x$ sufficientemente grande si ha $f(x) > 0$ (difatti $x \to \infty$). Per esempio, se $K>1$, abbiamo $f(K) = K^n - K > 0$. Quindi $[0,K]$ è un intervallo di separazione, ed esiste una soluzione nell'intervallo. Questa soluzione è unica? La funzione $f$ ha derivata $f'(x) = nx^{n-1}$; quindi $f'(x) > 0$ per ogni $x > 0$, e $f'(0) = 0$. Questo permette di concludere che la soluzione è una sola. 
 % Come dimostrarlo formalmente? Un modo è tramite il teorema di Rolle, che avete sicuramente visto ad analisi. Lo enunciamo qui, con delle ipotesi forse un pochino più restrittive di quelle che avete visto ad analisi.
@@ -897,13 +897,13 @@ Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli err
 2.8311    2.8273    2.8289    2.8282    2.8285    2.8284
 2.8284    2.8284    2.8284    2.8284    ...
     \end{lstlisting}
-    e quindi i valori assunti da $\frac{e_{n+1}}{e_n}$ sono
+    Notiamo che gli errori non stanno convergendo a zero. I valori assunti da $\frac{e_{n+1}}{e_n}$ sono
 \begin{lstlisting}
 0.5000    1.5000    0.9167    1.0398    0.9846    1.0065    
 0.9973    1.0011    0.9995    1.0002    0.9999    1.0000
 1.0000    1.0000    1.0000    1.0000    ...
 \end{lstlisting}
-In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a 1, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma a un'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
+In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a $r=1$, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma all'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
 \end{esempio}
 
 \paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
@@ -912,7 +912,7 @@ In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a 1, ne
 \]
 L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre usiamo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_n\to\alpha$ allora $\abs{\Phi'(\xi_n)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
 
-Quindi il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
+Quindi quando $\abs{\Phi'(\alpha)}<1$ il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
 \[
     \lim_{n\to\infty} \frac{e_{n+1}}{e_n} = 0.
 \]
@@ -966,7 +966,7 @@ Per un metodo come quello del punto fisso, il criterio di arresto più usato è 
 \end{figure}
 
 \begin{esercizio}
-    L'esempio della figura qui sopra è stato generato prendendo punti dati dalla formula $x_k = 10 \cdot 0.9^k$. Qual è il rapporto tra $\abs{x_{k+1}-x_k}$ e $\abs{x_k-\alpha}$ per questa successione? E per una successione geometrica generale $x_k = ar^k$ con tasso $r<1$?
+    L'esempio della figura qui sopra è stato generato prendendo punti dati dalla formula $x_k = 10 \cdot 0.9^k$. Quanto vale il rapporto tra $\abs{x_{k+1}-x_k}$ e $\abs{x_k-\alpha}$ per questa successione? E per una successione geometrica generale $x_k = ar^k$ con tasso $r<1$?
 \end{esercizio}
 
 
@@ -1624,7 +1624,22 @@ Su un computer, una variabile può assumere anche alcuni valori speciali, oltre 
 \end{itemize}
 
 \paragraph{Numeri a doppia precisione}
-Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene memorizzato in 64 bit (=valori~0 oppure~1). Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
+Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene memorizzato in 64 bit (=valori~0 oppure~1).
+
+
+\begin{conditional}[inf]
+\[
+\begin{tabular}{|c|c|c|}
+    \hline
+$s$ & $eeee\dots e$ & $d_1 d_2 d_3 \dots d_{52}$\\
+\hline
+\end{tabular}
+\]
+Il primo bit codifica il segno, i successivi 11 bit l'esponente, e i successivi 52 sono le cifre della mantissa ($d_0$ è sempre uguale a 1 e non serve memorizzarla).
+\end{conditional}
+
+
+Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
 C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha precisione di macchina $\mathsf{u}\approx 10^{-8}$. Con questo formato gli errori relativi sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno).
 
