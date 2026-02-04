@@ -330,7 +330,9 @@ f = @(x) x^2 - 2;
 a = 0; b = 2;
 n = 10;
 
-fa = f(a);
+% salviamo questi valori in variabili
+% per non doverli ricalcolare piu' volte
+fa = f(a); 
 fb = f(b);
 
 if fa*fb >= 0
@@ -344,17 +346,17 @@ for k = 1:n
     valori = [a, c, b, fa, fc, fb]
 
     if fc == 0
-        % caso fortunato!
+        % caso fortunato
         break
     end
     if fa*fc < 0
         b = c; % [a,b] <-- [a,c]
+        fb = fc; % si puo' omettere (perche'?)
     else
         a = c; % [a,b] <-- [c,b]
+        fa = fc; % si puo' omettere (perche'?)
     end
-    
 end
-x = (a+b) / 2;
 \end{lstlisting}
 
 
