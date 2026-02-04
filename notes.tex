@@ -164,20 +164,20 @@ Queste note vengono generate in versioni diverse (con più o meno argomenti) a s
 
 \chapter{Motivazione}
 
-Vedremo algoritmi per risolvere al computer alcuni problemi che avete visto nei corsi di analisi e algebra lineare. 
+In questo corso, vedremo algoritmi per risolvere al computer alcuni problemi che avete visto nei corsi di analisi e algebra lineare. Come mai questi algoritmi richiedono un trattamento speciale?
 
-\paragraph{Problemi senza soluzione esatta} Alcuni problemi non hanno una soluzione esatta data da una formula, per esempio $\int_0^1 e^{x^2} \mathrm{d}x$, ma si riescono a calcolare approssimazioni di queste soluzioni, per esempio approssimare un integrale tramite somme di Riemann. Vista la quantità di conti, meglio farlo fare a un computer.
+\paragraph{Problemi senza soluzione esatta} Alcuni problemi non hanno una soluzione esatta data da una formula, per esempio $\int_0^1 e^{-x^2} \mathrm{d}x$, ma si riescono a calcolare approssimazioni di queste soluzioni: per esempio, un integrale si può approssimare tramite somme di aree di rettangolini.
 
-\paragraph{Algoritmi lenti} Non sempre gli algoritmi che si vedono in un corso `teorico' funzionano bene su un computer. Ad esempio, consideriamo il calcolo del determinante di una matrice $A \in \mathbb{R}^{n\times n}$ tramite la formula di Laplace lungo la prima riga:
+\paragraph{Algoritmi lenti} Non sempre gli algoritmi che si vedono in un corso `teorico' funzionano bene su un computer. Ad esempio, il calcolo del determinante di una matrice $A \in \mathbb{R}^{n\times n}$ tramite la formula di Laplace lungo la prima riga:
 \[
     \det A = \sum_{j=1}^n (-1)^{j+1} a_{1j} A^{(1,j)}
 \]
-Qui $A^{1,j}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Notiamo che per calcolare il determinante di una matrice $11\times 11$ bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
+Qui $A^{(1,j)}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Per calcolare il determinante di una matrice $11\times 11$ con questa formula bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
 
-A meno che non ci siano proprietà particolari nella matrice $A$, come moltissime entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Sul mio computer, i tempi crescono in questo modo in funzione della dimensione $n$:
+A meno che non ci siano proprietà particolari nella matrice $A$, come entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Esempio su un computer moderno::
 \begin{center}
 \begin{tikzpicture}
-    \begin{axis}[ymode = log, xlabel={$n$}, ylabel={tempo / secondi}]
+    \begin{axis}[ymode = log, xlabel={$n$}, ylabel={tempo / $s$}]
         \addplot[
     color=blue,
     mark=square,
@@ -198,11 +198,11 @@ A meno che non ci siano proprietà particolari nella matrice $A$, come moltissim
     \end{axis}
 \end{tikzpicture}
 \end{center}
-Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 100 secondi! Un algoritmo così lento è poco utile in pratica.
+Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 100 secondi! Un algoritmo così lento è poco utile.
 
-\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diversi modi di gestire i calcoli, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative. Questo significa che certe operazioni sono approssimate; per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Alcuni algoritmi vanno implementati con attenzione per evitare che queste approssimazioni che sembrano innocue abbiano un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
+\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diverse soluzioni possibili, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative, come si fa su una calcolatrice. Questo significa che le operazioni sono approssimate: per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Gli algoritmi vanno implementati con attenzione per evitare che queste approssimazioni un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
 
-\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruisci un prototipo di aereo, e vedi se cade o no. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire se i risultati sono affidabili e se questi errori diventano così grandi da compromettere il risultato. Anche voi volete simulare reazioni e processi chimici.
+\paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruendo un prototipo di aereo. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire quando gli errori diventano così grandi da compromettere il risultato.
 
 \paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{x^2} \mathrm{d}x$, o il determinante di una matrice $11\times 11$, ma vogliamo imparare a fare in modo che il computer esegua questo calcolo per noi. Non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come \emph{programmare} il computer in modo da saper risolvere da soli qualunque nuovo problema ci capiti davanti.
 
@@ -345,15 +345,14 @@ for k = 1:n
     % per visualizzare cosa sta succedendo
     valori = [a, c, b, fa, fc, fb]
 
-    if fc == 0
-        % caso fortunato
+    if fc == 0   % caso fortunato
         break
     end
     if fa*fc < 0
-        b = c; % [a,b] <-- [a,c]
+        b = c;   % [a,b] <-- [a,c]
         fb = fc; % si puo' omettere (perche'?)
     else
-        a = c; % [a,b] <-- [c,b]
+        a = c;   % [a,b] <-- [c,b]
         fa = fc; % si puo' omettere (perche'?)
     end
 end
@@ -491,7 +490,7 @@ Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b]
     x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
 \end{equation}
 
-\paragraph{Teorema del punto fisso} Possiamo dimostrare un risultato di convergenza per questo metodo; ci sono però due protagonisti fondamentali che dobbiamo introdurre. Il primo è che dobbiamo lavorare su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
+\paragraph{Teorema del punto fisso} Per dimostrare un risultato di convergenza per questo metodo, ci sono due protagonisti fondamentali che dobbiamo introdurre. Il primo è che dobbiamo lavorare su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
 \begin{equation} \label{intervallo centrato in alpha}
     I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\} = [\alpha-\rho, \alpha + \rho].
 \end{equation}
@@ -516,12 +515,11 @@ Il secondo protagonista è la quantità
 \end{equation}
 cioè il massimo (in valore assoluto) della derivata seconda di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
 \begin{theorem}[Teorema di Weierstrass / di esistenza del massimo]
-    Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classoe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
+    Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
 \end{theorem}
-In questo caso, l'intervallo $I$ è chiuso e limitato, per come l'abbiamo definito in~\eqref{intervallo centrato in alpha}; se $\Phi$ è una funzione di classe $\mathcal{C}^1$, allora la sua derivata $\Phi'$ esiste ed è continua, e anche la funzione $f(x) = \abs{\Phi(x)}$ è continua, in quanto composizione di due funzioni continue: la funzione valore assoluto, e la derivata $\Phi'$. Quindi le ipotesi del teorema sono verificate e la quantità $L$ esiste.
+In questo caso, l'intervallo $I$ è chiuso e limitato, per come l'abbiamo definito in~\eqref{intervallo centrato in alpha}; se $\Phi$ è una funzione di classe $\mathcal{C}^1$, allora la sua derivata $\Phi'$ esiste ed è continua, e anche la funzione $f(x) = \abs{\Phi'(x)}$ è continua, in quanto composizione di due funzioni continue: la funzione valore assoluto, e la derivata $\Phi'$. Quindi le ipotesi del teorema sono verificate e la quantità $L$ esiste.
 
 Con questi due ingredienti a disposizione, possiamo enunciare questo teorema.
-
 
 \begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
 Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che la quantità $L$ definita in~\eqref{defL} sia strettamente minore di $1$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
