@@ -1819,24 +1819,57 @@ In questa dimostrazione abbiamo usato solo il fatto che abbiamo fatto due appros
 Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_n - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$ e cresce solo molto lentamente con il numero di iterazioni.
 
 \paragraph{Approssimazione al prim'ordine dell'errore di macchina}
-In realtà l'errore di macchina $\varepsilon_{mac}$ non è sempre dell'ordine di $10^{-16}$: l'accumulo di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzare questo errore su un esempio semplice. Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, calcoliamo
-\begin{align*}
-\tilde{\gamma} &= \tilde{f}(\tilde{x}, \tilde{y}) = \tilde{x} \otimes \tilde{x} \ominus \tilde{y} \otimes \tilde{y} \\
-&= x(1+\varepsilon_x) \otimes x(1+\varepsilon_x) \ominus y(1+\varepsilon_y) \otimes (1+\varepsilon_y)\\
-&= x^2(1+\varepsilon_x)^2(1+\varepsilon_1) \ominus y^2(1+\varepsilon_y^2)(1+\varepsilon_2)\\
-&= \left( x^2(1+\varepsilon_x)^2(1+\varepsilon_1) - y^2(1+\varepsilon_y^2)(1+\varepsilon_2) \right)(1+\varepsilon_3) \\
-& \doteq \underbrace{x^2-y^2}_{\text{valore esatto $f(x,y)$}} {}+{} x^2 \cdot 2\varepsilon_x + x^2 \varepsilon_1 - y^2 \cdot 2\varepsilon_y - y^2\varepsilon_2 + (x^2-y^2)\varepsilon_3.
-\end{align*}
-Nell'ultima uguaglianza, notiamo il punto sopra l'uguale: espandendo il prodotto, abbiamo ignorato tutte le quantità ``del secondo ordine'', vale a dire che contengono il prodotto di due (o più) $\varepsilon_i$: visto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, questi prodotti sono dell'ordine di $\mathsf{u}^2$, e quindi presumibilmente molto più piccoli di tutti gli altri termini.
+In realtà l'errore di macchina $\varepsilon_{mac}$ non è sempre dell'ordine di $10^{-16}$: l'accumulo di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzare questo errore su un esempio semplice. 
 
-Usando solo il fatto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare sull'errore è quella che otteniamo usando la disuguaglianza triangolare: dividendo tutto per $\gamma$, abbiamo
+Supponiamo di avere dati due numeri reali $x,y$ (non necessariamente dei numeri di macchina), e di voler calcolare la quantità $\gamma = f(x,y) = x^2 - y^2$. Per farlo, calcoliamo in quest'ordine
+\[
+A = x \cdot x, \quad B = y \cdot y, \quad \gamma = A - B.
+\]
+Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, effettuiamo le tre operazioni (due moltiplicazioni e una sottrazione) con i numeri di macchina:
+\[
+\tilde{A} = \tilde{x} \odot \tilde{x}, \quad \tilde{B} = \tilde{y} \odot \tilde{y}, \quad \tilde{\gamma} = \tilde{A} \ominus \tilde{B}.
+\]
+Nel calcolare $\tilde{A}$, si combinano un nuovo errore di macchina $\varepsilon_1$, ottenuto quando approssimiamo il risultato esatto $\tilde{x}^2$ con un numero di macchina, e gli errori precedenti che hanno modificato $x$ in $\tilde{x}$:
+\begin{align*}
+    \tilde{A} &= \tilde{x} \odot \tilde{x} = \tilde{x}^2 (1+\varepsilon_1) = x^2(1+\varepsilon_x)^2 (1+\varepsilon_1)\\
+    &= x^2 (1+2\varepsilon_x + \underbrace{\varepsilon_x^2}_{\mathcal{O}(\mathsf{u}^2)})(1+\varepsilon_1)\\
+    &= x^2(1+2\varepsilon_x + \varepsilon_1 + \underbrace{2\varepsilon_x\varepsilon_1}_{\mathcal{O}(\mathsf{u}^2)} + \mathcal{O}(\mathsf{u}^2)).
+\end{align*}
+Possiamo evitare di calcolare nel dettaglio i termini che contengono il prodotto di due o più errori; ci basta dire che sono dell'ordine di $\mathcal{O}(\mathsf{u}^2)$ per avere una stima dell'errore al primo ordine. Questo ci dice che l'errore relativo su $A$ è
+\[
+\varepsilon_A = \frac{\tilde{A}-A}{A} = 2\varepsilon_x + \varepsilon_1 + \mathcal{O}(\mathsf{u}^2):
+\]
+ricordiamo difatti che $\varepsilon_A = \frac{\tilde{A}-A}{A}$ con qualche manipolazione algebrica diventa $\tilde{A}=A(1+\varepsilon_A)$.
+
+In modo analogo si ha
+\[
+\tilde{B} = \tilde{y} \odot \tilde{y} = B(1+\varepsilon_B), \quad \varepsilon_B = 2\varepsilon_y + \varepsilon_2 + \mathcal{O}(\mathsf{u}^2),
+\]
+dove abbiamo chiamato $\varepsilon_2$ l'errore che facciamo rimpiazzando il risultato del secondo prodotto $\tilde{y} \odot \tilde{y}$ con un numero di macchina. Già questi errori $\varepsilon_A$ e $\varepsilon_B$ possono essere leggermente più grandi della precisione di macchina, fino a $3\mathsf{u}$. Ma l'errore maggiore si verifica quando consideriamo anche la sottrazione finale. Abbiamo
+\[
+\tilde{\gamma} = \tilde{A} \ominus \tilde{B} = (\tilde{A}-\tilde{B})(1+\varepsilon_3).
+\]
+Con un po' di manipolazioni, possiamo scrivere anche questo risultato in una forma simile a quella sopra: il risultato esatto $\gamma=x^2-y^2$, moltiplicato per un fattore $(1+e_{mac})$:
+\begin{align*}
+    \tilde{\gamma}&= (\tilde{A}-\tilde{B})(1+\varepsilon_3)\\
+    &= \frac{\gamma}{x^2-y^2}\biggl(x^2(1+\varepsilon_A) - y^2(1+\varepsilon_B)\biggr)(1+\varepsilon_3)\\
+    &= \gamma \biggl(\underbrace{\frac{x^2-y^2}{x^2-y^2}}_{=1} + \frac{x^2}{x^2-y^2}\varepsilon_A - \frac{y^2}{x^2-y^2}\varepsilon_B\biggr)(1+\varepsilon_3)\\
+    &= \gamma \biggl(1 + \frac{x^2}{x^2-y^2}\varepsilon_A - \frac{y^2}{x^2-y^2}\varepsilon_B +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)\biggr)\\
+    &= \gamma \biggl(1 + \frac{x^2}{x^2-y^2}(2\varepsilon_x + \varepsilon_1) - \frac{y^2}{x^2-y^2}(2\varepsilon_y + \varepsilon_2) +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)\biggr)\\
+    &= \gamma \biggl(1 + \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{2x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)\biggr).
+\end{align*}
+Questo ci dice che l'errore di macchina è
+\[
+e_{mac} = \frac{\tilde{\gamma} - \gamma}{\gamma} = \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2).
+\]
+Usando solo il fatto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare è quella che otteniamo usando la disuguaglianza triangolare: dividendo tutto per $\gamma$, abbiamo
 \begin{align}
     \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
     &\leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{y^2}{\abs{x^2-y^2}} \mathsf{u} + \mathsf{u}. \label{esempiox2y2}
 \end{align}
-Questo calcolo ci mostra quando possiamo aspettarci che l'errore di macchina sia grande: i coefficienti che moltiplicano la $\mathsf{u}$ diventano grandi quando $x$ e $y$ sono vicini tra loro, perché in questo caso $x^2-y^2$ è molto più piccolo di $x^2$ e $y^2$. Quindi, nel calcolo di questa espressione, l'errore di macchina è grande quando $x\approx y$. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando facciamo sottrazioni tra due numeri molto vicini tra loro.
+Questo calcolo ci permette di individuare per quali valori di $x$ e $y$ l'errore di macchina diventa molto grande: in particolare, quando $x^2$ e $y^2$ sono molto vicini tra loro, il denominatore $x^2-y^2$ è molto più piccolo del numeratore, e quindi $e_{mac}$ diventa molto grande. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando facciamo sottrazioni tra due numeri molto vicini tra loro.
 
-La stima dell'errore che abbiamo effettuato è abbastanza lunga e macchinosa anche per un'espressione molto semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
+Questo calcolo è stato lungo e macchinoso anche per un'espressione semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$.
 
 \paragraph{Numero di condizionamento} Concentriamoci sull'errore $\varepsilon_x$, e supponiamo per un attimo di ignorare gli errori $\varepsilon_y, \varepsilon_1,\varepsilon_2,\varepsilon_3$, ponendoli uguali a zero. Allora, possiamo notare che quello che stiamo calcolando è $\tilde{\gamma} = f(\tilde{x},y)$: l'unico errore che commettiamo è quello dovuto a rimpiazzare il valore iniziale $x$ con $\tilde{x}$, e tutte le altre operazioni sono esatte. Abbiamo a disposizione uno strumento dell'analisi per dare un'espressione approssimata di questo errore: lo sviluppo di Taylor. Consideriamo la funzione $g(x) = f(x,y)$, dove nascondiamo la dipendenza dalla $y$ perché la stiamo considerando costante. Se questa funzione è di classe $\mathcal{C}^1$, possiamo farne uno sviluppo di Taylor in $x$ per ottenere
 \[
@@ -1852,22 +1885,14 @@ Questa formula ci dice che quando calcoliamo una funzione $g(x)$ nel punto $\til
 \]
 moltiplicato per un fattore
 \[
-\frac{\partial g(x)}{\partial x}\frac{x}{g(x)}.
+\frac{\partial g}{\partial x}\frac{x}{g(x)}.
 \]
 Il valore assoluto di questa quantità, cioè
 \[
-\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}\frac{x}{g(x)}}
+\kappa_{g,x} = \abs*{\frac{\partial g}{\partial x}\frac{x}{g(x)}}
 \]
 viene detto \emph{numero di condizionamento} della funzione $g$ nel punto $x$. Esso è una sorta di `fattore di amplificazione' dell'errore, che ci dice di quanto un errore cresce (o decresce) quando effettuiamo operazioni.
 
-Possiamo riconoscere nel nostro esempio~\eqref{esempiox2y2}, con $g(x) = f(x,y) = x^2-y^2$, che il coefficiente davanti a $\varepsilon_x$ è proprio
-\[
-\kappa_{g,x} = \abs*{\frac{\partial g(x)}{\partial x}}\frac{\abs{x}}{\abs{g(x)}} = \abs{2x} \frac{\abs{x}}{\abs{x^2-y^2}}.
-\]
-Analogamente, il coefficiente davanti a $\varepsilon_y$ è uguale a 
-\[
-    \abs*{\frac{\partial (x^2-y^2)}{\partial y}}\frac{\abs{y}}{\abs{x^2-y^2}} = \abs{-2y} \frac{\abs{y}}{\abs{x^2-y^2}}.
-\]
 \paragraph{Esempio} La funzione $f(x) = \frac{x}{1-x}$ ha numero di condizionamento
 \[
 \kappa_{f,x} = \abs*{\frac{f'(x)x}{f(x)}} = \abs*{\frac{\frac{1}{(1-x)^2}x}{\frac{x}{1-x}}} = \frac{1}{\abs{1-x}}.
@@ -1876,28 +1901,22 @@ Questa quantità è grande quando $x\approx 1$. Un errore relativo piccolo sull'
 
 Una funzione che ha un numero di condizionamento grande viene detta \emph{mal condizionata}.
 
+Possiamo riconoscere nel nostro esempio~\eqref{esempiox2y2}, con $g(x) = f(x,y) = x^2-y^2$, che il coefficiente davanti a $\varepsilon_x$ è proprio
+\[
+\kappa_{g,x} = \abs*{\frac{\partial g}{\partial x}}\frac{\abs{x}}{\abs{g(x)}} = \abs{2x} \frac{\abs{x}}{\abs{x^2-y^2}}.
+\]
+Analogamente, il coefficiente davanti a $\varepsilon_y$ è uguale a 
+\[
+    \abs*{\frac{\partial (x^2-y^2)}{\partial y}}\frac{\abs{y}}{\abs{x^2-y^2}} = \abs{-2y} \frac{\abs{y}}{\abs{x^2-y^2}}.
+\]
+
 \paragraph{Errore inerente, algoritmico, e stabilità (*)}
 Notare che l'errore di macchina dipende non dalla funzione che vogliamo calcolare, ma dalla sequenza di operazioni che usiamo per calcolarla: per esempio $\gamma = f(x,y) = x^2-y^2 = (x+y)(x-y)$ è la stessa funzione scritta in due modi diversi, ma se usiamo la seconda espressione su un calcolatore possiamo ottenere un risultato $\tilde{\gamma}$ diverso:
 \[
     \tilde{\gamma} = \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y}).
 \]
 non è per forza uguale alla quantità che avevamo chiamato $\tilde{\gamma}$ in precedenza: abbiamo visto nell'Esercizio~\ref{ese: 
-miscellanea numeri di macchina} che anche solo facendo operazioni di macchina in ordine diverso possiamo ottenere risultati diversi.
-
-Calcoliamo l'approssimazione al prim'ordine dell'errore di macchina anche per questa formulazione:
-\begin{align*}
-    \tilde{\gamma} &= \tilde{f}(\tilde{x},\tilde{y}) = (\tilde{x}\oplus\tilde{y})\odot(\tilde{x}\ominus\tilde{y})\\
-    &= (x(1+\varepsilon_x)\oplus y(1+\varepsilon_y))\odot((1+\varepsilon_x)\ominus y(1+\varepsilon_y))\\
-    &= (x(1+\varepsilon_x)+ y(1+\varepsilon_y))(1+\varepsilon_1) \odot ((1+\varepsilon_x)- y(1+\varepsilon_y))(1+\varepsilon_2)\\
-    &= (x(1+\varepsilon_x)+ y(1+\varepsilon_y))(1+\varepsilon_1)((1+\varepsilon_x)- y(1+\varepsilon_y))(1+\varepsilon_2)(1+\varepsilon_3)\\
-    &\doteq (x+y)(x-y) + \biggl(x(x-y) + (x+y)x\biggr) \varepsilon_x + \biggl(y(x-y) - (x+y)y\biggr) \varepsilon_y \\
-    & \quad\quad + (x^2-y^2)(\varepsilon_1+\varepsilon_2+\varepsilon_3)
-\end{align*}
-Di nuovo, abbiamo ottenuto l'ultima uguaglianza espandendo i prodotti ma ignorando tutti i termini che contengono il prodotto di due o più termini $\varepsilon$. Possiamo semplificare l'ultima espressione in
-\[
-    \tilde{\gamma} = \underbrace{x^2-y^2}_{\text{valore esatto $f(x,y)$}} + 2x^2 \varepsilon_x = 2y^2 \varepsilon_y + (x^2-y^2)(\varepsilon_1+\varepsilon_2+\varepsilon_3)
-\]
-e quindi ottenere la stima disuguaglianza sull'errore
+miscellanea numeri di macchina} che anche solo facendo operazioni di macchina in ordine diverso possiamo ottenere risultati diversi. Lavorando nello stesso modo, possiamo ottenere in questo caso la disuguaglianza sull'errore
 \begin{align}
     \frac{\abs{\tilde{\gamma}-\gamma}}{\abs{\gamma}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} 
     + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y}
@@ -1906,38 +1925,36 @@ e quindi ottenere la stima disuguaglianza sull'errore
 \end{align}
 Abbiamo ottenuto un risultato diverso da quello in~\eqref{esempiox2y2}: i due algoritmi non eseguono le stesse operazioni sul calcolatore, e quindi sono soggetti a errori diversi. Tuttavia, una parte del risultato è la stessa: i coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Come abbiamo visto sopra, questi coefficienti sono uguali al numero di condizionamento della $f(x,y)$ rispetto alla $x$ e rispetto alla $y$. Questi numeri di condizionamento dipendono solo dalla funzione che vogliamo calcolare, non dalla sequenza di operazioni (\emph{algoritmo}) che stiamo usando per farlo. Quindi all'interno dell'errore di macchina ci sono degli addendi che sono inevitabili, anche se usiamo l'algoritmo migliore del mondo per calcolare il risultato: sono quelli dovuti all'errore sull'approssimazione con numeri di macchina dei dati in ingresso. Questo errore si chiama \emph{errore inerente}, e si può stimare come il numero di condizionamento della funzione che stiamo calcolando moltiplicato per $\mathsf{u}$. Se abbiamo una funzione che dipende da più di un valore in ingresso, come la nostra $f(x,y)$ che dipende sia dalla $x$ che dalla $y$, abbiamo un numero di condizionamento diverso rispetto a ognuna delle variabili, e l'errore inerente è la somma di questi errori $\left(\kappa_{f,x}+\kappa_{f,y}\right)\mathsf{u}$.
 
-I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nella~\eqref{esempiox2y2bis}, l'errore algoritmico è minore o uguale di $3\mathsf{u}$, quindi è sempre dello stesso ordine di grandezza della precisione di macchina, a parte un piccolo fattore moltiplicativo; questo è quanto di meglio possiamo sperare per un algoritmo. Nella~\eqref{esempiox2y2} invece l'errore algoritmico è composto dai termini contenenti $\varepsilon_1,\varepsilon_2,\varepsilon_3$. Anche in questo caso però l'errore algoritmico non può mai essere molto più grande dell'errore inerente: la quantità
-$
-\frac{2x^2}{\abs{x^2-y^2}}\mathsf{u}
-$
-è sempre maggiore di 
+I termini rimanenti, che dipendono dall'algoritmo che stiamo utilizzando, compongono l'\emph{errore algoritmico}. Nella~\eqref{esempiox2y2bis}, l'errore algoritmico è minore o uguale di $3\mathsf{u}$, quindi è sempre dello stesso ordine di grandezza della precisione di macchina, a parte un piccolo fattore moltiplicativo; questo è quanto di meglio possiamo sperare per un algoritmo. Nella~\eqref{esempiox2y2} invece l'errore algoritmico $\frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3}$ può essere molto più grande della precisione di macchina. Comunque, anche in questo caso però l'errore algoritmico non può mai essere molto più grande dell'errore inerente: la quantità
 $
 \frac{x^2}{\abs{x^2-y^2}}\mathsf{u}
-$, la quantità 
 $
-\frac{2y^2}{\abs{x^2-y^2}}\mathsf{u}
+è sempre minore di 
 $
-è sempre maggiore di 
+\frac{2x^2}{\abs{x^2-y^2}}\mathsf{u}
+$, e la quantità 
 $
-\frac{y^2}{\abs{x^2-y^2}}\mathsf{u},
+\frac{y^2}{\abs{x^2-y^2}}\mathsf{u}
 $
-e la loro somma è sempre almeno uguale a $\mathsf{u}$. Un algoritmo in cui l'errore algoritmico è sempre al più dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità  è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente che è inevitabile. Quindi un algoritmo stabile (informalmente) restituisce il minore errore possibile, almeno come ordine di grandezza.
+è sempre minore di 
+$
+\frac{2y^2}{\abs{x^2-y^2}}\mathsf{u},
+$
+Un algoritmo in cui l'errore algoritmico è sempre al più dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente che è inevitabile. Quindi un algoritmo stabile (informalmente) restituisce il minore errore possibile, come ordine di grandezza.
 
 \paragraph{Esempio di un algoritmo instabile (*)}
 Consideriamo la funzione $f(x) = 2x+x^2 = (1+x)^2-1$. Queste due espressioni equivalenti portano a due algoritmi per calcolare il valore della funzione:
 \[
 \tilde{f}_A(\tilde{x}) = 2\odot \tilde{x} \oplus \tilde{x}\odot \tilde{x}, \quad \tilde{f}_B(\tilde{x}) = (1\oplus \tilde{x}) \odot (1\oplus \tilde{x}) \ominus 1.
 \]
-Studiamo l'errore di macchina del secondo algoritmo, che scriviamo per comodità con una quantità intermedia:
-\begin{lstlisting}
-z = 1 + x
-risultato = z*z - 1 
-\end{lstlisting}
+Studiamo l'errore di macchina del secondo algoritmo, che scriviamo per comodità con delle quantità intermedie:\
+\[
+A = 1+x \quad B = A \cdot A, \quad \gamma = B-1.
+\]
 Abbiamo innanzitutto
 \begin{align*}
-\tilde{z} = 1\oplus \tilde{x} &= 1\oplus x(1+\varepsilon_x)\\
-& = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
-& = (1 + x + x\varepsilon_x)(1+\varepsilon_1)\\
+    \tilde{A} &= 1\oplus\tilde{x} = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
+    &= (1+x) \left(\frac{1}{1+x} \right)
 &= 1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2),
 \end{align*}
 poiché il termine $x\varepsilon_x\varepsilon_1$ contiene due fattori minori di $\mathsf{u}$. Calcoliamo anche l'espansione al primo ordine di $\tilde{z}^2$, che ci servirà più avanti:
@@ -1969,7 +1986,7 @@ Come già sappiamo, il coefficiente davanti a $\varepsilon_x$ è uguale al numer
 questo numero di condizionamento diventa molto grande quando $x\approx -2$; quindi la funzione è mal condizionata intorno a questo punto. Però l'errore di macchina diventa molto grande anche quando $x\approx 0$, per colpa del termine $\frac{1+2x+x^2}{2x+x^2}$ che diverge; mentre il numero di condizionamento resta limitato attorno a questo valore. Quindi quando $x\approx 0$ l'errore algoritmico è molto più grande dell'errore inerente, e quindi l'algoritmo dato da $\tilde{f}_B$ è instabile. (Si noti che quando abbiamo esattamente $x=0$ si ha $f(x)=0$, quindi non è ben definito il concetto di errore relativo perché ci richiederebbe di dividere per $0$.)
 
 \begin{conditional}[inf]
-\paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno osservato che queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, e specialmente di alcuni pixel in posizione chiave. Facendo piccole modifiche mirate ai segnali, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può aveere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
+\paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno osservato che queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, e specialmente di alcuni pixel in posizione chiave. Facendo piccole modifiche mirate ai segnali, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può avere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
 \begin{center}
     % public domain: https://picryl.com/media/trouble-at-the-halt-4d8cc6
     \includegraphics[width=0.5\textwidth]{trouble-at-the-halt-4d8cc6.jpg}
@@ -2166,7 +2183,7 @@ In altre parole, l'algoritmo che possiamo seguire per calcolare l'errore di macc
     \item Per ogni errore parziale, calcoliamo il prodotto dei coefficienti lungo il percorso che lo collega al risultato finale ( o lungo ognuno dei percorsi, se sono più di uno); esso rappresenta un addendo dell'errore di macchina $\frac{\tilde{\gamma}-\gamma}{\gamma}$.
 \end{itemize}
 \begin{remark}
-    Con un algoritmo simile a questo possiamo calcolare gli errori \emph{assoluti}, anziché relativi, cioè essenzialmente le derivate. Questa è una variante del famoso algoritmo di \emph{backpropagation} che viene utilizzato per allenare modelli di intelligenza artificiale.
+    Con un algoritmo simile a questo possiamo calcolare gli errori \emph{assoluti}, anziché relativi, cioè essenzialmente le derivate. Questa è una variante del famoso algoritmo di \emph{backpropagation} che viene utilizzato per calcolare derivate quando si allenano modelli di intelligenza artificiale.
 \end{remark}
 
 \end{conditional}
