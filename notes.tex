@@ -1954,36 +1954,35 @@ A = 1+x \quad B = A \cdot A, \quad \gamma = B-1.
 Abbiamo innanzitutto
 \begin{align*}
     \tilde{A} &= 1\oplus\tilde{x} = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
-    &= (1+x) \left(\frac{1}{1+x} \right)
-&= 1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2),
+    &= (1+x) \left(1+\frac{x}{1+x}\varepsilon_x \right)(1+\varepsilon_1)\\
+    &= (1+x) \left(1+\underbrace{\frac{x}{1+x}\varepsilon_x +\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)}_{=\varepsilon_A}\right)
 \end{align*}
-poiché il termine $x\varepsilon_x\varepsilon_1$ contiene due fattori minori di $\mathsf{u}$. Calcoliamo anche l'espansione al primo ordine di $\tilde{z}^2$, che ci servirà più avanti:
-\begin{align*}
-    \tilde{z}^2 &= \biggl(1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)\biggl(1 + x + x\varepsilon_x + (1+x)\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)\\
-    &= (1+x)^2 + 2(1+x)(x\varepsilon_x + (1+x)\varepsilon_1) + \mathcal{O}(\mathsf{u}^2)\\
-    &= (1+x)^2 + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\\
-\end{align*}
+poiché il termine $x\varepsilon_x\varepsilon_1$ contiene due fattori minori di $\mathsf{u}$.
 Poi continuiamo con
 \begin{align*}
-    \tilde{\gamma} &= \tilde{z}\odot \tilde{z} \ominus 1 \\
-    &= \tilde{z}^2 (1+\varepsilon_2) \ominus 1 \\
-    &= \biggl(\tilde{z}^2 (1+\varepsilon_2) - 1\biggr)(1+\varepsilon_3)\\
-    &= \tilde{z}^2 (1+\varepsilon_2)(1+\varepsilon_3) - 1 -\varepsilon_3\\
-    &= \tilde{z}^2 (1+\varepsilon_2 + \varepsilon_3 + \mathcal{O}(\mathsf{u}^2)) - 1 -\varepsilon_3\\
-    &=  \biggl((1+x)^2 + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)\biggr)(1+\varepsilon_2 + \varepsilon_3 + \mathcal{O}(\mathsf{u}^2)) - 1 -\varepsilon_3\\
-    &= (1+x)^2 + (1+x)^2(\varepsilon_2 + \varepsilon_3) + 2x(1+x)\varepsilon_x + 2(1+x)^2\varepsilon_1 + \mathcal{O}(\mathsf{u}^2)- 1 -\varepsilon_3\\
-    &= \gamma + (2x+2x^2)\varepsilon_x + 2(1+x)^2\varepsilon_1 + (1+x)^2\varepsilon_2 + ((1+x)^2-1)\varepsilon_3 + \mathcal{O}(\mathsf{u}^2).
+    \tilde{B} &= \tilde{A} \odot \tilde{A} = A^2(1+\varepsilon_A)^2 (1+\varepsilon_2)\\
+        &= B(1+2\varepsilon_A+\varepsilon_2 + \mathcal{O}(\mathsf{u}^2))\\
+        &= B\left(1+ \underbrace{2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2 + \mathcal{O}(\mathsf{u}^2)}_{\varepsilon_B}\right).
+\end{align*}
+Per la sottrazione finale, notiamo che il termine $1$ si rappresenta esattamente con un numero di macchina, quindi non commettiamo nessun errore nel rappresentarlo. Consideriamo quindi
+\begin{align*}
+    \tilde{\gamma} &= \tilde{B} \ominus 1 \\
+    &= (B(1+\varepsilon_B) - 1)(1+\varepsilon_3)\\
+    &= (B-1)\left(1+\frac{B}{B-1}\varepsilon_B\right)(1+\varepsilon_3)\\
+    &= (B-1)\left(1+\frac{B}{B-1}\varepsilon_B +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)\right)\\
+    &= \gamma\left(1+ \frac{(1+x)^2}{2x+x^2}\left(2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2\right) +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)  \right)\\
+    &= \gamma\left(1+ \frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)  \right)
 \end{align*}
 Quindi
 \begin{align*}
-    \abs*{\frac{\tilde{\gamma}-\gamma}{\gamma}} &= \abs*{\frac{2x+2x^2}{2x+x^2}\varepsilon_x + \frac{2(1+2x+x^2)}{2x+x^2}\varepsilon_1  + \frac{1+2x+x^2}{2x+x^2}\varepsilon_2 + \frac{2x+x^2}{2x+x^2}\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)} \\
-    &\stackrel{.}{\leq} \abs*{\frac{2x+2x^2}{2x+x^2}}\mathsf{u} + \abs*{3\frac{1+2x+x^2}{2x+x^2}}\mathsf{u} + \mathsf{u}.
+    e_{mac} &= \abs*{\frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)} \\
+    &\leq \abs*{\frac{2(1+x)}{2+x}}\mathsf{u} + \abs*{3\frac{(1+x)^2}{2x+x^2}}\mathsf{u} + \mathsf{u} + \mathcal{O}(\mathsf{u}^2)
 \end{align*}
 Come già sappiamo, il coefficiente davanti a $\varepsilon_x$ è uguale al numero di condizionamento della funzione:
 \[
 \kappa_{f,x} = \abs*{\frac{f'(x) x}{f(x)}} = \abs*{\frac{(2+2x)x}{2x+x^2}} = \abs*{\frac{2+2x}{2+x}};
 \]
-questo numero di condizionamento diventa molto grande quando $x\approx -2$; quindi la funzione è mal condizionata intorno a questo punto. Però l'errore di macchina diventa molto grande anche quando $x\approx 0$, per colpa del termine $\frac{1+2x+x^2}{2x+x^2}$ che diverge; mentre il numero di condizionamento resta limitato attorno a questo valore. Quindi quando $x\approx 0$ l'errore algoritmico è molto più grande dell'errore inerente, e quindi l'algoritmo dato da $\tilde{f}_B$ è instabile. (Si noti che quando abbiamo esattamente $x=0$ si ha $f(x)=0$, quindi non è ben definito il concetto di errore relativo perché ci richiederebbe di dividere per $0$.)
+questo numero di condizionamento diventa molto grande quando $x\approx -2$; quindi la funzione è mal condizionata intorno a questo punto. Però l'errore di macchina diventa molto grande anche quando $x\approx 0$, per colpa del denominatore $2x+x^2$; mentre il numero di condizionamento resta limitato per $x\approx 0$. Quindi quando $x\approx 0$ l'errore algoritmico è molto più grande dell'errore inerente, e perciò l'algoritmo dato da $\tilde{f}_B$ è instabile. (Si noti che quando abbiamo esattamente $x=0$ si ha $f(x)=0$, quindi non è ben definito il concetto di errore relativo perché ci richiederebbe di dividere per $0$.)
 
 \begin{conditional}[inf]
 \paragraph{Esempio: attacchi avversari} Alcune reti neurali sono usate in informatica per classificare immagini, ad esempio di segnali stradali: il modello restituisce come output dei numeri reali che sono probabilità (secondo il modello) che l'immagine contenga un determinato oggetto: per esempio, un certo segnale può essere riconosciuto con una probabilità dell'87\% di essere un divieto di transito, 7\% di essere divieto di sosta, 6\% di essere un limite di velocità. Alcuni ricercatori hanno osservato che queste probabilità possono essere funzioni mal condizionate dei pixel dell'immagine, e specialmente di alcuni pixel in posizione chiave. Facendo piccole modifiche mirate ai segnali, come quelle rappresentate nell'immagine qui sotto (\href{https://arxiv.org/abs/1707.08945}{fonte}), è possibile fare sì che l'immagine venga riconosciuta dalla rete neurale come un segnale stradale diverso, per esempio un limite di velocità. Questo mal condizionamento può avere conseguenze catastrofiche, per esempio, per i sistemi di guida automatica.
