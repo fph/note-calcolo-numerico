@@ -1145,7 +1145,7 @@ Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\
 \begin{conditional}[inf]
 \paragraph{Convergenza su intervalli}
 C'è un risultato che ci permette di concludere la convergenza del metodo di Newton su un intero intervallo, senza la condizione scomoda da verificare che il punto iniziale sia ``abbastanza vicino''. Questa volta per applicare il teorema dobbiamo usare un intervallo in cui lo zero $\alpha$ sia un estremo della funzione.
-\begin{theorem}[Convergenza su intervalli del metodo di Newton]
+\begin{theorem}[Convergenza su intervalli del metodo di Newton] \label{thm:convergenza Newton su intervalli}
     Sia $f$ una funzione di classe $\mathcal{C}^2$ su un intervallo $I = [a,b]$. Supponiamo che:
     \begin{itemize}
         \item $f$ abbia un solo zero $\alpha$ in un estremo dell'intervallo ($\alpha=a$ o $\alpha=b$).
@@ -1176,6 +1176,36 @@ che vale uno $\xi_n$ compreso tra $\alpha$ e $x_n$. Per le nostre ipotesi, $\fra
 
 Nel corso della dimostrazione abbiamo mostrato anche che $\alpha \leq x_{n+1} \leq x_n$ per ogni $n$. Ciò significa che la successione $x_n$ è decrescente e limitata da $\alpha$; in particolare quindi converge, e il suo limite è necessariamente $\alpha$, che è l'unico zero della funzione in $I$.
 \end{proof}
+
+\begin{esercizio}
+    Sia $f(x) = \log x + 2x - 1$.
+    \begin{enumerate}
+        \item Mostrare che $f$ ha un solo zero reale $\alpha$.
+        \item Per $x_0$ in quale intervallo di valori possiamo applicare il teorema~\ref{thm:convergenza Newton su intervalli} per concludere la convergenza del metodo?
+        \item Cosa possiamo dire sulla convergenza del metodo quando non siamo nell'intervallo determinato al punto precedente?
+    \end{enumerate}  
+\end{esercizio}
+Soluzione: \begin{enumerate}
+    \item La funzione $f(x)$ è definita solo per $x > 0$ per via del logaritmo; quindi ci restringiamo agli $x$ reali positivi (su cui $f \in \mathcal{C}^2$). La sua derivata $f'(x) = \frac{1}{x}+2$ è sempre positiva, quindi la funzione è crescente su tutto $(0,+\infty)$. Questo mostra che ha \emph{al massimo} uno zero. Per mostrare che ne ha esattamente uno, ci basta mostrare che attraversa l'asse delle ascisse. Abbiamo $f(1) = 1> 0$, e $\lim_{x\to 0^+} f(x) = -\infty$, quindi il grafico della funzione attraversa l'asse delle ascisse in un punto $\alpha \in (0,1)$. Per trovare esplicitamente un intervallo di separazione, possiamo prendere per esempio $e^{-1}$, di modo che sappiamo calcolarne il logaritmo: si ha $f(e^{-1}) = -1 + 2e^{-1} -1 = -2(1-e^{-1})$, che è negativo perché $e^{-1}<1$.
+    \item Calcoliamo innanzitutto anche $f''(x) = -\frac{1}{x^2}$, che ci servirà nel seguito. Come spesso succede, non è semplice trovare esplicitamente intervalli per cui
+    \[
+    \abs{\Phi'(x)} = \abs*{\frac{f(x)f''(x)}{(f'(x))^2}} = \abs*{\frac{(\log x + 2x - 1)(-\frac{1}{x^2})}{(\frac{1}{x}+2)^2}}
+    \]
+    è minore di $1$, per cui la nostra arma principale sarà il teorema di convergenza su intervalli. Poiché $f''(x)<0$ per ogni $x$, l'intervallo per cui $f(x)f''(x)\geq 0$ è $(0,\alpha)$. Per ogni scelta di $x_0 \in (0,\alpha)$ possiamo trovare un intervallo $I$ a cui applicare il teorema~\ref{thm:convergenza Newton su intervalli}, per esempio $[x_0,\alpha]$; questo mostra che per ogni $x_0 \in (0,\alpha)$ si ha convergenza monotona ad $\alpha$: più precisamente, $x_0 \leq x_1 \leq x_2 \leq \dots \leq \alpha$.
+    
+    \item Possiamo dire qualcosa sulla convergenza del metodo quando $x_0 > \alpha$? Notiamo innanzitutto che, poiché la funzione è concava, la retta tangente in $x_0$ sta sopra la funzione, e quindi $x_1 < \alpha$ (è la stessa idea della dimostrazione del teorema di convergenza su intervalli!). ma c'è un rischio: se la tangente cade ``abbastanza a sinistra'' avremo $x_1 \leq 0$, e quindi ci blocchiamo dopo la prima iterazione perché $f(x_1)$ non è definita. Possiamo dire esplicitamente quando questo succede:
+    \[
+    x_1 = x_0 - \frac{\log x_0 + 2x_0 - 1}{\frac{1}{x_0}+2} = \frac{1 + 2x_0 - \log x_0 - 2x_0 + 1}{\frac{1}{x_0}+2} = \frac{2 - \log x_0}{\frac{1}{x_0}+2},
+    \]
+    che è minore o uguale a zero quando $x_0 \geq e^2$.  Quindi il comportamento del metodo è questo:
+    \begin{itemize}
+        \item Se $x_0 \in (0,\alpha]$, il metodo converge per il teorema di convergenza su intervalli;
+        \item Se $x_0 \in (\alpha, e^2)$, la prima iterazione produce $x_1 \in (0,\alpha)$ e quindi il metodo converge perché ricadiamo nel caso precedente;
+        \item se $x_0 \geq e^2$, il metodo produce $x_1 \leq 0$, e quindi il metodo non è più applicabile dopo la prima iterazione.
+    \end{itemize}
+
+\end{enumerate}
+
 \end{conditional}
 
 
