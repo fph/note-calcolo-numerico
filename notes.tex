@@ -1151,30 +1151,30 @@ C'è un risultato che ci permette di concludere la convergenza del metodo di New
         \item $f$ abbia un solo zero $\alpha$ in un estremo dell'intervallo ($\alpha=a$ o $\alpha=b$).
         \item $f(x)f''(x) \geq 0$ su tutti i punti dell'intervallo.
     \end{itemize}
-    Allora, a partire da qualunque $x_0 \in [a,b]$ si ha $x_k \in I$ e $\lim_{k\to\infty} x_k = \alpha$.
+    Allora, a partire da qualunque $x_0 \in I$ si ha $x_k \in I$ e $\lim_{k\to\infty} x_k = \alpha$. La convergenza è monotona (crescente o decrescente).
 \end{theorem}
 \begin{proof}
 Visto che $f$ è continua e non ha altri zeri all'interno di $I$, dev'essere sempre positiva o sempre negativa. Quindi ci sono quattro situazioni possibili:
 \begin{enumerate}
-    \item $\alpha=a$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $(\alpha,b]$;
-    \item $\alpha=a$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $(\alpha,b]$;
-    \item $\alpha=b$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $[a,\alpha)$;
-    \item $\alpha=b$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $[a,\alpha)$.
+    \item $\alpha=a$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq \dots$;
+    \item $\alpha=a$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq \dots$;
+    \item $\alpha=b$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq \dots$;
+    \item $\alpha=b$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq \dots$.
 \end{enumerate}
-Trattiamo solo il primo: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
+Trattiamo solo il primo caso: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
 e/o all'asse $y$.
 
-Innanzitutto, dimostriamo per induzione che per ogni $n=0,1,2,\dots$ si ha $x_n \in I$. Il caso base $x_0 \in I$ è vero per ipotesi; quindi assumiamo $x_n\in I$ e dimostriamo $x_{n+1}\in I$. Consideriamo l'equazione che definisce la retta tangente in $x_n$,
+Dimostriamo per induzione che per ogni $n=0,1,2,\dots$ si ha $x_n \in I$. Il caso base $x_0 \in I$ è vero per ipotesi; quindi assumiamo $x_n\in I$ e dimostriamo che $\alpha \leq x_{n+1} \leq x_n$, da cui segue in particolare anche che $x_{n+1} \in I$. Consideriamo l'equazione che definisce la retta tangente in $x_n$,
 \[
 y = T(x) = f(x_n) + f'(x_n)(x-x_n).
 \]
 Ricordiamo lo sviluppo di Taylor~\eqref{sviluppo Taylor per dimostrazione conv. quadratica Newton}
 \[
-0 = f(\alpha) = f(x_n) + f'(x_n)(\alpha-x_n) + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2,
+0 = f(\alpha) = \underbrace{f(x_n) + f'(x_n)(\alpha-x_n)}_{=T(\alpha)} + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2,
 \]
 che vale uno $\xi_n$ compreso tra $\alpha$ e $x_n$. Per le nostre ipotesi, $\frac{f''(\xi_n)}{2}(\alpha-x_n)^2 \geq 0$, quindi $f(x_n) + f'(x_n)(\alpha-x_n) = T(\alpha) \leq 0$. Poiché invece $T(x_n) = f(x_n) \geq 0$, il punto $x_{n+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_n$; quindi in particolare $x_{n+1} \in I$. Questo completa la dimostrazione per induzione.
 
-Quello che abbiamo scritto dimostra anche qualcosa di più forte: $x_{n+1} \leq x_n$ per ogni $n$. Ciò significa che la successione $x_n$ è decrescente; in particolare quindi converge, e il suo limite è necessariamente $\alpha$ perché è l'unico zero in $I$.
+Nel corso della dimostrazione abbiamo mostrato anche che $\alpha \leq x_{n+1} \leq x_n$ per ogni $n$. Ciò significa che la successione $x_n$ è decrescente e limitata da $\alpha$; in particolare quindi converge, e il suo limite è necessariamente $\alpha$, che è l'unico zero della funzione in $I$.
 \end{proof}
 \end{conditional}
 
