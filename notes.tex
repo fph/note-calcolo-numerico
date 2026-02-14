@@ -485,10 +485,18 @@ Un altro algoritmo che ci permette di cercare zeri di funzioni è il \emph{metod
 \end{itemize}
 Ognuno di queste scritture porta a una definizione diversa di $\Phi(x)$, la funzione che sta a destra dell'uguale. In tutti questi casi, uno zero $\alpha$ di $f(\alpha)=0$ è anche un \emph{punto fisso} di $\Phi$, cioè soddisfa $\alpha = \Phi(\alpha)$. Tutte queste possibilità portano a scelte diverse di $\Phi(x)$, e quindi a metodi che hanno (potenzialmente) comportamenti molto diversi. Alcuni di questi metodi potrebbero generare successioni che convergono a $\alpha$ ed altri no. Studiamo in generale questi metodi.
 
-Il metodo del punto fisso funziona in questo modo: fissata una certa $\Phi:[a,b] \to \mathbb{R}$ e scelto $x_0 \in [a,b]$, costruiamo la successione
+Il metodo del punto fisso funziona in questo modo: data una certa $\Phi:[a,b] \to \mathbb{R}$ (che supporremo almeno continua, cioè di classe $\mathcal{C}^0$) e scelto $x_0 \in [a,b]$, costruiamo la successione
 \begin{equation} \label{puntofisso}
-    x_{n+1} = \Phi(x_n), \quad n=0,1,2,\dots    
+    x_{k+1} = \Phi(x_k), \quad k=0,1,2,\dots    
 \end{equation}
+
+Se la successione $x_k$ converge a un valore $\alpha$, allora $\alpha$ è un punto fisso di $\Phi$: difatti, passando al limite da entrambi i lati abbiamo
+\[
+\alpha = \lim_{k\to\infty} x_{k+1} = \lim_{k\to\infty} \Phi(x_k) = \Phi(\alpha).
+\]
+Nell'ultima uguaglianza, abbiamo usato la continuità di $\Phi$: difatti, ricordiamo dall'analisi che la continuità è proprio la proprietà che garantisce che se una successione $x_k$ converge ad $\alpha$, allora $\Phi(x_k)$ converge a $\Phi(\alpha)$.
+
+\paragraph{Applicabilità e convergenza} Purtroppo il metodo del punto fisso dà in generale meno garanzie del metodo di bisezione: vedremo tra poco che la convergenza è garantita solo per alcuni valori di $x_0$, e non è neppure semplice capire quali. Ma c'è un altro possibile problema che viene ancora prima della convergenza: quello dell'applicabilità. La funzione $\Phi$ in generale è definita solo su un sottointervallo di $\mathbb{R}$, e nulla ci garantisce che i nuovi punti $x_{k+1}$ che costruiamo siano in questo dominio. Vediamo un esempio: se $\Phi(x) = \frac{1}{x} - 1$, e partiamo da $x_0=1$, subito al primo passo abbiamo $x_1=0$, e la funzione $\Phi$ non è definita in $x_1$. Il risultato che vediamo ora ci garantisce sia l'applicabilità del metodo, che la convergenza.
 
 \paragraph{Teorema del punto fisso} Per dimostrare un risultato di convergenza per questo metodo, ci sono due protagonisti fondamentali che dobbiamo introdurre. Il primo è che dobbiamo lavorare su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
 \begin{equation} \label{intervallo centrato in alpha}
@@ -513,7 +521,7 @@ Il secondo protagonista è la quantità
 \begin{equation} \label{defL}
     L = \max_{x \in I} \, \abs{\Phi'(x)},    
 \end{equation}
-cioè il massimo (in valore assoluto) della derivata seconda di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
+cioè il massimo (in valore assoluto) della derivata di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
 \begin{theorem}[Teorema di Weierstrass / di esistenza del massimo]
     Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
 \end{theorem}
@@ -522,15 +530,15 @@ In questo caso, l'intervallo $I$ è chiuso e limitato, per come l'abbiamo defini
 Con questi due ingredienti a disposizione, possiamo enunciare questo teorema.
 
 \begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
-Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che la quantità $L$ definita in~\eqref{defL} sia strettamente minore di $1$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
+Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che $\abs{\Phi'(x)} < 1$ su tutti i punti $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
 \begin{itemize}
-    \item $x_k \in I$ per ogni $k \geq 0$;
-    \item $\lim_{k\to\infty} x_k = \alpha$.
+    \item $x_k \in I$ per ogni $k \geq 0$ (applicabilità);
+    \item $\lim_{k\to\infty} x_k = \alpha$ (convergenza).
 \end{itemize}
 \end{theorem}
-Notare che il primo punto è importante perché il metodo sia ben definito: altrimenti, $\Phi$ potrebbe non essere definita nel punto $x_k$!
-
 \begin{proof}
+Notiamo innanzitutto che l'ipotesi $\abs{\Phi'(x)} < 1$ ci garantisce che $L<1$; difatti, il massimo $L$ definito in~\eqref{defL} esiste e viene raggiunto in un punto dell'intervallo $I$.
+
 Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
 \begin{equation} \label{riduzione errore punto fisso}
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
@@ -587,17 +595,29 @@ Svolgimento: una soluzione corrisponde a uno zero di $f(x) = x - \cos x$. Questa
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Sotto quali condizioni su $m$ e $q$ il metodo converge?
 \end{esercizio}
 \begin{esercizio}
-    Applichiamo il metodo del punto fisso all'equazione $x = \Phi(x) = \frac13 + \frac23 x^2$. Quali sono gli zeri della funzione? Per quali valori di $x_0$ possiamo assicurare che il metodo converge usando il teorema visto?
+    Consideriamo il metodo del punto fisso applicato all'equazione $x = \Phi(x) = \frac13 + \frac23 x^2$. 
+    \begin{enumerate}
+        \item Determinare i punti fissi della funzione.
+        \item Per ognuno di questi punti fissi, determinare per quali valori di $x_0$ il teorema assicura la convergenza locale del metodo.
+        \item Cosa è possibile dire sulla convergenza del metodo per gli altri valori di $x_0$?
+    \end{enumerate}
+\end{esercizio}
+\begin{esercizio}
+    Consideriamo $f(x) =x - \frac{1}{2}\cos(x) - 1$.
+    \begin{enumerate}
+        \item Mostrare che la funzione ha un unico zero $\alpha \in \mathbb{R}$, e determinare un intervallo di separazione.
+        \item Mostrare che il metodo del punto fisso con $\Phi(x) = \frac{1}{2}\cos(x) + 1$ genera successioni che convergono ad $\alpha$ per ogni $x_0\in\mathbb{R}$.
+    \end{enumerate}
 \end{esercizio}
 
-\section{Convergenza lineare di un metodo iterativo}
+\section{Convergenza lineare}
 
 In questa sezione vediamo un modo di definire quanto velocemente converge un metodo numerico come quelli che abbiamo visto; 
-questo è importante in modo da poter confrontare metodi diversi. Abbiamo una successione di approssimazioni $x_n$ di una certa soluzione esatta $\alpha$, ognuna calcolata da quella precedente. La successione si dice \emph{convergente} se l'errore $e_n := \abs{x_n - \alpha}$ tende a $0$. Partiamo con un esempio che mostra cosa succede in un caso reale; in Figura~\ref{fig:iterativi} abbiamo considerato diversi metodi iterativi per risolvere l'equazione $x^3-2 = 0$, e abbiamo tracciato per ognuno di essi un grafico dell'errore $e_n$ rispetto a $n$.
+questo è importante in modo da poter confrontare metodi diversi. Abbiamo una successione di approssimazioni $x_k$, e vogliamo misurare la velocità a cui converge a un limite $\alpha$; per questo definiamo l'errore $e_k := \abs{x_k - \alpha}$. Partiamo con un esempio che mostra cosa succede in un caso reale; in Figura~\ref{fig:iterativi} abbiamo considerato diversi metodi iterativi per risolvere l'equazione $x^3-2 = 0$, e abbiamo tracciato per ognuno di essi un grafico dell'errore $e_k$ rispetto a $k$.
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
-        \begin{axis}[width=0.7\textwidth, xlabel={iterazione}, ylabel={errore (in scala lineare)}]
+        \begin{axis}[width=0.7\textwidth, xlabel={iterazione $k$}, ylabel={errore $e_k$ (in scala lineare)}]
 
             \addplot+[x=it, y=e] table{
                 it e
@@ -733,7 +753,7 @@ questo è importante in modo da poter confrontare metodi diversi. Abbiamo una su
     \end{tikzpicture}
     
     \begin{tikzpicture}
-    \begin{axis}[width=0.7\textwidth, ymode = log, xlabel={iterazione}, ylabel={errore (in scala logaritmica)}, legend style={at={(0.5,-0.15)},anchor=north}]
+    \begin{axis}[width=0.7\textwidth, ymode = log, xlabel={iterazione $k$}, ylabel={errore $e_k$ (in scala logaritmica)}, legend style={at={(0.5,-0.15)},anchor=north}]
 
         \addplot+[x=it, y=e] table{
             it e
@@ -875,48 +895,49 @@ La prima osservazione importante è che è utile usare una \emph{scala logaritmi
 
 La seconda osservazione che possiamo fare è che nel secondo grafico i punti sono approssimativamente allineati secondo una retta. Vediamo perché questo succede.
 
-\paragraph{Convergenza lineare} L'esempio più semplice che possiamo fare è quello in cui $e_n$ è una successione geometrica:
+\paragraph{Convergenza lineare} L'esempio più semplice che possiamo fare è quello in cui $e_k$ è una successione geometrica:
 \[
 e_0 = a,\, e_1 = ar,\, e_2 = ar^2,\, e_3 = ar^3, \dots
 \]
-Ad ogni passo, l'errore precedente viene moltiplicato per $r$. Ovviamente dobbiamo chiedere che $r < 1$, altrimenti $e_n$ non converge a $0$. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{n+1} - \log e_n = \log r < 0$.
+Ad ogni passo, l'errore precedente viene moltiplicato per $r$. Ovviamente dobbiamo richiedere che $r < 1$, altrimenti $e_k$ non converge a $0$. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{k+1} - \log e_k = \log r < 0$.
 
 Molti metodi hanno un comportamento simile a questo al limite, quindi introduciamo una definizione che formalizza questo comportamento. Diciamo che un metodo iterativo \emph{converge linearmente} (o ha \emph{ordine di convergenza $1$}) quando
 \begin{equation} \label{tassoconv}
-    \lim_{n \to \infty }\frac{e_{n+1}}{e_n} = r \in (0,1).    
+    \lim_{k \to \infty }\frac{e_{k+1}}{e_k} = r \in (0,1).    
 \end{equation}
-Questo vuol dire che per $n$ sufficientemente grande (la~\eqref{tassoconv} contiene un simbolo di limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
+Questo vuol dire che per $k$ sufficientemente grande (la~\eqref{tassoconv} contiene un simbolo di limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
 
 La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
 
-Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non vanno a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_n = 1/n$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
+Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_k = 1/k$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
 \begin{esempio}
-    Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{n+1} = x + \frac{1}{2} (x^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_n = \abs{x_n - \alpha}$ prodotti dal metodo, otteniamo
+    Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{k+1} = x + \frac{1}{2} (x^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_k = \abs{x_k - \alpha}$ prodotti dal metodo, otteniamo
     \begin{lstlisting}
 3.4142    2.4142    2.9142    2.7892    2.8439    2.8219    
 2.8311    2.8273    2.8289    2.8282    2.8285    2.8284
 2.8284    2.8284    2.8284    2.8284    ...
     \end{lstlisting}
-    Notiamo che gli errori non stanno convergendo a zero. I valori assunti da $\frac{e_{n+1}}{e_n}$ sono
+    Notiamo che gli errori non stanno convergendo a zero. I valori assunti da $\frac{e_{k+1}}{e_k}$ sono
 \begin{lstlisting}
 0.5000    1.5000    0.9167    1.0398    0.9846    1.0065    
 0.9973    1.0011    0.9995    1.0002    0.9999    1.0000
 1.0000    1.0000    1.0000    1.0000    ...
 \end{lstlisting}
-In particolare questi numeri mostrano che $\frac{e_{n+1}}{e_n}$ converge a $r=1$, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma all'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
+In particolare questi risultati numerici mostrano che $\frac{e_{k+1}}{e_k}$ converge a $r=1$, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma all'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
 \end{esempio}
 
-\paragraph{Tasso di convergenza del metodo di punto fisso} Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
+\paragraph{Tasso di convergenza del metodo di punto fisso} 
+Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
 \[
-\lim_{n \to \infty} \frac{\abs{x_{n+1} - \alpha}}{\abs{x_n - \alpha}} = \lim_{n\to\infty} \abs{\Phi'(\xi_n)} = \abs{\Phi'(\alpha)} \in [0,1).
+\lim_{k \to \infty} \frac{\abs{x_{k+1} - \alpha}}{\abs{x_k - \alpha}} = \lim_{k\to\infty} \abs{\Phi'(\xi_k)} = \abs{\Phi'(\alpha)} \in [0,1).
 \]
-L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, e quindi $\xi_n \to \alpha$ per il teorema dei carabinieri. Inoltre usiamo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_n\to\alpha$ allora $\abs{\Phi'(\xi_n)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
+L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_k - \alpha} \leq \abs{x_k - \alpha}$, e quindi $\xi_k \to \alpha$ per il teorema dei carabinieri. Inoltre usiamo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_k\to\alpha$ allora $\abs{\Phi'(\xi_k)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
 
 Quindi quando $\abs{\Phi'(\alpha)}<1$ il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
 \[
-    \lim_{n\to\infty} \frac{e_{n+1}}{e_n} = 0.
+    \lim_{k\to\infty} \frac{e_{k+1}}{e_k} = 0.
 \]
-Questo comportamento implica una convergenza più veloce di quella di qualunque retta su un grafico in scala logaritmica: per ogni $r>0$ si ha da un certo $n$ in poi $\frac{e_{n+1}}{e_n} < r$, e quindi la successione degli errori va a zero più velocemente di una retta di pendenza $\log r$. Questo per qualunque $r$; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui derivata tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{n+1}}{e_n} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+In questo caso, nel grafico dell'errore in scala logaritmica la distanza tra le ordinate di due punti successivi tende a $\log 0 = -\infty$, cioè, diventa sempre più grande. La successione degli errori allora tende a zero più velocemente di una qualunque retta; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui derivata tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{k+1}}{e_k} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -924,28 +945,23 @@ Questo comportamento implica una convergenza più veloce di quella di qualunque 
 \begin{esercizio}
     Quanto vale $r$ per i diversi metodi del punto fisso studiati più sopra per $f(x) = x^3 - 2$?
 \end{esercizio}
-\begin{esercizio}
-    Supponiamo di avere una funzione con uno zero $\alpha = 1$, e di avere un metodo numerico che produce una successione $x_k$ che converge invece a $\lim x_k = 2$ (per esempio, per un errore di programmazione). Quanto vale il limite $r$ in~\eqref{tassoconv}?
-\end{esercizio}
-Dall'esercizio precedente, ricaviamo che $r \geq 1$ può essere un'indicazione che il metodo non sta convergendo, o sta convergendo alla soluzione sbagliata!
 
 \paragraph{Tasso di convergenza del metodo di bisezione}
+Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo la definizione~\eqref{tassoconv}. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono dell'errore si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
 
-Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo la definizione~\eqref{tassoconv}. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
-
-Riusciamo però a dimostrare che $e_n \leq \varepsilon_n$, dove $\varepsilon_n$ è una successione che converge linearmente: difatti abbiamo visto che
+Riusciamo però a dimostrare che $e_k \leq \varepsilon_k$, dove $\varepsilon_k$ è una successione che converge linearmente: difatti abbiamo visto che
 \[
-e_n \leq \underbrace{\frac{b_0 - a_0}{2^{n+1}}}_{=\varepsilon_n},
+e_k \leq \underbrace{\frac{b_0 - a_0}{2^{k+1}}}_{=\varepsilon_k},
 \]
 e
 \[
-\lim_{n\to\infty} \frac{\varepsilon_{n+1}}{\varepsilon_n} = \lim_{n\to\infty} \frac{1}{2} = \frac{1}{2}.
+\lim_{k\to\infty} \frac{\varepsilon_{k+1}}{\varepsilon_k} = \lim_{k\to\infty} \frac{1}{2} = \frac{1}{2}.
 \]
-Diciamo allora che il metodo di bisezione ha \emph{convergenza pressoché lineare}. Su un grafico in scala logaritmica, gli errori $e_n$ stanno al di sotto della retta data dai punti $\varepsilon_n$, e solitamente non se ne discostano troppo. Questo è confermato anche dalla nostra figura.
+Il termine che si usa per descrivere un caso come questo è che il metodo di bisezione ha \emph{convergenza pressoché lineare}. Su un grafico in scala logaritmica, gli errori $e_k$ stanno al di sotto della retta data dai punti $\varepsilon_k$, e solitamente non se ne discostano troppo. Questo è confermato anche dalla nostra figura.
 
 \paragraph{Criteri di arresto per il metodo del punto fisso}
 
-Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{n} - x_{n-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_n - \alpha} < \varepsilon$, quando $r$ è vicino a $1$ e la convergenza è lenta. Vediamo un esempio nella figura qui sotto.
+Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{k} - x_{k-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_k - \alpha} < \varepsilon$, quando $r$ è vicino a $1$ e la convergenza è lenta. Vediamo un esempio nella figura qui sotto.
 
 \begin{figure}[H]
 \centering
@@ -994,17 +1010,17 @@ Vantaggi del metodo:
 
 Il \emph{metodo di Newton}, o \emph{metodo delle tangenti}, è un metodo per la ricerca di zeri che offre convergenza più veloce, ma richiede di utilizzare non solo $f \in \mathcal{C}^1([a,b])$, ma anche la sua derivata $f'$.
 
-L'idea è una di quelle classiche dell'analisi: quando guardiamo ``abbastanza in piccolo'', ogni funzione derivabile è vicina alla sua retta tangente. Ad ogni passo, data un'approssimazione $x_n$ di una soluzione, otteniamo $x_{n+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_n$. L'equazione della retta tangente è
+L'idea è una di quelle classiche dell'analisi: quando guardiamo ``abbastanza in piccolo'', ogni funzione derivabile è vicina alla sua retta tangente. Ad ogni passo, data un'approssimazione $x_k$ di una soluzione, otteniamo $x_{k+1}$ calcolando uno zero della \emph{retta tangente} al grafico di $f(x)$ in $x_k$. L'equazione della retta tangente è
 \[
-y = f(x_n) + f'(x_n) (x- x_n),
+y = f(x_k) + f'(x_k) (x- x_k),
 \]
-quindi $x_{n+1}$ è il punto tale che
+quindi $x_{k+1}$ è il punto tale che
 \[
-0 = f(x_n) + f'(x_n) (x_{n+1}- x_n),
+0 = f(x_k) + f'(x_k) (x_{k+1}- x_k),
 \]
 ossia, risolvendo,
 \[
-x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}.
+x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}.
 \]
 
 \begin{center}
@@ -1049,18 +1065,18 @@ Il metodo di Newton quindi è definito dalla successione
 \[
 \begin{cases}
     x_0 \text{ dato},\\
-    x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \quad n=0,1,2,\dots.
+    x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)} \quad k=0,1,2,\dots.
 \end{cases}
 \]
-Il metodo di Newton quindi è un metodo di punto fisso con $\Phi(x) = x - \frac{f(x)}{f'(x)}$. Notiamo che questa funzione non è definita se $f'(x) = 0$: quando incontriamo un'iterata $x_n$ per cui si ha $f'(x_n) = 0$, il metodo di Newton non è applicabile, perché non riusciamo a calcolare l'iterata successiva.
+Il metodo di Newton quindi è un metodo di punto fisso con $\Phi(x) = x - \frac{f(x)}{f'(x)}$. Notiamo che questa funzione non è definita se $f'(x) = 0$: quando incontriamo un'iterata $x_k$ per cui si ha $f'(x_k) = 0$, il metodo di Newton non è applicabile, perché non riusciamo a calcolare l'iterata successiva.
 
 Sotto l'ipotesi aggiuntiva $f'(\alpha) \neq 0$, riusciamo a dimostrare la convergenza locale del metodo di Newton.
 
 \begin{theorem}
 Sia $f \in \mathcal{C}^2([a,b])$, e sia $\alpha \in (a,b)$ tale che $f(\alpha) = 0$ e $f'(\alpha) \neq 0$. Allora, il metodo di Newton converge localmente: cioè, esiste un intervallo $I = [\alpha - \rho,\alpha + \rho]$ tale che per ogni successione generata dal metodo con $x_0 \in I$ si ha
 \begin{itemize}
-    \item $x_n \in I$ per ogni $n\geq 0$;
-    \item $\lim_{n\to \infty } x_n = \alpha$.
+    \item $x_k \in I$ per ogni $n\geq 0$;
+    \item $\lim_{k\to \infty } x_k = \alpha$.
 \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -1084,63 +1100,65 @@ Vantaggi:
     \item Nella maggior parte dei casi, converge molto più velocemente degli altri metodi.
 \end{itemize}
 
-Il comportamento che si osserva tipicamente con il metodo di Newton è un certo numero di iterazioni iniziali in cui l'errore non scende per nulla o quasi, e poi una convergenza molto veloce; appena $x_n$ si avvicina a $\alpha$ e l'errore $e_n$ va sotto una certa soglia, esso comincia ad andare a zero molto velocemente.
+Il comportamento che si osserva tipicamente con il metodo di Newton è un certo numero di iterazioni iniziali in cui l'errore non scende per nulla o quasi, e poi una convergenza molto veloce; appena $x_k$ si avvicina a $\alpha$ e l'errore $e_k$ va sotto una certa soglia, esso comincia ad andare a zero molto velocemente.
 
-\paragraph{Ordine di convergenza di un metodo iterativo}
+\paragraph{Ordine di convergenza}
 
-Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{n \to \infty }\frac{e_{n+1}}{e_n}$ è uguale a zero: questo vuol dire che la successione degli errori $e_n$ va a zero più velocemente di una serie geometrica, qualunque sia la sua ragione $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{n+1} - \log e_n$ tende a $-\infty$. Fissato un qualunque $r>0$, abbiamo che da un certo punto in poi $\lim_{n \to \infty }\frac{e_{n+1}}{e_n} < r$, e  questo vuol dire che la successione degli errori $e_n$ sta al di sotto di una retta con coefficiente angolare $\log r$. Questo significa che un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
+Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{k \to \infty }\frac{e_{k+1}}{e_k}$ è uguale a zero: questo vuol dire che la successione degli errori $e_k$ va a zero più velocemente di una serie geometrica, qualunque sia il suo tasso $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{k+1} - \log e_k$ tende a $-\infty$. Questo significa che un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
 
-Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione: dato un $p > 1$, diciamo che un metodo iterativo ha \emph{ordine di convergenza $p$} se vale
+Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione. Sia data, di nuovo, una successione $x_k$, e usiamo l'errore $e_k = \abs{x_k - \alpha}$ per valutarne la velocità di convergenza ad $\alpha$. Dato un $p > 1$, diciamo che la successione ha \emph{ordine di convergenza $p$} se vale
 \[
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in (0,\infty).
+\lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} = s \in (0,\infty).
 \]
-Notare che non richiediamo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere un metodo con convergenza superlineare. Difatti, se un metodo ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
+Cioè, l'errore al passo $k+1$ non è più (al limite) proporzionale ad $e_k$, ma a una sua potenza $e_k^p$. (E ricordiamo che se $e_k<1$, allora $e_k^p$ è più piccolo di $e_k$.)
+
+In questa definizione non richiediamo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere convergenza superlineare. Difatti, se una successione ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
 \begin{equation} \label{almeno}
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n} = \lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} \cdot \lim_{n \to \infty } e_n^{p-1} = s \cdot 0 = 0.
+\lim_{k \to \infty }\frac{e_{k+1}}{e_k} = \lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} \cdot \lim_{k \to \infty } e_k^{p-1} = s \cdot 0 = 0.
 \end{equation}
 
-\paragraph{Esempio} La successione $x_n = 3\cdot 10^{-2^n}$ converge a $0$ con ordine di convergenza $2$: difatti si ha
+\paragraph{Esempio} La successione $x_k = 3\cdot 10^{-2^k}$ converge a $\alpha=0$ con ordine di convergenza $2$: difatti si ha
 \[
-\frac{e_{n+1}}{e_n^2} = \frac{3\cdot 10^{-2^{n+1}}-0}{(3\cdot 10^{-2^n} - 0)^2} = \frac{3\cdot 10^{-2^{n+1}}}{9\cdot 10^{-2^{n+1}}} = \frac13.
+\frac{e_{k+1}}{e_k^2} = \frac{3\cdot 10^{-2^{k+1}}-0}{(3\cdot 10^{-2^k} - 0)^2} = \frac{3\cdot 10^{-2^{k+1}}}{9\cdot 10^{-2^{k+1}}} = \frac13.
 \]
-I primi elementi della successione sono $x_0 = 3\cdot 10^{-1}$, $x_1 = 3\cdot 10^{-2}$, $x_2 = 3\cdot 10^{-4}$, $x_3 = 3\cdot 10^{-8}$, $x_4 = 3\cdot 10^{-16}$, cioè $x_n = 0,00\dots03$, dove prima del $3$ ci sono $2^n$ zeri in totale (incluso quello prima della virgola). Il numero di zeri raddoppia ad ogni passo, e questo fa sì che la successione converga molto più velocemente che non una successione che converge linearmente. In un grafico in scala logaritmica, gli errori tendono a scendere come un'esponenziale, e la distanza (in verticale) tra due punti successivi $\log e_{n+1} - \log e_n$ raddoppia ad ogni passo.
+I primi elementi della successione sono $x_0 = 3\cdot 10^{-1}$, $x_1 = 3\cdot 10^{-2}$, $x_2 = 3\cdot 10^{-4}$, $x_3 = 3\cdot 10^{-8}$, $x_4 = 3\cdot 10^{-16}$, cioè $x_k = 0{,}00\dots03$, dove prima del $3$ ci sono $2^k$ zeri in totale (incluso quello prima della virgola). Il numero di zeri raddoppia ad ogni passo, e questo fa sì che la successione converga molto velocemente. Si può verificare che in un grafico in scala logaritmica, gli errori stanno sul grafico di un'esponenziale, e la distanza (in verticale) tra due punti successivi $\log e_{k+1} - \log e_k$ raddoppia ad ogni passo.
 
-Diciamo che un metodo numerico converge con ordine \emph{almeno $p$} se vale
+In una variante di questa definizione, diciamo che una successione converge con ordine \emph{almeno $p$} se vale
 \[
-\lim_{n \to \infty }\frac{e_{n+1}}{e_n^p} = s \in [0,\infty).
+\lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} = s \in [0,\infty).
 \]
-Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $k$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $k$, allora converge anche di ordine almeno $h$ per ogni $h\leq k$. (La dimostrazione di questo fatto, che non vediamo, è analoga alla~\eqref{almeno}.)
+Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $p$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $p$, allora converge anche di ordine almeno $q$, per ogni $q\leq p$. (La dimostrazione di questo fatto, che non vediamo, si basa su un calcolo simile a quello in~\eqref{almeno}.)
 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton]\label{thm:convnewton}
-Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_n = \abs{x_n - \alpha}$ soddisfa
+Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_k = \abs{x_k - \alpha}$ soddisfa
 \[
-\lim_{n\to \infty} \frac{e_{n+1}}{e_n^2} = s \in [0,\infty).
+\lim_{k\to \infty} \frac{e_{k+1}}{e_k^2} = s \in [0,\infty).
 \]
 (cioè questo limite esiste ed è finito.)
 \end{theorem}
 
 \begin{proof}
-Usiamo uno sviluppo di Taylor (con resto di Lagrange) in $x_n$ per scrivere l'uguaglianza
+Usiamo uno sviluppo di Taylor (con resto di Lagrange) in $x_k$ per scrivere l'uguaglianza
 \begin{equation} \label{sviluppo Taylor per dimostrazione conv. quadratica Newton}
-    0 = f(\alpha) = f(x_n) + f'(x_n)(\alpha-x_n) + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2    
+    0 = f(\alpha) = f(x_k) + f'(x_k)(\alpha-x_k) + \frac{f''(\xi_k)}{2}(\alpha-x_k)^2    
 \end{equation}
-che vale per uno $\xi_n$ compreso tra $\alpha$ e $x_n$.
+che vale per uno $\xi_k$ compreso tra $\alpha$ e $x_k$.
 
-Dividiamo per $f'(x_n)$ per ottenere
+Dividiamo per $f'(x_k)$ per ottenere
 \[
-\frac{f''(\xi_n)}{2f'(x_n)}(\alpha-x_n)^2 = - \frac{f(x_n)}{f'(x_n)} - \alpha + x_n   =  x_{n+1} - \alpha.
+\frac{f''(\xi_k)}{2f'(x_k)}(\alpha-x_k)^2 = - \frac{f(x_k)}{f'(x_k)} - \alpha + x_k   =  x_{k+1} - \alpha.
 \]
 Allora
 \[
-\frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \frac{f''(\xi_n)}{2f'(x_n)}.
+\frac{x_{k+1} - \alpha}{(x_k-\alpha)^2} = \frac{f''(\xi_k)}{2f'(x_k)}.
 \]
-Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\xi_n$). Vogliamo ora passare al limite per $n \to \infty$. Come già detto sopra, sappiamo che $0 \leq \abs{\xi_n - \alpha} \leq \abs{x_n - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_n - \alpha} \to 0$ e quindi $\xi_n \to \alpha$. Allora, per la continuità di queste funzioni, $f''(\xi_n) \to f''(\alpha)$ e $f'(x_n) \to f'(\alpha)$ (che è diverso da zero); quindi
+Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\xi_k$). Vogliamo ora passare al limite per $k \to \infty$. Come già detto sopra, sappiamo che $0 \leq \abs{\xi_k - \alpha} \leq \abs{x_k - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_k - \alpha} \to 0$ e quindi $\xi_k \to \alpha$. Allora, per la continuità di queste funzioni, $f''(\xi_k) \to f''(\alpha)$ e $f'(x_k) \to f'(\alpha)$ (che è diverso da zero); quindi
 \[
-\lim_{n\to\infty} \frac{x_{n+1} - \alpha}{(x_n-\alpha)^2} = \lim \frac{f''(\xi_n)}{2f'(x_n)} = \frac{f''(\alpha)}{2f'(\alpha)} = s \in [0,\infty).
+\lim_{k\to\infty} \frac{x_{k+1} - \alpha}{(x_k-\alpha)^2} = \lim \frac{f''(\xi_k)}{2f'(x_k)} = \frac{f''(\alpha)}{2f'(\alpha)} = s \in [0,\infty).
 \]
 \end{proof}
 
-\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_n)}{f'(x_n)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_n - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_n - x_{n+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è il criterio di arresto che avevamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
+\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_k)}{f'(x_k)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_k - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_k - x_{k+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è il criterio di arresto che avevamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
 
 \begin{conditional}[inf]
 \paragraph{Convergenza su intervalli}
@@ -1164,17 +1182,25 @@ Visto che $f$ è continua e non ha altri zeri all'interno di $I$, dev'essere sem
 Trattiamo solo il primo caso: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
 e/o all'asse $y$.
 
-Dimostriamo per induzione che per ogni $n=0,1,2,\dots$ si ha $x_n \in I$. Il caso base $x_0 \in I$ è vero per ipotesi; quindi assumiamo $x_n\in I$ e dimostriamo che $\alpha \leq x_{n+1} \leq x_n$, da cui segue in particolare anche che $x_{n+1} \in I$. Consideriamo l'equazione che definisce la retta tangente in $x_n$,
+Vogliamo dimostrare che se per un certo $k$ si ha $x_k \in I$, allora il metodo di Newton è applicabile (cioè, $f'(x_k)\neq 0$) e si ha $\alpha \leq x_{k+1} \leq x_k$; da questo in particolare segue anche che $x_{k+1} \in I$.
+
+Dal teorema di Lagrange abbiamo
 \[
-y = T(x) = f(x_n) + f'(x_n)(x-x_n).
+\frac{f(x_k) - f(\alpha)}{x_k-\alpha} = f'(z_k)
+\]
+per un punto $z_k \in (\alpha, x_k)$. Poiché $f(x_k)>0$ e $f(\alpha)=0$, ne segue che $f'(z_k) > 0$. Poiché $f''(x)\geq 0$, la funzione $f'(x)$ è crescente, e quindi $f'(x_k) \geq f'(z_k) > 0$. Questo assicura l'applicabilità del metodo.
+
+Consideriamo ora l'equazione che definisce la retta tangente in $x_k$,
+\[
+y = T(x) = f(x_k) + f'(x_k)(x-x_k).
 \]
 Ricordiamo lo sviluppo di Taylor~\eqref{sviluppo Taylor per dimostrazione conv. quadratica Newton}
 \[
-0 = f(\alpha) = \underbrace{f(x_n) + f'(x_n)(\alpha-x_n)}_{=T(\alpha)} + \frac{f''(\xi_n)}{2}(\alpha-x_n)^2,
+0 = f(\alpha) = \underbrace{f(x_k) + f'(x_k)(\alpha-x_k)}_{=T(\alpha)} + \frac{f''(\xi_k)}{2}(\alpha-x_k)^2,
 \]
-che vale uno $\xi_n$ compreso tra $\alpha$ e $x_n$. Per le nostre ipotesi, $\frac{f''(\xi_n)}{2}(\alpha-x_n)^2 \geq 0$, quindi $f(x_n) + f'(x_n)(\alpha-x_n) = T(\alpha) \leq 0$. Poiché invece $T(x_n) = f(x_n) \geq 0$, il punto $x_{n+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_n$; quindi in particolare $x_{n+1} \in I$. Questo completa la dimostrazione per induzione.
+che vale uno $\xi_k$ compreso tra $\alpha$ e $x_k$. Per le nostre ipotesi, $\frac{f''(\xi_k)}{2}(\alpha-x_k)^2 \geq 0$, quindi $f(x_k) + f'(x_k)(\alpha-x_k) = T(\alpha) \leq 0$. Poiché invece $T(x_k) = f(x_k) \geq 0$, il punto $x_{k+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_k$, come volevamo dimostrare.
 
-Nel corso della dimostrazione abbiamo mostrato anche che $\alpha \leq x_{n+1} \leq x_n$ per ogni $n$. Ciò significa che la successione $x_n$ è decrescente e limitata da $\alpha$; in particolare quindi converge, e il suo limite è necessariamente $\alpha$, che è l'unico zero della funzione in $I$.
+Questo dimostra che il metodo di Newton produce una successione decrescente $x_0 \geq x_1 \geq x_2 \geq \dots $, limitata da $\alpha$. In particolare quindi la successione converge, e il suo limite è necessariamente $\alpha$, che è l'unico zero della funzione in $I$.
 \end{proof}
 
 \begin{esercizio}
@@ -1325,7 +1351,7 @@ allora avremo
 
 Quindi se il valore della molteplicità $m$ è noto a priori possiamo utilizzare il seguente (\emph{metodo di Newton modificato}):
 \begin{equation} \label{newtonmod}
-    x_{n+1} = \underbrace{x_n - m\frac{f(x_n)}{f'(x_n)}}_{:=\Phi_m(x_n)} \quad n = 0,1,2,\dots    
+    x_{k+1} = \underbrace{x_k - m\frac{f(x_k)}{f'(x_k)}}_{:=\Phi_m(x_k)} \quad k = 0,1,2,\dots    
 \end{equation}
 Si può dimostrare, con passaggi simili a quelli precedenti, che questo metodo converge (localmente) con ordine almeno 2, quando viene applicato a una funzione che ha uno zero di molteplicità $m$.
 
@@ -1341,30 +1367,30 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
 
 \section{Varianti del metodo di Newton} Non sempre si ha a disposizione (in modo facile da calcolare) la derivata della funzione $f$. Per questo esistono alcune varianti del metodo di Newton che cercano di evitare di calcolare derivate.
 \begin{description}
-    \item[Metodo delle corde] Si ottiene rimpiazzando la derivata $f'(x_n)$ con un valore costante fissato $c$:
+    \item[Metodo delle corde] Si ottiene rimpiazzando la derivata $f'(x_k)$ con un valore costante fissato $c$:
         \[
             \begin{cases}
                 \text{$x_0$ dato},\\
-                x_{n+1} = x_n - \frac{f(x_n)}{c}, \quad n=0,1,2,\dots.
+                x_{k+1} = x_k - \frac{f(x_k)}{c}, \quad n=0,1,2,\dots.
             \end{cases}
         \]    
     Per esempio, si può prendere $c = f'(x_0)$, se lo si conosce; questo richiede di calcolare la $f'$ una volta sola anziché una volta per passo come nel metodo di Newton. Geometricamente, questo metodo corrisponde a rimpiazzare le rette tangenti che si usano nel metodo di Newton con rette che hanno coefficiente angolare costante $c$. Un esempio di questo metodo è l'iterazione di punto fisso che abbiamo già studiato $x_{k+1} = x_{k} - \frac14 (x_k^3-2)$, dove la $c$ vale $4$. 
     
     Anche il metodo delle corde è un metodo di punto fisso, con $\Phi(x) = x - \frac{1}{c}f(x)$, quindi possiamo studiarne la convergenza locale con le tecniche che abbiamo visto: $\Phi'(x) = 1 - \frac{1}{c}f'(x)$, e per avere $\abs{\Phi'(\alpha)} < 1$ dobbiamo scegliere $c$ in modo che $f'(\alpha) \in (0,2c)$.
-    \item[Metodo delle secanti] È l'iterazione che si ottiene rimpiazzando, nel metodo di Newton, $f'(x_n)$ con il rapporto incrementale calcolato sugli ultimi due punti,
+    \item[Metodo delle secanti] È l'iterazione che si ottiene rimpiazzando, nel metodo di Newton, $f'(x_k)$ con il rapporto incrementale calcolato sugli ultimi due punti,
     \[
-    \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}.
+    \frac{f(x_k) - f(x_{k-1})}{x_k - x_{k-1}}.
     \]
-    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_n)$ e $f(x_{n-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). 
+    In questo modo si rimpiazza la derivata con una sua approssimazione più economica da calcolare: abbiamo già calcolato $f(x_k)$ e $f(x_{k-1})$ nei passi precedenti del metodo, quindi dobbiamo fare solo due sottrazioni e una divisione (che in realtà diventa una moltiplicazione, quando si va a scrivere il metodo per esteso). 
     
     Per applicare il metodo delle secanti, serve partire da \emph{due} punti iniziali $x_0$ e $x_1$:
     \[
     \begin{cases}
         \text{$x_0$, $x_1$ dati},\\
-        x_{n+1} = x_n - \frac{f(x_n) (x_n - x_{n-1})}{f(x_n) - f(x_{n-1})}, \quad n=1,2,\dots.
+        x_{k+1} = x_k - \frac{f(x_k) (x_k - x_{k-1})}{f(x_k) - f(x_{k-1})}, \quad k=1,2,\dots.
     \end{cases}
     \]
-    Anche questo metodo converge localmente, e il suo ordine di convergenza (sotto opportune ipotesi sulla funzione) è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$. Non dimostriamo quest'ultimo risultato, che è più complesso: difatti questo non è un metodo del tipo $x_{n+1} = \Phi(x_n)$, perché ogni valore dipende dalle \emph{due} iterate precedenti. 
+    Anche questo metodo converge localmente, e il suo ordine di convergenza (sotto opportune ipotesi sulla funzione) è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$. Non dimostriamo quest'ultimo risultato, che è più complesso: difatti questo non è un metodo del tipo $x_{k+1} = \Phi(x_k)$, perché ogni valore dipende dalle \emph{due} iterate precedenti. 
     
 
 \end{description}
