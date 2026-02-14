@@ -376,35 +376,35 @@ L'altra domanda chiave per un algoritmo numerico è: quanto vicino andiamo alla 
     \vdots \,\,&= \,\,\vdots\\
     b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
 \end{align*}
-Se ci fermiamo dopo $n$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{n}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. A questo punto, se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_n = \frac{a_n + b_n}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_n,b_n)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{n}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_n$ o $b_n$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
+Se ci fermiamo dopo $k$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{k}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. A questo punto, se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_k = \frac{a_k + b_k}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_k,b_k)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{k}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_k$ o $b_k$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
 \begin{figure}[H]
 \begin{center}
     \begin{tikzpicture}[scale=0.5]
         \draw [very thick, ->] (0,0) -- (10,0);
-        \fill (2,0) node[below] {$\mathstrut a_n$} circle (3pt);
-        \fill (8,0) node[below] {$\mathstrut b_n$} circle (3pt);
-        \fill (5,0) node[below] {$\mathstrut c_n$} circle (3pt);
+        \fill (2,0) node[below] {$\mathstrut a_k$} circle (3pt);
+        \fill (8,0) node[below] {$\mathstrut b_k$} circle (3pt);
+        \fill (5,0) node[below] {$\mathstrut c_k$} circle (3pt);
         \fill[red] (2.5,0) node[above] {$\alpha$} circle (3pt);
     \end{tikzpicture}\\
     \begin{tikzpicture}[scale=0.5]
         \draw [very thick, ->] (0,0) -- (10,0);
-        \fill (2,0) node[below] {$\mathstrut a_n$} circle (3pt);
-        \fill (8,0) node[below] {$\mathstrut b_n$} circle (3pt);
-        \fill (5,0) node[below] {$\mathstrut c_n$} circle (3pt);
+        \fill (2,0) node[below] {$\mathstrut a_k$} circle (3pt);
+        \fill (8,0) node[below] {$\mathstrut b_k$} circle (3pt);
+        \fill (5,0) node[below] {$\mathstrut c_k$} circle (3pt);
         \fill[red] (7.5,0) node[above] {$\alpha$} circle (3pt);
     \end{tikzpicture}
 \end{center}
-\caption{Nella figura sopra, $\alpha$ è molto vicino a $a_n$, quindi $\abs{\alpha - b_n}$ è quasi uguale a $\ell$, la lunghezza dell'intervallo $[a_n,b_n]$. Nella figura sotto, invece, $\alpha$ è molto vicino a $b_n$, quindi $\abs{\alpha - a_n}$ è quasi uguale a $\ell$. In entrambi i casi, $\abs{\alpha-c_n}\leq \ell/2$.}
+\caption{Nella figura sopra, $\alpha$ è molto vicino a $a_k$, quindi $\abs{\alpha - b_k}$ è quasi uguale a $\ell$, la lunghezza dell'intervallo $[a_k,b_k]$. Nella figura sotto, invece, $\alpha$ è molto vicino a $b_k$, quindi $\abs{\alpha - a_k}$ è quasi uguale a $\ell$. In entrambi i casi, $\abs{\alpha-c_k}\leq \ell/2$.}
 \end{figure}
 
-Quindi, dato il valore $c_n$ restituito dopo $n$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
+Quindi, dato il valore $c_k$ restituito dopo $k$ passi del metodo di bisezione, siamo sicuri che esiste uno zero $\alpha$ di $f$ tale che 
 \begin{equation} \label{tolleranza bisezione}
-    \abs{c_n - \alpha} \leq \frac{b_0-a_0}{2^{n+1}}.    
+    \abs{c_k - \alpha} \leq \frac{b_0-a_0}{2^{k+1}}.    
 \end{equation}
 
-\paragraph{Criterio di arresto} Possiamo trasformare il calcolo fatto sopra in un criterio per scegliere quante iterazioni fare. Fissiamo una tolleranza $\varepsilon>0$; vogliamo arrestare il metodo quando siamo sicuri di aver determinato il valore di \emph{uno} zero $\alpha$ della funzione $f$ (non per forza l'unico!) a meno di questa tolleranza. Per avere questa sicurezza, il termine di destra della~\eqref{tolleranza bisezione} deve essere minore di $\varepsilon$. Quindi prendiamo il più piccolo intero $n$ tale che
+\paragraph{Criterio di arresto} Possiamo trasformare il calcolo fatto sopra in un criterio per scegliere quante iterazioni fare. Fissiamo una tolleranza $\varepsilon>0$; vogliamo arrestare il metodo quando siamo sicuri di aver determinato il valore di \emph{uno} zero $\alpha$ della funzione $f$ (non per forza l'unico!) a meno di questa tolleranza. Per avere questa sicurezza, il termine di destra della~\eqref{tolleranza bisezione} deve essere minore di $\varepsilon$. Quindi prendiamo il più piccolo intero $k$ tale che
 \[
-\frac{b_0 - a_0}{2^{n+1}} \leq \varepsilon \iff 2^{n+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff n \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
+\frac{b_0 - a_0}{2^{k+1}} \leq \varepsilon \iff 2^{k+1} \geq \frac{b_0 - a_0}{\varepsilon} \iff k \geq \log_2 \left(\frac{b_0 - a_0}{\varepsilon}\right)-1.
 \]
 
 \paragraph{Criterio di arresto euristico (**)} Un'altra idea naturale è che possiamo fermarci quando $f(c_k)$ è ``sufficientemente piccolo''. Abbiamo già accennato al fatto che su un computer i calcoli non vengono effettuati esattamente, ma solo con un certo numero di cifre significative. In particolare, la condizione di arresto $f(c_k) = 0$ potrebbe non essere mai verificata esattamente, ma quando $f(c_k)$ è molto piccolo potremmo decidere di essere soddisfatti e fermare il calcolo. È però vero che se abbiamo trovato un valore $c$ per cui $f(c)$ è piccolo, allora siamo vicini a uno zero $\alpha$? È facile costruire funzioni per cui questo non succede: basta prendere una funzione positiva che diminuisce fino ad arrivare molto vicino a zero e poi risale. Però possiamo introdurre un \emph{criterio euristico}, cioè un criterio non rigoroso (e di cui non è garantito il successo). 
@@ -1830,7 +1830,7 @@ Le risposte sono queste:
 
 \chapter{Analisi dell'errore}
 
-\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha \neq 0$ tramite una successione $x_n$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_n$. In generale, rimpiazzeremo la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire l'errore analitico come
+\paragraph{Errore analitico ed errore di macchina} Siamo ora in grado di studiare nel dettaglio l'errore commesso nella soluzione di problemi numerici. Supponiamo di dover calcolare una quantità $\alpha \neq 0$ tramite una successione $x_k$ che converge ad $\alpha$. Il primo errore che commettiamo è il cosiddetto \emph{errore analitico}, che commettiamo quando rimpiazziamo $\alpha$ con $x_k$. In generale, rimpiazzeremo la quantità desiderata $\alpha$ con una quantità effettivamente calcolata $\gamma$, per esempio se decidiamo di fare cinque passi del metodo di Newton avremo $\gamma=x_5$. Possiamo definire l'errore analitico come
 \begin{equation} \label{ean}
     e_{an} = \frac{\gamma - \alpha}{\alpha}.    
 \end{equation}
@@ -1838,7 +1838,7 @@ Il secondo errore che commettiamo è il cosiddetto \emph{errore di macchina}, do
 \[
 \begin{cases}
     \tilde{x}_0 = \text{approssimazione con numeri di macchina di $x_0$},\\
-    \tilde{x}_{n+1} = \tilde{x}_n \ominus (\tilde{x}_n\odot \tilde{x}_n \ominus 2) \oslash (2\odot \tilde{x}_n).
+    \tilde{x}_{k+1} = \tilde{x}_k \ominus (\tilde{x}_k\odot \tilde{x}_k \ominus 2) \oslash (2\odot \tilde{x}_k).
 \end{cases}
 \]
 Questo processo produce un risultato $\tilde{\gamma}$ che è, solitamente, diverso da $\gamma$. (Come già fatto nel capitolo precedente, usiamo la tilde per indicare un'approssimazione ottenuta tramite aritmetica di macchina.) È importante notare che questo $\tilde{\gamma}$ \emph{non} è necessariamente il numero di macchina più vicino a $\gamma$, ma può essere più grande a causa dell'accumulo di molti errori successivi (come in uno degli esempi precedenti: $1\oslash 3 \oplus 1\oslash 3 \oplus 1\oslash 3 \neq 1$). 
@@ -1872,7 +1872,7 @@ e_{tot} &= \frac{\tilde{\gamma} - \alpha}{\alpha} = \frac{\tilde{\gamma} - \gamm
 \end{proof}
 In questa dimostrazione abbiamo usato solo il fatto che abbiamo fatto due approssimazioni successive una dopo l'altra: prima abbiamo rimpiazzato $\alpha$ con $\gamma$, poi $\gamma$ con $\tilde{\gamma}$. Questo quindi è un risultato generale che ci dice che gli errori relativi commessi successivamente si sommano (al prim'ordine).
 
-Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_n - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$ e cresce solo molto lentamente con il numero di iterazioni.
+Questo risultato è già sufficiente a spiegare qualitativamente il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_k - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$ e cresce solo molto lentamente con il numero di iterazioni.
 
 \paragraph{Approssimazione al prim'ordine dell'errore di macchina}
 In realtà l'errore di macchina $\varepsilon_{mac}$ non è sempre dell'ordine di $10^{-16}$: l'accumulo di errori successivi può far sì che esso diventi molto più grande. Vediamo ora come analizzare questo errore su un esempio semplice. 
