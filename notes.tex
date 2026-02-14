@@ -1744,20 +1744,25 @@ Data un'approssimazione $\tilde{x}$ di un numero reale $x \neq 0$, il suo \emph{
 \end{equation}
 È un tipo di errore naturale da considerare: l'errore assoluto $\tilde{x}-x$ da solo non dice nulla: possiamo fare degli esempi dalla vita reale di errori su lunghezze e prezzi. Per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non vuol dire nulla: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
 
-Possiamo riscrivere la~\eqref{relerr} come $\tilde{x} = x(1+\varepsilon)$. Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (detta \emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
+Con qualche passaggio algebrico, possiamo riscrivere la~\eqref{relerr} come
+\begin{equation}\label{errore relativo in due forme}
+    \varepsilon = \frac{\tilde{x}-x}{x} \iff \tilde{x} = x(1+\varepsilon).
+\end{equation}
+Questo è un formato utile, che ci dice che possiamo pensare $\tilde{x}$ come ottenuto moltiplicando $x$ per un numero molto vicino a $1$.
+
+Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (detta \emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
 
 \paragraph{Valori non normalizzati}
-Su un computer, una variabile può assumere anche alcuni valori speciali, oltre ai numeri di macchina visti sopra:
+Per ottenere un sistema di numeri più completo, estendiamo l'insieme dei numeri di macchina normalizzati aggiungendo alcuni valori speciali:
 \begin{itemize}
-    \item Lo zero: difficile fare senza, e non è un numero normalizzato!
-    \item $+\infty, -\infty, -0$: vengono aggiunti, con regole aritmetiche ispirate dall'analisi come $1/-\infty = -0$, per far sì che gli algoritmi possano funzionare anche in alcuni casi limite.
+    \item Lo zero: non è un numero normalizzato, ed è difficile fare senza!
+    \item $+\infty, -\infty, -0$: vengono aggiunti, con regole aritmetiche ispirate dall'analisi come $1/-\infty = -0$, per far sì che gli algoritmi che scriviamo funzionino anche in alcuni casi limite.
     \item \texttt{NaN}, che viene restituito come una sorta di codice d'errore da alcune operazioni non valide come $0/0$ e $\infty-\infty$.
     \item Alcuni numeri in più compresi tra $0$ e $\omega$, chiamati \emph{numeri denormalizzati}; non ci interessano qui.
 \end{itemize}
 
 \paragraph{Numeri a doppia precisione}
 Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti i computer e i linguaggi di programmazione si conformano a quello. Lo standard specifica quali parametri $\beta,t,m,M$ scegliere e il risultato di ogni operazione. Il formato più comune è quello noto come \texttt{double}, \texttt{float64} o \texttt{binary64}; esso corrisponde a scegliere $\beta = 2, t=53, m=-1022, M = 1023$. Ogni numero viene memorizzato in 64 bit (=valori~0 oppure~1).
-
 
 \begin{conditional}[inf]
 \[
