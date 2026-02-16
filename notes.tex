@@ -1768,7 +1768,7 @@ Esiste uno standard (IEEE 754) per l'aritmetica di macchina; praticamente tutti 
 \[
 \begin{tabular}{|c|c|c|}
     \hline
-$s$ & $eeee\dots e$ & $d_1 d_2 d_3 \dots d_{52}$\\
+$s$ & $e_1e_2e_3\dots e_{11}$ & $d_1 d_2 d_3 \dots d_{52}$\\
 \hline
 \end{tabular}
 \]
@@ -1832,6 +1832,133 @@ Le risposte sono queste:
 
 
 \paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
+
+\begin{conditional}[inf]
+    \section{(*) Approfondimento: fast inverse square root}
+
+    In questa sezione (che è riportata solo per vostra curiosità e non è nel programma dell'esame), descriviamo un algoritmo \emph{bit-level hack} famoso che è entrato nella storia della programmazione. Esso risale al videogioco Quake III Arena, un \emph{first-person shooter} del 1999, quando la grafica 3D era ancora un campo relativamente nuovo. Molte operazioni che oggi si fanno su una scheda grafica al tempo venivano eseguite su CPU, e ottimizzare ogni ciclo di clock era importante, per avere una grafica 3D usabile su processori molto più lenti di quelli di oggi.
+
+    In particolare, un'operazione frequente nel rendering 3D è la normalizzazione di vettori: dato un vettore $[x,y,z]$ in $\mathbb{R}^3$, calcolare la sua versione normalizzata $\frac{1}{\sqrt{x^2+y^2+z^2}}[x,y,z]$. Per trovare il coefficiente, si calcola dapprima $r = x^2+y^2+z^2$, e poi la sua radice quadrata inversa $\frac{1}{\sqrt{r}}$. Riportiamo qui dal sorgente di Quake III il codice C++ della funzione che calcola la radice quadrata inversa $\frac{1}{\sqrt{r}}$. Abbiamo rimosso qualche macro, ma mantenuto i coloriti commenti originali.
+    \begin{lstlisting}[language=C++, basicstyle=\footnotesize\ttfamily]
+float Q_rsqrt( float number )
+{
+  long i;
+  float x2, y;
+  const float threehalfs = 1.5F;
+
+  x2 = number * 0.5F;
+  y  = number;
+  i  = * ( long * ) &y; // evil floating point bit level hacking
+  i  = 0x5f3759df - ( i >> 1 );                // what the fuck?
+  y  = * ( float * ) &i;
+  y  = y * ( threehalfs - ( x2 * y * y ) );     // 1st iteration
+//	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+	return y;
+}        
+    \end{lstlisting}
+    L'algoritmo su cui si basa la funzione \lstinline{Q_rsqrt} è il metodo di Newton applicato a $f(y) = \frac{1}{y^2}-r$ (dove $r$ è il numero di cui vogliamo calcolare la radice quadrata)
+    \[
+    y_{k+1} = y_k - \frac{f(y_k)}{f'(y_k)} = y_k - \frac{\frac{1}{y_k^2}-r}{\frac{2}{y_k^3}} = y_k\left(\frac{3}{2} - \frac{r}{2}y_k^2\right).
+    \]
+    Questo metodo iterativo è particolarmente efficiente anche perché non richiede divisioni in virgola mobile, lente sui processori dell'epoca. 
+    
+    Ma la parte più notevole del codice sono le righe 9--11: usano una manipolazione di bit particolarmente oscura per generare un punto iniziale \lstinline{y} per il metodo di Newton. Vediamo nella riga 12 una singola iterazione del metodo di Newton; la seconda iterazione del metodo è commentata: il punto iniziale scelto è già così vicino alla soluzione che una singola iterazione basta per ottenere un risultato accurato (almeno per gli scopi del videogioco, che non richiedeva un valore esatto fino all'ultima cifra).
+
+    La manipolazione nelle righe 9--11 si basa sul reinterpretare i bit della rappresentazione in virgola mobile di $y$ come un intero: nella riga 9, \lstinline{&y} restituisce un puntatore al numero floating-point \lstinline{y}; \lstinline{( long * )} lo converte a un puntatore a un intero a 32 bit (\lstinline{long}), e infine l'operatore \lstinline{*} più a sinistra legge l'intero $i$ che sta nella locazione di memoria a cui punta questo puntatore, cioè, la stessa locazione di memoria che contiene $y$. Nella riga 11, viene fatto il processo inverso: i bit dell'intero \lstinline{i} vengono reinterpretati come un \lstinline{float}.
+    
+    La proprietà matematica su cui si basa la manipolazione è: se prendiamo un numero a virgola mobile $y$, e reinterpretiamo i bit della sua rappresentazione come un numero intero con segno, otteniamo una buona approssimazione del logaritmo $\log_2 y$.
+    Per capire come mai vale questa proprietà, dobbiamo dire qualcosa di più sul modo in cui vengono memorizzati gli esponenti in un numero a virgola mobile. Descriviamo l'idea per i numeri a doppia precisione, che sono quelli che abbiamo visto nel dettaglio nel corso, ma tutto funziona anche per i numeri a singola precisione (32 bit, \texttt{float} del C/C++) che usa la funzione.
+    
+    Ricordiamo come viene rappresentato un numero a virgola mobile nei 64 bit che lo compongono:
+    \[
+    \begin{tabular}{|c|c|c|}
+        \hline
+    $s$ & $e_1e_2e_3\dots e_{11}$ & $d_1 d_2 d_3 \dots d_{52}$\\
+    \hline
+    \end{tabular}
+    \]
+    La funzione \lstinline{Q_rsqrt} assume implicitamente che il parametro \texttt{number} sia positivo, quindi possiamo ignorare il segno $s$. Indichiamo con $e$ e $d$ i due numeri binari formati dai due blocchi di bit successivi, di 11 e 52 cifre rispettivamente: quindi $e$ un intero è compreso tra 0 e 2047, e $d$ tra $0$ e $2^{52-1}$.
+    
+    I bit di $e$ codificano l'esponente $p \in \{-1022,\dots, 1023\}$ semplicemente come $e = p+1023$:
+    \begin{center}
+    \begin{tabular}{ccc}
+        \toprule
+        $e$ (binario) &$e$ (decimale) & $p$\\
+        \midrule
+        \texttt{00000000000} & 0 & valore speciale (\texttt{0} o denormalized)\\
+        \texttt{00000000001} & 1 & $-1022$ \\
+        \texttt{00000000010} & 2 & $-1021$\\
+        \texttt{00000000011} & 3 & $-1020$\\
+        $\vdots$ & $\vdots$ & $\vdots$\\
+        \texttt{11111111110} & 2046 & $1023$\\
+        \texttt{11111111111} & 2047 & valore speciale (\texttt{Inf} o \texttt{NaN})\\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    I rimanenti 52 bit sono le cifre $d_1,\dots,d_{52}$ della mantissa, escludendo la cifra iniziale $d_0$ che è sempre uguale a $1$. 
+    
+    Quindi possiamo scrivere in funzione di $e$ e $d$ sia il numero di macchina
+    \[
+    y = 2^{e-1023} (1 + 2^{-52} d ),
+    \]
+    che l'intero a 64 bit rappresentato dagli stessi bit
+    \[
+    i = 2^{52}e + d.
+    \]
+    Si ha la relazione (approssimata)
+    \[
+    \log_2(y) = e - 1023 + \log_2(1+2^{-52} d ) \approx e - 1023 + 2^{-52} d = 2^{-52}i - 1023:
+    \]
+    difatti, $\log_2{1+x}\approx x$ quando $x$ è compreso in $[0,1]$, come si può vedere anche dal grafico qui sotto.
+
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[
+        domain=0:1,
+        samples=200,
+        xlabel={$x$},
+        ylabel={$y$},
+        legend pos=north west,
+        grid=both,
+    ]
+        % y = log2(1+x)
+        \addplot[blue, thick] {ln(1+x)/ln(2)};
+        \addlegendentry{$\log_2(1+x)$}
+
+        % y = x
+        \addplot[red, thick] {x};
+        \addlegendentry{$x$}
+        \end{axis}
+        \end{tikzpicture}
+    \end{center}
+
+    Possiamo vedere dal grafico che l'errore massimo che commettiamo con questa approssimazione è circa $0.1$. In realtà la retta disegnata in rosso nel grafico non è l'approssimazione migliore che possiamo dare di $\log_2(1+x)$; spostandola leggermente più in alto (di una quantità $\gamma$) si ottiene un'approssimazione di $\log_2(1+x) \approx x+\gamma$ che ha un errore massimo ancora minore. Quindi, possiamo trovare una costante $c$ tale che $2^{-52}i + c$ è un'ottima approssimazione di $\log_2(y)$ per ogni numero floating-point normalizzato $y$; il valore esatto di $c$ non ci importa.
+
+    Possiamo ora usare le proprietà dei logaritmi per trovare un'approssimazione di $z = \frac{1}{\sqrt{y}} = y^{-1/2}$:
+    \[
+        \log_2 z = -\frac{1}{2} \log_2 y
+    \]
+    quindi, lavorando con gli interi $i$ e $j$ che hanno gli stessi bit di rappresentazione di $y$ e $z$ rispettivamente
+    \[
+        2^{-52}j + c \approx -\frac{1}{2}(2^{-52}i + c)
+    \]
+    cioè
+    \[
+    j \approx -\frac{1}{2}i + d,
+    \]
+    dove $d$ è un'altra costante (che non calcoliamo esattamente qui). Il valore di $z$ ottenuto prendendo $j = -\frac{1}{2}i + d$ è un'ottima approssimazione iniziale di $\frac{1}{\sqrt{y}}$, che viene poi raffinata ulteriormente da un passo del metodo di Newton.
+ 
+    Questa trasformazione è quello che fanno le righe 9--11 del codice:
+    \begin{lstlisting}[language=C++, basicstyle=\footnotesize\ttfamily, firstnumber=9]
+  i  = * ( long * ) &y; //interpreta y come intero ottenendo i
+  i  = 0x5f3759df - ( i >> 1 ); //calcola j = d - i/2 con il bit shifting operator >>
+  y  = * ( float * ) &i; //interpreta j come float ottenendo z
+    \end{lstlisting}
+    La costante $d = {}$\lstinline{0x5f3759df} che compare in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
+
+    Riassumendo, il metodo particolare con cui è rappresentato tramite bit un numero a virgola mobile nello standard dei numeri di macchina (IEEE754) permette di ottenere un'approssimazione di $\log_2(y)$ semplicemente reinterpretando i bit della sua rappresentazione come un intero. Questa proprietà non è un caso, ma è il motivo per cui nello standard è stato scelto di rappresentare gli esponenti in questo modo $e = p + 1023$, anziché memorizzare direttamente $p$ come intero con segno in quegli 11 bit.
+\end{conditional}
 
 \chapter{Analisi dell'errore}
 In questo capitolo, studiamo come l'errore relativo impatta i risultati dei calcoli che facciamo. Ricordiamo la relazione~\eqref{errore relativo in due forme}, che ci dà due modi diversi di vedere l'errore, uno come rapporto esplicito e uno come un fattore moltiplicativo:
