@@ -1726,7 +1726,7 @@ il numero di macchina immediatamente successivo è quello che si ottiene aggiung
 \end{equation}
 \end{theorem}
 \begin{proof}
-Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Allora $x$ è compreso tra due numeri di macchina successivi, chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} 7.64$.
+Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Allora $x$ è compreso tra due numeri di macchina successivi, chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t-1$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} 7.64$.
 
 Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x$ e $\tilde{x}$ sono entrambi compresi nell'intervallo $(\underline{x}, \overline{x})$, si ha 
 \begin{equation}
@@ -1912,7 +1912,7 @@ float Q_rsqrt( float number )
     \[
     \log_2(y) = e - 1023 + \log_2(1+2^{-52} d ) \approx e - 1023 + 2^{-52} d = 2^{-52}i - 1023:
     \]
-    difatti, $\log_2{1+x}\approx x$ quando $x$ è compreso in $[0,1]$, come si può vedere anche dal grafico qui sotto.
+    difatti, $\log_2(1+x)\approx x$ quando $x$ è compreso in $[0,1]$, come si può vedere anche dal grafico qui sotto.
 
     \begin{center}
         \begin{tikzpicture}
@@ -2132,7 +2132,7 @@ f(x,y) \to f(\tilde{x},\tilde{y}) \to g(\tilde{x},\tilde{y}),
 \]
 dove abbiamo indicato con $f$ la funzione (calcolata in aritmetica esatta) $f(x,y) = x^2-y^2$, e con $g$ la sua versione in cui le operazioni sono effettuate in virgola mobile e affette da errori di macchina. Queste sono due perturbazioni successive, quindi possiamo usare il Teorema~\ref{thm: composizione di due errori}: definendo i due errori separatamente
 \[
-\varepsilon_{in} = \frac{f(\tilde{x},\tilde{y}) - f(x,y)}{f(x,y)}, \quad \varepsilon_{alg} = \frac{g(\tilde{x},\tilde{y}) - }{f(\tilde{x},\tilde{y})}
+\varepsilon_{in} = \frac{f(\tilde{x},\tilde{y}) - f(x,y)}{f(x,y)}, \quad \varepsilon_{alg} = \frac{g(\tilde{x},\tilde{y}) - f(\tilde{x},\tilde{y})}{f(\tilde{x},\tilde{y})}
 \]
 abbiamo che l'errore di macchina è (al primo ordine) la somma di questi due errori:
 \[
