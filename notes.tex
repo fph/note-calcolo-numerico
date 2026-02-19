@@ -2228,11 +2228,11 @@ Oltre alle fonti di errore già studiate, ne abbiamo una aggiuntiva: il fatto ch
 \end{itemize}
 Di nuovo, abbiamo due errori successivi sulla stessa quantità
 \[
-\alpha \to x_n \to \tilde{x}_k.
+\alpha \to x_k \to \tilde{x}_k.
 \]
 Quindi possiamo usare il Teorema~\ref{thm: composizione di due errori} per scrivere un'approssimazione al primo ordine dell'\emph{errore totale}
 \[
-\varepsilon_{tot} = \frac{\tilde{x}_n - \alpha}{\alpha} \doteq \varepsilon_{an} + \varepsilon_{mac}.
+\varepsilon_{tot} = \frac{\tilde{x}_k - \alpha}{\alpha} \doteq \varepsilon_{an} + \varepsilon_{mac}.
 \]
 Questo risultato ci permette di spiegare il comportamento che osserviamo nella figura~\ref{fig:stagnazione}. Nell'analizzare i metodi abbiamo già stimato l'errore analitico $e_{an} = \abs{x_k - \alpha}$, e sappiamo che si comporta come $cr^k$, dove $k$ è il numero di passi, quindi scende come una retta su un grafico in scala semi-logaritmica. Nelle prime 150 iterazioni l'errore analitico è più grande di $10^{-16}$, ed è la quantità dominante nella somma degli errori; più avanti, l'errore analitico è minore, e quello dominante è l'errore di macchina, che è dell'ordine di $10^{-16}$ e cresce solo molto lentamente con il numero di iterazioni.
 
@@ -2815,7 +2815,7 @@ Se la matrice è triangolare inferiore, possiamo risolvere il sistema per \emph{
  % x_i &= \frac{b_i - A_{i1}x_1 - \dots -A_{i,i-1}x_{i-1}}{A_{ii}},\\
  % \vdots & \vdots\\
  x_n &= \frac{b_n - A_{n1}x_1 - A_{n2}x_2 - \dots -A_{n,n-1}x_{n-1}}{A_{nn}}.\\
- \end{align*} 
+ \end{align*}
 Notare che ad ogni passo compaiono a destra dell'uguale solo valori $x_i$ che abbiamo già calcolato nei passi precedenti.
 Possiamo contare il numero di operazioni in ogni riga, ottenendo
 \[
