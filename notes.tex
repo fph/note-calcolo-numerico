@@ -1878,13 +1878,13 @@ float Q_rsqrt( float number )
     
     Ricordiamo come viene rappresentato un numero a virgola mobile nei 64 bit che lo compongono:
     \[
-    \begin{tabular}{|c|c|c|}
+    y = \begin{tabular}{|c|c|c|}
         \hline
-    $s$ & $e_1e_2e_3\dots e_{11}$ & $d_1 d_2 d_3 \dots d_{52}$\\
+    $s$ & $e_1e_2e_3\dots e_{11}$ & $c_1 c_2 c_3 \dots c_{52}$\\
     \hline
     \end{tabular}
     \]
-    La funzione \lstinline{Q_rsqrt} assume implicitamente che il parametro \texttt{number} sia positivo, quindi possiamo ignorare il segno $s$. Indichiamo con $e$ e $d$ i due numeri binari formati dai due blocchi di bit successivi, di 11 e 52 cifre rispettivamente: quindi $e$ un intero è compreso tra 0 e 2047, e $d$ tra $0$ e $2^{52-1}$.
+    La funzione \lstinline{Q_rsqrt} assume implicitamente che il parametro \texttt{number} sia positivo, quindi possiamo ignorare il segno $s$. Indichiamo con $e$ e $c$ i due numeri binari formati dai due blocchi di bit successivi, di 11 e 52 cifre rispettivamente: quindi $e$ è un intero compreso tra 0 e $2^{11}-1$, e $c$ un intero compreso tra $0$ e $2^{52-1}$.
     
     I bit di $e$ codificano l'esponente $p \in \{-1022,\dots, 1023\}$ semplicemente come $e = p+1023$:
     \begin{center}
@@ -1902,19 +1902,27 @@ float Q_rsqrt( float number )
         \bottomrule
     \end{tabular}
     \end{center}
-    I rimanenti 52 bit sono le cifre $d_1,\dots,d_{52}$ della mantissa, escludendo la cifra iniziale $d_0$ che è sempre uguale a $1$. 
-    
-    Quindi possiamo scrivere in funzione di $e$ e $d$ sia il numero di macchina
+    I rimanenti 52 bit sono le cifre $c_1,\dots,c_{52}$ della mantissa, escludendo la cifra iniziale $c_0$ che è sempre uguale a $1$. 
+
+    Se leggiamo gli stessi bit come la rappresentazione di un intero con segno, $e$ e $c$ letti consecutivamente formano le 63 cifre in base-2 dell'intero $i$:
     \[
-    y = 2^{e-1023} (1 + 2^{-52} d ),
+    i = \begin{tabular}{|c|c|}
+        \hline
+    $s$ & $e_1e_2e_3\dots e_{11} c_1 c_2 c_3 \dots c_{52}$\\
+    \hline
+    \end{tabular}
+    \]
+    Scriviamo in funzione di $e$ e $c$ sia il numero di macchina
+    \[
+    y = 2^{e-1023} (1 + 2^{-52} c ),
     \]
     che l'intero a 64 bit rappresentato dagli stessi bit
     \[
-    i = 2^{52}e + d.
+    i = 2^{52}e + c.
     \]
     Si ha la relazione (approssimata)
     \[
-    \log_2(y) = e - 1023 + \log_2(1+2^{-52} d ) \approx e - 1023 + 2^{-52} d = 2^{-52}i - 1023:
+    \log_2 y = e - 1023 + \log_2(1+2^{-52} c ) \approx e - 1023 + 2^{-52} c = 2^{-52}i - 1023:
     \]
     difatti, $\log_2(1+x)\approx x$ quando $x$ è compreso in $[0,1]$, come si può vedere anche dal grafico qui sotto.
 
@@ -1938,21 +1946,21 @@ float Q_rsqrt( float number )
         \end{tikzpicture}
     \end{center}
 
-    Possiamo vedere dal grafico che l'errore massimo che commettiamo con questa approssimazione è circa $0.1$. In realtà la retta disegnata in rosso nel grafico non è l'approssimazione migliore che possiamo dare di $\log_2(1+x)$; spostandola leggermente più in alto (di una quantità $\gamma$) si ottiene un'approssimazione di $\log_2(1+x) \approx x+\gamma$ che ha un errore massimo ancora minore. Quindi, possiamo trovare una costante $c$ tale che $2^{-52}i + c$ è un'ottima approssimazione di $\log_2(y)$ per ogni numero floating-point normalizzato $y$; il valore esatto di $c$ non ci importa.
+    Vediamo dal grafico che l'errore massimo che commettiamo con questa approssimazione è circa $0.1$. In realtà la retta disegnata in rosso nel grafico non è l'approssimazione migliore che possiamo dare di $\log_2(1+x)$; spostandola leggermente più in alto (di una quantità $\gamma$) si ottiene un'approssimazione di $\log_2(1+x) \approx x+\gamma$ che ha un errore massimo ancora minore. Quindi, esiste una costante $K$ tale che $2^{-52}i + K$ è un'ottima approssimazione di $\log_2(y)$ per ogni numero floating-point normalizzato $y$; il valore esatto di $K$ non ci importa.
 
-    Possiamo ora usare le proprietà dei logaritmi per trovare un'approssimazione di $z = \frac{1}{\sqrt{y}} = y^{-1/2}$:
+    Ora usiamo le proprietà dei logaritmi per trovare un'approssimazione di $z = \frac{1}{\sqrt{y}} = y^{-1/2}$:
     \[
         \log_2 z = -\frac{1}{2} \log_2 y.
     \]
     Se chiamiamo $i$ e $j$ gli interi che hanno gli stessi bit di rappresentazione di $y$ e $z$ rispettivamente, abbiamo
     \[
-        2^{-52}j + c \approx \log_2 z = -\frac{1}{2} \log_2 y \approx -\frac{1}{2}(2^{-52}i + c)
+        2^{-52}j + K \approx \log_2 z = -\frac{1}{2} \log_2 y \approx -\frac{1}{2}(2^{-52}i + K)
     \]
     cioè
     \[
-    j \approx -\frac{1}{2}i + d,
+    j \approx -\frac{1}{2}i + L,
     \]
-    dove $d$ è un'altra costante (che non calcoliamo esattamente qui). Il valore di $z$ ottenuto prendendo $j = -\frac{1}{2}i + d$ è un'ottima approssimazione iniziale di $\frac{1}{\sqrt{y}}$, che viene poi raffinata ulteriormente da un passo del metodo di Newton.
+    dove $L$ è un'altra costante (che non calcoliamo esattamente qui). Il valore di $z$ ottenuto prendendo $j = -\frac{1}{2}i + L$ è un'ottima approssimazione iniziale di $\frac{1}{\sqrt{y}}$, che viene poi raffinata ulteriormente da un passo del metodo di Newton.
  
     Questa trasformazione è quello che fanno le righe 9--11 del codice:
     \begin{lstlisting}[language=C++, basicstyle=\footnotesize\ttfamily, firstnumber=9]
@@ -1960,7 +1968,7 @@ float Q_rsqrt( float number )
   i  = 0x5f3759df - ( i >> 1 ); //calcola j = d - i/2 con il bit shifting operator >>
   y  = * ( float * ) &i; //interpreta j come float ottenendo z
     \end{lstlisting}
-    La costante $d = {}$\lstinline{0x5f3759df} che compare in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
+    La costante $L = {}$\lstinline{0x5f3759df} che compare in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
 
     Riassumendo, il metodo particolare con cui è rappresentato tramite bit un numero a virgola mobile nello standard dei numeri di macchina (IEEE 754) permette di ottenere un'approssimazione di $\log_2(y)$ semplicemente reinterpretando i bit della sua rappresentazione come un intero. Questa proprietà non è un caso, ma è il motivo per cui nello standard è stato scelto di rappresentare gli esponenti in questo modo $e = p + 1023$, anziché memorizzare direttamente $p$ come intero con segno in quegli 11 bit.
 \end{conditional}
