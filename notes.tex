@@ -1780,7 +1780,7 @@ Il primo bit codifica il segno, i successivi 11 bit l'esponente, e i successivi 
 
 Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
-C'è anche un altro formato comune, chiamato \texttt{single} o \texttt{float32}, che ha precisione di macchina $\mathsf{u}\approx 10^{-8}$. Con questo formato gli errori relativi sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno).
+C'è anche un altro formato nello standard, chiamato \texttt{single} o \texttt{float32}, che può rappresentare numeri compresi tra $\omega \approx 10^{-38}$ e $\Omega \approx 10^{38}$ e ha precisione di macchina $\mathsf{u}\approx 10^{-7}$. Con questo formato gli errori sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno). I formati di numeri reali a disposizione nei vari linguaggi di programmazione tipicamente sono questi due (con vari nomi a seconda del linguaggio).
 
 Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì il numero in base 2
 \begin{align*}
@@ -1833,7 +1833,13 @@ Le risposte sono queste:
 
 
 
-\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto.
+\paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto. Studieremo nel dettaglio questo tema nel prossimo capitolo.
+
+\begin{conditional}[inf]
+    Con il boom dei \emph{large language models}, negli ultimi anni sono diventati più comuni anche tipi di numeri a virgola mobile non standard, da 16 o addirittura 8 bit, che in passato erano poco più di una curiosità. Le operazioni in questi formati sono implementati in hardware solo su alcune GPU, e sono usati nel training di reti neurali: un'applicazione che è \emph{memory-bound} e può tollerare errori anche abbastanza grandi. (Questa \emph{non} è la stessa cosa della ``quantizzazione'' di cui forse avete sentito parlare provando a eseguire modelli in locale.)
+
+    Nelle normali applicazioni scientifiche comunque si preferisce usare i formati standard a 32 e 64 bit, visto che un fattore importante è l'impatto degli errori di macchina, che può essere grosso. 
+\end{conditional}
 
 \begin{conditional}[inf]
     \section{(*) Approfondimento: fast inverse square root}
