@@ -7,7 +7,7 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathmorphing, calc}
 
 \usepackage[margin=1.4in]{geometry}
 
@@ -1863,14 +1863,12 @@ float Q_rsqrt( float number )
     \[
     y_{k+1} = y_k - \frac{f(y_k)}{f'(y_k)} = y_k - \frac{\frac{1}{y_k^2}-r}{\frac{2}{y_k^3}} = y_k\left(\frac{3}{2} - \frac{r}{2}y_k^2\right).
     \]
-    Questo metodo iterativo è particolarmente efficiente anche perché non richiede divisioni in virgola mobile, lente sui processori dell'epoca. 
+    Questo metodo iterativo è particolarmente efficiente anche perché non richiede divisioni in virgola mobile, lente sui processori dell'epoca. Vediamo nella riga 12 una singola iterazione del metodo di Newton; la seconda iterazione del metodo è commentata: il punto iniziale scelto è già così vicino alla soluzione che una singola iterazione basta per ottenere un risultato accurato (almeno per gli scopi del videogioco, che non richiedeva un valore esatto fino all'ultima cifra).
     
-    Ma la parte più notevole del codice sono le righe 9--11: usano una manipolazione di bit particolarmente oscura per generare un punto iniziale \lstinline{y} per il metodo di Newton. Vediamo nella riga 12 una singola iterazione del metodo di Newton; la seconda iterazione del metodo è commentata: il punto iniziale scelto è già così vicino alla soluzione che una singola iterazione basta per ottenere un risultato accurato (almeno per gli scopi del videogioco, che non richiedeva un valore esatto fino all'ultima cifra).
-
-    La manipolazione nelle righe 9--11 si basa sul reinterpretare i bit della rappresentazione in virgola mobile di $y$ come un intero: nella riga 9, \lstinline{&y} restituisce un puntatore al numero floating-point \lstinline{y}; \lstinline{( long * )} lo converte a un puntatore a un intero a 32 bit (\lstinline{long}), e infine l'operatore \lstinline{*} più a sinistra legge l'intero $i$ che sta nella locazione di memoria a cui punta questo puntatore, cioè, la stessa locazione di memoria che contiene $y$. Nella riga 11, viene fatto il processo inverso: i bit dell'intero \lstinline{i} vengono reinterpretati come un \lstinline{float}.
+    La parte più notevole del codice sono le righe 9--11: usano una manipolazione di bit particolarmente oscura per generare un punto iniziale \lstinline{y} per il metodo. Si basa sul reinterpretare i bit della rappresentazione in virgola mobile di $y$ come un intero: nella riga 9, partendo a leggere da destra, \lstinline{&y} restituisce un puntatore al numero floating-point \lstinline{y}; poi la conversione di tipo \lstinline{( long * )} lo converte a un puntatore a un intero a 32 bit (\lstinline{long}), e infine l'operatore \lstinline{*} più a sinistra legge un intero \lstinline{i} dalla locazione di memoria a cui punta questo puntatore, cioè, la stessa locazione di memoria che contiene \lstinline{y}. Nella riga 11, viene fatto il processo inverso: i bit dell'intero \lstinline{i} vengono riletti come un \lstinline{float}.
     
     La proprietà matematica su cui si basa la manipolazione è: se prendiamo un numero a virgola mobile $y$, e reinterpretiamo i bit della sua rappresentazione come un numero intero con segno, otteniamo una buona approssimazione del logaritmo $\log_2 y$.
-    Per capire come mai vale questa proprietà, dobbiamo dire qualcosa di più sul modo in cui vengono memorizzati gli esponenti in un numero a virgola mobile. Descriviamo l'idea per i numeri a doppia precisione, che sono quelli che abbiamo visto nel dettaglio nel corso, ma tutto funziona anche per i numeri a singola precisione (32 bit, \texttt{float} del C/C++) che usa la funzione.
+    Per capire come mai vale questa proprietà, dobbiamo dire qualcosa di più sul modo in cui vengono memorizzati gli esponenti in un numero a virgola mobile. Descriviamo l'idea per i numeri a doppia precisione (64 bit), che sono quelli che vediamo nel dettaglio nel corso, ma tutto funziona anche per i numeri a singola precisione (32 bit, \texttt{float} del C/C++) che vengono usati nella funzione.
     
     Ricordiamo come viene rappresentato un numero a virgola mobile nei 64 bit che lo compongono:
     \[
@@ -1938,11 +1936,11 @@ float Q_rsqrt( float number )
 
     Possiamo ora usare le proprietà dei logaritmi per trovare un'approssimazione di $z = \frac{1}{\sqrt{y}} = y^{-1/2}$:
     \[
-        \log_2 z = -\frac{1}{2} \log_2 y
+        \log_2 z = -\frac{1}{2} \log_2 y.
     \]
-    quindi, lavorando con gli interi $i$ e $j$ che hanno gli stessi bit di rappresentazione di $y$ e $z$ rispettivamente
+    Se chiamiamo $i$ e $j$ gli interi che hanno gli stessi bit di rappresentazione di $y$ e $z$ rispettivamente, abbiamo
     \[
-        2^{-52}j + c \approx -\frac{1}{2}(2^{-52}i + c)
+        2^{-52}j + c \approx \log_2 z = -\frac{1}{2} \log_2 y \approx -\frac{1}{2}(2^{-52}i + c)
     \]
     cioè
     \[
@@ -1958,7 +1956,7 @@ float Q_rsqrt( float number )
     \end{lstlisting}
     La costante $d = {}$\lstinline{0x5f3759df} che compare in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
 
-    Riassumendo, il metodo particolare con cui è rappresentato tramite bit un numero a virgola mobile nello standard dei numeri di macchina (IEEE754) permette di ottenere un'approssimazione di $\log_2(y)$ semplicemente reinterpretando i bit della sua rappresentazione come un intero. Questa proprietà non è un caso, ma è il motivo per cui nello standard è stato scelto di rappresentare gli esponenti in questo modo $e = p + 1023$, anziché memorizzare direttamente $p$ come intero con segno in quegli 11 bit.
+    Riassumendo, il metodo particolare con cui è rappresentato tramite bit un numero a virgola mobile nello standard dei numeri di macchina (IEEE 754) permette di ottenere un'approssimazione di $\log_2(y)$ semplicemente reinterpretando i bit della sua rappresentazione come un intero. Questa proprietà non è un caso, ma è il motivo per cui nello standard è stato scelto di rappresentare gli esponenti in questo modo $e = p + 1023$, anziché memorizzare direttamente $p$ come intero con segno in quegli 11 bit.
 \end{conditional}
 
 \chapter{Analisi dell'errore}
@@ -2156,7 +2154,7 @@ $
 $
 \frac{2y^2}{\abs{x^2-y^2}}\mathsf{u},
 $
-Un algoritmo in cui l'errore algoritmico è sempre al più dello stesso ordine di grandezza dell'errore inerente si dice \emph{stabile}. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente, che è inevitabile con qualunque algoritmo, anche il migliore del mondo. Quindi un algoritmo stabile restituisce il minore errore possibile, almeno come ordine di grandezza.
+Un algoritmo si dice \emph{stabile} se l'errore algoritmico è sempre al più dello stesso ordine di grandezza di $\mathsf{u}$ per il numero di condizionamento del problema rispetto ai suoi input (o la somma dei numeri di condizionamento, se c'è più di un input), cioè la limitazione che abbiamo dato sull'errore inerente. Quindi entrambi gli algoritmi che abbiamo visto per calcolare $f(x,y) = x^2-y^2$ sono stabili. La stabilità è una proprietà che cerchiamo sempre di avere nei nostri algoritmi: ci dice che l'algoritmo non fa mai un errore molto più grande di quello inerente, che è inevitabile con qualunque algoritmo, anche il migliore del mondo. Quindi un algoritmo stabile restituisce il minore errore possibile, almeno come ordine di grandezza.
 
 Al contrario, un algoritmo \emph{instabile} è uno che può avere un errore molto maggiore del condizionamento della quantità che va a calcolare.
 
@@ -2238,6 +2236,10 @@ Questo risultato ci permette di spiegare il comportamento che osserviamo nella f
 
 \begin{conditional}[inf]
 \section{Grafi computazionali per l'analisi dell'errore}
+
+%%% Rifare questa introduzione partendo dal riscrivere l'esempio precedente $x^2-y^2$ con i teoremi sulla propagazione degli errori. Questo va bene tenerlo come secondo esempio di analisi dell'errore con un grafo.
+%%% E a questo punto forse questa parte sull'introduzione dei grafi ha senso spostarla sopra, prima di parlare di errore algoritmico/inerente o comunque lì in mezzo? 
+
 Mostriamo ora una tecnica per calcolare l'approssimazione al primo ordine dell'errore algoritmico basata sulla rappresentazione delle operazioni eseguite come un grafo. Rappresentiamo innanzitutto le operazioni da fare come un grafo in cui le frecce collegano gli \emph{input} di un'operazione ai suoi \emph{output}; per esempio qui sotto vediamo il grafo che rappresenta il calcolo della quantità $\frac{y}{x+y}$ a partire dai due input $x$, $y$.
 
 \begin{center}
@@ -2429,6 +2431,117 @@ In altre parole, l'algoritmo che possiamo seguire per calcolare l'errore di macc
     Con un algoritmo simile a questo possiamo calcolare gli errori \emph{assoluti}, anziché relativi, cioè essenzialmente le derivate. Questa è una variante del famoso algoritmo di \emph{backpropagation} che viene utilizzato per calcolare derivate quando si allenano modelli di intelligenza artificiale.
 \end{remark}
 
+\end{conditional}
+
+\begin{conditional}[inf]
+
+\section{Errore su una somma}
+Un'operazione particolarmente frequente nella pratica è quella di dover sommare dei numeri. Vediamo come si comporta l'errore in questo caso. Concentriamoci sulla somma $s = x_1+x_2+x_3+\dots+x_n$. Il condizionamento è facile da calcolare:
+\[
+\kappa_{s, x_k} = \abs*{1 \cdot \frac{x_k}{x_1 + x_2 +\dots+x_n}}, \quad k=1,2,\dots,n.
+\]
+Questo ci dice subito che la somma è mal condizionata quando alcuni degli addendi sono molto più grandi del totale; questo può capitare quando gli $x_k$ hanno segni diversi. Se invece sono tutti positivi, allora il numero di condizionamento è sempre minore di $1$ e non abbiamo problemi. 
+
+Ora proviamo a calcolare l'errore algoritmico. Per farlo, dobbiamo definire esattamente in che ordine sommiamo i numeri; supponiamo di farlo partendo da sinistra, cioè ad esempio per $n=4$
+\[
+    s = ((x_1 + x_2) + x_3) + x_4.
+\]
+Il grafo computazionale corrispondente a questa operazione è il seguente.
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+\node[draw, rectangle] (x1) {$x_1$};
+  \node[draw, rectangle, below of=x1] (x2) {$x_2$};  
+  \node[draw, rectangle, below of=x2] (x3) {$x_3$};
+  \node[draw, rectangle, below of=x3] (x4) {$x_4$};
+
+  \node[draw, rectangle, right of=x2] (x12) {$x_1+x_2$};
+  \node[draw, rectangle, right of=x3, node distance=3.5cm] (x123) {$x_1+x_2+x_3$};
+  \node[draw, rectangle, right of=x4, node distance=5cm] (x1234) {$x_1+x_2+x_3+x_4$};
+  
+  \draw[->] (x1) -- (x12) node[midway, right] {$\frac{x_1}{x_1+x_2}$}
+  					(x2) -- (x12) node[midway, above] {$\frac{x_2}{x_1+x_2}$}
+            (x3) -- (x123) node[midway, above] {$\frac{x_3}{x_1+x_2+x_3}$}
+            (x12) -- (x123) node[midway, right] {$\frac{x_1+x_2}{x_1+x_2+x_3}$}
+            (x4) -- (x1234) node[midway, above] {$\frac{x_4}{x_1+x_2+x_3+x_4}$}
+            (x123) -- (x1234) node[midway, right] {$\frac{x_1+x_2+x_3}{x_1+x_2+x_3+x_4}$};
+\end{tikzpicture}
+\end{center}
+Ci sono diverse quantità che si semplificano: i quattro errori sugli input $\varepsilon_k = \frac{\tilde{x}_k - x_k}{x_k}$, per $k=1,2,3,4$, propagati lungo strade molto diverse producono quattro errori della stessa forma $\frac{x_k}{x_1+x_2+x_3+x_4}\varepsilon_k$. Non ci sorprende, perché già sappiamo che questo è il numero di condizionamento. 
+
+Chiamiamo invece $\varepsilon_{sk}$ l'errore introdotto sommando l'addendo $x_k$, per $k=2,3,\dots,n$; il termine che lo contiene diventa
+\[
+\frac{x_1+\dots+x_k}{x_1+\dots+x_n}\varepsilon_k.
+\]
+Quindi
+\[
+\varepsilon_{alg} = \frac{x_1+x_2}{x_1+\dots+x_n}\varepsilon_2 + \frac{x_1+x_2+x_3}{x_1+\dots+x_n}\varepsilon_3 + \dots + \frac{x_1+x_2+\dots+x_{n-1}}{x_1+\dots+x_n}\varepsilon_{n-1} + \varepsilon_n.
+\]
+Nell'ultimo termine numeratore e denominatore sono uguali, quindi abbiamo semplicemente $1$. Di nuovo, in generale tutto quello che possiamo dire è che l'errore è piccolo se il totale $s$ è molto più piccolo degli addendi; e ognuno degli addendi è la somma dei condizionamenti rispetto alle variabili che compaiono al numeratore; quindi in generale $\varepsilon_{alg}$ è al più $n-1$ volte (la maggiorazione di) $\varepsilon_{in}$.
+
+È interessante vedere il caso in cui tutti gli addendi sono positivi: in questo caso, i coefficienti di amplificazione sono tutti limitati da $1$, ma comunque possono avere valori molto diversi: se $\varepsilon_n$ è molto più grande di tutti gli altri addendi, allora tutti i coefficienti tranne l'ultimo $1$ sono molto piccoli; se invece è $\varepsilon_1$ o $\varepsilon_2$ ad essere molto più grande degli altri, allora abbiamo $n-1$ coefficienti quasi uguali a $1$ che moltiplicano errori, quindi $\varepsilon_{alg}\leq (n-1)\mathsf{u}$. La conclusione interessante è che l'ordine degli addendi conta: sommare $x_1 + \dots + x_n$ non ha lo stesso errore algoritmico che sommare $x_n + \dots + x_1$. Quando tutti gli addendi sono positivi, si può dimostrare che l'ordine che minimizza l'errore è quello in cui sono in ordine crescente: quindi se ci interessa solo la stabilità conviene prima ordinare gli addendi in ordine crescente e poi sommarli (in contesti in cui ha senso farlo: ordinare $n$ interi già da solo costa più che sommarli!)
+
+Un'altra possibilità è sommare in ordine diverso, per esempio ricorsivamente a due a due quando il numero degli addendi è una potenza di $2$: 
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+\node[draw, rectangle] (x1) {$x_1$};
+  \node[draw, rectangle, below of=x1] (x2) {$x_2$};  
+  \node[draw, rectangle, below of=x2] (x3) {$x_3$};
+  \node[draw, rectangle, below of=x3] (x4) {$x_4$};
+
+  \node[draw, rectangle] (x12) at ($(x1) + (2cm, -1cm)$) {$x_1+x_2$};
+  \node[draw, rectangle] (x34) at ($(x3) + (2cm, -1cm)$) {$x_3+x_4$};
+  \node[draw, rectangle] (x1234) at ($(x2) + (5cm, -1cm)$)  {$x_1+x_2+x_3+x_4$};
+  
+  \draw[->] (x1) -- (x12) node[midway, above] {$\frac{x_1}{x_1+x_2}$}
+  					(x2) -- (x12) node[midway, below] {$\frac{x_2}{x_1+x_2}$}
+            (x3) -- (x34) node[midway, above] {$\frac{x_3}{x_3+x_4}$}
+            (x4) -- (x34) node[midway, below] {$\frac{x_4}{x_3+x_4}$}
+            (x12) -- (x1234) node[midway, right] {$\frac{x_1+x_2}{x_1+x_2+x_3+x_4}$}
+            (x34) -- (x1234) node[midway, right] {$\frac{x_3+x_4}{x_1+x_2+x_3+x_4}$};
+\end{tikzpicture}
+\end{center}
+Non vediamo i dettagli, ma si può dimostrare che in questo caso (supponendo che tutti gli $x_k$ siano positivi) l'errore algoritmico nel caso pessimo è $(\log_2(n) - 1)\mathsf{u}$ anziché $(n-1)\mathsf{u}$ come nel caso della somma sequenziale.
+
+\paragraph{Un esempio con funzioni non razionali} Vediamo ora un altro esempio che ci mostra come estendere il nostro framework con i grafi a funzioni più complesse. Supponiamo di avere a disposizione una funzione di libreria \lstinline{exp} che calcola l'esponenziale con un'errore relativo di al più $C\mathsf{u}$, per una certa costante $C$; cioè, il risultato calcolato $\tilde{y} \approx e^{\tilde{x}}$ soddisfa $y = e^{\tilde{x}}(1+\varepsilon_{exp})$, con $\abs{\varepsilon_{exp}} < C\mathsf{u}$. Questo è il comportamento tipico delle funzioni di libreria: su funzioni complicate come esponenziali, seni, coseni, \dots è più difficile e dispendioso garantire un errore limitato dal solo $\mathsf{u}$.
+
+Supponiamo di voler calcolare $z = e^{x+y}$; ci conviene calcolarlo come $z = \exp(x+y)$ o come $z = \exp(x)\exp(y)$, chiamando due volte la libreria? Calcoliamo innanzitutto il coefficiente di propagazione dell'errore dell'esponenziale come
+\[
+\frac{d}{dx}e^x \cdot \frac{x}{e^x} = x.
+\]
+Ora possiamo disegnare i due grafi come
+\begin{center}
+\begin{tabular}{cc}
+\begin{tikzpicture}[node distance=2cm, auto]
+\node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};  
+  \node[draw, rectangle] (xpy) at ($(x) + (2cm, -1cm)$) {$x+y$};
+  \node[draw, rectangle, right of=xpy, node distance=3cm] (ris) {$\exp(x+y)$};
+  
+  \draw[->] (x) -- (xpy) node[midway, above] {$\frac{x}{x+y}$}
+            (y) -- (xpy) node[midway, above] {$\frac{y}{x+y}$}
+            (xpy) -- (ris) node[midway, above] {$x+y$};
+\end{tikzpicture}
+&
+\begin{tikzpicture}[node distance=2cm, auto]
+\node[draw, rectangle] (x) {$x$};
+  \node[draw, rectangle, below of=x] (y) {$y$};  
+  \node[draw, rectangle, right of=x] (ex) {$\exp(x)$};  
+  \node[draw, rectangle, right of=y] (ey) {$\exp(y)$};
+  \node[draw, rectangle] (ris) at ($(ex) + (2cm, -1cm)$) {$\exp(x)\exp(y)$};
+  
+  \draw[->] (x) -- (ex) node[midway, above] {$x$}
+            (y) -- (ey) node[midway, above] {$y$}
+            (ex) -- (ris) node[midway, above] {$1$}
+            (ey) -- (ris) node[midway, below] {$1$};
+\end{tikzpicture}
+\end{tabular}
+\end{center}
+Dai due grafi leggiamo l'errore di macchina nei due casi:
+\begin{align*}
+\varepsilon_{mac1} &= x\varepsilon_x + y\varepsilon_y + \varepsilon_1(x+y) + \varepsilon_2\\
+\varepsilon_{mac2} &= x\varepsilon_x + y\varepsilon_y + \varepsilon_3 + \varepsilon_4 + \varepsilon_5,\\
+\end{align*}
+dove $\varepsilon_1$ è l'errore sulla somma, $\varepsilon_5$ sul prodotto, e $\varepsilon_2,\varepsilon_3,\varepsilon_4$ sono errori su esponenziali; in particolare quindi $\abs{\varepsilon_k} \leq \mathsf{u}$ per $k=1,5$ e $\abs{\varepsilon_k} \leq C\mathsf{u}$ per $k=2,3,4$. Riconosciamo nei primi due addendi l'errore inerente (uguale per i due algoritmi); l'errore algoritmico nei due casi è limitato da $\abs{\varepsilon_{alg1}}\leq (C+\abs{x+y})\mathsf{u}$ e $\abs{\varepsilon_{alg1}}\leq (2C+1)\mathsf{u}$. Quindi quando $\abs{x+y}$ è piccolo conviene il primo algoritmo, quando è grande il secondo --- sempre se non ci sono overflow/underflow, che questa analisi non tratta. L'errore inerente è limitato da $\abs{\varepsilon_{in}} \leq (\abs{x}+\abs{y})\mathsf{u}$, quindi comunque anche il primo algoritmo è stabile.
 \end{conditional}
 
 \chapter{Equazioni lineari e autovalori}
