@@ -2057,7 +2057,7 @@ Qual è il loro effetto combinato?
 \section{Errore di macchina}
 Con questi strumenti a disposizione, possiamo andare a studiare più nel dettaglio l'impatto degli errori che facciamo quando calcoliamo una quantità sul computer utilizzando i numeri \emph{floating point}; questi sono detti \emph{errori di macchina}. Vedremo che l'errore commesso non è sempre dell'ordine di $10^{-16}$ purtroppo, ma in certi casi può venire amplificato e diventare molto più grande.
 
-\paragraph{Un primo esempio} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora su cosiddette \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo due quantità intermedie.
+\paragraph{Un primo esempio} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora sulle \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo due quantità intermedie.
 \[
 A = x \cdot x, \quad B = y \cdot y, \quad z = A - B.
 \]
@@ -2556,6 +2556,10 @@ Dai due grafi leggiamo l'errore di macchina nei due casi:
 \varepsilon_{mac2} &= x\varepsilon_x + y\varepsilon_y + \varepsilon_3 + \varepsilon_4 + \varepsilon_5,\\
 \end{align*}
 dove $\varepsilon_1$ è l'errore sulla somma, $\varepsilon_5$ sul prodotto, e $\varepsilon_2,\varepsilon_3,\varepsilon_4$ sono errori su esponenziali; in particolare quindi $\abs{\varepsilon_k} \leq \mathsf{u}$ per $k=1,5$ e $\abs{\varepsilon_k} \leq C\mathsf{u}$ per $k=2,3,4$. Riconosciamo nei primi due addendi l'errore inerente (uguale per i due algoritmi); l'errore algoritmico nei due casi è limitato da $\abs{\varepsilon_{alg1}}\leq (C+\abs{x+y})\mathsf{u}$ e $\abs{\varepsilon_{alg1}}\leq (2C+1)\mathsf{u}$. Quindi quando $\abs{x+y}$ è piccolo conviene il primo algoritmo, quando è grande il secondo --- sempre se non ci sono overflow/underflow, che questa analisi non tratta. L'errore inerente è limitato da $\abs{\varepsilon_{in}} \leq (\abs{x}+\abs{y})\mathsf{u}$, quindi comunque anche il primo algoritmo è stabile.
+
+Un altro esempio interessante è quello della quantità $f(x) = \frac{\log x}{x-1}$.
+
+
 \end{conditional}
 
 \chapter{Equazioni lineari e autovalori}
@@ -2627,7 +2631,7 @@ c_1\norm{\mathbf{v}}_p \leq \norm{\mathbf{v}}_q \leq c_2 \norm{\mathbf{v}}_p \qu
 \]
 Queste costanti spesso sono una funzione della dimensione; per esempio, per ogni $\mathbf{v}\in\mathbb{C}^n$ si ha
 \[
-\norm{\mathbf{v}}_0 \leq \norm{\mathbf{v}}_2 \leq \sqrt{n}\norm{\mathbf{v}}_0.
+\norm{\mathbf{v}}_\infty \leq \norm{\mathbf{v}}_2 \leq \sqrt{n}\norm{\mathbf{v}}_\infty.
 \]
 (esercizio: dimostrarlo.)
 
@@ -2667,30 +2671,6 @@ Mi basta considerare il vettore $\mathbf{u} = \mathbf{v} \frac{1}{\norm{\mathbf{
 ed eliminando il denominatore otteniamo la tesi.
 \end{proof}
 
-\paragraph{Norma di Frobenius}
-
-Non tutte le norme matriciali si ottengono da questa costruzione. Un altro esempio è la \emph{norma di Frobenius},
-\[
-\norm{A}_F = \sqrt{\sum_{i,j=1}^n \abs{A_{ij}}^2}.
-\]
-Questa funzione soddisfa tutte le proprietà di una norma matriciale, ma non è una norma matriciale \emph{indotta}. Un modo veloce di vederlo è considerando la norma della matrice identità: $\norm{I}_F = \sqrt{n}$, ma per una norma matriciale indotta segue dalla definizione che $\norm{I}_p = 1$.
-
-\paragraph{Norme, autovalori e raggio spettrale}
-
-Data una matrice quadrata $A$, ricordiamo che quando $A\mathbf{v} = \mathbf{v}\lambda$ per un qualche vettore $\mathbf{v}\in\mathbb{C}^n$ (diverso dal vettore nullo!) e scalare $\lambda \in \mathbb{C}$ si dice che $\lambda$ è un \emph{autovalore} e $\mathbf{v}$ è un \emph{autovettore} di $A$. Avete visto ad algebra lineare diverse proprietà degli autovalori. Prendendo norme, abbiamo che
-\[
-\norm{\mathbf{v}}_p \abs{\lambda} = \norm{\mathbf{v}\lambda}_p = \norm{A\mathbf{v}}_p \leq \norm{A}_p \norm{\mathbf{v}}_p.
-\]
-Possiamo semplificare $\norm{\mathbf{v}}_p \neq 0$, quindi $\abs{\lambda} \leq \norm{A}$ per ogni autovalore.
-
-Data una matrice $A \in \mathbb{C}^{n\times n}$ (quindi gli autovalori esistono sempre), si chiama \emph{spettro} l'insieme dei suoi autovalori, e \emph{raggio spettrale} (e si indica $\rho(A)$) il valore assoluto più grande degli autovalori, $\rho(A) = \max_{\lambda \text{ autoval.}} \abs{\lambda}$. Notate che il raggio spettrale non è per forza un autovalore: per esempio potremmo avere $A$ con autovalori $\{-2, i, -i\}$, e quindi $\rho(A)=2$ non è un autovalore.
-
-In ogni caso, dalla formula qui sopra segue
-\[
-\rho(A) \leq \norm{A}_p
-\]
-per ogni norma matriciale indotta.
-
 \paragraph{Formule per le norme matriciali $1,2,\infty$}
 È abbastanza complicato calcolare le norme matriciali indotte usando la loro definizione: c'è da fare un massimo su un insieme infinito di vettori\dots. Per le norme $1,2,\infty$ ci sono delle formule più semplici. Le enunciamo senza dimostrazione.
 \begin{align*}
@@ -2708,6 +2688,39 @@ A = \begin{bmatrix}
 \end{bmatrix},
 \]
 e verificare (aiutandosi eventualmente con Matlab) che $\rho(A)\leq \norm{A}_p$ per $p=1,2,\infty$. (La disuguaglianza è vera anche per $\norm{A}_F$, ma la dimostrazione che abbiamo fatto funziona solo per norme matriciali indotte.)
+
+\paragraph{Norma di Frobenius}
+
+Non tutte le norme matriciali si ottengono da questa costruzione. Un altro esempio è la \emph{norma di Frobenius},
+\[
+\norm{A}_F = \sqrt{\sum_{i,j=1}^n \abs{A_{ij}}^2}.
+\]
+Questa funzione soddisfa tutte le proprietà di una norma matriciale, ma non è una norma matriciale \emph{indotta}. Un modo veloce di vederlo è considerando la norma della matrice identità: $\norm{I}_F = \sqrt{n}$, ma per una norma matriciale indotta segue dalla definizione che $\norm{I}_p = 1$.
+
+\paragraph{Norme, autovalori e raggio spettrale}
+
+Data una matrice quadrata $A$, ricordiamo che quando $A\mathbf{v} = \mathbf{v}\lambda$ per un qualche vettore $\mathbf{v}\in\mathbb{C}^n$ (diverso dal vettore nullo!) e scalare $\lambda \in \mathbb{C}$ si dice che $\lambda$ è un \emph{autovalore} e $\mathbf{v}$ è un \emph{autovettore} di $A$. Avete visto ad algebra lineare diverse proprietà degli autovalori. 
+
+Data una matrice $A \in \mathbb{C}^{n\times n}$, si chiama \emph{spettro} l'insieme dei suoi autovalori (che esistono sempre, se li cerchiamo in $\mathbb{C}$!), e \emph{raggio spettrale} (e si indica col simbolo $\rho(A)$) il valore assoluto più grande degli autovalori:
+\[
+\rho(A) = \max_{\text{$\lambda$ autovalore di $A$}} \abs{\lambda}
+\]
+Notate che il raggio spettrale non è per forza un autovalore: per esempio potremmo avere una matrice $A$ con autovalori $\{-2, i, -i\}$, e quindi $\rho(A)=2$ non è un autovalore.
+
+Si ha il seguente risultato che lega norme e raggio spettrale.
+\begin{theorem}[Teorema di Hirsch]
+    Per ogni matrice e ogni norma matriciale indotta, si ha
+\begin{equation} \label{rhonorm}
+    \rho(A) \leq \norm{A}_p    
+\end{equation}
+\end{theorem}
+\begin{proof}
+Prendiamo un autovalore $\lambda$ di $A$ e un autovettore associato $\mathbf{v}$. Prendendo le norme nella relazione $A\mathbf{v} = \mathbf{v}\lambda$, abbiamo
+\[
+\norm{\mathbf{v}}_p \abs{\lambda} = \norm{\mathbf{v}\lambda}_p = \norm{A\mathbf{v}}_p \leq \norm{A}_p \norm{\mathbf{v}}_p.
+\]
+Semplifichiamo $\norm{\mathbf{v}}_p$, che è diverso da zero perché $\mathbf{v}\neq 0$, e otteniamo $\abs{\lambda} \leq \norm{A}_p$. Visto che vale questa relazione per ogni autovalore $\lambda$, abbiamo la~\eqref{rhonorm}.
+\end{proof}
 
 \paragraph{Condizionamento della soluzione di sistemi lineari} Prima ancora di parlare di algoritmi risolutivi, andiamo a studiare il condizionamento della soluzione di sistemi lineari, che ci dice quanto vale l'errore inerente. La soluzione di sistemi lineari è un problema che ha come ``input'' $A,\b$ e come ``output'' $\x$. Ha senso chiederci come cambia $\x$ se perturbiamo $A$ oppure $\b$, o anche tutti e due insieme. Possiamo definire degli errori relativi su queste quantità vettoriali e matriciali rimpiazzando i valori assoluti con delle norme: $\frac{\norm{\tilde{\x}-\x}}{\norm{\x}}$, $\frac{\norm{\tilde{A}-A}}{\norm{A}}$, $\frac{\norm{\tilde{\b}-\b}}{\norm{\b}}$ (occhio che $\norm{\frac{\tilde{\b}-\b}{\b}}$ non vuol dire niente, non possiamo dividere per vettori!)
 
@@ -6243,11 +6256,11 @@ Vogliamo ora determinare qual è il limite di $(A^{n-1}+ \dots + A^2 + A + 1)B$ 
 \]
 Riconosciamo di nuovo la possibilità di applicare il limite notevole
 \[
-    \lim_{n\to \infty} \left(1+\frac{x}{N}\right)^n = e^{x}.
+    \lim_{n\to \infty} \left(1+\frac{x}{n}\right)^n = e^{x}.
 \]
-Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tende a $e^{x}$ \emph{dal basso}, quindi si ha per ogni $n$
+Nei corsi di analisi probabilmente avete anche dimostrato che questo limite tende a $e^{x}$ \emph{dal basso}: si ha per ogni $n$
 \[
-    \left(1+\frac{(b-a)L}{n}\right)^N \leq e^{(b-a)L}.
+    \left(1+\frac{(b-a)L}{n}\right)^n \leq e^{(b-a)L}.
 \]
 Pertanto rimettendo insieme tutti i pezzi abbiamo per ogni $k=1,2,\dots,n$
 \[
