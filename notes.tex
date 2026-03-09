@@ -310,7 +310,7 @@ $a_0=a,b_0=b$\;
 \caption{Il metodo di bisezione}
 \end{algorithm}
 
-\paragraph{Esempio} Prendiamo $f(x) = x^2 - 2$. L'intervallo $[a,b] = [0,2]$ è un intervallo di separazione, quindi contiene (almeno) uno zero $\alpha$ di $f$. Sappiamo già in realtà che ne contiene esattamente uno, $\alpha=\sqrt{2}$.
+\paragraph{Esempio} Prendiamo $f(x) = x^2 - 2$. L'intervallo $[a,b] = [0,2]$ è un intervallo di separazione, quindi contiene (almeno) uno zero $\alpha$ di $f$. Sappiamo già in realtà che ne contiene esattamente uno, $\alpha=\sqrt{2}$. Partendo da questo intervallo, i valori ottenuti nelle prime iterazioni del metodo sono quelli in tabella:
 
 \begin{center}
     \begin{tabular}{cccccccc}
@@ -352,18 +352,18 @@ for k = 1:n
     end
     if fa*fc < 0
         b = c;   % [a,b] <-- [a,c]
-        fb = fc; % si puo' omettere (perche'?)
+        fb = fc; % questa riga in realta' si puo' omettere (perche'?)
     else
         a = c;   % [a,b] <-- [c,b]
-        fa = fc; % si puo' omettere (perche'?)
+        fa = fc; % questa riga in realta' si puo' omettere (perche'?)
     end
 end
 \end{lstlisting}
 
 
-\paragraph{Costo computazionale} Una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? Approssimativamente, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni coinvolte. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ somme; calcolare $1+2+3+\dots+20$ richiede $19$ somme, cioè circa il doppio, e quindi ci aspettiamo che ci metta il doppio del tempo.
+\paragraph{Costo computazionale} Una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? Approssimativamente, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni coinvolte. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ addizioni; calcolare invece $1+2+3+\dots+20$ richiede $19$ addizioni, cioè circa il doppio, e quindi ci aspettiamo che ci metta il doppio del tempo.
 
-Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare la $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene va calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche poche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
+Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare il valore della $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
 
 Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale in cui abbiamo calcolato la $f$ tre volte, in $a_0,b_0,c_0$, in ogni passo successivo abbiamo calcolato il valore in \emph{un} solo nuovo punto, cioè $c_k$. Difatti, i valori di $f(a_k)$ e $f(b_k)$ sono già noti dal passo precedente, e ci è bastato ricopiarli dalla riga precedente della tabella.
 
@@ -376,7 +376,7 @@ L'altra domanda chiave per un algoritmo numerico è: quanto vicino andiamo alla 
     b_2 - a_2 &= \frac{b_1-a_1}{2} = \frac{b_0-a_0}{4}\\
     b_3 - a_3 &= \frac{b_2-a_2}{2} = \frac{b_1-a_1}{4} = \frac{b_0-a_0}{8}\\
     \vdots \,\,&= \,\,\vdots\\
-    b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-1} - a_{k-1}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
+    b_{k} - a_{k} &= \frac{b_{k-1} - a_{k-1}}{2} = \frac{b_{k-2} - a_{k-2}}{4} = \dots = \frac{b_{0} - a_{0}}{2^k}
 \end{align*}
 Se ci fermiamo dopo $k$ iterazioni del metodo, abbiamo un intervallo di ampiezza $\frac{b_0-a_0}{2^{k}}$, e sappiamo che esso contiene uno zero $\alpha$ della funzione. A questo punto, se vogliamo restituire \emph{un} valore reale che sia la migliore approssimazione possibile di $\alpha$ con le informazioni a nostra disposizione, la cosa migliore da fare è restituire il punto medio $c_k = \frac{a_k + b_k}{2}$. Difatti $\alpha$ è un punto di cui sappiamo solo che sta nell'intervallo $(a_k,b_k)$, di ampiezza $\ell = \frac{b_0-a_0}{2^{k}}$; quindi la distanza tra $\alpha$ e il punto medio dell'intervallo è al massimo $\ell/2$. Se restituissi $a_k$ o $b_k$ invece nel caso peggiore l'errore è quasi uguale a $\ell$.
 \begin{figure}[H]
@@ -421,13 +421,13 @@ dove a destra dell'uguale abbiamo l'equazione della retta tangente in $c_k$. Un 
 \]
 dove $\xi$ è un punto compreso nell'intervallo tra $c_k$ e $x$ (in qualunque ordine essi siano). Ci aspettiamo che l'ultimo termine sia piccolo, se stiamo guardando in una sezione abbastanza piccola del grafico: se $x-c_k$ è piccolo, $(x-c_k)^2$ lo è molto di più.
 
-Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di valutare la distanza $\abs{\alpha - c_k}$ usando le formule sopra? Possiamo ricavare dalla~\eqref{fapprox}
+Supponiamo che ci sia uno zero $x = \alpha$ vicino a $c_k$; siamo in grado di stimare la distanza $\abs{\alpha - c_k}$ usando le formule sopra? Possiamo ricavare dalla~\eqref{fapprox}
 \[
 \abs{c_k-\alpha} \approx \frac{\abs{f(c_k)}}{\abs{f'(c_k)}}.
 \]
 Rovesciando il ragionamento, se $\frac{\abs{f(c_k)}}{\abs{f'(c_k)}} \leq \varepsilon$ ci possiamo aspettare (ma non è garantito!) che $c_k$ disti circa $\varepsilon$ da uno zero $\alpha$ della funzione. Questo procedimento non è rigoroso però: può essere che la funzione $f$ vari più di quanto ci aspettiamo; questo succede per esempio quando $f''(\xi)$ è grande, o la funzione non è $\mathcal{C}^2$.
 
-Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in $c_k$, ma che sia piccolo \emph{rispetto alla sua derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore $f(c_k)$ piccolo, ma $c_k$ è lontano da $\alpha$.
+Notiamo il fatto interessante che non importa che $f(c_k)$ sia piccolo in assoluto, ma che sia piccolo \emph{rispetto alla derivata}. Valore piccolo e derivata piccola vuol dire semplicemente che la nostra funzione è molto ``piatta'', non per forza che siamo vicini a uno zero, come in figura: la funzione assume un valore $f(c_k)$ piccolo, ma $c_k$ è lontano da $\alpha$.
 \begin{center}
     \begin{tikzpicture}
         \draw[->] (-2,0) -- (5,0) node[right] {$x$};
@@ -439,7 +439,7 @@ Notiamo il fatto interessante che non importa che $f$ sia piccolo in assoluto in
         \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
     \end{tikzpicture}
 \end{center}
-È utile cercare di avere un criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti dalla funzione possono variare molto a seconda delle applicazioni: se la funzione $f$ per esempio misurasse le distanze tra gli atomi di una molecola, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$ già di suo.
+È bene che il criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti possono variare molto a seconda delle applicazioni: se la funzione $f$ per esempio misurasse le distanze tra gli atomi di una molecola, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$.
 
 Ci manca ancora un ingrediente per completare questo criterio di arresto. Il valore di $f(c_k)$ viene calcolato lungo l'algoritmo, ma $f'(c_k)$ no, e calcolarlo può essere molto più complicato. Possiamo però rimpiazzarlo con un'altra approssimazione: se $c_k \in [a_k, b_k]$, allora
 \[
@@ -3352,24 +3352,24 @@ Partiamo dall'equazione
 A = 
 \underbrace{
 \begin{bmatrix}
-    1\\
-    \ell_{21} & \ddots\\
-    \vdots & \vdots & 1\\
-    \vdots & \vdots & \ell_{k+1,k} & 1\\
-    \vdots & \vdots & \ell_{k+2,k} & 0 & 1\\
-    \vdots & \vdots & \vdots & 0 & 0 & \ddots\\
-    \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & \dots & 1\\
+    \vphantom{\ell_{k+1,k}}  1\\
+    \vphantom{\ell_{k+1,k}} \ell_{21} & \ddots\\
+    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & 1\\
+    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \ell_{k+1,k} & 1\\
+    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \ell_{k+2,k} & 0 & 1\\
+    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \vdots & 0 & 0 & \ddots\\
+    \vphantom{\ell_{k+1,k}}  \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & \dots & 1\\
 \end{bmatrix}
 }_{L_{k+1} = E_1^{-1}E_2^{-1}\dots E_k^{-1}}
 \underbrace{
 \begin{bmatrix}
-    U_{11} & U_{12} & \dots & & & &U_{1,n} \\
-    0 & \ddots  & \dots & \dots & \dots &\dots & \vdots\\
-    0 & & U_{kk} & \dots & \dots & \dots & \vdots\\
-    0 & \dots & 0 & U_{k+1,k+1} & \dots & \dots & U_{k+1,n}\\
-    0 & \dots & 0 & U_{k+2,k+1} & & &\vdots\\
-    0 & \dots & 0 & \vdots & & & \vdots\\
-    0 & \dots & 0 & U_{n,k+1} & \dots & \dots & U_{n,n}\\
+     \vphantom{\ell_{k+1,k}} U_{11} & U_{12} & \dots & & & &U_{1,n} \\
+     \vphantom{\ell_{k+1,k}} 0 & \ddots  & \dots & \dots & \dots &\dots & \vdots\\
+     \vphantom{\ell_{k+1,k}} 0 & & U_{kk} & \dots & \dots & \dots & \vdots\\
+     \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & U_{k+1,k+1} & U_{k+1,k+2} & \dots & U_{k+1,n}\\
+     \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & U_{k+2,k+1} & U_{k+2,k+2} & &\vdots\\
+     \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & \vdots & \vdots& \ddots & \vdots\\
+     \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & U_{n,k+1} & U_{n,k+2} & \dots & U_{n,n}\\
 \end{bmatrix}.
 }_{U_{k+1}}
 \end{equation}
@@ -3578,6 +3578,14 @@ end
 \end{lstlisting}
 Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
 
+Il vantaggio dell'eliminazione di Gauss con pivoting è che non incontriamo mai pivot nulli, a patto di partire da una matrice invertibile.
+\begin{theorem}
+    Sia $A$ una matrice invertibile. Allora, il processo di eliminazione di Gauss con pivoting arriva a termine senza mai incontrare pivot nulli, e produce una matrice di permutazione $P$ e due matrici triangolari $L,U$ tali che $PA=LU$.
+\end{theorem}
+\begin{proof}
+    Incontriamo un pivot nullo solo quando a un certo passo $k$ tutti gli elementi $U_{k,k}, U_{k+1,k}, \dots, U_{n,k}$ tra cui possiamo scegliere il pivot sono uguali a zero. Quando questo succede, nell'eliminazione di Gauss come l'abbiamo vista ad algebra lineare abbiamo una colonna senza pivot, e dobbiamo continuare scegliendo un pivot dalla successiva: sappiamo dall'algebra lineare che quando questo succede allora la matrice $A$ non è invertibile.
+\end{proof}
+
 Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Se misuriamo il costo in termini di numero di operazioni aritmetiche necessarie, come abbiamo fatto finora, quindi il costo dell'eliminazione di Gauss con pivoting è sempre  $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come nel caso senza pivoting.
 
 In Matlab esiste già una funzione che calcola la fattorizzazione LU con pivoting, come la nostra \lstinline{fattLU}, con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
@@ -3594,14 +3602,14 @@ L\mathbf{y} = P\b, \quad U\x = \mathbf{y}
 per sostituzione in avanti e all'indietro rispettivamente.
 
 La fattorizzazione LU con pivoting è l'algoritmo normalmente usato per risolvere sistemi lineari su un computer; in Matlab 
-anche \lstinline{A \ b} utilizza questo algoritmo. Questo algoritmo è più stabile ed efficiente di tutti gli altri che avete visto ad algebra lineare: quelli basati sull'inversa $A^{-1}$, quelli basati su varianti diverse dell'eliminazione di Gauss che comportano di eliminare elementi sopra i pivot, quelli basati su determinanti come il metodo di Cramer, \dots
+anche \lstinline{A \ b} utilizza questo algoritmo. Questo algoritmo è più stabile ed efficiente di tutti gli altri che avete visto ad algebra lineare: quelli basati sull'inversa $A^{-1}$, quelli basati su varianti diverse dell'eliminazione di Gauss che comportano di eliminare elementi sopra i pivot, quelli basati su determinanti come il metodo di Cramer, eccetera.
 
 \paragraph{Errore algoritmico nella soluzione di sistemi lineari}
 Non vediamo un'analisi completa dell'errore algoritmico della soluzione di sistemi lineari con la fattorizzazione LU, poiché è abbastanza complessa; ma si può dimostrare che l'errore algoritmico (sia con che senza pivoting) è dell'ordine di $\norm{L}\norm{U} \norm{A^{-1}} \mathsf{u}$. In particolare, visto che l'errore inerente è invece dell'ordine di $\kappa(A)\mathsf{u} = \norm{A}\norm{A^{-1}}\mathsf{u}$  l'algoritmo è stabile a patto che l'algoritmo produca matrici $L$ e $U$ tali che $\norm{L}\norm{U}$ non sia molto più grande di $\norm{A}$.
 
 Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile: cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
 
-\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficiente di calcolare il determinante: il loro costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
+\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficiente di calcolare il determinante: il costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
 
 \begin{theorem}
 Sia $PA = LU$ una fattorizzazione LU con pivoting della matrice $A \in \mathbb{C}^{n \times n}$. Allora,
