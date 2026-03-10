@@ -2671,24 +2671,6 @@ Mi basta considerare il vettore $\mathbf{u} = \mathbf{v} \frac{1}{\norm{\mathbf{
 ed eliminando il denominatore otteniamo la tesi.
 \end{proof}
 
-\paragraph{Formule per le norme matriciali $1,2,\infty$}
-È abbastanza complicato calcolare le norme matriciali indotte usando la loro definizione: c'è da fare un massimo su un insieme infinito di vettori\dots. Per le norme $1,2,\infty$ ci sono delle formule più semplici. Le enunciamo senza dimostrazione.
-\begin{align*}
-\norm{A}_{\infty} &= \max_{i=1}^n \sum_{j=1}^n \abs{A_{ij}},\\
-\norm{A}_{1} &= \max_{j=1}^n \sum_{i=1}^n \abs{A_{ij}},\\
-\norm{A}_2 &= \rho(A^TA)^{1/2}.
-\end{align*}
-(Qui $\rho(\cdot)$ è di nuovo il raggio spettrale.)
-
-Esempio: calcolare queste tre norme (e anche la norma di Frobenius) sulla matrice
-\[
-A = \begin{bmatrix}
-    -2 & -1\\
-    -2 & 1
-\end{bmatrix},
-\]
-e verificare (aiutandosi eventualmente con Matlab) che $\rho(A)\leq \norm{A}_p$ per $p=1,2,\infty$. (La disuguaglianza è vera anche per $\norm{A}_F$, ma la dimostrazione che abbiamo fatto funziona solo per norme matriciali indotte.)
-
 \paragraph{Norma di Frobenius}
 
 Non tutte le norme matriciali si ottengono da questa costruzione. Un altro esempio è la \emph{norma di Frobenius},
@@ -2722,6 +2704,27 @@ Prendiamo un autovalore $\lambda$ di $A$ e un autovettore associato $\mathbf{v}$
 Semplifichiamo $\norm{\mathbf{v}}_p$, che è diverso da zero perché $\mathbf{v}\neq 0$, e otteniamo $\abs{\lambda} \leq \norm{A}_p$. Visto che vale questa relazione per ogni autovalore $\lambda$, abbiamo la~\eqref{rhonorm}.
 \end{proof}
 
+% questo non si può spostare sopra, perché serve aver già definito il raggio spettrale.
+\paragraph{Formule per le norme matriciali $1,2,\infty$}
+È abbastanza complicato calcolare le norme matriciali indotte usando la loro definizione: c'è da fare un massimo su un insieme infinito di vettori\dots. Per le norme $1,2,\infty$ ci sono delle formule più semplici. Le enunciamo senza dimostrazione.
+\begin{align*}
+\norm{A}_{\infty} &= \max_{i=1}^n \sum_{j=1}^n \abs{A_{ij}},\\
+\norm{A}_{1} &= \max_{j=1}^n \sum_{i=1}^n \abs{A_{ij}},\\
+\norm{A}_2 &= \rho(A^TA)^{1/2}.
+\end{align*}
+(Qui $\rho(\cdot)$ è di nuovo il raggio spettrale.)
+
+Esempio: calcolare queste tre norme (e anche la norma di Frobenius) sulla matrice
+\[
+A = \begin{bmatrix}
+    -2 & -1\\
+    -2 & 1
+\end{bmatrix},
+\]
+e verificare (aiutandosi eventualmente con Matlab) che $\rho(A)\leq \norm{A}_p$ per $p=1,2,\infty$. (La disuguaglianza è vera anche per $\norm{A}_F$, ma la dimostrazione che abbiamo fatto funziona solo per norme matriciali indotte.)
+
+
+
 \paragraph{Condizionamento della soluzione di sistemi lineari} Prima ancora di parlare di algoritmi risolutivi, andiamo a studiare il condizionamento della soluzione di sistemi lineari, che ci dice quanto vale l'errore inerente. La soluzione di sistemi lineari è un problema che ha come ``input'' $A,\b$ e come ``output'' $\x$. Ha senso chiederci come cambia $\x$ se perturbiamo $A$ oppure $\b$, o anche tutti e due insieme. Possiamo definire degli errori relativi su queste quantità vettoriali e matriciali rimpiazzando i valori assoluti con delle norme: $\frac{\norm{\tilde{\x}-\x}}{\norm{\x}}$, $\frac{\norm{\tilde{A}-A}}{\norm{A}}$, $\frac{\norm{\tilde{\b}-\b}}{\norm{\b}}$ (occhio che $\norm{\frac{\tilde{\b}-\b}{\b}}$ non vuol dire niente, non possiamo dividere per vettori!)
 
 Qui vediamo cosa succede quando perturbiamo il vettore dei termini noti $\b$. 
@@ -2734,25 +2737,29 @@ Qui vediamo cosa succede quando perturbiamo il vettore dei termini noti $\b$.
 In questa disuguaglianza, nei termini $\norm{A}_p$, $\norm{A^{-1}}_p$ si intende che utilizzano la norma matriciale indotta dalla norma vettoriale $\norm{\cdot}_p$.
 \begin{proof}
 Possiamo calcolare
-\[
-\norm{\tilde{\x}-\x}_p = \norm{A^{-1}\tilde{\b} - A^{-1}\b}_p = \norm{A^{-1}(\tilde{\b}-\b)}_p \leq  \norm{A^{-1}}_p\norm{\tilde{\b}-\b}_p,
-\]
+\begin{equation} \label{matnorm1}
+    \norm{\tilde{\x}-\x}_p = \norm{A^{-1}\tilde{\b} - A^{-1}\b}_p = \norm{A^{-1}(\tilde{\b}-\b)}_p \leq  \norm{A^{-1}}_p\norm{\tilde{\b}-\b}_p,    
+\end{equation}
 utilizzando la proprietà di compatibilità della norma matriciale indotta (Teorema~\ref{thm:compatibilita}). Per la stessa proprietà abbiamo
 \[
-\norm{\b}_p = \norm{A \x}_p \leq \norm{A}\norm{\x}_p.
+\norm{\b}_p = \norm{A \x}_p \leq \norm{A}_p\norm{\x}_p,
 \]
-Possiamo dividere membro a membro le due disuguaglianze (i versi sono quelli corretti per farlo!), ottenendo la~\eqref{conditionbound}.
+o, riarrangiando i termini,
+\begin{equation} \label{matnorm2}
+    \frac{1}{\norm{\x}_p} \leq \norm{A}_p \frac{1}{\norm{\b}_p}.
+\end{equation}
+Moltiplicando membro a membro la~\eqref{matnorm1} e la~\eqref{matnorm2} (possiamo farlo perché hanno lo stesso verso) otteniamo la tesi.
 \end{proof}
 
 Questa disuguaglianza è valida non solo al prim'ordine, ma per tutti gli $A,\x,\b$. La quantità $\kappa_p(A) = \norm{A}_p\norm{A^{-1}}_p$ si definisce ``numero di condizionamento'' (in norma-$p$) della matrice $A$ (con un piccolo abuso di notazione, visto che finora abbiamo definito il condizionamento di un \emph{problema} o di una \emph{funzione}).
 
 La quantità $\kappa(A)$ è sempre maggiore di $1$, perché per ogni norma matriciale indotta $1 = \norm{I}_p = \norm{AA^{-1}}_p \leq \norm{A}_p\norm{A^{-1}}_p$. Una matrice si dice ``ben condizionata'' se questa quantità è vicina a 1, e ``mal condizionata'' se è molto maggiore di 1 (qualche migliaio almeno, di solito; non c'è una soglia precisa).
 
-Non vediamo la dimostrazione, ma si può dimostrare che $\kappa(A)$ è anche il numero di condizionamneto rispetto a perturbazioni della matrice $A$: se $\tilde{\x}$ e $\x$ sono le soluzioni rispettivamente di $\tilde{A}\tilde{\x}=\b$ e $A\x=\b$, allora
+Non vediamo la dimostrazione, ma si può dimostrare che $\kappa(A)$ è anche il numero di condizionamento rispetto a perturbazioni della matrice $A$: se $\tilde{\x}$ e $\x$ sono le soluzioni rispettivamente di $\tilde{A}\tilde{\x}=\b$ e $A\x=\b$, allora
 \[
 \frac{\norm{\tilde{\x}-\x}_p}{\norm{\x}_p} \mathrel{\stackrel{.}{\leq}} \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}.
 \]
-Occhio al punto sopra il $\leq$: a differenza del precedente, in questo caso si tratta di un risultato che vale solo a meno di termini dell'ordine del quadrato di $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$: se $\frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$ è grande, questa disuguaglianza può essere ben lontana dall'essere verificata.
+Occhio al punto sopra il $\leq$: a differenza del precedente, in questo caso si tratta di un risultato che vale solo a meno di termini dell'ordine del quadrato di $\varepsilon_A = \frac{\norm{\tilde{A}-A}_p}{\norm{A}_p}$: se questa quantità è grande, la disuguaglianza può essere ben lontana dall'essere verificata.
 
 \paragraph{Esempio} Con Matlab, è problematico mostrare gli errori facendo esempi di perturbazioni dell'ordine della precisione di macchina $\mathsf{u}\approx 2.2\times 10^{-16}$, visto che i calcoli stessi che facciamo sono affetti da un errore dello stesso ordine di grandezza. Possiamo però vedere cosa succede con perturbazioni molto più grandi.
 \begin{lstlisting}
