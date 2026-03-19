@@ -7,7 +7,7 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usetikzlibrary{decorations.pathmorphing, calc}
+\usetikzlibrary{decorations.pathmorphing, calc, matrix}
 
 \usepackage[margin=1.4in]{geometry}
 
@@ -3384,19 +3384,76 @@ A =
 \end{equation}
 che mostra le matrici ottenute dopo i primi $k$ passi della fattorizzazione. Siamo quindi pronti per fare il passo $k+1$, e vogliamo controllare se il pivot $(U_{k+1})_{k+1,k+1}$ è zero.
 
-La matrice $A_{1:k+1,1:k+1}$ è uguale al prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$. In realtà, per come sono messi gli zeri nella matrice di destra, ci basta considerare le due matrici $(k+1)\times(k+1)$ ottenute prendendo le prime $k+1$ righe e $k+1$ colonne delle matrici al membro di destra, che chiameremo $\hat{L}$ e $\hat{U}$. Difatti tutti gli elementi a destra di $\hat{L}$ sono zeri, quindi quando facciamo il prodotto con gli elementi sotto $\hat{U}$ (che pure \emph{non} sono tutti zeri!) non contano.
+La matrice $A_{1:k+1,1:k+1}$ è uguale al prodotto tra le prime $k+1$ righe di $L_{k+1}$ e le prime $k+1$ colonne di $U_{k+1}$. In realtà, per come sono messi gli zeri, ci basta considerare le due matrici $(k+1)\times(k+1)$ ottenute prendendo le prime $k+1$ righe e $k+1$ colonne delle matrici al membro di destra, cioè $L_{1:k+1,1:k+1}$ e $U_{1:k+1,1:k+1}$. Difatti tutti gli elementi alla destra di $L_{1:k+1,1:k+1}$ sono zeri, quindi quando facciamo il prodotto con gli elementi sotto $U_{1:k+1,1:k+1}$ (che pure \emph{non} sono tutti zeri!) otteniamo zero.
 
-Per questo abbiamo
+\begin{figure}[H]
 \[
-A_{1:k+1,1:k+1} = \hat{L}\hat{U}.
+\begin{tikzpicture}[baseline=(m.center)]
+\matrix (m) [matrix of math nodes,
+             nodes in empty cells,
+             left delimiter=(,
+             right delimiter=)] {
+* & * & * & * & * \\
+* & * & * & * & * \\
+* & * & * & * & * \\
+* & * & * & * & * \\
+* & * & * & * & * \\
+};
+\node[red,above of=m-1-2, node distance=3ex] {$A_{1:k+1,1:k+1}$};
+\draw[red, thick]
+  (m-1-1.north west) rectangle (m-3-3.south east);
+\end{tikzpicture}
+=
+\begin{tikzpicture}[baseline=(m.center)]
+\matrix (m) [matrix of math nodes,
+             nodes in empty cells,
+             left delimiter=(,
+             right delimiter=)] {
+1 & 0 & 0 & 0 & 0 \\
+* & 1 & 0 & 0 & 0 \\
+* & * & 1 & 0 & 0 \\
+* & * & 0 & 1 & 0 \\
+* & * & 0 & 0 & 1 \\
+};
+\node[blue,above of=m-1-2, node distance=3ex] {$L_{1:k+1,1:k+1}$};
+\draw[blue, thick]
+  (m-1-1.north west) rectangle (m-3-3.south east);
+\fill[blue, opacity=0.3]
+  (m-1-1.north west) rectangle (m-3-5.south east);
+\end{tikzpicture}
+\cdot
+\begin{tikzpicture}[baseline=(m.center)]
+\matrix (m) [matrix of math nodes,
+             nodes in empty cells,
+             left delimiter=(,
+             right delimiter=)] {
+* & * & * & * & * \\
+0 & * & * & * & * \\
+0 & 0 & * & * & * \\
+0 & 0 & * & * & * \\
+0 & 0 & * & * & * \\
+};
+\node[green,above of=m-1-2, node distance=3ex] {$U_{1:k+1,1:k+1}$};
+\draw[green, thick]
+  (m-1-1.north west) rectangle (m-3-3.south east);
+\fill[green, opacity=0.3]
+  (m-1-1.north west) rectangle (m-5-3.south east);
+\end{tikzpicture}
+\]
+\caption{Esempio: $A_{1:3,1:3}$ è il prodotto delle prime 3 righe di $L_3$ (matrice $3\times 5$) e delle prime 3 colonne di $U_3$ (matrice $5\times 3$). In realtà, però, per come sono messi gli zeri ci basta moltiplicare $L_{1:3,1:3}$ e $U_{1:3,1:3}$ per ottenere lo stesso risultato.}
+\end{figure}
+
+Quindi abbiamo
+\[
+A_{1:k+1,1:k+1} = L_{1:k+1,1:k+1}U_{1:k+1,1:k+1}.
 \]
 Questa è una fattorizzazione LU della matrice $A_{1:k+1,1:k+1}$. In particolare, abbiamo
 \[
-\det A_{1:k+1,1:k+1} = (\det \hat{L}) (\det \hat{U}) = (1\cdot 1 \cdot \dots \cdot 1) (U_{11}U_{22}\cdots U_{k+1,k+1}).
+\det A_{1:k+1,1:k+1} = (\det L_{1:k+1,1:k+1}) (\det U_{1:k+1,1:k+1}) = (1\cdot 1 \cdot \dots \cdot 1) (U_{11}U_{22}\cdots U_{k+1,k+1}).
 \]
-Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k$-esimo dell'eliminazione di Gauss. Visto che ci sono $n-1$ passi nel metodo, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potremmo avere $U_{nn}=0$, ma non importa: non ci sono passi successivi in cui dobbiamo dividere per esso.
+Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k+1$-esimo dell'eliminazione di Gauss. Visto che ci sono $n-1$ passi nel metodo, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potremmo avere $U_{nn}=0$, ma non importa: non ci sono passi successivi in cui dobbiamo dividere per esso.
 \end{proof}
-Notiamo che quello che abbiamo dimostrato qui sopra in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la \emph{prima} sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero, ma arrivati al passo $k+1$ si ha $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
+Quello che abbiamo appena dimostrato in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la \emph{prima} sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero, ma arrivati al passo $k+1$ si ha $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
 
 \paragraph{Matrici dominanti diagonali}
 
@@ -3415,7 +3472,7 @@ Supponiamo invece (per assurdo) che $A\mathbf{x}=0$ per un qualche vettore $\mat
 \]
 e quindi contraddice la dominanza diagonale.
 \end{proof}
-Osserviamo che se $A$ è dominante diagonale, allora lo sono anche tutte le sue sottomatrici principali di testa: le disuguaglianze diventano più forti perché stiamo omettendo dei termini. Quindi se $A$ è dominante diagonale allora ammette fattorizzazione LU.
+Osserviamo che se $A$ è dominante diagonale, allora lo sono anche tutte le sue sottomatrici principali di testa: le disuguaglianze diventano più forti perché stiamo omettendo dei termini. Quindi se $A$ è dominante diagonale allora ha sempre una fattorizzazione LU.
 
 Analogamente, possiamo definire matrici dominanti diagonali per colonne, quando
 \[
@@ -3431,13 +3488,13 @@ Esempio: la matrice
     1 & 1 & 3
 \end{bmatrix}
 \]
-è dominante diagonale per righe, ma non per colonne (valgono uguaglianze). Le sue sottomatrici principali di testa sono di nuovo pred. diag. per righe (e questa volta anche per colonne).
+è dominante diagonale per righe, ma non per colonne (valgono uguaglianze). Le sue sottomatrici principali di testa sono di nuovo predominanti diagonali per righe (e questa volta anche per colonne).
 
-
+\section{Pivoting}
 
 \paragraph{Stabilità e necessità del pivoting}
 
-Su un computer, difficilmente gli ``zeri'' vengono calcolati esattamente come zero! L'eliminazione di Gauss tecnicamente fallisce solo se c'è un pivot \emph{esattamente} uguale a zero, ma un pivot molto vicino a zero è comunque problematico. Non facciamo un'analisi dettagliata dell'errore algoritmico, ma vediamo direttamente un esempio in cui le cose vanno storte. Supponiamo di avere (per un $\varepsilon>0$ molto piccolo) la matrice
+L'eliminazione di Gauss fallisce solo se incontriamo un pivot \emph{esattamente} uguale a zero, ma un pivot molto vicino a zero è comunque problematico. Non facciamo un'analisi dettagliata dell'errore algoritmico, ma vediamo direttamente un esempio in cui le cose vanno storte. Supponiamo di avere (per un $\varepsilon>0$ molto piccolo) la matrice
 \[
 A = \begin{bmatrix}
     \varepsilon & 1 & 1\\
@@ -3449,26 +3506,28 @@ Questa matrice è ben condizionata (in tutte e tre le norme che abbiamo visto, i
 \[
 U_2 = \begin{bmatrix}
     \varepsilon & 1 & 1\\
-    0 & 1-\frac{1}{\varepsilon} & 1-\frac{1}{\varepsilon}\\
-    0 & 1-\frac{1}{\varepsilon} & -1-\frac{1}{\varepsilon}
+    0 & 1-\varepsilon^{-1} & 1-\varepsilon^{-1}\\
+    0 & 1-\varepsilon^{-1} & -1-\varepsilon^{-1}
 \end{bmatrix}.
 \]
-Se $\varepsilon$ è molto piccolo, $\frac{1}{\varepsilon}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\frac{1}{\varepsilon}$ che a $-1-\frac{1}{\varepsilon}$ è $\frac{1}{\varepsilon}$, e quindi quando andiamo a scrivere quei numeri su un calcolatore la matrice che viene memorizzata è
+Se $\varepsilon$ è molto piccolo, $\varepsilon^{-1}$ è molto grande. In particolare, se per esempio $\varepsilon = 2^{-60}$, il numero di macchina più vicino sia a $1-\varepsilon^{-1}$ che a $-1-\varepsilon^{-1}$ è $-\varepsilon^{-1}$, e quindi quando andiamo a scrivere quei numeri su un calcolatore la matrice che viene effettivamente memorizzata è
 \[
 \tilde{U}_2 = 
 \begin{bmatrix}  
     \varepsilon & 1 & 1\\
-    0 & -\frac{1}{\varepsilon} & -\frac{1}{\varepsilon}\\
-    0 & -\frac{1}{\varepsilon} & -\frac{1}{\varepsilon}
+    0 & -\varepsilon^{-1} & -\varepsilon^{-1}\\
+    0 & -\varepsilon^{-1} & -\varepsilon^{-1}
 \end{bmatrix}.
 \]
-In particolare, le ultime due righe sono identiche. Pertanto al passo successivo l'algoritmo di fattorizzazione LU si blocca affermando (erroneamente) che la matrice è singolare. Ma in realtà la matrice di partenza $A$ è molto lontana dall'essere singolare, anzi, è una matrice ben condizionata e quindi non dovremmo avere problemi numerici con un algoritmo stabile. Anche in un esempio senza valori così estremi, possiamo vedere che quando $A_{11}$ è molto più piccolo degli altri valori presenti nella matrice dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dobbiamo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
+In particolare, le ultime due righe sono identiche. Pertanto al termine della fattorizzazione LU concludiamo (erroneamente) che la matrice è singolare, e non possiamo risolvere sistemi lineari. Ma in realtà la matrice di partenza $A$ è molto lontana dall'essere singolare: è una matrice ben condizionata e quindi non dovremmo incontrare problemi numerici con un algoritmo stabile. Anche in un esempio senza valori così estremi, possiamo vedere che quando $A_{11}$ è molto più piccolo degli altri valori presenti nella matrice dobbiamo sommare un numero molto grande a tutti gli elementi della sottomatrice $A_{2:3,2:3}$, e poi successivamente dobbiamo fare una sottrazione tra due valori molto grandi e molto vicini tra loro, al passo successivo dell'eliminazione. Questo causa perdita di precisione e problemi numerici.
 
-La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe durante la fattorizzazione. In particolare, ad ogni passo scambieremo le righe in modo da portare, ad ogni passo $k$, in posizione pivot $(k,k)$ il numero \emph{più grande} in valore assoluto tra quelli della sottomatrice $(U_k)_{k:n,k}$. Questo scambio lo faremo sempre, non solo quando $(U_k)_{k,k}$ è molto piccolo.
+La soluzione per eliminare questi problemi è introdurre la possibilità di scambiare tra loro le righe durante la fattorizzazione. Ricordiamo, difatti, che il problema iniziale che vogliamo risolvere è un sistema lineare, cioè un'insieme di $n$ equazioni. Se scambiamo tra loro queste equazioni (quindi in particolare scambiando le righe della matrice $A$), la soluzione non cambia.
 
-Notare che questo è il contrario rispetto a quello che facevate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
+In particolare, vogliamo fare in modo da avere, ad ogni passo $k$, nella posizione del pivot $(k,k)$ il numero \emph{più grande} in valore assoluto tra quelli della colonna $(U_k)_{k:n,k}$. Questo scambio lo faremo sempre, non solo quando $(U_k)_{k,k}$ è molto piccolo.
 
-Scambiando righe, possiamo completare l'eliminazione di Gauss, esattamente come abbiamo visto nel corso di algebra lineare. Tutte le volte che la matrice $A$ è invertibile, otterremo $n$ pivot, quindi una matrice $U$ triangolare superiore, con elementi non nulli sulla diagonale. Però per continuare il nostro algoritmo vogliamo interpretare questo processo di nuovo come una fattorizzazione; nelle prossime sezioni vediamo come farlo.
+È interessante notare che questo criterio per scegliere il pivot è l'opposto di quello che usavate ad algebra lineare facendo i conti a mano: se per esempio i numeri della prima colonna erano $2,-4,-3,1$, tipicamente volevate avere $1$ come pivot in modo da non avere denominatori. Questa volta invece l'obiettivo è diverso: vogliamo pivot più grandi possibili (in valore assoluto), quindi scegliamo $-4$ come pivot.
+
+Scambiando righe opportunamente, possiamo sempre completare l'eliminazione di Gauss, come avete visto nel corso di algebra lineare. Tutte le volte che la matrice $A$ è invertibile, otterremo $n$ pivot, quindi una matrice $U$ triangolare superiore, con elementi non nulli sulla diagonale. Vogliamo interpretare questo processo di nuovo come una fattorizzazione; nelle prossime sezioni vediamo come farlo.
 
 \paragraph{Matrici di permutazione}
 La soluzione che vedremo per questo problema corrisponde essenzialmente a calcolare la fattorizzazione LU di una matrice ottenuta dalla $A$ permutando le righe in un ordine opportuno: quindi per esempio
@@ -3536,15 +3595,15 @@ P\mathbf{x}
 \]
 La stessa cosa succede quando effettuiamo il prodotto $PA$; la stessa permutazione viene applicata calcolando ogni colonna separatamente, quindi l'effetto netto è quello di permutare le righe di $A$.
 
-L'algoritmo che vedremo non suppone di conoscere a priori la matrice $P$, ma la costruisce passo per passo scambiando le righe di $A$.
+Vediamo ora un algoritmo che non suppone di conoscere a priori la matrice $P$, ma la costruisce durante la fattorizzazione scambiando le righe di $A$ alla bisogna.
 
 \paragraph{Eliminazione di Gauss con pivoting (parziale)}
 
-Partiamo da una matrice $P_1 = I$. Al primo passo dell'eliminazione di Gauss, una volta individuata la riga $p$ dove sta l'elemento con $\abs{A_{p1}} = \max \abs{A_{i1}}$, scambiamo la riga $p$ e la riga $1$ in $A$. Questo corrisponde a rimpiazzare la matrice $A$ con una matrice $P_2A$, dove $P_2$ è la matrice che differisce dall'identità solo per lo scambio delle righe $1$ e $p$.
+Partiamo da una matrice $P_1 = I$. Al primo passo dell'eliminazione di Gauss, torviamo la riga $p$ dove sta l'elemento con $\abs{A_{p1}} = \max \abs{A_{i1}}$, e scambiamo la riga $p$ e la riga $1$. Questo corrisponde a rimpiazzare la matrice $A$ con una matrice $P_2A$, dove $P_2$ è la matrice che differisce dall'identità solo per lo scambio delle righe $1$ e $p$.
 
 Similmente, prima di ogni passo $k$, individuiamo la riga dove sta il pivot $\abs{(U_k)_{pk}} = \max \abs{(U_k)_{k:n,k}}$, e scambiamo la riga $k$ con la riga $p$ nella matrice $P_k A$. Quella che otteniamo quindi è un'altra matrice ottenuta permutando le righe della matrice $A$, che possiamo quindi scrivere come $P_{k+1} A$, dove $P_k$ è un'opportuna matrice di permutazione.
 
-Notiamo che fino a questo punto l'algoritmo di fattorizzazione LU ha lavorato indipendentemente sulle righe da $k:n$: se queste righe fossero state in un altro ordine nella matrice $A$, avremmo ottenuto le stesse matrici $L_k$ e $U_k$, solo con gli elementi calcolati nelle ultime righe in ordine diverso. Quindi per ottenere il risultato dei primi $k$ passi di fattorizzazione LU su questa matrice $P_{k+1} A$, dobbiamo semplicemente prendere le matrici $L_k$ e $U_k$ che abbiamo già calcolato, e scambiare gli elementi calcolati nelle righe $p$ e $k$. (Occhio: sulla matrice $L_k$, questo scambio si limita alle prime $k-1$ colonne, quelle contenenti gli elementi che abbiamo calcolato: gli elementi uguali a $1$ sulla diagonale restano al loro posto.)
+Notiamo che fino a questo punto l'algoritmo di fattorizzazione LU ha lavorato indipendentemente sulle righe da $k$ a $n$: se queste righe fossero state in un altro ordine nella matrice $A$, avremmo ottenuto le stesse matrici $L_k$ e $U_k$, solo con gli elementi calcolati nelle ultime righe in ordine diverso. Quindi per ottenere il risultato dei primi $k$ passi di fattorizzazione LU su questa matrice $P_{k+1} A$, dobbiamo semplicemente prendere le matrici $L_k$ e $U_k$ che abbiamo già calcolato, e scambiare gli elementi calcolati nelle righe $p$ e $k$. (Occhio: sulla matrice $L_k$, questo scambio si limita alle prime $k-1$ colonne, quelle contenenti gli elementi che abbiamo calcolato: gli elementi uguali a $1$ sulla diagonale restano al loro posto.)
 
 A questo punto, effettuiamo normalmente un passo di eliminazione di Gauss sulle matrici ottenute, ottenendo due nuove matrici $L_{k+1}$ e $U_{k+1}$. Per come abbiamo lavorato, vale ad ogni passo la relazione $P_k A = L_k U_k$.
 
@@ -3587,7 +3646,7 @@ end
 \end{lstlisting}
 Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
 
-Il vantaggio dell'eliminazione di Gauss con pivoting è che non incontriamo mai pivot nulli, a patto di partire da una matrice invertibile.
+Il vantaggio dell'eliminazione di Gauss con pivoting è che non incontriamo mai pivot nulli, a patto di partire da una matrice invertibile:
 \begin{theorem}
     Sia $A$ una matrice invertibile. Allora, il processo di eliminazione di Gauss con pivoting arriva a termine senza mai incontrare pivot nulli, e produce una matrice di permutazione $P$ e due matrici triangolari $L,U$ tali che $PA=LU$.
 \end{theorem}
@@ -3595,9 +3654,9 @@ Il vantaggio dell'eliminazione di Gauss con pivoting è che non incontriamo mai 
     Incontriamo un pivot nullo solo quando a un certo passo $k$ tutti gli elementi $U_{k,k}, U_{k+1,k}, \dots, U_{n,k}$ tra cui possiamo scegliere il pivot sono uguali a zero. Quando questo succede, nell'eliminazione di Gauss come l'abbiamo vista ad algebra lineare abbiamo una colonna senza pivot, e dobbiamo continuare scegliendo un pivot dalla successiva: sappiamo dall'algebra lineare che quando questo succede allora la matrice $A$ non è invertibile.
 \end{proof}
 
-Qual è il costo computazionale di questo algoritmo? Le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono tempo per essere effettuate sul computer, però non sono operazioni aritmetiche, strettamente parlando. Se misuriamo il costo in termini di numero di operazioni aritmetiche necessarie, come abbiamo fatto finora, quindi il costo dell'eliminazione di Gauss con pivoting è sempre  $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come nel caso senza pivoting.
+Qual è il costo computazionale della fattorizzazione LU con pivoting? Rispetto alla fattorizzazione LU vista in precedenza, le uniche operazioni che abbiamo aggiunto sono la ricerca del massimo e gli scambi di righe. Queste sono operazioni che richiedono tempo per essere effettuate sul computer, però non sono operazioni aritmetiche tra numeri in virgola mobile. Quindi, se misuriamo il costo in termini di numero di operazioni aritmetiche, come abbiamo fatto finora, il costo dell'eliminazione di Gauss con pivoting è sempre $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche, come nel caso senza pivoting.
 
-In Matlab esiste già una funzione che calcola la fattorizzazione LU con pivoting, come la nostra \lstinline{fattLU}, con un nome diverso: \lstinline{[L, U, P] = lu(A)}.
+In Matlab esiste già una funzione che calcola la fattorizzazione LU con pivoting, come la nostra \lstinline{fattorizzazioneLU_pivoting} ma con un nome più corto: \lstinline{[L, U, P] = lu(A)}.
 
 
 \paragraph{Soluzione di sistemi lineari tramite fattorizzazione LU con pivoting}
@@ -3618,7 +3677,7 @@ Non vediamo un'analisi completa dell'errore algoritmico della soluzione di siste
 
 Il pivoting assicura che gli elementi della $L$ siano tutti minori o uguali a $1$ in valore assoluto, quindi la norma di $L$ non è mai troppo grande. Però, anche con il pivoting, esistono matrici particolarmente sfortunate in cui $\norm{U}/\norm{A}$ cresce come $2^n$, dove $n$ è il numero di righe e colonne della matrice $A$. Nella maggior parte dei casi, però, questo non succede e l'eliminazione di Gauss con pivoting è un algoritmo stabile: cioè l'errore algoritmico $e_{alg}$ è dello stesso ordine di grandezza di quello inerente $e_{in}$. L'errore analitico, di nuovo, è $0$, visto che l'algoritmo calcola la soluzione esatta di $A\x=\b$, non una successione convergente ad essa.
 
-\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficiente di calcolare il determinante: il costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo basato sulla fattorizzazione LU per calcolarlo.
+\paragraph{Calcolo del determinante mediante fattorizzazione LU con pivoting} Abbiamo visto nell'introduzione del corso che usare le formule classiche dell'algebra lineare (espansione di Laplace, formule ricorsive sui minori, \dots) non è un modo efficiente di calcolare il determinante: il costo computazionale cresce troppo velocemente. Vediamo qui invece un metodo per calcolarlo basato sulla fattorizzazione LU.
 
 \begin{theorem}
 Sia $PA = LU$ una fattorizzazione LU con pivoting della matrice $A \in \mathbb{C}^{n \times n}$. Allora,
