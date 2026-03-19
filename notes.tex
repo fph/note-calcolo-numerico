@@ -2731,10 +2731,11 @@ Qui vediamo cosa succede quando perturbiamo il vettore dei termini noti $\b$.
 \begin{theorem}
     Sia $A\in \mathbb{C}^{n\times n}$ una matrice invertibile, e $\b,\tilde{\b} \in \mathbb{C}^n$ due vettori, con $\b\neq \mathbf{0}$. Siano $\x$ e $\tilde{\x}$ le soluzioni dei due sistemi lineari $A\x=\b$, $A\tilde{\x}=\tilde{\b}$. Allora, per una qualunque norma vettoriale $\norm{\cdot}_p$ si ha
     \begin{equation} \label{conditionbound}
-        \frac{\norm{\tilde{\x}-\x}_p}{\norm{\x}_p} \leq \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{\b}-\b}_p}{\norm{\b}_p}.    
+        \frac{\norm{\tilde{\x}-\x}_p}{\norm{\x}_p} \leq \norm{A}_p\norm{A^{-1}}_p \frac{\norm{\tilde{\b}-\b}_p}{\norm{\b}_p},
     \end{equation}
+    dove $\norm{A}_p$, $\norm{A^{-1}}_p$ sono calcolati usando la norma matriciale indotta dalla norma vettoriale data.
 \end{theorem}
-In questa disuguaglianza, nei termini $\norm{A}_p$, $\norm{A^{-1}}_p$ si intende che utilizzano la norma matriciale indotta dalla norma vettoriale $\norm{\cdot}_p$.
+Attenzione: $\norm{A^{-1}}_p$, la norma dell'inversa della matrice $A$, in generale \emph{non} è uguale a $\frac{1}{\norm{A}_p}$.
 \begin{proof}
 Possiamo calcolare
 \begin{equation} \label{matnorm1}
@@ -2825,11 +2826,10 @@ ans =
 ans =
     1.8000e+05        
 \end{lstlisting}
-Questa nuova matrice $A$ ha un numero di condizionamento molto più grande, $1.8\times 10^{-5}$. Diciamo che è \emph{mal condizionata}. L'errore relativo sul termine noto $b$ pari a $1.66 \times 10^{-5}$ produce un errore relativo sulla soluzione $x$ pari a $3$; cioè la soluzione ottenuta è completamente sbagliata. La disuguaglianza~\eqref{conditionbound} comunque è rispettata anche in questo caso.
-
+Questa nuova matrice $A$ ha un numero di condizionamento molto più grande, $1.8\times 10^{5}$. Diciamo che è \emph{mal condizionata}. L'errore relativo sul termine noto $b$ pari a $1.66 \times 10^{-5}$ produce un errore relativo sulla soluzione $x$ pari a $3$; cioè la soluzione ottenuta è completamente sbagliata. La disuguaglianza~\eqref{conditionbound} comunque è rispettata anche in questo caso.
 
 \section{Condizionamento del calcolo di autovalori (**)}
-Un altro problema classico dell'algebra lineare è il calcolo di autovalori e autovettori. Non vediamo nel dettaglio algoritmi per farlo, perché sono molto più complicati; ci fideremo di \texttt{eig(A)} di Matlab. Però, almeno per studiare il problema teoricamente, è importante vedere quale è il condizionamento di questa operazione, in modo da sapere quando anche Matlab rischia di calcolare un risultato errato.
+Un altro problema classico dell'algebra lineare è il calcolo di autovalori e autovettori. Non vediamo nel dettaglio algoritmi per farlo, perché sono molto più complicati: ci fideremo di \texttt{eig(A)} di Matlab. Però, almeno per studiare il problema teoricamente, è importante vedere quale è il condizionamento di questa operazione, in modo da sapere quando anche Matlab rischia di calcolare un risultato errato.
 
 Ci limitiamo a un caso più facile, quello di \emph{autovalori semplici}: un autovalore si dice \emph{semplice} se la sua molteplicità geometrica e algebrica è uguale a 1, cioè, se è uno zero semplice del polinomio caratteristico $\det(\lambda I - A)$. In questo caso, esistono e sono unici (a meno di multipli) un autovalore destro $\mathbf{x}$ e uno sinistro $\mathbf{y}^*$ associati a $\lambda$; cioè, $A\mathbf{x} = \mathbf{x}\lambda$ e $\mathbf{y}^* A = \lambda \mathbf{y}^*$. Si può dimostrare che per un autovalore semplice $\mathbf{x}$ e $\mathbf{y}^*$ non sono mai ortogonali. Il risultato di perturbazione che enunciamo dipende dal coseno dell'angolo che essi formano, cioè
 \[
@@ -2986,8 +2986,8 @@ La complessità è di nuovo $n^2$ operazioni.
 
 Se una matrice triangolare ha molti elementi uguali a zero (si dice che è \emph{sparsa}), e sappiamo da principio questo fatto, possiamo scrivere del codice specializzato che salta le operazioni che coinvolgono degli elementi $A_{ij}$ che sappiamo essere zero. In questo modo si utilizzano $\mathcal{O}(2\texttt{nnz})$ operazioni, dove \texttt{nnz} è il \emph{numero di nonzeri} della matrice.
 
-\paragraph{Stabilità della soluzione di sistemi lineari speciali} Abbiamo visto che l'errore commesso nella soluzione numerica di un problema è $e_{tot} \doteq e_{an} + e_{mac}$. In questi algoritmi, la quantità $\gamma$ che calcoliamo è \emph{esattamente} uguale alla soluzione $\alpha$ del problema: non abbiamo processi di limite, o successioni che convergono alla soluzione $\alpha$ e che dobbiamo troncare. Quindi $e_{an} = 0$. Abbiamo visto ulteriormente che 
-$e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{alg} \leq \kappa_{\x,A}\mathsf{u} + \kappa_{\x,\b} \mathsf{u} \doteq 2\kappa(A)\mathsf{u}$. È possibile dimostrare (qui non lo vediamo) che gli algoritmi di soluzione di sistemi diagonali e sostituzione in avanti e all'indietro sono \emph{stabili}, cioè $e_{alg}$ non è mai molto più grande di $e_{in}$.
+\paragraph{Stabilità della soluzione di sistemi lineari speciali} Abbiamo visto che l'errore commesso nella soluzione numerica di un problema è $e_{tot} \doteq e_{an} + e_{mac}$. In questi algoritmi, la quantità $\gamma$ che calcoliamo è \emph{esattamente} uguale alla soluzione $\alpha$ del problema: non abbiamo processi di limite, o successioni che convergono alla soluzione $\alpha$ e che dobbiamo troncare. Quindi $e_{an} = 0$. Abbiamo visto poi che 
+$e_{mac} \doteq e_{in} + e_{alg},$ e che $e_{in} \leq \kappa_{\x,A}\mathsf{u} + \kappa_{\x,\b} \mathsf{u} \doteq 2\kappa(A)\mathsf{u}$. È possibile dimostrare (qui non lo vediamo) che negli algoritmi di soluzione di sistemi diagonali e sostituzione in avanti e all'indietro $e_{alg}$ è sempre dello stesso ordine di grandezza di $e_{in}$.
 
 \section{Eliminazione di Gauss e fattorizzazione LU}
 
@@ -2999,7 +2999,7 @@ Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\
     A & \b
 \end{bmatrix}$;
     \item Puntiamo a fare combinazioni lineari delle \emph{righe} (non colonne) per trasformare $A$ in forma \emph{triangolare superiore}; non vogliamo eliminare anche gli elementi sopra il pivot per trasformare $A$ in una matrice diagonale, come talvolta si fa (eliminazione di Gauss--Jordan).
-    \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero; in questo modo otterremo una matrice triangolare superiore con elementi diversi da zero sulla triangolare principale.
+    \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero; in questo modo otterremo una matrice triangolare superiore con elementi diversi da zero sulla diagonale principale.
 \end{itemize}
 Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
@@ -3026,10 +3026,10 @@ U_{k+1} = \begin{bmatrix}
     0& 0  &0 & 0 & \ast & \dots & \ast\\
 \end{bmatrix}.
 \]
-Per ottenere $U_{k+1}$, sottraiamo da ogni riga $i>k$ di $U_k$ un opportuno multiplo (\emph{moltiplicatore}) della $k$-esima riga; visto che vogliamo eliminare l'elemento in posizione $(i,k)$, questo multiplo dev'essere scelto pari a $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe di $U_k$ rimangono invariate.
+Per ottenere $U_{k+1}$, sottraiamo da ogni riga $i>k$ di $U_k$ un opportuno multiplo (\emph{moltiplicatore}) della sua $k$-esima riga. Per eliminare l'elemento in posizione $(i,k)$, questo multiplo viene scelto uguale a $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$. Le prime $k$ righe di $U_k$ rimangono invariate.
 
 \paragraph{Moltiplicatori}
-In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicatori usati ad ogni passo, andando a scriverli separatamente in una seconda matrice. Al primo passo, partiamo da una matrice $L_1 = I$ (vedremo poi perché partiamo dalla matrice identità); poi, ad ogni passo di eliminazione di Gauss, andiamo a scrivere il moltiplicatore $L_{ik} = \frac{(U_k)_{ik}}{(U_k)_{kk}}$ nella posizione $i,k$ di questa matrice. In questo modo, per esempio per una matrice $4\times 4$,  ad ogni passo la struttura delle matrici ottenute è (indicando con $*$ gli elementi diversi da zero)
+In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicatori usati ad ogni passo, andando a scriverli separatamente in una seconda matrice. Al primo passo, partiamo da una matrice $L_1 = I$ (vedremo poi perché partiamo dalla matrice identità); poi, ogni volta che calcoliamo un nuovo moltiplicatore $L_{ik}$, andiamo a scriverlo nella posizione $i,k$ di questa matrice. In questo modo, per esempio per una matrice $4\times 4$,  ad ogni passo la struttura delle matrici ottenute è (indicando con $*$ gli elementi diversi da zero)
 \[
     \begin{array}{ll}
     L_1 = \begin{bmatrix}
@@ -3079,7 +3079,7 @@ In aggiunta all'eliminazione di Gauss, vogliamo tenere traccia dei moltiplicator
     \end{bmatrix}.
     \end{array}
 \]
-Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$, cioè il prodotto di queste due matrici è uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_1 = 0$: gli uni sulla diagonale sono necessari per far valere l'uguaglianza $L_k U_k = A$. Notiamo in particolare due casi di questa uguaglianza: quando $k=1$, abbiamo l'uguaglianza (ovvia) $I \cdot A = A$; e all'ultimo passo abbiamo $L_n U_n = A$, che è esattamente la fattorizzazione LU che stiamo cercando: $L_n=L$ è triangolare inferiore con 1 sulla diagonale, $U_n=U$ è triangolare superiore.
+Dimostreremo più avanti che ad ogni passo si ha $L_k U_k = A$: il prodotto delle due matrici è sempre uguale alla matrice di partenza $A$. Questo è il motivo per cui siamo partiti con $L_1 = I$, anziché, per esempio, da $L_1 = 0$: gli uni sulla diagonale sono necessari per far valere l'uguaglianza $L_k U_k = A$. Notiamo in particolare due casi di questa uguaglianza: quando $k=1$, abbiamo l'uguaglianza (ovvia) $I \cdot A = A$; e all'ultimo passo abbiamo $L_n U_n = A$, che è esattamente la fattorizzazione LU che stiamo cercando: $L_n=L$ è triangolare inferiore con 1 sulla diagonale, $U_n=U$ è triangolare superiore.
 
 % Quindi dopo il passo $k$ abbiamo
 % \begin{equation} \label{fattLU}
@@ -3205,8 +3205,6 @@ Il grosso del costo è dato dall'aggiornamento del blocco $U_{k+1:n, k+1:n}$ ad 
 0^2+1^2 + 2^2 + \dots + (n-1)^2 = \frac{1}{6}(n-1)n(2n-1) = \frac13n^3 + \mathcal{O}(n^2).
 \]
 I termini che abbiamo omesso e indicato con $\mathcal{O}(n^2)$ sono \emph{di ordine inferiore} a $\frac13 n^3$, cioè contengono potenze più basse della $n$. Se teniamo traccia delle operazioni nelle altre righe (ad esempio, il calcolo degli $L_{ij}$) otteniamo termini di ordine inferiore. Quindi il costo della fattorizzazione LU (così come quello dell'eliminazione di Gauss) è $\frac23 n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche.
-
-Notiamo che nel codice non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece usato del codice che ne calcola il risultato usando la struttura particolare di queste matrici $E_k$. Se invece lo avessimo scritto come prodotto, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato ad ogni passo l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutto l'algoritmo!
 
 \paragraph{Soluzione di sistemi lineari tramite la fattorizzazione LU} 
 Una volta calcolata $A = LU$, abbiamo decomposto $A$ in un prodotto di matrici più semplici, e possiamo usare questa decomposizione per risolvere sistemi lineari. 
@@ -3344,6 +3342,10 @@ Possiamo ora enunciare il risultato promesso.
     Abbiamo già osservato al termine della dimostrazione del lemma che $L_{k+1} = E_1^{-1} E_2^{-1} \dots E_{k-1}^{-1} E_k^{-1}$, quindi il prodotto di queste due matrici fa $A$.
 \end{proof}
 
+\begin{remark}
+    Nel codice che abbiamo scritto per la fattorizzazione LU non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece calcolato $U_{k+1}$ sommando opportuni multipli delle righe, quindi sfruttando la struttura delle matrici $E_k$. Questo è computazionalmente più efficiente: se avessimo scritto ogni passo dell'eliminazione di Gauss come un prodotto di matrici, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato  l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutta la fattorizzazione!
+\end{remark}
+
 \paragraph{Esistenza della fattorizzazione LU}
 
 Cosa può andare storto durante la fattorizzazione LU? Una sola cosa: quando dobbiamo dividere per $(U_k)_{kk}$ (elemento \emph{pivot}), questo potrebbe essere zero. Possiamo dimostrare un criterio che mostra quando questo succede.
@@ -3364,15 +3366,15 @@ A =
     \vphantom{\ell_{k+1,k}}  \vdots & \vdots & 1\\
     \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \ell_{k+1,k} & 1\\
     \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \ell_{k+2,k} & 0 & 1\\
-    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \vdots & 0 & 0 & \ddots\\
-    \vphantom{\ell_{k+1,k}}  \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & \dots & 1\\
+    \vphantom{\ell_{k+1,k}}  \vdots & \vdots & \vdots & 0 & \ddots & \ddots\\
+    \vphantom{\ell_{k+1,k}}  \ell_{n1} & \dots & \ell_{n,k} & 0 & \dots & 0 & 1\\
 \end{bmatrix}
 }_{L_{k+1} = E_1^{-1}E_2^{-1}\dots E_k^{-1}}
 \underbrace{
 \begin{bmatrix}
      \vphantom{\ell_{k+1,k}} U_{11} & U_{12} & \dots & & & &U_{1,n} \\
      \vphantom{\ell_{k+1,k}} 0 & \ddots  & \dots & \dots & \dots &\dots & \vdots\\
-     \vphantom{\ell_{k+1,k}} 0 & & U_{kk} & \dots & \dots & \dots & \vdots\\
+     \vphantom{\ell_{k+1,k}} 0 & \ddots & U_{kk} & \dots & \dots & \dots & \vdots\\
      \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & U_{k+1,k+1} & U_{k+1,k+2} & \dots & U_{k+1,n}\\
      \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & U_{k+2,k+1} & U_{k+2,k+2} & &\vdots\\
      \vphantom{\ell_{k+1,k}} 0 & \dots & 0 & \vdots & \vdots& \ddots & \vdots\\
