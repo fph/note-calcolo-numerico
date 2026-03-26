@@ -3352,7 +3352,7 @@ Cosa può andare storto durante la fattorizzazione LU? Una sola cosa: quando dob
 
 Definiamo le \emph{sottomatrici principali di testa} di una matrice $A$ come $A_{1:k,1:k}$. Questa notazione (che ci è familiare da Matlab) significa prendere gli elementi della matrice $A$ che stanno nelle righe dalla $1$ alla $k$ e nelle colonne dalla $1$ alla $k$, ottenendo una sottomatrice quadrata $k\times k$.
 
-\begin{theorem}[Esistenza della fattorizzazione LU]
+\begin{theorem}[Esistenza della fattorizzazione LU] \label{thm:esistenzaLU}
 Data una matrice $A\in\mathbb{C}^{n\times n}$, supponiamo che le sottomatrici principali di testa $A_{1:k,1:k}$ di $A$, per $k=1,\dots,n-1$, siano tutte invertibili. Allora, è possibile portare a termine l'algoritmo di fattorizzazione LU senza mai incontrare pivot nulli, e quindi esiste una fattorizzazione LU di $A$.
 \end{theorem}
 \begin{proof}
@@ -3453,7 +3453,11 @@ Questa è una fattorizzazione LU della matrice $A_{1:k+1,1:k+1}$. In particolare
 \]
 Quindi se $\det A_{1:k+1,1:k+1} \neq 0$, allora anche l'elemento $U_{k+1,k+1}$ è diverso da zero e possiamo effettuare il passo $k+1$-esimo dell'eliminazione di Gauss. Visto che ci sono $n-1$ passi nel metodo, mi basta guardare fino a $A_{1:n-1,1:n-1}$: la matrice $A$ stessa potrebbe essere singolare, e quindi potremmo avere $U_{nn}=0$, ma non importa: non ci sono passi successivi in cui dobbiamo dividere per esso.
 \end{proof}
-Quello che abbiamo appena dimostrato in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la \emph{prima} sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero, ma arrivati al passo $k+1$ si ha $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
+% Quello che abbiamo appena dimostrato in realtà è un ``se e solo se'': se $A_{1:k+1,1:k+1}$ è la \emph{prima} sottomatrice principale di testa non invertibile, allora possiamo effettuare i primi $k$ passi, e $U_{11},\dots,U_{k,k}$ sono diversi da zero, ma arrivati al passo $k+1$ si ha $U_{k+1,k+1}=0$ e quindi l'eliminazione di Gauss fallisce.
+
+\begin{remark}
+    È possibile dimostrare che sotto le stesse ipotesi del teorema~\ref{thm:esistenzaLU} (sottomatrici principali di testa invertibili) quella costruita è l'\emph{unica} fattorizzazione LU della matrice $A$: cioè, l'unico modo di scrivere $A$ come prodotto di una matrice triangolare inferiore con $1$ sulla diagonale $L$, e una matrice triangolare superiore $U$.
+\end{remark}
 
 \paragraph{Matrici dominanti diagonali}
 
