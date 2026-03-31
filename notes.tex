@@ -4249,18 +4249,18 @@ Abbiamo due scelte naturali come criteri di arresto per il metodo:
 \end{enumerate}
 Il primo criterio è facile da implementare, ma (esattamente come abbiamo visto per il metodo del punto fisso nel caso scalare), quando la convergenza è lenta, $\norm{\x^{(k)} - \x^{(k+1)}}$ può essere molto più piccolo di $\norm{\x^{(k+1)} - \x}$, quindi rischiamo di sottostimare l'errore.
 
-\paragraph{Residuo e stabilità all'indietro (*)}  Se $\x$ è la soluzione esatta del sistema lineare $A\x = \b$, allora chiaramente $\norm{A\x-\b} = 0$. Ma se per un vettore $\tilde{\x} \in \mathbb{C}^n$ il \emph{residuo} $\mathbf{r} = A\tilde{\x}-\b$ è piccolo, questo implica che $\tilde{\x}$ e $\x$ sono vicini? Intuitivamente sì, ma vediamo un risultato quantitativo che dice cosa succede.
+\paragraph{Relazione tra errore e residuo (*)}  Se $\x$ è la soluzione esatta del sistema lineare $A\x = \b$, allora chiaramente $\norm{A\x-\b} = 0$. Ma se per un vettore $\tilde{\x} \in \mathbb{C}^n$ il \emph{residuo} $\mathbf{r} = A\tilde{\x}-\b$ è piccolo, questo implica che $\tilde{\x}$ e $\x$ sono vicini? Vediamo un risultato quantitativo che dice cosa succede.
 
-\begin{theorem}[Stima del residuo]
-Siano $A \in \mathbb{C}^{n\times n}$, $\b\in\mathbb{C}^n$. Sia $\x$ la soluzione del sistema lineare $A\x=\b$, sia $\tilde{\x}\in\mathbb{R}^n$ un altro vettore, e sia $\mathbf{r} = A\tilde{\x}-\b$. Allora,
+\begin{theorem}[Relazione tra errore e residuo]
+Siano $A \in \mathbb{C}^{n\times n}$, $\b\in\mathbb{C}^n$. Sia $\x$ la soluzione del sistema lineare $A\x=\b$, sia $\widetilde{\x}\in\mathbb{R}^n$ un altro vettore, e sia $\mathbf{r} = A\widetilde{\x}-\b$. Allora,
 \[
-\frac{\norm{\tilde{\x}-\x}}{\norm{\x}} \leq \kappa(A) \frac{\norm{\mathbf{r}}}{\norm{\b}}.
+\frac{\norm{\widetilde{\x}-\x}}{\norm{\x}} \leq \kappa(A) \frac{\norm{\mathbf{r}}}{\norm{\b}}.
 \]
 \end{theorem}
 \begin{proof}
-Abbiamo $A\tilde{\x} = \b + \mathbf{r}$. Allora, $\tilde{\x}$ è la soluzione del sistema lineare $A\tilde{\x} = \widehat{\b}$, in cui abbiamo perturbato il termine noto in $\widehat{\b} = \b + \mathbf{r}$. Pertanto possiamo applicare la disuguaglianza~\eqref{conditionbound}, che ci dà la tesi.
+Abbiamo $A\widetilde{\x} = \b + \mathbf{r}$. Allora, $\widetilde{\x}$ è la soluzione del sistema lineare $A\widetilde{\x} = \widetilde{\b}$, in cui abbiamo rimpiazzato il termine noto $\b$ con $\widetilde{\b} = \b + \mathbf{r}$. Pertanto possiamo applicare la disuguaglianza~\eqref{conditionbound}, che ci dà immediatamente la tesi.
 \end{proof}
-Questo risultato non si applica solo all'iterata $\x^{(k+1)}$ prodotta da un metodo iterativo, ma a una qualunque soluzione approssimata di un sistema lineare, non importa come l'abbiamo ottenuta. È quindi particolarmente interessante perché ci permette di ottenere una stima esplicita sull'errore relativo nella $\tilde{\x}$ calcolata, sulla base di quantità calcolabili al computer.
+Questo risultato non si applica solo all'iterata $\x^{(k+1)}$ prodotta da un metodo iterativo, ma a una qualunque soluzione approssimata di un sistema lineare, non importa come l'abbiamo ottenuta. È interessante perché ci permette di ottenere una stima esplicita sull'errore relativo nella $\widetilde{\x}$ calcolata, sulla base di quantità calcolabili al computer.
 
 \paragraph{Convergenza di Jacobi e Gauss--Seidel per matrici $A$ dominanti diagonali}
 \begin{theorem}
@@ -4304,6 +4304,9 @@ nel caso del metodo di Gauss--Seidel (la parte triangolare inferiore è moltipli
 e il membro di destra (quando $\abs{\lambda} \geq 1$) è più grande del termine corrispondente agli elementi fuori dalla diagonale di $N-\lambda M$.
 \end{proof}
 
+
+\begin{conditional}[ich]
+    
 \section{Sistemi di equazioni non lineari}
 
 \paragraph{Introduzione} Facciamo qualche accenno anche a metodi per risolvere sistemi di equazioni \emph{non} lineari: data una $F: D \subseteq \mathbb{R}^n \to \mathbb{R}^n$, come possiamo trovare \emph{una} soluzione del sistema?
@@ -4421,6 +4424,8 @@ La convergenza di questo metodo è quadratica, sotto le stesse condizioni del me
     \caption{Convergenza della variante del metodo di Newton in un esempio con $m=4$.} \label{fig:newtonibrido}
     \end{figure}    
 
+\end{conditional}
+
 \section{Sistemi lineari sovradeterminati (minimi quadrati)}
 
 Supponiamo di avere un sistema del tipo
@@ -4487,13 +4492,13 @@ Sia $\x\in\mathbb{R}^n$ un vettore tale che $A^T \mathbf{r}(\x) = A^T(A\x-\b) = 
 \begin{proof}
 Prendiamo un qualunque vettore diverso da $\x$: possiamo scriverlo come $\x+\mathbf{z}$, con $\mathbf{z}\in\mathbb{R}^n, \mathbf{z} \neq \mathbf{0}$; il suo residuo vale
 \[
-\mathbf{r}(\x+\mathbf{z}) =  A(\x+\mathbf{z})-\b = \underbrace{A\x-\b}_{=\mathbf{r}} + \underbrace{A\mathbf{z}}_{=\mathbf{s}} = \mathbf{r}+\mathbf{s}.
+\mathbf{r}(\x+\mathbf{z}) =  A\x+ A\mathbf{z}-\b = \underbrace{A\x-\b}_{=\mathbf{r}} + \underbrace{A\mathbf{z}}_{=\mathbf{s}} = \mathbf{r}+\mathbf{s}.
 \]
 (Abbiamo usato la sola lettera $\mathbf{r}$ per indicare il residuo $\mathbf{r}(\x)$, per avere una notazione più semplice.)
 
 Vogliamo dimostrare che la norma di questo residuo è maggiore o uguale a quella di $\mathbf{r}$; questo ci permette di concludere che $\x$ è la soluzione del problema. Il quadrato di questa norma vale
 \[
-\norm{\mathbf{r}(\x+\mathbf{z})}_2^2 = \norm{A(\x+\mathbf{z})-\b}_2^2 = (\mathbf{r}+\mathbf{s})^T(\mathbf{r}+\mathbf{s}) = \mathbf{s}^T \mathbf{s} + \mathbf{s}^T\mathbf{r} + \mathbf{r}^T \mathbf{s} + \mathbf{r}^T \mathbf{r}.
+\norm{\mathbf{r}(\x+\mathbf{z})}_2^2 = (\mathbf{r}+\mathbf{s})^T(\mathbf{r}+\mathbf{s}) = \mathbf{s}^T \mathbf{s} + \mathbf{s}^T\mathbf{r} + \mathbf{r}^T \mathbf{s} + \mathbf{r}^T \mathbf{r}.
 \]
 Notiamo però che il prodotto scalare $\mathbf{r}^T\mathbf{s} = \mathbf{s}^T\mathbf{r}$ è uguale a zero: difatti,
 \[
