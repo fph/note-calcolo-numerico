@@ -140,7 +140,7 @@
 
 Queste note sono nate per fare da `scaletta' per me mentre tengo le lezioni; sono anche a vostra disposizione per essere usate come dispense per lo studio.
 
-Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini. Dei Large Language Model (GPT 4.1 e GPT 5) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini.
+Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini, e il testo è stato in parte migliorato e corretto in discussioni con Gianna Del Corso. Dei Large Language Model (GPT 4.1 e GPT 5) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini.
 
 \bigskip
 
@@ -4231,9 +4231,9 @@ Se $\abs{\lambda} \geq 1$ (e $\mathbf{v}\neq 0$, visto  che $\mathbf{v}$ è un a
 \end{proof}
 Visto che $\rho(H) \leq \norm{H}_p$ per ogni norma matriciale indotta, abbiamo anche il seguente risultato.
 \begin{corollary}
-Se $\norm{H}_p \leq 1$ per una qualunque norma matriciale indotta, allora il metodo iterativo~\eqref{iterlin} è convergente.
+Se $\norm{H}_p < 1$ per una qualunque norma matriciale indotta, allora il metodo iterativo~\eqref{iterlin} è convergente.
 \end{corollary}
-Questo \emph{non} è un ``se e solo se''! In particolare, possiamo anche avere situazioni in cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
+Attenzione: questo risultato \emph{non} è un ``se e solo se'': se $\norm{H}_p \geq 1$, non possiamo dire se $\rho(p)$ è minore di 1 oppure no. In particolare, poi, esistono anche matrici per cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
 
 È possibile dimostrare anche che per ogni norma vettoriale vale
 \[
