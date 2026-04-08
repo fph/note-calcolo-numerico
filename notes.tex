@@ -4456,6 +4456,15 @@ Similmente, se prendiamo il vettore $\x_2$ che soddisfa la seconda e la terza eq
 
 In un certo senso però $\x_1$ è ``meno sbagliato'' di $\x_2$, visto che $A\x_1$ è più vicino a $\b$ che non $A\x_2$: difatti $\norm{A\x_1-\b} = 0.5$, $\norm{A\x_2 - \b} = 1$, per tutte e tre le norme che abbiamo visto. Da questo punto di vista, ha senso chiedersi qual è il vettore $\x$ per cui $A\x$ è più vicino a $\b$.
 
+\paragraph{Applicazioni}
+Sorprendentemente, questo problema di risolvere approssimativamente equazioni ha molte applicazioni nella vita reale. Spesso possiamo supporre che la relazione tra alcune variabili sia lineare (approssimativamente). Per esempio, possiamo aspettarci che il prezzo (di affitto o di vendita) di una casa dipenda da quanto è grande, in metri quadrati, e da quanto lontana è dal centro: quindi che vale una relazione del tipo
+\begin{equation} \label{prezzocase}
+    P \approx x_1 M + x_2 D    
+\end{equation}
+dove $P$ è il prezzo, $D$ è la distanza dal centro, e $x_1,x_2$ sono due coefficienti. Non sappiamo il valore esatto di $x_1$ e $x_2$, e anzi visto che si tratta di una relazione approssimata non esiste un vero e proprio valore esatto. Ma se abbiamo a disposizione prezzo, metratura e distanza di $m>2$ case, abbiamo $m$ equazioni approssimate con la stessa forma della~\eqref{prezzocase}. Risolvendole, possiamo trovare il valore ``meno sbagliato'' di $x_1$ e $x_2$, e usare questi valori per esempio per stimare il prezzo di una nuova casa che entra sul mercato.
+
+Questo tipo di analisi è molto comune in statistica (dove è nota come \emph{regressione lineare}), e in un certo senso è la forma più semplice di \emph{machine learning}, apprendimento automatico: risolvendo un sistema di equazioni, il computer ``impara'' a stimare il valore di una casa.
+
 \paragraph{Interpretazione geometrica} Dall'algebra lineare, sappiamo che il vettore $A\x$ è una combinazione lineare delle colonne di $A$, e al variare del vettore $\x$ queste combinazioni lineari stanno tutte all'interno dell'immagine $\operatorname{Im} A$, che è un sottospazio di $\mathbb{R}^m$.
 \begin{center}
 
@@ -4552,7 +4561,7 @@ Si può dimostrare (noi qui non lo facciamo) il seguente risultato.
 \begin{theorem}
     Per ogni $A \in \mathbb{R}^{m\times n}$, esistono una matrice $Q\in\mathbb{R}^{m\times m}$ \emph{ortogonale} (cioè che soddisfa $Q^TQ=I$) e una matrice $R \in \mathbb{R}^{m\times n}$ triangolare superiore tali che $A = QR$.
 \end{theorem}
-La matrice $R$ è rettangolare: quando scriviamo ``triangolare'' intendiamo che
+La matrice $R$ è rettangolare: quando scriviamo ``triangolare superiore'' intendiamo che $R_{ij}=0$ se $i>j$, cioè
 \[
 R = \begin{bmatrix}
     R_1\\ O
