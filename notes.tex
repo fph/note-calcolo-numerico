@@ -2924,6 +2924,14 @@ Questa uguaglianza è valida per ogni $i=1,2,\dots,n$. Scegliamo ora come $i$ l'
 L'ultima disuguaglianza segue dal fatto che $\abs{x_p}$ è massimo. Questa catena di disuguaglianze dimostra che $\lambda$ sta all'interno del cerchio $K_p$. Poiché $\lambda$ sta all'interno di almeno un cerchio, sta anche all'interno della loro unione.
 \end{proof}
 
+\begin{conditional}[inf]
+Si può aggiungere al teorema anche quest'altro risultato, di cui non vediamo la dimostrazione.
+\begin{theorem}[Secondo teorema di Gershgorin]
+    Sotto le stesse ipotesi del teorema dei cerchi di Gershgorin, supponiamo che ci siano $k$ cerchi (per un $k=1,2,\dots$) che hanno unione disgiunta da tutti altri cerchi. Allora, questa unione contiene esattamente $k$ autovalori.
+\end{theorem}
+Per esempio, se un cerchio è disgiunto da tutti gli altri, allora contiene esattamente un autovalore. Se due cerchi che si intersecano sono disgiunti da tutti gli altri, allora la loro unione contiene esattamente due cerchi, e così via.
+\end{conditional}
+
 
 \section{Soluzione di equazioni lineari: casi speciali}
 
@@ -5210,23 +5218,65 @@ Sappiamo già che la soluzione del problema è unica. Basta verificare che $p(x_
 
 \paragraph{Resto dell'interpolazione}
 In alcuni casi, sappiamo che i punti da interpolare $(x_i,y_i)$ appartengono esattamente al grafico di una certa funzione $f$, cioè, $y_i = f(x_i)$ per ogni $i=0,\dots,d$. Si parla in questo caso di ``polinomio di interpolazione della funzione $f$''. Questa $f$ tipicamente non è un polinomio, ma potrebbe essere una funzione definita da una formula più complicata. Ha senso quindi cercare di ``rimpiazzarla'' con un polinomio più semplice, se possiamo assicurarci che l'errore commesso nell'interpolazione è piccolo. Il risultato seguente ci dà un modo di stimare questo errore, in funzione delle derivate della funzione $f$.
-\begin{theorem}[Resto dell'interpolazione]
+\begin{theorem}[Resto dell'interpolazione] \label{thm:resto dell'interpolazione}
 Sia $f\in \mathcal{C}^{d+1}([a,b])$, $x_0,x_1,\dots,x_d$ nodi distinti in $[a,b]$, e $p(x)$ il polinomio di interpolazione (di grado al più $d$) di $f$ sui nodi dati. Allora per ogni $x\in [a,b]$ esiste un punto $\xi \in (a,b)$ tale che
 \begin{equation} \label{resto dell'interpolazione}
     f(x) - p(x) = \frac{f^{(d+1)}(\xi)}{(d+1)!} (x-x_0)(x-x_1) \dots (x-x_d).    
 \end{equation}
 \end{theorem}
-Non lo dimostriamo ma facciamo qualche commento.
+Qualche commento su questo enunciato:
 \begin{itemize}
     \item Questo risultato assomiglia a uno sviluppo di Taylor con resto di Lagrange: abbiamo che $f(x)$ è uguale a un polinomio $p(x)$ (che arriva ad avere potenze fino al grado $d$) più un resto che dipende dalla derivata $d+1$-esima. Qui abbiamo $d+1$ punti, anziché un ``centro'' solo dello sviluppo di Taylor, e nella formula per il resto $\frac{f^{(d+1)}(\xi)}{(d+1)!}(x-x_0)^{d+1}$, il termine $(x-x_0)^{d+1}$ viene rimpiazzato da $\prod_{j=0}^d (x-x_i)$. (Questo è un ottimo modo per ricordarsi la formula.)
     \item Non ci stupisce che ci siano dei fattori $(x-x_i)$ nel membro di destra: difatti, se sostituiamo $x=x_i$, per un qualche $i=0,1,\dots,d$, il termine di sinistra si annulla, quindi deve annullarsi anche quello di destra.
     \item Un caso speciale in cui possiamo verificare il risultato direttamente è quello in cui $f(x)$ è essa stessa un polinomio di grado minore o uguale a $d$. In questo caso il polinomio di interpolazione coincide con $f(x)$ stessa, quindi il termine di sinistra è nullo per ogni $x$; e anche il termine di destra si annulla perché per un polinomio di grado al più $d$ abbiamo $f^{(d+1)} \equiv 0$.
 \end{itemize}
 
+\begin{conditional}[inf]
 
+\paragraph{Dimostrazione del teorema del resto dell'interpolazione (*)} La dimostrazione del Teorema~\ref{thm:resto dell'interpolazione} si basa su questo lemma.
+\begin{lemma}
+    Sia $h(t)$ una funzione di classe (almeno) $C^1$ su $[a,b]$, che si annulla in (almeno) $k\geq 2$ punti distinti in $[a,b]$. Allora, la sua derivata $h'(t)$ si annulla in (almeno) $k-1$ punti distinti in $(a,b)$.
+\end{lemma}
+\begin{proof}
+    Chiamiamo, ordinandoli in ordine crescente, $t_1 < t_2 < \dots < t_k$ i punti in cui $h$ si annulla. Possiamo applicare il teorema di Rolle in ogni intervallo $[t_i, t_{i+1}]$: si ha $h(t_i)=h(t_{i+1})=0$, quindi esiste un punto $z_i \in (t_i,t_{i+1})$ tale che $h'(z_i)=0$. Questo ragionamento vale per $i=1,2,\dots,k-1$, e i punti sono tutti distinti, visto che stanno in intervalli disgiunti.
+\end{proof}
+Utilizzando questo lemma, possiamo dimostrare il teorema del resto dell'interpolazione.
+\begin{proof}[Dimostrazione del Teorema~\ref{thm:resto dell'interpolazione}]
+    Ci basta trattare il caso in cui il punto $x$ è diverso dai nodi $x_0,x_1,\dots,x_d$; difatti se così non fosse il teorema è semplice da dimostrare: sia il membro di sinistra che quello di destra si annullano per ogni scelta di $\xi \in (a,b)$. 
 
+    Supponiamo il punto $x$ fissato, e definiamo una funzione (che dipende non da $x$, ma da un'altra variabile $t$)
+    \[
+    h(t) = f(t) - p(t) - K (t-x_0)(t-x_1)\dotsm(t-x_d).
+    \]
+    Questa funzione dipende da una costante $s\in\mathbb{R}$. Scegliamo il valore di $K$ in modo che $h(x)=0$:
+    \[
+    K = \frac{f(x)-p(x)}{(x-x_0)(x-x_1)\dotsm(x-x_d)}.
+    \]
+    In questo modo, la funzione $h$ si annulla in $d+2$ punti distinti in $[a,b]$: non solo $x$, ma anche $x_0,x_1,\dots, x_d$: difatti quando $t$ è uguale a un qualche $x_i$  si ha $f(t) = p(t)$, e il prodotto $(t-x_0)(t-x_1)\dotsm(t-x_d)$ si annulla perché contiene un fattore nullo.
 
+    Inoltre, la funzione $h(t)$ è di classe almeno $\mathcal{C}^{d+1}$: difatti $f(t)$ è di classe $\mathcal{C}^{d+1}$ per ipotesi, $p(t)$ è un polinomio in $t$ quindi è di classe $\mathcal{C}^{\infty}$, ed è un polinomio in $t$ anche il termine $K (t-x_0)(t-x_1)\dotsm(t-x_d)$: la costante $K$ non dipende da $t$.
 
+    Possiamo applicare il lemma tante volte ad $h$ e alle sue derivate successive:
+    \begin{itemize}
+        \item $h(t)$ si annulla in (almeno) $d+2$ punti distinti in $(a,b)$;
+        \item $h'(t)$ si annulla in (almeno) $d+1$ punti distinti in $(a,b)$;
+        \item $h''(t)$ si annulla in (almeno) $d$ punti distinti in $(a,b)$;
+        \item \dots
+        \item $h^{(d+1)}(t)$ si annulla in (almeno) $1$ punto in $(a,b)$.
+    \end{itemize}
+    Quindi esiste (almeno) un valore $\xi \in (a,b)$ tale che
+    \[
+    0 = h^{(d+1)}(\xi) = f^{(d+1)}(\xi) - 0 - K(d+1)!
+    \]
+    Difatti la derivata $(d+1)$-esima di $p(t)$ (che è un polinomio di grado $d$) è zero, e la derivata $(d+1)$-esima del termine $K (t-x_0)(t-x_1)\dotsm(t-x_d)$ (che è un polinomio di grado $d+1$, del tipo $t^{d+1} + \text{termini di grado inferiore}$) è la costante $(d+1)!$.
+    
+    Ricordando la definizione di $K$ allora abbiamo
+    \[
+    f^{(d+1)}(\xi) = \frac{f(x)-p(x)}{(x-x_0)(x-x_1)\dotsm(x-x_d)} (d+1)!.
+    \]
+    Da qui ci basta mettere in evidenza il termine $f(x)-p(x)$ per ottenere la~\eqref{resto dell'interpolazione}.
+\end{proof}
+\end{conditional}
 
 \paragraph{Errore dell'interpolazione} Dal teorema del resto dell'interpolazione segue una stima per l'errore massimo (differenza tra $f(x)$ e $p(x)$), cioè
 \[
