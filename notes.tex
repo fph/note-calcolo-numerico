@@ -1176,31 +1176,31 @@ C'è un risultato che ci permette di concludere la convergenza del metodo di New
 \begin{proof}
 Visto che $f$ è continua e non ha altri zeri all'interno di $I$, dev'essere sempre positiva o sempre negativa. Quindi ci sono quattro situazioni possibili:
 \begin{enumerate}
-    \item $\alpha=a$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq \dots$;
-    \item $\alpha=a$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq \dots$;
-    \item $\alpha=b$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq \dots$;
-    \item $\alpha=b$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq \dots$.
+    \item $\alpha=a$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq x_2 \geq \dots$;
+    \item $\alpha=a$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $(\alpha,b]$, e vogliamo mostrare che $x_0 \geq x_1 \geq x_2 \geq \dots$;
+    \item $\alpha=b$, $f(x)>0, f''(x) \geq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq x_2 \leq \dots$;
+    \item $\alpha=b$, $f(x)<0, f''(x) \leq 0$ in tutti i punti di $[a,\alpha)$, e vogliamo mostrare che $x_0 \leq x_1 \leq x_2 \leq \dots$.
 \end{enumerate}
 Trattiamo solo il primo caso: gli altri sono analoghi, anche perché si ottengono dal primo riflettendo il grafico rispetto all'asse $x$ 
 e/o all'asse $y$.
 
-Vogliamo dimostrare che se per un certo $k$ si ha $x_k \in I$, allora il metodo di Newton è applicabile (cioè, $f'(x_k)\neq 0$) e si ha $\alpha \leq x_{k+1} \leq x_k$; da questo in particolare segue anche che $x_{k+1} \in I$.
+Vogliamo innanzitutto dimostrare che se per un certo $k$ si ha $x_k \in I$, allora il metodo di Newton è applicabile (cioè, $f'(x_k)\neq 0$) e si ha $\alpha \leq x_{k+1} \leq x_k$; da questo in particolare segue che anche $x_{k+1} \in I$.
 
 Dal teorema di Lagrange abbiamo
 \[
 \frac{f(x_k) - f(\alpha)}{x_k-\alpha} = f'(z_k)
 \]
-per un punto $z_k \in (\alpha, x_k)$. Poiché $f(x_k)>0$ e $f(\alpha)=0$, ne segue che $f'(z_k) > 0$. Poiché $f''(x)\geq 0$, la funzione $f'(x)$ è crescente, e quindi $f'(x_k) \geq f'(z_k) > 0$. Questo assicura l'applicabilità del metodo.
+per un punto $z_k \in (\alpha, x_k)$. Poiché $f(x_k)>0$ e $f(\alpha)=0$, ne segue che $f'(z_k) > 0$. Poiché $f''(x)\geq 0$, la funzione $f'(x)$ è crescente, e quindi $f'(x_k) \geq f'(z_k) > 0$. Questo assicura che possiamo applicare il metodo e costruire $x_{k+1}$ senza che si annulli il denominatore. Ora ci resta da mostrare che $x_{k+1} \in [\alpha, x_k]$.
 
-Consideriamo ora l'equazione che definisce la retta tangente in $x_k$,
+Per questo, consideriamo l'equazione che della retta tangente in $x_k$,
 \[
 y = T(x) = f(x_k) + f'(x_k)(x-x_k).
 \]
-Ricordiamo lo sviluppo di Taylor~\eqref{sviluppo Taylor per dimostrazione conv. quadratica Newton}
+Riprendiamo lo sviluppo di Taylor~\eqref{sviluppo Taylor per dimostrazione conv. quadratica Newton}
 \[
 0 = f(\alpha) = \underbrace{f(x_k) + f'(x_k)(\alpha-x_k)}_{=T(\alpha)} + \frac{f''(\xi_k)}{2}(\alpha-x_k)^2,
 \]
-che vale uno $\xi_k$ compreso tra $\alpha$ e $x_k$. Per le nostre ipotesi, $\frac{f''(\xi_k)}{2}(\alpha-x_k)^2 \geq 0$, quindi $f(x_k) + f'(x_k)(\alpha-x_k) = T(\alpha) \leq 0$. Poiché invece $T(x_k) = f(x_k) \geq 0$, il punto $x_{k+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_k$, come volevamo dimostrare.
+dove l'uguaglianza vale per uno $\xi_k \in (\alpha, x_k)$. Per le nostre ipotesi, $\frac{f''(\xi_k)}{2}(\alpha-x_k)^2 \geq 0$, quindi $f(x_k) + f'(x_k)(\alpha-x_k) = T(\alpha) \leq 0$. Poiché invece $T(x_k) = f(x_k) \geq 0$, il punto $x_{k+1}$ in cui la retta incrocia l'asse delle ascisse è compreso tra $\alpha$ e $x_k$, come volevamo dimostrare.
 
 Questo dimostra che il metodo di Newton produce una successione decrescente $x_0 \geq x_1 \geq x_2 \geq \dots $, limitata da $\alpha$. In particolare quindi la successione converge, e il suo limite è necessariamente $\alpha$, che è l'unico zero della funzione in $I$.
 \end{proof}
