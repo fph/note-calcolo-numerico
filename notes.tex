@@ -568,21 +568,25 @@ da cui per il teorema dei carabinieri segue che $\lim_{k\to \infty} x_k = \alpha
 \end{proof}
 
 \begin{esempio}
-Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Se prendiamo $r = 0.5$, abbiamo che su tutto l'intervallo
+Consideriamo la funzione $\Phi(x) = x - \frac16 (x^3-2)$. Questa ha come punto fisso $\alpha =\sqrt[3]{2} \approx 1.26$. La sua derivata è $\Phi'(x) = 1 - \frac{1}{6}3x^2 = 1 - \frac{1}{2}x^2$. Si ha allora $\abs{\Phi'(x)}<1$ per $x \in (-2,0) \cup (0,2)$. Attenzione però: non possiamo prendere $(0,2)$ all'interno del teorema~\ref{thm:puntofisso}, e neppure un generico intervallo al suo interno come $[0.5,1.5]$: ci serve un intervallo centrato in $\alpha$. Se prendiamo $\rho = 0.5$, abbiamo che su tutto l'intervallo
 \[
-    [\alpha-\rho,\alpha+\rho] \approx [1.26-0.5,1.26+0.5]
+    I = [\alpha-\rho,\alpha+\rho] \approx [1.26-0.5,1.26+0.5]
 \]
-si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il teorema, e concludere che il metodo converge per ogni scelta di $x_0$ in questo intervallo. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $r < 2 - \sqrt[3]{2} \approx 0.74$ e la soluzione è analoga.
-\end{esempio} 
+si ha $\abs{\Phi'(x)}<1$. Possiamo quindi applicare il Teorema~\ref{thm:puntofisso} su questo intervallo $I$, e concludere che il metodo converge per ogni scelta di $x_0 \in I$. Al posto di $0.5$, possiamo scegliere qualunque ampiezza $\rho < 2 - \sqrt[3]{2} \approx 0.74$.
+\end{esempio}
+Possiamo effettuare questa scelta di $\rho$ sotto ipotesi più generali; enunciamo questo risultato come un corollario del Teorema~\ref{thm:puntofisso}. 
+\begin{corollary} \label{oss:corpuntofisso}
+    Supponiamo che $\Phi(x) \in \mathcal{C}^1([a,b])$ abbia un punto fisso $\alpha\in (a,b)$ per cui vale $\abs{\Phi'(\alpha)} < 1$. Allora, esiste sempre un $\rho$ sufficientemente piccolo tale che $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho] \subset [a,b]$; quindi sono verificate le ipotesi del Teorema~\ref{thm:puntofisso} e si ha convergenza locale sull'intervallo $I$.
+\end{corollary}
+\begin{proof}
+    Ci basta osservare che la funzione $\Phi'(x)$ è continua. Allora, ogni volta che $\Phi'(\alpha) \in (-1,1)$, possiamo trovare un intervallo $[\alpha-\rho,\alpha+\rho]$ sufficientemente piccolo da avere $\Phi'(x) \in (-1,1)$ per tutti i punti al suo interno.
+\end{proof}
+Notiamo che questo risultato ci garantisce che \emph{esiste} un $\rho$ che soddisfa le ipotesi del teorema; calcolarlo esplicitamente però non è sempre semplice.
 
+Vale anche un'osservazione opposta: se $\abs{\Phi'(\alpha)} \geq 1$, allora non riusciremo mai a trovare un intervallo che soddisfi le ipotesi del teorema. Lo vediamo in un esempio.
 \begin{esempio}
 Consideriamo invece la funzione $\Phi(x) = \frac{2}{x^2}$, che ha sempre come punto fisso $x=\sqrt[3]{2}$. Questa volta si ha $\Phi'(x) = -\frac{4}{x^3}$, quindi $\Phi'(\alpha) = -2$. Non riusciremo mai a trovare un intervallo in cui applicare il teorema, perché già nel punto $\alpha$ che deve essere il centro dell'intervallo non vale la relazione $\abs{\Phi'(x)}< 1$. Si può difatti vedere che il metodo di punto fisso con questa funzione non converge ad $\alpha$: anche partendo da un $x_0$ molto vicino ad $\alpha$ (ma diverso da esso) le iterate si allontanano da esso.
 \end{esempio}
-
-
-\begin{remark} \label{oss:corpuntofisso}
-    Se $\Phi(x) \in \mathcal{C}^1([a,b])$ e $\abs{\Phi'(\alpha)} < 1$ per un certo punto fisso $\alpha\in (a,b)$, allora per continuità possiamo prendere un $r$ sufficientemente piccolo da avere $\abs{\Phi'(x)} < 1$ per ogni $x \in I = [\alpha - \rho, \alpha + \rho]$. Quindi le ipotesi del teorema di convergenza locale~\ref{thm:puntofisso} sono verificate per questo $\rho$. Non è semplice stabilire a priori quanto dev'essere piccolo $\rho$.
-\end{remark}
     
 \begin{esercizio}
 Esercizio: consideriamo l'equazione di punto fisso $x = \cos x$ (con $x$ in radianti). Quante soluzioni positive ha? Sappiamo individuare esplicitamente un intervallo $I$ in cui si applica il teorema del punto fisso?
@@ -1800,9 +1804,9 @@ Un buon sito che potete usare per visualizzare lo sviluppo in base 2 dei numeri 
 \paragraph{Operazioni di macchina}
 
 Una volta memorizzati due numeri, possiamo chiedere al computer di calcolarne la somma: per esempio se scriviamo in Matlab
-\texttt{x = 0.3; y = 0.4; x + y} viene visualizzato il risultato.
+\texttt{x = 0.3; y = 0.4; x + y} viene visualizzato un risultato. Sappiamo già che il computer in realtà memorizza approssimazioni $\tilde{x}$ e $\tilde{y}$ di 0.3 e 0.4, che soddisfano $\tilde{x} = 0.3(1+\varepsilon_1), \tilde{y} = 0.4(1+\varepsilon_2)$, con $\abs{\varepsilon_i} \leq \mathsf{u}$. Ma c'è una terza fonte di errore: anche se $\tilde{x}$ e $\tilde{y}$ sono numeri di macchina, la loro somma $\tilde{x} + \tilde{y}$ potrebbe non esserlo; quindi va approssimata anche lei con un numero di macchina. L'operazione ``calcola la somma di $\tilde{x}$ e $\tilde{y}$ e rimpiazzala con il numero di macchina più vicino'' viene indicata con $\tilde{x} \oplus \tilde{y}$. Analogamente definiamo $\ominus, \odot, \oslash$. Queste quattro operazioni sono dette \emph{operazioni di macchina}. 
 
-Sappiamo già che il computer memorizza approssimazioni $\tilde{x}$ e $\tilde{y}$ di 0.3 e 0.4, che soddisfano $\tilde{x} = 0.3(1+\varepsilon_1), \tilde{y} = 0.4(1+\varepsilon_2)$, con $\abs{\varepsilon_i} \leq \mathsf{u}$. Ma c'è una terza fonte di errore: anche se $\tilde{x}$ e $\tilde{y}$ sono numeri di macchina, la loro somma $\tilde{x} + \tilde{y}$ potrebbe non esserlo; quindi va approssimata anche lei con un numero di macchina. L'operazione ``calcola la somma di $\tilde{x}$ e $\tilde{y}$ e rimpiazzala con il numero di macchina più vicino'' viene indicata con $\tilde{x} \oplus \tilde{y}$. Analogamente definiamo $\ominus, \odot, \oslash$. Quindi $ \tilde{x} \oplus \tilde{y} = (\tilde{x}+\tilde{y})(1+\varepsilon)$, per un opportuno errore $\varepsilon$ che soddisfa $\abs{\varepsilon} \leq \mathsf{u}$, e analogamente per le altre operazioni.
+Quindi vale l'uguaglianza $\tilde{x} \oplus \tilde{y} = (\tilde{x}+\tilde{y})(1+\varepsilon)$, per un opportuno errore $\varepsilon$ che soddisfa $\abs{\varepsilon} \leq \mathsf{u}$; e analogamente per le altre tre operazioni di macchina.
 
 \paragraph{Underflow/overflow} Ci sono due casi particolari da citare: eseguendo operazioni con numeri di macchina, si può ottenere come risultato un numero più grande di $\Omega$ in valore assoluto. In questo caso, viene restituito $+\infty$ o $-\infty$. Questo fenomeno si chiama \emph{overflow}. Similmente, quando un'operazione produce un numero più piccolo di $\omega$ in valore assoluto, viene restituito $0$ (\emph{underflow}).
 
@@ -1831,14 +1835,12 @@ Le risposte sono queste:
     \item $0.01 \odot 0.01 = 0$, visto che il risultato esatto $0.01 \cdot 0.01 = 10^{-4}$ è più piccolo del più piccolo numero di macchina positivo $\omega = 0.01$ (un esempio di underflow).
 \end{itemize}
 
-
-
 \paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto. Studieremo nel dettaglio questo tema nel prossimo capitolo.
 
 \begin{conditional}[inf]
     Con il boom dei \emph{large language models}, negli ultimi anni sono diventati più comuni anche tipi di numeri a virgola mobile non standard, da 16 o addirittura 8 bit, che in passato erano poco più di una curiosità. Le operazioni in questi formati sono implementati in hardware solo su alcune GPU, e sono usati nel training di reti neurali: un'applicazione che è \emph{memory-bound} e può tollerare errori anche abbastanza grandi. (Questa \emph{non} è la stessa cosa della ``quantizzazione'' di cui forse avete sentito parlare provando a eseguire modelli in locale.)
 
-    Nelle normali applicazioni scientifiche comunque si preferisce usare i formati standard a 32 e 64 bit, visto che un fattore importante è l'impatto degli errori di macchina, che può essere grosso. 
+    Nelle normali applicazioni scientifiche comunque si preferisce usare i formati standard a 32 e 64 bit, visto che un fattore importante è l'impatto degli errori di macchina, che può essere grosso.
 \end{conditional}
 
 \chapter{Analisi dell'errore}
@@ -1925,7 +1927,7 @@ Qual è il loro effetto combinato?
 \section{Errore di macchina}
 Con questi strumenti a disposizione, possiamo andare a studiare più nel dettaglio l'impatto degli errori che facciamo quando calcoliamo una quantità sul computer utilizzando i numeri \emph{floating point}; questi sono detti \emph{errori di macchina}. Vedremo che l'errore commesso non è sempre dell'ordine di $10^{-16}$ purtroppo, ma in certi casi può venire amplificato e diventare molto più grande.
 
-\paragraph{Un primo esempio} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora sulle \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo due quantità intermedie.
+\paragraph{Approssimazione al primo ordine dell'errore di macchina} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora sulle \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo due quantità intermedie.
 \[
 A = x \cdot x, \quad B = y \cdot y, \quad z = A - B.
 \]
