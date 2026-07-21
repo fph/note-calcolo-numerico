@@ -140,7 +140,7 @@
 
 Queste note sono nate per fare da `scaletta' per me mentre tengo le lezioni; sono anche a vostra disposizione per essere usate come dispense per lo studio.
 
-Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini, e il testo è stato in parte migliorato e corretto in discussioni con Gianna Del Corso. Dei Large Language Model (GPT 4.1 e GPT 5) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini.
+Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini, e il testo è stato in parte migliorato e corretto in discussioni con Gianna Del Corso. Dei Large Language Model (GPT 4.1, GPT 5, Claude Opus 4.8) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini, e per il proofreading.
 
 \bigskip
 
@@ -176,7 +176,7 @@ In questo corso, vedremo algoritmi per risolvere al computer alcuni problemi che
 \]
 Qui $A^{(1,j)}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Per calcolare il determinante di una matrice $11\times 11$ con questa formula bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
 
-A meno che non ci siano proprietà particolari nella matrice $A$, come entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Esempio su un computer moderno::
+A meno che non ci siano proprietà particolari nella matrice $A$, come entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Esempio su un computer recente:
 \begin{center}
 \begin{tikzpicture}
     \begin{axis}[ymode = log, xlabel={$n$}, ylabel={tempo / $s$}]
@@ -202,11 +202,11 @@ A meno che non ci siano proprietà particolari nella matrice $A$, come entrate u
 \end{center}
 Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 100 secondi! Un algoritmo così lento è poco utile.
 
-\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diverse soluzioni possibili, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative, come si fa su una calcolatrice. Questo significa che le operazioni sono approssimate: per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Gli algoritmi vanno implementati con attenzione per evitare che queste approssimazioni un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
+\paragraph{Algoritmi inaccurati} Un altro fattore è \emph{come} il computer implementa certe operazioni. Numeri come $1/3$ o $\sqrt{2}$ hanno infinite cifre; non possiamo fare le operazioni ``in colonna''. Ci sono diverse soluzioni possibili, ma per la maggior parte delle applicazioni l'esperienza ha insegnato che la strategia migliore è tenere (essenzialmente) solo un certo numero di cifre significative, come si fa su una calcolatrice. Questo significa che le operazioni sono approssimate: per esempio $\frac13 + \frac13 + \frac13 \approx 0.33333 + 0.33333 + 0.33333 = 0.99999 \neq 1$. Gli algoritmi vanno implementati con attenzione per evitare che queste approssimazioni abbiano un grosso impatto sul risultato. Per esempio: l'eliminazione di Gauss, o anche formule semplici come quella per risolvere un'equazione di secondo grado.
 
 \paragraph{Importanza} Risolvere problemi computazionali al computer è diventato sempre più importante negli ultimi anni. Pensate per esempio a chi deve progettare un aereo. Quanto spessa deve essere la parete di metallo da usare nelle ali? Se è troppo spessa, il nostro aereo consuma più carburante del necessario. Se è troppo sottile, l'ala potrebbe rompersi. Una volta c'era un solo modo di scoprirlo: costruendo un prototipo di aereo. Oggi, la maggior parte di questi esperimenti possono essere rimpiazzati da simulazioni al computer. Va trovato il modo più efficiente di farle (un aereo è un oggetto molto complesso), ed è fondamentale capire quando gli errori diventano così grandi da compromettere il risultato.
 
-\paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{x^2} \mathrm{d}x$, o il determinante di una matrice $11\times 11$, ma vogliamo imparare a fare in modo che il computer esegua questo calcolo per noi. Non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come \emph{programmare} il computer in modo da saper risolvere da soli qualunque nuovo problema ci capiti davanti.
+\paragraph{Programmazione} L'altro scopo importante di questo corso è come \emph{programmare} un computer, cioè scrivere delle istruzioni per far eseguire sequenze specifiche di operazioni: non vogliamo calcolare noi le somme di Riemann di $\int_0^1 e^{-x^2} \mathrm{d}x$, o il determinante di una matrice $11\times 11$, ma vogliamo imparare a fare in modo che il computer esegua questo calcolo per noi. Non vogliamo affidarci a un'app o un sito già fatto per ogni singolo problema, ma imparare come \emph{programmare} il computer in modo da saper risolvere da soli qualunque nuovo problema ci capiti davanti.
 
 \chapter{Equazioni non lineari (zeri di funzione)}
 
@@ -241,7 +241,7 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
 
 \paragraph{Il problema} Data una funzione $f: [a,b] \to \mathbb{R}$, vogliamo calcolare uno \emph{zero della funzione}, cioè un punto $\alpha$ tale che $f(\alpha) = 0$. Un altro esempio semplice è il calcolo di radici $n$-esime: calcolare $\sqrt[n]{K}$ è equivalente a trovare uno zero della funzione $f(x) = x^n - K$.
 
-Ci potrebbero essere più soluzioni in un dato intervallo (a priori anche infinite!). Un modo conveniente di dimostrare che esiste \emph{almeno} una soluzione in un dato intervallo $[a,b]$ è mostrare che è un \emph{intervallo di separazione}, cioè $f(a)$ e $f(b)$ hanno segni opposti: $f(a)>0,f(b)<0$ oppure $f(a)>0,f(b)<0$. Un modo semplice di scrivere questa condizione è $f(a)f(b) < 0$. Difatti, ricordiamo questo teorema che avete visto ad analisi.
+Ci potrebbero essere più soluzioni in un dato intervallo (a priori anche infinite!). Un modo conveniente di dimostrare che esiste \emph{almeno} una soluzione in un dato intervallo $[a,b]$ è mostrare che è un \emph{intervallo di separazione}, cioè $f(a)$ e $f(b)$ hanno segni opposti: $f(a)>0,f(b)<0$ oppure $f(a)<0,f(b)>0$. Un modo semplice di scrivere questa condizione è $f(a)f(b) < 0$. Difatti, ricordiamo questo teorema che avete visto ad analisi.
 \begin{theorem}[Teorema di esistenza degli zeri]
 Sia $f \in \mathcal{C}^0([a,b])$. Se $f(a)$ e $f(b)$ hanno segno opposto (uno positivo e uno negativo), allora esiste almeno un reale $\alpha \in (a,b)$ tale che $f(\alpha) = 0$.
 \end{theorem}
@@ -439,7 +439,7 @@ Notiamo il fatto interessante che non importa che $f(c_k)$ sia piccolo in assolu
         \draw[domain=-1.5:4.5,smooth,variable=\x,blue] plot ({\x},{0.05*(\x-2)});      
     \end{tikzpicture}
 \end{center}
-È bene che il criterio di arresto che non dipenda solo dal valore della funzione, perché i valori assunti possono variare molto a seconda delle applicazioni: se la funzione $f$ per esempio misurasse le distanze tra gli atomi di una molecola, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$.
+È bene che il criterio di arresto non dipenda solo dal valore della funzione, perché i valori assunti possono variare molto a seconda delle applicazioni: se la funzione $f$ per esempio misurasse le distanze tra gli atomi di una molecola, la scala sull'asse delle $y$ sarà di circa $f(x) \approx 10^{-10}$.
 
 Ci manca ancora un ingrediente per completare questo criterio di arresto. Il valore di $f(c_k)$ viene calcolato lungo l'algoritmo, ma $f'(c_k)$ no, e calcolarlo può essere molto più complicato. Possiamo però rimpiazzarlo con un'altra approssimazione: se $c_k \in [a_k, b_k]$, allora
 \[
@@ -917,7 +917,7 @@ La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{ta
 
 Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_k = 1/k$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
 \begin{esempio}
-    Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{k+1} = x + \frac{1}{2} (x^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_k = \abs{x_k - \alpha}$ prodotti dal metodo, otteniamo
+    Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{k+1} = x_k + \frac{1}{2} (x_k^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_k = \abs{x_k - \alpha}$ prodotti dal metodo, otteniamo
     \begin{lstlisting}
 3.4142    2.4142    2.9142    2.7892    2.8439    2.8219    
 2.8311    2.8273    2.8289    2.8282    2.8285    2.8284
@@ -1196,7 +1196,7 @@ Dal teorema di Lagrange abbiamo
 \]
 per un punto $z_k \in (\alpha, x_k)$. Poiché $f(x_k)>0$ e $f(\alpha)=0$, ne segue che $f'(z_k) > 0$. Poiché $f''(x)\geq 0$, la funzione $f'(x)$ è crescente, e quindi $f'(x_k) \geq f'(z_k) > 0$. Questo assicura che possiamo applicare il metodo e costruire $x_{k+1}$ senza che si annulli il denominatore. Ora ci resta da mostrare che $x_{k+1} \in [\alpha, x_k]$.
 
-Per questo, consideriamo l'equazione che della retta tangente in $x_k$,
+Per questo, consideriamo l'equazione della retta tangente in $x_k$,
 \[
 y = T(x) = f(x_k) + f'(x_k)(x-x_k).
 \]
@@ -1260,7 +1260,7 @@ Esempio: la funzione $f(x) = \sin(2x) - 2\sin(x)$ ha uno zero di molteplicità $
 \[
     p(x) = (x-\alpha)^m g(x),
 \]
-dove $g(x)$ è il prodotto di tutti gli altri fattori di grado $1$ diversi da $(x-\alpha)$, allora $\alpha$ è uno zero di molteplicità $m$. Però la nostra definizione è più generale, in quanto si applica anche a funzioni che non sono polinomi.
+dove $g(x)$ è il prodotto di tutti gli altri fattori diversi da $(x-\alpha)$, allora $\alpha$ è uno zero di molteplicità $m$. Però la nostra definizione è più generale, in quanto si applica anche a funzioni che non sono polinomi.
 
 È possibile anche dimostrare una fattorizzazione simile a quella che si ha per i polinomi.
 \begin{lemma}
@@ -1694,12 +1694,12 @@ Ci sono due grossi cambiamenti rispetto alla~\eqref{rapprbase}: abbiamo $t$ cifr
 
 \paragraph{Esempio} Prendiamo i numeri di macchina costruiti con $\beta=10$, $t=3$, $m=-2$, $M=3$.
 
-Il numero di macchina positivo più piccolo è $10^{-2}(1 \cdot 10^{0} + 0 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.0100$. I numeri di macchina successivi si ottengono incrementando le cifre: $0.0101, 0.0102, \dots, 0.0999$. Altri numeri compresi tra due di questi, ad esempio $0.01005$, non si possono scrivere con sole $t=3$ cifre significative. A questo punto abbiamo elencato tutti i numeri con esponente $-2$; il numero di macchina ancora successivo è un numero con esponente $-1$: precisamente, $10^{-1}(1 \cdot 10^{0} + \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.100$. Si prosegue in questo modo, ottenendo
+Il numero di macchina positivo più piccolo è $10^{-2}(1 \cdot 10^{0} + 0 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.0100$. I numeri di macchina successivi si ottengono incrementando le cifre: $0.0101, 0.0102, \dots, 0.0999$. Altri numeri compresi tra due di questi, ad esempio $0.01005$, non si possono scrivere con sole $t=3$ cifre significative. A questo punto abbiamo elencato tutti i numeri con esponente $-2$; il numero di macchina ancora successivo è un numero con esponente $-1$: precisamente, $10^{-1}(1 \cdot 10^{0} + 0 \cdot 10^{-1} + 0 \cdot 10^{-2}) = 0.100$. Si prosegue in questo modo, ottenendo
 \begin{align*}
     &0.0100, 0.0101, 0.0102 \dots, 0.0999 & & \text{esponente $p=-2$}\\
     &0.100, 0.101, 0.102 \dots, 0.999 & & \text{esponente $p=-1$}\\
     &1.00, 1.01, 1.02, \dots, 9.99 & & \text{esponente $p=0$}\\
-    &10.0., 10.1, 10.2, \dots, 99.9 & & \text{esponente $p=1$}\\
+    &10.0, 10.1, 10.2, \dots, 99.9 & & \text{esponente $p=1$}\\
     &100, 101, 102, \dots, 999 & & \text{esponente $p=2$}\\
     &1000, 1010, 1020, \dots, 9990 & & \text{esponente $p=3$}\\
 \end{align*}
@@ -1718,7 +1718,7 @@ Il numero positivo più piccolo rappresentabile, che chiamiamo $\omega$, si otti
 
 Dato un numero di macchina normalizzato positivo 
 \[
-x = \beta^p \left(c_0 \beta^0 + c_1 \beta^1 + \ldots + c_{t-1} \beta^{-(t-1)} \right),
+x = \beta^p \left(c_0 \beta^0 + c_1 \beta^{-1} + \ldots + c_{t-1} \beta^{-(t-1)} \right),
 \]
 il numero di macchina immediatamente successivo è quello che si ottiene aggiungendo $1$ all'ultima cifra $c_{t-1}$, cioè $x + \beta^{p-(t-1)}$. Questo è chiaro se l'ultima cifra è diversa da $\beta-1$; se l'ultima cifra è $\beta-1$, aggiungendo 1 all'ultima cifra ci sono dei riporti: ad esempio, aggiungendo $0.0001$ a $0.0999$ otteniamo $0.1000$. Quando si hanno questi riporti, però, l'ultima cifra è sempre $0$, quindi siamo sempre in grado di scrivere questo numero $x + \beta^{p-(t-1)}$ come un numero di macchina, eventualmente cambiando esponente.
 
@@ -1782,7 +1782,7 @@ Il primo bit codifica il segno, i successivi 11 bit l'esponente, e i successivi 
 \end{conditional}
 
 
-Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di maccchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
+Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di macchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
 C'è anche un altro formato nello standard, chiamato \texttt{single} o \texttt{float32}, che può rappresentare numeri compresi tra $\omega \approx 10^{-38}$ e $\Omega \approx 10^{38}$ e ha precisione di macchina $\mathsf{u}\approx 10^{-7}$. Con questo formato gli errori sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno). I formati di numeri reali a disposizione nei vari linguaggi di programmazione tipicamente sono questi due (con vari nomi a seconda del linguaggio).
 
@@ -1838,7 +1838,7 @@ Le risposte sono queste:
 \paragraph{Commenti} Perché è stato scelto questo sistema per rappresentare i numeri reali sul computer? Esistono alternative, come rappresentare i numeri tramite razionali, cioè rapporti di interi (ma i denominatori diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici) o tenere traccia degli errori calcolando esplicitamente degli intervalli di inclusione per ogni quantità calcolata (ma gli intervalli diventano spesso \emph{molto} grandi anche quando si fanno operazioni semplici). Il sistema dei numeri di macchina è quello che si è affermato come il più comodo nelle applicazioni, ed è diventato lo standard. È un sistema che richiede di effettuare continuamente delle approssimazioni; per questo è importante comprendere teoricamente il loro impatto. Studieremo nel dettaglio questo tema nel prossimo capitolo.
 
 \begin{conditional}[inf]
-    Con il boom dei \emph{large language models}, negli ultimi anni sono diventati più comuni anche tipi di numeri a virgola mobile non standard, da 16 o addirittura 8 bit, che in passato erano poco più di una curiosità. Le operazioni in questi formati sono implementati in hardware solo su alcune GPU, e sono usati nel training di reti neurali: un'applicazione che è \emph{memory-bound} e può tollerare errori anche abbastanza grandi. (Questa \emph{non} è la stessa cosa della ``quantizzazione'' di cui forse avete sentito parlare provando a eseguire modelli in locale.)
+    Con l'esplosione dei \emph{large language models}, negli ultimi anni sono diventati più comuni anche tipi di numeri a virgola mobile non standard, da 16 o addirittura 8 bit, che in passato erano poco più di una curiosità. Le operazioni in questi formati sono implementate in hardware sulle GPU, e sono usati nel training di reti neurali: un'applicazione che è \emph{memory-bound} e può tollerare errori anche abbastanza grandi. (Questa \emph{non} è la stessa cosa della ``quantizzazione'' di cui forse avete sentito parlare provando a eseguire modelli in locale.)
 
     Nelle normali applicazioni scientifiche comunque si preferisce usare i formati standard a 32 e 64 bit, visto che un fattore importante è l'impatto degli errori di macchina, che può essere grosso.
 \end{conditional}
@@ -2241,7 +2241,7 @@ e quindi
 \end{center}
 e infine per una divisione $g(a,b) = a/b$
 \[
-\frac{\partial g(a,b)}{\partial a} \frac{a}{g(a,b)} = \frac{1}{b}\frac{a}{a/b} = 1, \quad \frac{\partial c}{\partial b} \frac{b}{a/b} = -\frac{a}{b^2}\frac{b}{a/b} = -1
+\frac{\partial g(a,b)}{\partial a} \frac{a}{g(a,b)} = \frac{1}{b}\frac{a}{a/b} = 1, \quad \frac{\partial g(a,b)}{\partial b} \frac{b}{a/b} = -\frac{a}{b^2}\frac{b}{a/b} = -1
 \]
 quindi
 \begin{center}
@@ -2256,7 +2256,7 @@ quindi
   \draw[->] (y) -- (sum) node[midway, above] {$-1$};
 \end{tikzpicture}
 \end{center}
-Questi calcoli ci dicono che coefficienti scrivere su ogni arco del nostro grafo, a seconda di a quale operazione elementare esso corrisponde. Se sugli archi del nostro grafo ci fossero avere operazioni più complesse che il computer è in grado di eseguire, per esempio un elevamento a potenza o un logaritmo, a ognuna di esse possiamo associare dei coefficienti di amplificazione in base alla formula~\eqref{ampliferrore}. Completiamo quindi il calcolo per il nostro esempio: i coefficienti di amplificazione lungo i due lati rimanenti sono $1$ e $-1$, quindi
+Questi calcoli ci dicono che coefficienti scrivere su ogni arco del nostro grafo, a seconda di a quale operazione elementare esso corrisponde. Se sugli archi del nostro grafo ci fossero operazioni più complesse che il computer è in grado di eseguire, per esempio un elevamento a potenza o un logaritmo, a ognuna di esse possiamo associare dei coefficienti di amplificazione in base alla formula~\eqref{ampliferrore}. Completiamo quindi il calcolo per il nostro esempio: i coefficienti di amplificazione lungo i due lati rimanenti sono $1$ e $-1$, quindi
 \begin{center}
 \begin{tikzpicture}[node distance=2cm, auto]
   % Nodes
@@ -2352,7 +2352,7 @@ Il grafo computazionale corrispondente a questa operazione è il seguente.
 \end{center}
 Ci sono diverse quantità che si semplificano: i quattro errori sugli input $\varepsilon_k = \frac{\tilde{x}_k - x_k}{x_k}$, per $k=1,2,3,4$, propagati lungo strade molto diverse producono quattro errori della stessa forma $\frac{x_k}{x_1+x_2+x_3+x_4}\varepsilon_k$. Non ci sorprende, perché già sappiamo che questo è il numero di condizionamento. 
 
-Chiamiamo invece $\varepsilon_{sk}$ l'errore introdotto sommando l'addendo $x_k$, per $k=2,3,\dots,n$; il termine che lo contiene diventa
+Chiamiamo invece $\varepsilon_{k}$ l'errore introdotto sommando l'addendo $x_k$, per $k=2,3,\dots,n$; il termine che lo contiene diventa
 \[
 \frac{x_1+\dots+x_k}{x_1+\dots+x_n}\varepsilon_k.
 \]
@@ -2425,7 +2425,7 @@ Dai due grafi leggiamo l'errore di macchina nei due casi:
 \varepsilon_{mac1} &= x\varepsilon_x + y\varepsilon_y + \varepsilon_1(x+y) + \varepsilon_2\\
 \varepsilon_{mac2} &= x\varepsilon_x + y\varepsilon_y + \varepsilon_3 + \varepsilon_4 + \varepsilon_5,\\
 \end{align*}
-dove $\varepsilon_1$ è l'errore sulla somma, $\varepsilon_5$ sul prodotto, e $\varepsilon_2,\varepsilon_3,\varepsilon_4$ sono errori su esponenziali; in particolare quindi $\abs{\varepsilon_k} \leq \mathsf{u}$ per $k=1,5$ e $\abs{\varepsilon_k} \leq C\mathsf{u}$ per $k=2,3,4$. Riconosciamo nei primi due addendi l'errore inerente (uguale per i due algoritmi); l'errore algoritmico nei due casi è limitato da $\abs{\varepsilon_{alg1}}\leq (C+\abs{x+y})\mathsf{u}$ e $\abs{\varepsilon_{alg1}}\leq (2C+1)\mathsf{u}$. Quindi quando $\abs{x+y}$ è piccolo conviene il primo algoritmo, quando è grande il secondo --- sempre se non ci sono overflow/underflow, che questa analisi non tratta. L'errore inerente è limitato da $\abs{\varepsilon_{in}} \leq (\abs{x}+\abs{y})\mathsf{u}$, quindi comunque anche il primo algoritmo è stabile.
+dove $\varepsilon_1$ è l'errore sulla somma, $\varepsilon_5$ sul prodotto, e $\varepsilon_2,\varepsilon_3,\varepsilon_4$ sono errori su esponenziali; in particolare quindi $\abs{\varepsilon_k} \leq \mathsf{u}$ per $k=1,5$ e $\abs{\varepsilon_k} \leq C\mathsf{u}$ per $k=2,3,4$. Riconosciamo nei primi due addendi l'errore inerente (uguale per i due algoritmi); l'errore algoritmico nei due casi è limitato da $\abs{\varepsilon_{alg1}}\leq (C+\abs{x+y})\mathsf{u}$ e $\abs{\varepsilon_{alg2}}\leq (2C+1)\mathsf{u}$. Quindi quando $\abs{x+y}$ è piccolo conviene il primo algoritmo, quando è grande il secondo --- sempre se non ci sono overflow/underflow, che questa analisi non tratta. L'errore inerente è limitato da $\abs{\varepsilon_{in}} \leq (\abs{x}+\abs{y})\mathsf{u}$, quindi comunque anche il primo algoritmo è stabile.
 
 Un altro esempio interessante è quello della quantità $f(x) = \frac{\log x}{x-1}$.
 
@@ -2580,7 +2580,7 @@ Semplifichiamo $\norm{\mathbf{v}}_p$, che è diverso da zero perché $\mathbf{v}
 \begin{align*}
 \norm{A}_{\infty} &= \max_{i=1}^n \sum_{j=1}^n \abs{A_{ij}},\\
 \norm{A}_{1} &= \max_{j=1}^n \sum_{i=1}^n \abs{A_{ij}},\\
-\norm{A}_2 &= \rho(A^TA)^{1/2}.
+\norm{A}_2 &= \rho(A^*A)^{1/2}.
 \end{align*}
 (Qui $\rho(\cdot)$ è di nuovo il raggio spettrale.)
 
@@ -2743,7 +2743,7 @@ Possiamo scrivere, a meno di termini di ordine superiore in $\varepsilon$, lo sv
 \end{equation}
 da cui
 \[
-\abs{\tilde{\lambda} - \lambda} \stackrel{.}{=} \varepsilon \frac{1}{\mathbf{y}^*\mathbf{x}} \mathbf{y}^* E \mathbf{x}
+\abs{\tilde{\lambda} - \lambda} \stackrel{.}{=} \varepsilon \frac{1}{\abs{\mathbf{y}^*\mathbf{x}}} \abs{\mathbf{y}^* E \mathbf{x}}
 \]
 
 Per concludere dimostriamo che $\abs{\mathbf{y}^* E \mathbf{x}} \leq \norm{\mathbf{y}}_2\norm{\mathbf{x}}_2$. Poiché $\mathbf{y}^* E \mathbf{x}$ è il prodotto scalare tra $\mathbf{y}$ e $E \mathbf{x}$, chiamando $\alpha$ l'angolo che formano abbiamo
@@ -2789,7 +2789,7 @@ Riarrangiando termini e prendendo i moduli otteniamo
 \]
 Questa uguaglianza è valida per ogni $i=1,2,\dots,n$. Scegliamo ora come $i$ l'indice $p$ (o uno degli indici) tale che il modulo $\abs{x_p}$ sia massimo. Poiché $\mathbf{x}\neq 0$, avremo $\abs{x_p} \neq 0$. Possiamo quindi riscrivere l'uguaglianza precedente per $i=p$ e dividere per $\abs{x_p}$ entrambi i lati, ottenendo
 \[
-\abs{\lambda - A_{pp}} \leq \sum_{\substack{j=1\\ j \neq p}}^n \abs{A_{pj}}\frac{\abs{x_j}}{\abs{x_p}} \leq \sum_{\substack{j=1\\ j \neq i}}^n \abs{A_{pj}}.
+\abs{\lambda - A_{pp}} \leq \sum_{\substack{j=1\\ j \neq p}}^n \abs{A_{pj}}\frac{\abs{x_j}}{\abs{x_p}} \leq \sum_{\substack{j=1\\ j \neq p}}^n \abs{A_{pj}}.
 \]
 L'ultima disuguaglianza segue dal fatto che $\abs{x_p}$ è massimo. Questa catena di disuguaglianze dimostra che $\lambda$ sta all'interno del cerchio $K_p$. Poiché $\lambda$ sta all'interno di almeno un cerchio, sta anche all'interno della loro unione.
 \end{proof}
@@ -2799,7 +2799,7 @@ Si può aggiungere al teorema anche quest'altro risultato, di cui non vediamo la
 \begin{theorem}[Secondo teorema di Gershgorin]
     Sotto le stesse ipotesi del teorema dei cerchi di Gershgorin, supponiamo che ci siano $k$ cerchi (per un $k=1,2,\dots$) che hanno unione disgiunta da tutti gli altri cerchi. Allora, questa unione contiene esattamente $k$ autovalori.
 \end{theorem}
-Per esempio, se un cerchio è disgiunto da tutti gli altri, allora contiene esattamente un autovalore. Se due cerchi che si intersecano sono disgiunti da tutti gli altri, allora la loro unione contiene esattamente due cerchi, e così via.
+Per esempio, se un cerchio è disgiunto da tutti gli altri, allora contiene esattamente un autovalore. Se due cerchi che si intersecano sono disgiunti da tutti gli altri, allora la loro unione contiene esattamente due autovalori, e così via.
 
 \begin{figure}
 \begin{center}
@@ -2903,7 +2903,7 @@ Si chiama \emph{fattorizzazione LU} di $A$ una decomposizione di una matrice $A\
     \item Puntiamo a fare combinazioni lineari delle \emph{righe} (non colonne) per trasformare $A$ in forma \emph{triangolare superiore}; non vogliamo eliminare anche gli elementi sopra il pivot per trasformare $A$ in una matrice diagonale, come talvolta si fa (eliminazione di Gauss--Jordan).
     \item Non facciamo (per ora) scambi di righe, e assumiamo (per ora) che tutti i pivot siano diversi da zero; in questo modo otterremo una matrice triangolare superiore con elementi diversi da zero sulla diagonale principale.
 \end{itemize}
-Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $A_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
+Partiamo definendo $U_1 = A$, e vogliamo applicare ripetutamente delle trasformazioni in modo da generare una sequenza di matrici $U_2, U_3, \dots, U_n$, dove l'ultima matrice $U_n$ è triangolare superiore. Supponiamo di aver già fatto $k-1$ passi ed essere al $k$-esimo. Abbiamo generato a partire da $A$ una matrice $U_k \in\mathbb{C}^{n\times n}$ che è parzialmente in forma triangolare superiore: in ogni colonna $j<k$, gli elementi sotto la diagonale sono nulli. 
 \[
 U_k = \begin{bmatrix}
     \ast & \dots & \ast & \ast & \ast & \dots & \ast\\
@@ -2915,7 +2915,7 @@ U_k = \begin{bmatrix}
     0& 0  &0 & (U_k)_{n,k} & \ast & \dots & \ast\\
 \end{bmatrix}
 \]
-(abbiamo chiamato $(A_k)_{ij}$ gli elementi della matrice $A_k$).
+(abbiamo chiamato $(U_k)_{ij}$ gli elementi della matrice $U_k$).
 Nel $k$-esimo passo, andiamo a introdurre zeri anche nella $k$-esima colonna, costruendo una nuova matrice 
 \[
 U_{k+1} = \begin{bmatrix}
@@ -3245,7 +3245,7 @@ Possiamo ora enunciare il risultato promesso.
 \end{proof}
 
 \begin{remark}
-    Nel codice che abbiamo scritto per la fattorizzazione LU non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece calcolato $U_{k+1}$ sommando opportuni multipli delle righe, quindi sfruttando la struttura delle matrici $E_k$. Questo è computazionalmente più efficiente: se avessimo scritto ogni passo dell'eliminazione di Gauss come un prodotto di matrici, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato  l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni in aritmetiche: più di quello che abbiamo speso per tutta la fattorizzazione!
+    Nel codice che abbiamo scritto per la fattorizzazione LU non abbiamo mai scritto esplicitamente moltiplicazioni di matrici \lstinline{Ek*Uk}, ma abbiamo invece calcolato $U_{k+1}$ sommando opportuni multipli delle righe, quindi sfruttando la struttura delle matrici $E_k$. Questo è computazionalmente più efficiente: se avessimo scritto ogni passo dell'eliminazione di Gauss come un prodotto di matrici, per esempio \lstinline{U2 = E1*U1}, Matlab avrebbe usato  l'algoritmo generale per calcolare un prodotto matrice-matrice, che è molto più costoso. Solo effettuare il prodotto $U_2 = E_1 U_1$ al primo passo avrebbe richiesto $2n^3 + \mathcal{O}(n^2)$ operazioni aritmetiche: più di quello che abbiamo speso per tutta la fattorizzazione!
 \end{remark}
 
 \paragraph{Esistenza della fattorizzazione LU}
@@ -3392,7 +3392,7 @@ Una matrice dominante diagonale è invertibile.
 \begin{proof}
 Partiamo studiando il caso in cui $A$ è dominante diagonale \emph{per righe}. Supponiamo invece (per assurdo) che $A\mathbf{x}=0$ per un qualche vettore $\mathbf{x}\neq 0$. Allora, $\mathbf{x}$ è un autovettore con autovalore $\lambda=0$. Per il teorema dei cerchi di Gershgorin, dovrà esistere un indice $p\in \{1,2,\dots,n\}$ tale che $0 \in K_p$. Ma questa relazione vuol dire che
 \[
-\abs{A_{pp}} = \abs{0 - A_{pp}} \leq \sum_{j\neq i} \abs{A_{ij}},
+\abs{A_{pp}} = \abs{0 - A_{pp}} \leq \sum_{j\neq p} \abs{A_{pj}},
 \]
 e quindi contraddice la dominanza diagonale.
 
@@ -3554,7 +3554,7 @@ for k = 1:n-1
     end
 end    
 \end{lstlisting}
-Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,n}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
+Il secondo argomento di output della funzione \lstinline{max}, che abbiamo salvato nella variabile \lstinline{posizione}, restituisce un indice all'interno del vettore di $n-k+1$ elementi $U_{k:n,k}$: se per esempio l'elemento di modulo massimo fosse il primo, \lstinline{posizione = 1}, però questa posizione 1 corrisponde alla riga $k$ della matrice $U$. Per convertire questa posizione in un indice di riga, dobbiamo sommare $k-1$.
 
 Il vantaggio dell'eliminazione di Gauss con pivoting è che non incontriamo mai pivot nulli, a patto di partire da una matrice invertibile:
 \begin{theorem}
@@ -3633,14 +3633,14 @@ A_\alpha =
 Soluzione:
 \begin{enumerate}
     \item I cerchi di Gershgorin hanno tutti centro $1$ e raggio $\abs{\alpha}$. Se $\abs{\alpha} < 1$, allora $0$ non appartiene all'unione dei cerchi di Gershgorin, quindi non è un autovalore della matrice $A_\alpha$; pertanto $A_\alpha$ è invertibile. Se invece $\abs{\alpha} \geq 1$, allora $1$ sta all'interno dell'unione dei cerchi, quindi il teorema non ci permette di concludere nulla: $0$ potrebbe essere autovalore oppure no.
-    \item Le sottomatrici di testa fino all'ordine $n-1$ sono tutte triangolare inferiori con $1$ sulla diagonale; quindi sono invertibili per ogni valore di $\alpha\in\mathbb{C}$.
+    \item Le sottomatrici di testa fino all'ordine $n-1$ sono tutte triangolari inferiori con $1$ sulla diagonale; quindi sono invertibili per ogni valore di $\alpha\in\mathbb{C}$.
     \item Eseguiamo l'eliminazione di Gauss: al primo passo, l'unico elemento da eliminare è quello in posizione $(2,1)$, e per farlo dobbiamo sottrarre $-\alpha$ volte la riga 1 dalla riga 2 (occhio al doppio segno $-$).
     \[
         U_1 = A; \, U_2 = \begin{bmatrix}
             1  & 0 &  0& \dots  & 0 &  -\alpha\\
             0 & 1 & 0 & \dots & 0 & -\alpha^2\\
             0& -\alpha & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
+            & & -\alpha & 1\\
             & & & \ddots & \ddots & \\
             & & &  &-\alpha & 1      
         \end{bmatrix}
@@ -3651,7 +3651,7 @@ Soluzione:
             1  & 0 &  0& \dots  & 0 &  -\alpha\\
             0 & 1 & 0 & \dots & 0 & -\alpha^2\\
             0& 0 & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
+            & & -\alpha & 1\\
             & & & \ddots & \ddots & \\
             & & &  &-\alpha & 1      
         \end{bmatrix}.
@@ -3673,7 +3673,7 @@ Soluzione:
             0& 0 & 1 & \dots  & 0 & 0\\
             & & \ddots & \ddots\\
             & & & -\alpha & 1 & -\alpha^{n-1}\\
-            & & &  & 0 & 1-\alpha_n
+            & & &  & 0 & 1-\alpha^n
         \end{bmatrix}.
     \]
     Quindi otteniamo la fattorizzazione $A=LU$ con
@@ -3682,7 +3682,7 @@ Soluzione:
             1  & 0 &  0& \dots  & 0 &  0\\
             -\alpha & 1 & 0 & \dots & 0 & 0\\
             0& -\alpha & 1 & \dots  & 0 & 0\\
-            & & \alpha & 1\\
+            & & -\alpha & 1\\
             & & & \ddots & \ddots & \\
             & & &  &-\alpha & 1      
         \end{bmatrix}, \quad U = \begin{bmatrix}
@@ -3691,7 +3691,7 @@ Soluzione:
             0& 0 & 1 & \dots  & 0 & 0\\
             & & \ddots & \ddots\\
             & & & 0 & 1 & -\alpha^{n-1}\\
-            & & &  & 0 & 1-\alpha_n
+            & & &  & 0 & 1-\alpha^n
         \end{bmatrix}.
     \]
     Ricordiamo che la matrice $L$ è ottenuta a partire dalla matrice identità inserendo sotto la diagonale tutti i moltiplicatori utilizzati nell'eliminazione.
@@ -3896,9 +3896,9 @@ già dopo il primo passaggio otteniamo una matrice con molti più non-zeri di qu
     0 & * & * & * & * & *\\
 \end{bmatrix}.
 \]
-Esistono metodi per risolvere sistemi lineari che riescono a sfruttare il fatto che $A$ sia una matrice sparsa, ottenendo un minore costo computazionale rispetto a $\mathcal{O}(n^3)$. Questi metodi sono molto simili a quelli che abbiamo visto nella prima sezione: producono, passo dopo passo, una successione di vettori, $\x^{(1)}, \x^{(2)}, \x^{(3)},\dots,\x^{(3)}, \dots$ (ogni $\x^{(i)}$ è un vettore; mettiamo l'indice in alto per non confonderci con gli elementi). Sotto condizioni opportune (che vedremo), questa successione converge alla soluzione $\x$ di $A\x=\b$.
+Esistono metodi per risolvere sistemi lineari che riescono a sfruttare il fatto che $A$ sia una matrice sparsa, ottenendo un minore costo computazionale rispetto a $\mathcal{O}(n^3)$. Questi metodi sono molto simili a quelli che abbiamo visto nella prima sezione: producono, passo dopo passo, una successione di vettori, $\x^{(1)}, \x^{(2)}, \x^{(3)},\dots$ (ogni $\x^{(i)}$ è un vettore; mettiamo l'indice in alto per non confonderci con gli elementi). Sotto condizioni opportune (che vedremo), questa successione converge alla soluzione $\x$ di $A\x=\b$.
 
-\paragraph{Metodi iterativi basati su splitting} Descriviamo ora un modo per ottenere un metodo iterativo a partire da uno \emph{splitting} della matrice $A$, cioè una scrittura del tipo $A = M - N$, dove $M\in\mathbb{C}^{n\times n}$ è una matrice invertibile. La soluzione $\x\in\mathbb{C}^{n\times n}$ del sistema lineare soddisfa
+\paragraph{Metodi iterativi basati su splitting} Descriviamo ora un modo per ottenere un metodo iterativo a partire da uno \emph{splitting} della matrice $A$, cioè una scrittura del tipo $A = M - N$, dove $M\in\mathbb{C}^{n\times n}$ è una matrice invertibile. La soluzione $\x\in\mathbb{C}^{n}$ del sistema lineare soddisfa
 \begin{equation} \label{solsistema}
     A\x = \b \iff (M-N)\x=\b \iff M\x = \b + N\x  \iff \x = M^{-1}(\b + N\x)
 %    \underbrace{M^{-1}N}_{=H}x + \underbrace{M^{-1}b}_{=c}.
@@ -3912,7 +3912,7 @@ Questo suggerisce di impostare un'iterazione di punto fisso
 \end{equation}
 Notiamo che questa iterazione si può implementare in modo efficiente se abbiamo un modo efficiente di risolvere il sistema lineare $M\x^{(k+1)} = \b + N\x^{(k)}$: per esempio, se $M$ è triangolare possiamo usare un processo di sostituzione. Tipicamente \emph{non} vogliamo calcolare $M^{-1}$, né tantomeno $M^{-1}N$, perché questo sarebbe troppo costoso.
 
-La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $x_{k+1} = \Phi(x_k)$ che abbiamo già visto per equazioni non lineari. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando $\x^{(1)}$ è sufficientemente vicino alla soluzione esatta $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo. Questa è una conseguenza della linearità.
+La~\eqref{iterlin} è una versione ``multidimensionale'' del metodo di punto fisso $x_{k+1} = \Phi(x_k)$ che abbiamo già visto per equazioni non lineari. Parlando di quel metodo, avevamo visto che spesso la convergenza avviene solo quando il punto iniziale $\x^{(0)}$ è sufficientemente vicino alla soluzione $\x$. Per questi metodi, invece, la convergenza solitamente \emph{non} dipende dal punto iniziale, come vedremo. Questa è una conseguenza della linearità.
 
 \paragraph{Metodi di Jacobi e Gauss--Seidel} Due metodi iterativi sono particolarmente comuni per la loro semplicità. Il \emph{metodo di Jacobi} si ottiene scegliendo come $M$ una matrice diagonale che ha elementi diagonali uguali a quelli di $A$, cioè
 \[
@@ -4120,7 +4120,7 @@ semplificando le coppie $V^{-1}V=I$ che compaiono. Se $\rho(H) < 1$, allora $\ab
 \[
 \lim_{k\to\infty} \mathbf{e}^{(k)} = \lim H^k \mathbf{e}^{(0)} = \lim VD^k V^{-1} \mathbf{e}^{(0)} = 0.
 \]
-Questo conclude (con l'ipotesi aggiuntiva che $k$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta: se $\rho(H)\geq 1$, allora il metodo non converge (per ogni scelta del punto iniziale $\x^{(0)}$). Per fare questo, ci basta dimostrare che se $H$ ha un autovalore e un autovettore $H\mathbf{v} = \mathbf{v} \lambda$, con $\abs{\lambda} \geq 1$, allora esiste \emph{almeno una} scelta di $\x^{(0)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Prendiamo $\x^{(0)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(0)} = \x^{(0)} - \x = \mathbf{v}$, e 
+Questo conclude (con l'ipotesi aggiuntiva che $H$ sia diagonalizzabile) la dimostrazione che se $\rho(H)<1$ allora il metodo è convergente. Visto che questo è un ``se e solo se'', vogliamo però dimostrare anche l'implicazione opposta: se $\rho(H)\geq 1$, allora il metodo non converge (per ogni scelta del punto iniziale $\x^{(0)}$). Per fare questo, ci basta dimostrare che se $H$ ha un autovalore e un autovettore $H\mathbf{v} = \mathbf{v} \lambda$, con $\abs{\lambda} \geq 1$, allora esiste \emph{almeno una} scelta di $\x^{(0)}$ per cui l'errore $\e^{(k)}$ non converge a zero. Prendiamo $\x^{(0)} = \x + \mathbf{v}$. Allora abbiamo $\e^{(0)} = \x^{(0)} - \x = \mathbf{v}$, e 
 \begin{align*} \label{nonconverge}
     \e^{(1)} &= He^{(0)} = H\mathbf{v} = \mathbf{v}\lambda,\\
     \e^{(2)} &= He^{(1)} = H\mathbf{v}\lambda = \mathbf{v}\lambda^2,\\
@@ -4135,7 +4135,7 @@ Visto che $\rho(H) \leq \norm{H}_p$ per ogni norma matriciale indotta, abbiamo a
 \begin{corollary}
 Se $\norm{H}_p < 1$ per una qualunque norma matriciale indotta, allora il metodo iterativo~\eqref{iterlin} è convergente.
 \end{corollary}
-Attenzione: questo risultato \emph{non} è un ``se e solo se'': se $\norm{H}_p \geq 1$, non possiamo dire se $\rho(p)$ è minore di 1 oppure no. In particolare, poi, esistono anche matrici per cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
+Attenzione: questo risultato \emph{non} è un ``se e solo se'': se $\norm{H}_p \geq 1$, non possiamo dire se $\rho(H)$ è minore di 1 oppure no. In particolare, esistono anche matrici per cui alcune norme matriciali indotte sono minori di 1 e altre maggiori di 1.
 
 È possibile dimostrare anche che per ogni norma vettoriale vale
 \[
@@ -4354,7 +4354,7 @@ In un sistema di questo tipo, la soluzione spesso non esiste: abbiamo più equaz
 \end{equation}
 Visto che ho più equazioni che incognite, non è garantito che esista un vettore $\x$ che soddisfa tutte e tre le equazioni. Per esempio, il vettore che soddisfa le prime due equazioni è $\x_1 = \begin{bsmallmatrix}1.5\\0.5\end{bsmallmatrix}$, ma la terza equazione non è soddisfatta, e si ha $A\x_1 - \b = \begin{bsmallmatrix}0\\0\\-0.5\end{bsmallmatrix}$.
 
-Similmente, se prendiamo il vettore $\x_2$ che soddisfa la seconda e la terza equazione, abbiamo $\x_2 = \begin{bsmallmatrix}2\\1\end{bsmallmatrix}$; questa volta la prima equazione non è soddisfatta e si ha $A\x_1 - \b = \begin{bsmallmatrix}1\\0\\0\end{bsmallmatrix}$.
+Similmente, se prendiamo il vettore $\x_2$ che soddisfa la seconda e la terza equazione, abbiamo $\x_2 = \begin{bsmallmatrix}2\\1\end{bsmallmatrix}$; questa volta la prima equazione non è soddisfatta e si ha $A\x_2 - \b = \begin{bsmallmatrix}1\\0\\0\end{bsmallmatrix}$.
 
 In un certo senso però $\x_1$ è ``meno sbagliato'' di $\x_2$, visto che $A\x_1$ è più vicino a $\b$ che non $A\x_2$: difatti $\norm{A\x_1-\b} = 0.5$, $\norm{A\x_2 - \b} = 1$, per tutte e tre le norme che abbiamo visto. Da questo punto di vista, ha senso chiedersi qual è il vettore $\x$ per cui $A\x$ è più vicino a $\b$.
 
@@ -4363,7 +4363,7 @@ Sorprendentemente, questo problema di risolvere approssimativamente equazioni ha
 \begin{equation} \label{prezzocase}
     P \approx x_1 M + x_2 D    
 \end{equation}
-dove $P$ è il prezzo, $D$ è la distanza dal centro, e $x_1,x_2$ sono due coefficienti. Non sappiamo il valore esatto di $x_1$ e $x_2$, e anzi visto che si tratta di una relazione approssimata non esiste un vero e proprio valore esatto. Ma se abbiamo a disposizione prezzo, metratura e distanza di $m>2$ case, abbiamo $m$ equazioni approssimate con la stessa forma della~\eqref{prezzocase}. Risolvendole, possiamo trovare il valore ``meno sbagliato'' di $x_1$ e $x_2$, e usare questi valori per esempio per stimare il prezzo di una nuova casa che entra sul mercato.
+dove $P$ è il prezzo, $M$ la metratura, $D$ la distanza dal centro, e $x_1,x_2$ sono due coefficienti. Non sappiamo il valore esatto di $x_1$ e $x_2$, e anzi visto che si tratta di una relazione approssimata non esiste un vero e proprio valore esatto. Ma se abbiamo a disposizione prezzo, metratura e distanza di $m>2$ case, abbiamo $m$ equazioni approssimate con la stessa forma della~\eqref{prezzocase}. Risolvendole, possiamo trovare il valore ``meno sbagliato'' di $x_1$ e $x_2$, e usare questi valori per esempio per stimare il prezzo di una nuova casa che entra sul mercato.
 
 Questo tipo di analisi è molto comune in statistica (dove è nota come \emph{regressione lineare}), e in un certo senso è la forma più semplice di \emph{machine learning}, apprendimento automatico: risolvendo un sistema di equazioni, il computer ``impara'' a stimare il valore di una casa.
 
@@ -4421,7 +4421,7 @@ Allora si ha
 \[
 \norm{A(\x+\mathbf{z})-\b}_2^2 = \mathbf{s}^T \mathbf{s} + \mathbf{r}^T \mathbf{r} \geq \mathbf{r}^T\mathbf{r}.
 \]
-Difatti $\mathbf{s}^T\mathbf{s} = s_1^2 + s_2^2 + \dots + s_m^2 \geq 0$ è positivo. Questo dimostra che $\mathbf{r}(\x +\mathbf{z})$ ha norma maggiore o uguale a quella di $\mathbf{r}(\x)$ per ogni scelta del vettore $\z$.
+Difatti $\mathbf{s}^T\mathbf{s} = s_1^2 + s_2^2 + \dots + s_m^2 \geq 0$ è maggiore o uguale a zero. Questo dimostra che $\mathbf{r}(\x +\mathbf{z})$ ha norma maggiore o uguale a quella di $\mathbf{r}(\x)$ per ogni scelta del vettore $\z$.
 \end{proof}
 Quindi per trovare la soluzione $\x$ di questo problema ci basta risolvere il sistema di equazioni
 \begin{equation} \label{eqnormali}
@@ -4595,7 +4595,7 @@ Queste uguaglianze ci dicono che il polinomio $a(x) = a_0 + a_1 x + a_2 x^2 + \d
 \end{proof}
 Dall'invertibilità di questa matrice segue che il problema dell'interpolazione polinomiale è sempre risolubile, cioè vale questo risultato.
 \begin{theorem}[esistenza e unicità del polinomio di interpolazione]
-Date $n+1$ coppie $(x_0,y_0),\dots,(x_d,y_d)$, con gli $x_i$ tutti diversi tra loro, esiste uno e un solo polinomio $p(x)$ di grado minore o uguale a $d$ tale che $p(x_i)=y_i$ per ogni $i=0,1,\dots,d$.
+Date $d+1$ coppie $(x_0,y_0),\dots,(x_d,y_d)$, con gli $x_i$ tutti diversi tra loro, esiste uno e un solo polinomio $p(x)$ di grado minore o uguale a $d$ tale che $p(x_i)=y_i$ per ogni $i=0,1,\dots,d$.
 \end{theorem}
 
 \paragraph{Esempio} Cerchiamo il polinomio di grado minore o uguale a $d=2$ che passa per i tre punti $(x_0,y_0) = (1,2)$, $(x_1,y_1) = (2,5)$, $(x_2,y_2) = (3,7)$. Questo equivale a trovare il polinomio $p(x) = \alpha_0 + \alpha_1 x + \alpha_2 x^2$ che risolve il sistema $X\mathbf{\alpha} = \mathbf{y}$
@@ -4612,7 +4612,7 @@ Date $n+1$ coppie $(x_0,y_0),\dots,(x_d,y_d)$, con gli $x_i$ tutti diversi tra l
         2\\5\\7
     \end{bmatrix}.
 \]
-Risolvendo il sistema (per esempio con \lstinline{X \ y} in Matlab, dopo aver definito $X$ e $\mathbf{y}$) si ottengono i coefficienti del polinomio $p(x) = -2 + 4.5 x = 0.5x^2$, che effettivamente soddisfa le tre condizioni cercate. Questo è l'unico polinomio di grado minore o uguale a due che soddisfa le tre condizioni; ne esistono altri di grado maggiore: si può mostrare (qui non lo vediamo nel dettaglio) che sono tutti i polinomi della forma $p(x) = -2 + 4.5 x = 0.5x^2 + (x-1)(x-2)(x-3)q(x)$, dove $q(x)$ è un qualunque altro polinomio; difatti vediamo che l'ultimo addendo si annulla per $x=1,x=2$, e $x=3$. 
+Risolvendo il sistema (per esempio con \lstinline{X \ y} in Matlab, dopo aver definito $X$ e $\mathbf{y}$) si ottengono i coefficienti del polinomio $p(x) = -2 + 4.5 x - 0.5x^2$, che effettivamente soddisfa le tre condizioni cercate. Questo è l'unico polinomio di grado minore o uguale a due che soddisfa le tre condizioni; ne esistono altri di grado maggiore: si può mostrare (qui non lo vediamo nel dettaglio) che sono tutti i polinomi della forma $p(x) = -2 + 4.5 x - 0.5x^2 + (x-1)(x-2)(x-3)q(x)$, dove $q(x)$ è un qualunque altro polinomio.
 
 Notare che sul grado abbiamo solo una disuguaglianza: nulla vieta che il coefficiente $\alpha_d$ (o anche quelli precedenti) sia uguale a zero per una particolare scelta dei punti $(x_i,y_i)$. Per esempio, se modifichiamo i dati in $(1,3), (2,5), (3,7)$ (che sono tre punti allineati), allora il polinomio di grado $\leq 2$ che passa esattamente per questi punti è $p(x)=1+2x+0x^2 = 1+2x$, che ha grado $1$ perché $\alpha_2 = 0$. 
 
@@ -5078,7 +5078,7 @@ Questo non è il comportamento che ci aspettiamo da una funzione ``semplice'' ch
 
 Possiamo dare una formula esplicita per la soluzione del problema dell'interpolazione polinomiale. Fissati i nodi distinti $x_0,x_1,\dots,x_d$, definiamo i \emph{polinomi di Lagrange}
 \[
-L_k(x) = \frac{\prod_{j\neq k}(x - x_j)}{\prod_{j\neq k}(x_k - x_j)}, \quad k=1,2,\dots,d.
+L_k(x) = \frac{\prod_{j\neq k}(x - x_j)}{\prod_{j\neq k}(x_k - x_j)}, \quad k=0,1,\dots,d.
 \]
 Ad esempio, se i nodi sono $x_0 = 1, x_1 = 2, x_2 = 4$, abbiamo
 \[
@@ -5183,7 +5183,7 @@ Utilizzando questo lemma, possiamo dimostrare il teorema del resto dell'interpol
     \[
     h(t) = f(t) - p(t) - K (t-x_0)(t-x_1)\dotsm(t-x_d).
     \]
-    Questa funzione dipende da una costante $s\in\mathbb{R}$. Scegliamo il valore di $K$ in modo che $h(x)=0$:
+    Questa funzione dipende da una costante $K\in\mathbb{R}$. Scegliamo il valore di $K$ in modo che $h(x)=0$:
     \[
     K = \frac{f(x)-p(x)}{(x-x_0)(x-x_1)\dotsm(x-x_d)}.
     \]
@@ -5367,7 +5367,7 @@ I \approx \sum_{i=1}^n w_i f(x_i) = w_1 f(x_1) + w_2 f(x_2) + \dots + w_n f(x_n)
 \]
 dove $w_i$ sono detti \emph{pesi} e $x_i$ \emph{nodi} della formula, e sono scelti indipendentemente da $f$ (ma tipicamente dipendono dall'intervallo $[a,b]$).
 
-Il costo computazionale di applicare una formula di quadratura con $n$ pesi e nodi è di $n$ valutazioni della funzione $f$, più poche altre operazioni ($2n-1$ per la precisione). Poiché il calcolo della funzione $f$ richiede un numero variabile di operazioni (e potenzialmente molto grande), esprimiamo il costo computazionale in termini di qaunte volte va valutata la funzione, esattamente come abbiamo fatto in passato per gli algoritmi per risolvere equazioni non lineari.
+Il costo computazionale di applicare una formula di quadratura con $n$ pesi e nodi è di $n$ valutazioni della funzione $f$, più poche altre operazioni ($2n-1$ per la precisione). Poiché il calcolo della funzione $f$ richiede un numero variabile di operazioni (e potenzialmente molto grande), esprimiamo il costo computazionale in termini di quante volte va valutata la funzione, esattamente come abbiamo fatto in passato per gli algoritmi per risolvere equazioni non lineari.
 
 \paragraph{Suddivisione di un intervallo in sottointervalli uguali} Un'operazione che ci servirà fare diverse volte nel seguito sarà quella di suddividere un intervallo $[a,b]$ in un certo numero di sottointervalli uguali. Vediamo qui delle formule che permettono di dare un'espressione per i punti risultanti. Per aiutarci, mostriamo un esempio con $n=5$ sottointervalli.
 \begin{center}
@@ -5521,7 +5521,7 @@ Per le somme destre $\tilde{I}_{R,n}$ vale la stessa disuguaglianza, che si dimo
 
 Ci può venire qualche dubbio che la funzione $f'(\xi_k)(x - x_k)$ sia integrabile, visto che i teoremi sullo sviluppo di Taylor non ci dicono nulla su come è scelto $\xi_k$, ma possiamo notare che $f'(\xi_k)(x - x_k) = f(x) - f(x_k)$, e la funzione a destra dell'uguale è sicuramente continua in $x$.
 
-La formula~\eqref{Riemann sum error} ci dice che quando usiamo valori più grandi di $n$ abbiamo valori di $h$ più piccoli, e $\tilde{I}_{L,n}$ converge al valore esstto dell'integrale $I$ quando $n\to \infty$. L'errore è proporzionale a $h$, quindi possiamo scriverlo cone $\mathcal{O}(h)$. Vediamo ora che una piccola modifica al metodo ci permette di ottenere una convergenza più veloce (e quindi un errore più piccolo).
+La formula~\eqref{Riemann sum error} ci dice che quando usiamo valori più grandi di $n$ abbiamo valori di $h$ più piccoli, e $\tilde{I}_{L,n}$ converge al valore esatto dell'integrale $I$ quando $n\to \infty$. L'errore è proporzionale a $h$, quindi possiamo scriverlo come $\mathcal{O}(h)$. Vediamo ora che una piccola modifica al metodo ci permette di ottenere una convergenza più veloce (e quindi un errore più piccolo).
 
 \paragraph{Formula del punto medio}
 In questo metodo, invece di prendere come altezza del rettangolo il valore della funzione nell'estremo sinistro o destro dell'intervallo, usiamo il valore nel punto medio:
@@ -6032,7 +6032,7 @@ Come nel caso della formula dei trapezi, possiamo scrivere la formula risultante
 \begin{align*}
     \tilde{I}_{CS,n} &= \sum_{k=0}^{n-1} \frac{x_{k+1}-x_k}{6}\left(f(x_k)+4f\left(\frac{x_k+x_{k+1}}{2}\right) + f(x_{k+1})\right)\\
     &= \frac{h}{6} \left( f(x_0) + 4f\left(\frac{x_0+x_1}{2}\right) + f(x_1) + f(x_1) + \dots + 4f\left(\frac{x_{n-1}+x_n}{2}\right) +  f(x_n)   \right)\\
-    &= \frac{h}{6} \left(f(x_0) + 2\sum_{k=1}^{n-1}f(x_k) + f(x_n) \right) \frac{4h}{6} \sum_{k=0}^{n-1} f\left(\frac{x_{k}+x_{k+1}}{2}\right) \\
+    &= \frac{h}{6} \left(f(x_0) + 2\sum_{k=1}^{n-1}f(x_k) + f(x_n) \right) + \frac{4h}{6} \sum_{k=0}^{n-1} f\left(\frac{x_{k}+x_{k+1}}{2}\right) \\
     &= \frac13 \tilde{I}_{T,n} +\frac{2}{3}\tilde{I}_{M,n}.
 \end{align*}
 Nell'ultima riga di questa catena di uguaglianze compare il fatto interessante che il metodo di Cavalieri--Simpson si può scrivere come una media pesata del metodo del punto medio e di quello dei trapezi.
@@ -6090,7 +6090,7 @@ Questa è la formulazione più generale, ma in molti esempi $m=1$ e quindi il pr
 \begin{equation} \label{testproblem}
     \begin{cases}
     y'(t) = \lambda y(t), \quad y: [0,1] \to \mathbb{R}\\  
-    y(0) = y_0,
+    y(0) = 1,
     \end{cases}
 \end{equation}
 in cui quindi abbiamo $f(t, y) = \lambda y$. La soluzione di questo problema è $y(t) = \exp( \lambda t)$.
@@ -6158,7 +6158,7 @@ Questa volta la funzione $\f(t,\y)$ al membro di destra dipende sia dalla $t$ ch
 
 La maggior parte degli algoritmi che vedremo calcolano un'approssimazione dei valori assunti dalla soluzione $\y(t)$ su una griglia di punti equispaziati in $[a,b]$: useremo la notazione già vista nel capitolo scorso
 \[
-h = \frac{b-a}{n}, \quad t_k = a + kh, \quad n = 0,1,2,\dots,n.
+h = \frac{b-a}{n}, \quad t_k = a + kh, \quad k = 0,1,2,\dots,n.
 \]
 Chiameremo queste approssimazioni $\y_k \approx \y(t_k)$, per $k = 1,2,\dots, n$. Vediamo un esempio qui sotto. Notare che i punti neri \emph{non} stanno esattamente sul grafico della funzione.
 
@@ -6365,7 +6365,7 @@ Pertanto rimettendo insieme tutti i pezzi abbiamo per ogni $k=1,2,\dots,n$
 \[
 E_n \leq (A^{n-1}+ \dots + A^2 + A + 1)B \leq \frac{e^{(b-a)L}-1}{hL} \frac{h^2}{2}C_2 = \frac{(e^{(b-a)L}-1) C_2}{2L} h.
 \]
-Le quantità $C_2, L, b-a$ sono costanti che non dipendono da $N$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
+Le quantità $C_2, L, b-a$ sono costanti che non dipendono da $n$, quindi possiamo affermare che $E_n = \mathcal{O}(h)$.
 \end{proof}
 
 \paragraph{Metodi generali a un passo}
@@ -6432,7 +6432,7 @@ Un metodo di Runge--Kutta è \emph{esplicito} se nella tavola di Butcher la matr
         a_{s1} & \dots & a_{ss}
     \end{bmatrix}
 \]
-è strettamente triangolare superiore, cioè $a_{ij}=0$ se $i \leq j$ (inclusi gli elementi sulla diagonale). In questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo. Altrimenti abbiamo un metodo \emph{implicito}: è necessario risolvere un sistema di equazioni non-lineari per calcolare i $\mathbf{k}_i$, analogamente a quello che succede nel metodo di Eulero implicito.
+è strettamente triangolare inferiore, cioè $a_{ij}=0$ se $i \leq j$ (inclusi gli elementi sulla diagonale; devono essere zero anche quelli). In questo caso è possibile calcolare esplicitamente i valori di $\mathbf{k}_i$ uno per volta a partire dal primo. Altrimenti abbiamo un metodo \emph{implicito}: è necessario risolvere un sistema di equazioni non-lineari per calcolare i $\mathbf{k}_i$, analogamente a quello che succede nel metodo di Eulero implicito.
 
 \paragraph{Esempio: un metodo esplicito}
 Consideriamo il metodo con tavola di Butcher
@@ -7336,8 +7336,8 @@ p_1(z) = \alpha_0 + \alpha_1 z + \dots + \alpha_s z^s
 \]
 il suo polinomio associato (di grado $s$). 
 \begin{itemize}
-    \item Se $p_1(z)$ ha $s$ zeri distinti nel piano complesso $\lambda_1, \lambda_2,\dots, \lambda_s$, allora ogni soluzione della~\eqref{ricorrenza} si scrive come combinazione lineare delle soluzioni di base $\lambda_1^k, \lambda_2^k, \dots, \lambda_s^k$.
-    \item Per ogni zero $\lambda$ di $p_1(z)$ ripetuto con molteplicità $m>1$, come soluzioni di base invece di prendere $m$ copie di $\lambda$ dobbiamo prendere $\lambda^n, n\lambda^n, n^2\lambda^n,\dots, n^{m-1}\lambda^n$.
+    \item Se $p_1(z)$ ha $s$ zeri distinti nel piano complesso $\lambda_1, \lambda_2,\dots, \lambda_s$, allora ogni soluzione $y_k$ della~\eqref{ricorrenza} si scrive come combinazione lineare delle soluzioni di base $\lambda_1^k, \lambda_2^k, \dots, \lambda_s^k$.
+    \item Per ogni zero $\lambda$ di $p_1(z)$ ripetuto con molteplicità $m>1$, come soluzioni di base invece di prendere $m$ copie di $\lambda$ dobbiamo prendere $\lambda^k, k\lambda^k, k^2\lambda^k,\dots, k^{m-1}\lambda^k$.
 \end{itemize}
 \end{theorem}
 
@@ -7367,7 +7367,7 @@ Un metodo lineare a più passi si dice \emph{zero-stabile} se il suo primo polin
 
 \paragraph{Esempio} Consideriamo il metodo~\eqref{ab2}. Il primo polinomio caratteristico è $z^2-z$; difatti, $\alpha_2=1, \alpha_1=-1, \alpha_0 = 0$. Questo polinomio ha zeri $\lambda=1$ e $\lambda=0$. In particolare, esso soddisfa la condizione delle radici, quindi il metodo è zero-stabile.
 
-Notiamo che $\alpha = 1$ è sempre una radice del primo polinomio caratteristico, per ogni metodo consistente: altrimenti è impossibile che si abbia $\boldsymbol{\tau}_k \to \mathbf{0}$, già solo considerando il problema $y'=0$.
+Notiamo che $z = 1$ è sempre una radice del primo polinomio caratteristico, per ogni metodo consistente: altrimenti è impossibile che si abbia $\boldsymbol{\tau}_k \to \mathbf{0}$, già solo considerando il problema $y'=0$.
 
 La zero-stabilità sembra un concetto di poco rilievo, visto che ci concentriamo su un problema molto facile e di poco interesse; in realtà ha una conseguenza importante, perché ci assicura che piccole perturbazioni nei dati iniziali $\y_1,\dots,\y_{s-1}$ non causano errori molto più grandi sugli elementi successivi della successione. Questo è il motivo per cui compare tra le ipotesi del teorema di equivalenza di Dahlquist enunciato sopra.
 
@@ -7393,7 +7393,7 @@ Come conseguenza del Teorema~\ref{thm:eq-differenze}, possiamo quindi scrivere i
 \[
     \pi_q(z) = (z^2 -z) - q\left(\frac{3}{2}z - \frac{1}{2}\right) = z^2 - \left(1+\frac32 q\right) z + \frac12 q.
 \]
-Possiamo calcolare le sue soluzioni (in funzione di $q$), ma la formula ottenuta non è particolarmente illuminante. È più interessante vedere cosa succede per qualche valore di $q$ fissato. Per $q=-1$, il polinomio diventa $\pi_{-1}(z) = z^2 - \frac12 q - \frac12$, che ha zeri $\lambda=-1$ e $\lambda=1/2$. Queste soluzioni \emph{non} sono entrambe minori di $1$, quindi $q=-1$ non appartiene alla regione di stabilità del metodo. (In particolare, questo ci dice anche che il metodo \emph{non} è A-stabile).
+Possiamo calcolare le sue soluzioni (in funzione di $q$), ma la formula ottenuta non è particolarmente illuminante. È più interessante vedere cosa succede per qualche valore di $q$ fissato. Per $q=-1$, il polinomio diventa $\pi_{-1}(z) = z^2 + \frac12 z - \frac12$, che ha zeri $\lambda=-1$ e $\lambda=1/2$. Queste soluzioni \emph{non} sono entrambe minori di $1$, quindi $q=-1$ non appartiene alla regione di stabilità del metodo. (In particolare, questo ci dice anche che il metodo \emph{non} è A-stabile).
 
 
 
