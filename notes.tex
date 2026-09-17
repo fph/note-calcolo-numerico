@@ -1,3 +1,5 @@
+% 
+
 \documentclass[a4paper]{report}
 
 \usepackage{amsmath,amsthm,amssymb,mathtools}
@@ -168,15 +170,15 @@ Queste note vengono generate in versioni diverse (con più o meno argomenti) a s
 
 In questo corso, vedremo algoritmi per risolvere al computer alcuni problemi che avete visto nei corsi di analisi e algebra lineare. Come mai questi algoritmi richiedono un trattamento speciale?
 
-\paragraph{Problemi senza soluzione esatta} Alcuni problemi non hanno una soluzione esatta data da una formula, per esempio $\int_0^1 e^{-x^2} \mathrm{d}x$, ma si riescono a calcolare approssimazioni di queste soluzioni: per esempio, un integrale si può approssimare tramite somme di aree di rettangolini.
+\paragraph{Problemi senza soluzione esatta} Alcuni problemi, per esempio quello di calcolare $\int_0^1 e^{-x^2} \mathrm{d}x$, non hanno una soluzione esatta data da una formula, ma è possibile calcolarne approssimazioni: per esempio, un integrale si può approssimare tramite somme di aree di rettangolini.
 
 \paragraph{Algoritmi lenti} Non sempre gli algoritmi che si vedono in un corso `teorico' funzionano bene su un computer. Ad esempio, il calcolo del determinante di una matrice $A \in \mathbb{R}^{n\times n}$ tramite la formula di Laplace lungo la prima riga:
 \[
     \det A = \sum_{j=1}^n (-1)^{j+1} a_{1j} A^{(1,j)}
 \]
-Qui $A^{(1,j)}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Per calcolare il determinante di una matrice $11\times 11$ con questa formula bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
+Qui $A^{(1,j)}$ il determinante della sottomatrice $(n-1)\times (n-1)$ che si ottiene eliminando da $A$ la riga 1 e la colonna $j$. Per calcolare il determinante di una matrice $11\times 11$ con questa formula, bisogna calcolare $11$ determinanti di matrici $10\times 10$, che a loro volta richiedono ognuno il calcolo di $10$ determinanti di matrici $9\times 9$, e così via.
 
-A meno che non ci siano proprietà particolari nella matrice $A$, come entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Esempio su un computer recente:
+A meno che non ci siano proprietà particolari nella matrice $A$, come tante entrate uguali a zero, il calcolo di un determinante con questa formula è molto lento, non solo per un umano ma anche per un computer. Ecco un esempio su un computer recente:
 \begin{center}
 \begin{tikzpicture}
     \begin{axis}[ymode = log, xlabel={$n$}, ylabel={tempo / $s$}]
@@ -363,7 +365,7 @@ end
 
 \paragraph{Costo computazionale} Una delle domande importanti quando abbiamo un metodo numerico per calcolare qualcosa è: quanto tempo ci mette? Approssimativamente, il tempo impiegato da un computer per eseguire un calcolo dipende dal numero di operazioni coinvolte. Per esempio, calcolare la somma $1+2+3+\dots+10$ richiede $9$ addizioni; calcolare invece $1+2+3+\dots+20$ richiede $19$ addizioni, cioè circa il doppio, e quindi ci aspettiamo che ci metta il doppio del tempo.
 
-Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare la $f$. Spesso il metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare il valore della $f$ in un punto è dispendioso. Per questo ha senso chiedersi quante volte viene calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
+Nel caso del metodo di bisezione, la difficoltà maggiore nel calcolare il tempo è che non sappiamo quante operazioni sono necessarie per calcolare il valore della funzione $f$ in un punto. Spesso qusto metodo viene usato con funzioni $f$ date da formule molto complicate, per cui anche solo calcolare il valore della $f$ in un punto è dispendioso. Per questo ha senso dire che il costo computazionale del metodo è determinato da quante volte viene calcolato il valore della funzione $f$ in ogni passo. Nei passi del metodo sono necessarie anche altre operazioni, quelle per calcolare $\frac{a_k+b_k}{2}$, ma il loro costo è tipicamente trascurabile rispetto a quello del calcolo della $f$, quindi possiamo ignorarle.
 
 Guardando la tabella più sopra, possiamo vedere che, a parte il passo iniziale in cui abbiamo calcolato la $f$ tre volte, in $a_0,b_0,c_0$, in ogni passo successivo abbiamo calcolato il valore in \emph{un} solo nuovo punto, cioè $c_k$. Difatti, i valori di $f(a_k)$ e $f(b_k)$ sono già noti dal passo precedente, e ci è bastato ricopiarli dalla riga precedente della tabella.
 
@@ -500,7 +502,7 @@ Nell'ultima uguaglianza, abbiamo usato la continuità di $\Phi$: difatti, ricord
 
 \paragraph{Applicabilità e convergenza} Purtroppo il metodo del punto fisso dà in generale meno garanzie del metodo di bisezione: vedremo tra poco che la convergenza è garantita solo per alcuni valori di $x_0$, e non è neppure semplice capire quali. Ma c'è un altro possibile problema che viene ancora prima della convergenza: quello dell'applicabilità. La funzione $\Phi$ in generale è definita solo su un sottointervallo di $\mathbb{R}$, e nulla ci garantisce che i nuovi punti $x_{k+1}$ che costruiamo siano in questo dominio. Vediamo un esempio: se $\Phi(x) = \frac{1}{x} - 1$, e partiamo da $x_0=1$, subito al primo passo abbiamo $x_1=0$, e la funzione $\Phi$ non è definita in $x_1$. Il risultato che vediamo ora ci garantisce sia l'applicabilità del metodo, che la convergenza.
 
-\paragraph{Teorema del punto fisso} Per dimostrare un risultato di convergenza per questo metodo, ci sono due protagonisti fondamentali che dobbiamo introdurre. Il primo è che dobbiamo lavorare su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
+\paragraph{Teorema del punto fisso} Per dimostrare un risultato di convergenza per questo metodo, lavoriamo su un intervallo definito in modo particolare. Fissiamo una distanza (o raggio) $\rho>0$, e consideriamo l'insieme dei punti che hanno distanza da $\alpha$ minore o uguale a $\rho$, che possiamo scrivere in due modi:
 \begin{equation} \label{intervallo centrato in alpha}
     I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\} = [\alpha-\rho, \alpha + \rho].
 \end{equation}
@@ -519,17 +521,7 @@ La situazione è simile a quella che avevamo nel metodo di bisezione, con un seg
 \end{tikzpicture}
 \end{center}
 
-Il secondo protagonista è la quantità
-\begin{equation} \label{defL}
-    L = \max_{x \in I} \, \abs{\Phi'(x)},    
-\end{equation}
-cioè il massimo (in valore assoluto) della derivata di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
-\begin{theorem}[Teorema di Weierstrass / di esistenza del massimo]
-    Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
-\end{theorem}
-In questo caso, l'intervallo $I$ è chiuso e limitato, per come l'abbiamo definito in~\eqref{intervallo centrato in alpha}; se $\Phi$ è una funzione di classe $\mathcal{C}^1$, allora la sua derivata $\Phi'$ esiste ed è continua, e anche la funzione $f(x) = \abs{\Phi'(x)}$ è continua, in quanto composizione di due funzioni continue: la funzione valore assoluto, e la derivata $\Phi'$. Quindi le ipotesi del teorema sono verificate e la quantità $L$ esiste.
-
-Con questi due ingredienti a disposizione, possiamo enunciare questo teorema.
+Andiamo subito a enunciare il teorema che vogliamo dimostrare.
 
 \begin{theorem}[Convergenza locale del metodo del punto fisso]\label{thm:puntofisso}
 Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi(\alpha)=\alpha$. Supponiamo che $\Phi$ sia di classe $\mathcal{C}^1$ sull'intervallo $I = \{x\in\mathbb{R} \colon \abs{x-\alpha} \leq \rho\}$, e supponiamo inoltre che $\abs{\Phi'(x)} < 1$ su tutti i punti $x\in I$. Allora, il metodo~\eqref{puntofisso} è tale che per ogni $x_0 \in I$ si ha
@@ -539,23 +531,33 @@ Siano dati $\alpha\in\mathbb{R}$, $\rho>0$, e $\Phi$ una funzione tale che $\Phi
 \end{itemize}
 \end{theorem}
 \begin{proof}
-Notiamo innanzitutto che l'ipotesi $\abs{\Phi'(x)} < 1$ ci garantisce che $L<1$; difatti, il massimo $L$ definito in~\eqref{defL} esiste e viene raggiunto in un punto dell'intervallo $I$.
+Innanzitutto, ci servirà considerare la quantità
+\begin{equation} \label{defL}
+    L = \max_{x \in I} \, \abs{\Phi'(x)},    
+\end{equation}
+cioè il massimo (in valore assoluto) della derivata di $\Phi$ su tutto l'intervallo. Notiamo innanzitutto che questo massimo esiste: ricordiamo il seguente teorema dell'analisi.
+\begin{theorem}[Teorema di Weierstrass / di esistenza del massimo]
+    Sia $[a,b]$ un intervallo chiuso e limitato, e sia $f$ una funzione di classe $\mathcal{C}^0$ (cioè continua) su $[a,b]$. Allora, esiste (almeno) un punto di massimo nell'intervallo $I$.
+\end{theorem}
+Possiamo applicare questo teorema alla~\eqref{defL}: l'intervallo $I$ è chiuso e limitato, per come l'abbiamo definito in~\eqref{intervallo centrato in alpha}: se $\Phi$ è una funzione di classe $\mathcal{C}^1$, allora la sua derivata $\Phi'$ esiste ed è continua, e anche la funzione $f(x) = \abs{\Phi'(x)}$ è continua, in quanto composizione di due funzioni continue: la funzione valore assoluto, e la derivata $\Phi'$. Quindi le ipotesi del teorema sono verificate e la quantità $L$ esiste.
 
-Consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. La prima cosa che facciamo nella nostra dimostrazione è trovare una relazione tra l'errore al passo $k$ e quello al passo $k+1$. Si ha
+L'ipotesi che abbiamo fatto $\abs{\Phi'(x)} < 1$ ci garantisce che $L<1$: difatti, il massimo $L$ definito in~\eqref{defL} esiste e viene raggiunto in un punto dell'intervallo $I$.
+
+Ora consideriamo la quantità $\abs{x_k-\alpha}$, cioè la distanza tra $x_k$ e la soluzione esatta del nostro problema $\alpha$. Questa quantità viene chiamata l'\emph{errore al passo $k$} commesso dal metodo. Per la nostra dimostrazione, vogliamo trovare una relazione tra l'errore a un passo $k$ e quello al passo successivo $k+1$. Si ha
 \begin{equation} \label{riduzione errore punto fisso}
 \frac{\abs{x_{k+1}-\alpha}}{\abs{x_k-\alpha}} = \abs*{
     \frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha}} = \abs{\Phi'(\xi_k)},
 \end{equation}
-per un certo punto $\xi_k$. Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che per ogni iterazione $k$ si ha un punto $\xi_k$ diverso.
+per un certo punto $\xi_k$. Abbiamo usato il fatto che $x_{k+1} = \Phi(x_k)$, che $\alpha = \Phi(\alpha)$, e il teorema di Lagrange, che avete visto nel corso di analisi: esso ci dice che esiste un punto $\xi_k$ nell'intervallo aperto di estremi $x_k$ e $\alpha$ (non importa in che ordine sono) tale che $\frac{\Phi(x_k)-\Phi(\alpha)}{x_k-\alpha} = \Phi'(\xi_k)$. Chiamiamo questo punto $\xi_k$, indicando esplicitamente l'indice $k$, per sottolineare il fatto che possiamo applicare il teorema in ogni iterazione $k$, e in ognuna di esse si ottiene punto $\xi_k$ diverso.
 
-Ora vogliamo trasformare la~\eqref{riduzione errore punto fisso} in una formula per l'errore esplicita, in cui l'errore al passo $k$ non dipende dall'errore al passo $k-1$. Dimostreremo per induzione che per ogni $k\geq 0$ si ha
+Ora vogliamo trasformare la~\eqref{riduzione errore punto fisso} in una formula esplicita per l'errore, in cui l'errore al passo $k$ non dipende dall'errore al passo $k-1$. Dimostreremo per induzione che per ogni $k\geq 0$ si ha
 \begin{equation} \label{fpindu}
     \abs{x_k - \alpha} \leq L^k \rho.
 \end{equation}
 Ricordandoci come è fatta una dimostrazione per induzione, dobbiamo dimostrare queste due cose:
 \begin{itemize}
-    \item Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. 
-    \item Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Vogliamo usare la relazione~\eqref{riduzione errore punto fisso} per dimostrare che l'errore viene ridotto di un fattore $L$. Per questo, il punto delicato è dimostrare che $\xi_k \in I$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k \rho$; poiché $L<1$, si ha anche $L^k\rho < \rho$ e quindi $\abs{x_k - \alpha}<\rho$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Possiamo dunque scrivere usando la relazione~\eqref{riduzione errore punto fisso}
+    \item Passo base: Per $k=0$, la~\eqref{fpindu} diventa $\abs{x_0 - \alpha} \leq \rho$, che è vera perché è equivalente a dire che $x_0 \in I$. 
+    \item Passo induttivo: Supponiamo la~\eqref{fpindu} vera per un certo $k$, e dimostriamola per $k+1$. Vogliamo usare la relazione~\eqref{riduzione errore punto fisso} per dimostrare che l'errore viene ridotto di un fattore $L$. Per questo, il punto delicato è dimostrare che $\xi_k \in I$. Innanzitutto, per l'ipotesi induttiva abbiamo $\abs{x_k - \alpha} < L^k \rho$; poiché $L<1$, si ha anche $L^k\rho < \rho$ e quindi $\abs{x_k - \alpha}<\rho$, il che vuol dire che $x_k\in I$. Poiché $\xi_k$ è compreso tra $x_k$ e $\alpha$, anche esso appartiene all'intervallo $I$, e quindi abbiamo $\abs{\Phi'(\xi_k)} \leq L$. Possiamo dunque scrivere usando la relazione~\eqref{riduzione errore punto fisso}
     \begin{equation} \label{fpindu2}
         \abs{x_{k+1} - \alpha} = \abs{\Phi'(\xi_k)} \abs{x_k - \alpha} \leq L \cdot L^k \rho = L^{k+1}\rho.
     \end{equation}  
@@ -581,7 +583,7 @@ Possiamo effettuare questa scelta di $\rho$ sotto ipotesi più generali; enuncia
 \begin{proof}
     Ci basta osservare che la funzione $\Phi'(x)$ è continua. Allora, ogni volta che $\Phi'(\alpha) \in (-1,1)$, possiamo trovare un intervallo $[\alpha-\rho,\alpha+\rho]$ sufficientemente piccolo da avere $\Phi'(x) \in (-1,1)$ per tutti i punti al suo interno.
 \end{proof}
-Notiamo che questo risultato ci garantisce che \emph{esiste} un $\rho$ che soddisfa le ipotesi del teorema; calcolarlo esplicitamente però non è sempre semplice.
+Notiamo che questo risultato ci garantisce che \emph{esiste} un $\rho$ che soddisfa le ipotesi del teorema; calcolarlo esplicitamente però non è sempre semplice. Si usa il termine convergenza \emph{locale} appunto perché la convergenza di questo algoritmo è garantita solo quando siamo sufficientemente vicino alla soluzione $\alpha$.
 
 Vale anche un'osservazione opposta: se $\abs{\Phi'(\alpha)} \geq 1$, allora non riusciremo mai a trovare un intervallo che soddisfi le ipotesi del teorema. Lo vediamo in un esempio.
 \begin{esempio}
@@ -1076,23 +1078,25 @@ Il metodo di Newton quindi è definito dalla successione
 \]
 Il metodo di Newton quindi è un metodo di punto fisso con $\Phi(x) = x - \frac{f(x)}{f'(x)}$. Notiamo che questa funzione non è definita se $f'(x) = 0$: quando incontriamo un'iterata $x_k$ per cui si ha $f'(x_k) = 0$, il metodo di Newton non è applicabile, perché non riusciamo a calcolare l'iterata successiva.
 
-Sotto l'ipotesi aggiuntiva $f'(\alpha) \neq 0$, riusciamo a dimostrare la convergenza locale del metodo di Newton.
+Sotto l'ipotesi aggiuntiva $f'(\alpha) \neq 0$, riusciamo a dimostrare l'applicabilità e la convergenza locale del metodo di Newton.
 
 \begin{theorem}
 Sia $f \in \mathcal{C}^2([a,b])$, e sia $\alpha \in (a,b)$ tale che $f(\alpha) = 0$ e $f'(\alpha) \neq 0$. Allora, il metodo di Newton converge localmente: cioè, esiste un intervallo $I = [\alpha - \rho,\alpha + \rho]$ tale che per ogni successione generata dal metodo con $x_0 \in I$ si ha
 \begin{itemize}
-    \item $x_k \in I$ per ogni $n\geq 0$;
-    \item $\lim_{k\to \infty } x_k = \alpha$.
+    \item $x_k \in I$ per ogni $n\geq 0$ (applicabilità);
+    \item $\lim_{k\to \infty } x_k = \alpha$ (convergenza locale).
 \end{itemize}
 \end{theorem}
 \begin{proof}
-Poiché $f'(\alpha) \neq 0$ e la funzione derivata $f'(x)$ è continua, in un intorno sufficientemente piccolo di $\alpha$, che possiamo prendere della forma $[\alpha-\hat{\rho}, \alpha+\hat{\rho}]$, si ha $f'(x) \neq 0$; quindi la funzione $\Phi(x)$ è ben definita. Inoltre, possiamo calcolare
+Otterremo questi risultati sfruttando il fatto che il metodo di Newton è un caso particolare di metodo di punto fisso.
+
+Poiché $f'(\alpha) \neq 0$ e la funzione derivata $f'(x)$ è continua, in un intorno sufficientemente piccolo di $\alpha$, che possiamo prendere della forma $[\alpha-\hat{\rho}, \alpha+\hat{\rho}]$, si ha $f'(x) \neq 0$; quindi la funzione $\Phi(x)$ è ben definita. Inoltre, calcoliamo
 \begin{equation} \label{Phiprime}
     \Phi'(x) = 1 - \frac{f'(x)f'(x) - f(x)f''(x)}{(f'(x))^2} = \frac{f(x)f''(x)}{(f'(x))^2};
 \end{equation}
 pertanto se $f'(\alpha) \neq 0$ abbiamo $\Phi'(\alpha) = 0$. Come nell'Osservazione~\ref{oss:corpuntofisso}, possiamo affermare che in un intorno sufficientemente piccolo di $\alpha$ avremo $\abs{\Phi'(x)} < 1$. Esiste quindi un intervallo $I = [\alpha-\rho,\alpha+\rho]$, con $\rho\leq \hat{\rho}$, in cui la $\Phi(x)$ esiste e $\abs{\Phi'(x)} < 1$ per ogni $x\in I$. In questo intervallo possiamo applicare il teorema del punto fisso e quindi ottenere la tesi.
 \end{proof}
-Poiché $r = \Phi'(\alpha)=0$, il metodo di Newton ha convergenza superlineare.
+Poiché $r = \Phi'(\alpha)=0$, il metodo di Newton ha convergenza superlineare sotto le ipotesi del teorema.
 
 \paragraph{Vantaggi e svantaggi del metodo di Newton}
 Svantaggi:
@@ -1844,20 +1848,20 @@ Le risposte sono queste:
 \end{conditional}
 
 \chapter{Analisi dell'errore}
-In questo capitolo, studiamo come l'errore relativo impatta i risultati dei calcoli che facciamo. Ricordiamo la relazione~\eqref{errore relativo in due forme}, che ci dà due modi diversi di vedere l'errore, uno come rapporto esplicito e uno come un fattore moltiplicativo:
+In questo capitolo, studiamo come l'errore impatta i risultati dei calcoli che facciamo. Ricordiamo la relazione~\eqref{errore relativo in due forme}, che ci dà due modi diversi di vedere l'errore relativo, uno come rapporto e uno come un fattore moltiplicativo:
 \begin{equation}
     \varepsilon = \frac{\tilde{x}-x}{x} \iff \tilde{x} = x(1+\varepsilon).
 \end{equation}
 
 \section{Condizionamento e amplificazione dell'errore}
 
-\paragraph{Condizionamento} Innanzitutto, mostriamo un risultato generale che mostra come l'errore si propaga lungo calcoli successivi. Supponiamo di avere una quantità $y$ che viene calcolata a partire da una quantità $x$. Dati due valori vicini tra loro $x$ e $\tilde{x}$, che possiamo pensare come una versione di $x$ affetta da errore, possiamo calcolare $y = f(x)$ e $\tilde{y} = f(\tilde{x})$. Assumiamo per ora che il valore degli altri ``input'' della funzione non cambi, e che tutti i calcoli siano effettuati in modo esatto, quindi l'errore nella $y$ è dovuto unicamente alla modifica del primo argomento. 
+\paragraph{Condizionamento} Innanzitutto, mostriamo un risultato generale che mostra come l'errore si propaga lungo calcoli successivi. Supponiamo di avere una quantità $y$ che viene calcolata a partire da una quantità $x$. Dati due valori vicini tra loro $x$ e $\tilde{x}$, che possiamo pensare come una versione di $x$ affetta da errore, possiamo calcolare $y = f(x)$ e $\tilde{y} = f(\tilde{x})$. Assumiamo per ora che il valore degli altri ``input'' della funzione (se ce ne sono) non cambi, e che tutti i calcoli siano effettuati in modo esatto, quindi l'errore nella $y$ è dovuto unicamente alla modifica del primo argomento. 
 
 Vogliamo calcolare come sono legati tra loro gli errori relativi
 \[
 \varepsilon_x = \frac{\tilde{x}-x}{x} \text{ e } \varepsilon_y = \frac{\tilde{y}-y}{y}.
 \]
-Se supponiamo che questi errori siano piccoli, possiamo ignorare nelle nostre operazioni termini che coinvolgono il \emph{quadrato} degli errori, ad esempio $xy\varepsilon_x^2$, visto che ci aspettiamo che siano ancora più piccoli. Formalizziamo questa idea con della notazione presa di nuovo dall'analisi: diciamo che $A \doteq B$ (uguaglianza con un puntino) quando $A$ e $B$ differiscono per una quantità che converge a zero come $\mathcal{O}(\varepsilon^2)$, quando l'errore $\varepsilon$ che stiamo considerando converge a zero. È una notazione meno pesante per scrivere $A = B + \mathcal{O}(\varepsilon^2)$. Con questa notazione, possiamo innanzitutto formulare il seguente risultato.
+Supporremo che questi errori siano piccoli, così che possiamo ignorare nelle nostre operazioni termini che coinvolgono i loro \emph{quadrati}, ad esempio $xy\varepsilon_x^2$, e più in generale anche potenze maggiori: ci aspettiamo che siano ancora più piccoli, e quindi trascurabili. Formalizziamo questa idea con della notazione presa di nuovo dall'analisi: diciamo che $A \doteq B$ (uguaglianza con un puntino) quando $A$ e $B$ differiscono per una quantità che converge a zero come $\mathcal{O}(\varepsilon^2)$, quando l'errore $\varepsilon$ che stiamo considerando converge a zero. È una notazione meno pesante per scrivere $A = B + \mathcal{O}(\varepsilon^2)$. Con questa notazione, possiamo innanzitutto formulare il seguente risultato.
 \begin{theorem}
      Siano dati $x\neq 0$, $\tilde{x}$, $y = f(x,\dots) \neq 0$ e $\tilde{y}= f(\tilde{x}, \dots)$. Supponiamo che la funzione $f$ sia di classe $\mathcal{C}^2$ nella variabile $x$. Allora,
      \begin{equation} \label{ampliferrore}
@@ -2769,11 +2773,11 @@ che è molto più grande di $\varepsilon$. Per esempio, se $\varepsilon=10^{-16}
 
 \section{Teorema dei cerchi di Gershgorin (*)}
 
-Vediamo ora un risultato teorico che ci dice in quali regioni del piano complesso si possono trovare gli autovalori di una matrice. Per introdurlo, definiamo i \emph{cerchi di Gershgorin} di una matrice $A\in\mathbb{C}^{n\times n}$ come gli insiemi
+Vediamo ora un risultato teorico che ci dice in quali regioni del piano complesso si possono trovare gli autovalori di una matrice quadrata $A$. Per introdurlo, definiamo i \emph{cerchi di Gershgorin} di una matrice $A\in\mathbb{C}^{n\times n}$ come gli insiemi
 \[
 K_i = \left\{z\in \mathbb{C} \colon \abs{z - A_{ii}} \leq \sum_{\substack{j=1\\ j \neq i}}^n \abs{A_{ij}} \right\}, \quad i=1,2,\dots,n.
 \]
-Le equazioni definiscono l'interno di $n$ cerchi, che hanno centro negli elementi diagonali di $A$ e raggio uguale alla somma dei moduli degli elementi al di fuori della riga.
+Le equazioni definiscono l'interno di $n$ cerchi, ognuno associato a una riga di $A$; ognuno ha centro in un elemento diagonale di $A$ e raggio uguale alla somma dei moduli degli altri elementi della stessa riga.
 
 \begin{theorem}[Teorema dei cerchi di Gershgorin]
 Sia $A\in\mathbb{C}^{n\times n}$, e $\lambda$ un suo autovalore. Allora $\lambda$ appartiene all'unione dei cerchi $K_i$ definiti sopra (al variare di $i=1,2,\dots,n$).
