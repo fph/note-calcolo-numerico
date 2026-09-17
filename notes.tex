@@ -2,6 +2,8 @@
 
 \usepackage{amsmath,amsthm,amssymb,mathtools}
 
+\usepackage{manfnt}
+
 % Needed for \comment
 \usepackage{verbatim}
 
@@ -212,7 +214,7 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
 
 \begin{conditional}[ich]
     %%%
-    % Pannocchia dice che è più comune un'altra variante, la formula di Peng--Robinson; usare quella invece
+    % Prima usavamo Van Der Waals, ma Pannocchia dice che è più comune questa variante.
     %%%
     \paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di Peng--Robinson}
     \[
@@ -915,7 +917,7 @@ Questo vuol dire che per $k$ sufficientemente grande (la~\eqref{tassoconv} conti
 
 La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
 
-Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_k = 1/k$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
+\marginpar{\dbend} Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_k = 1/k$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
 \begin{esempio}
     Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{k+1} = x_k + \frac{1}{2} (x_k^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_k = \abs{x_k - \alpha}$ prodotti dal metodo, otteniamo
     \begin{lstlisting}
@@ -1110,6 +1112,12 @@ Vantaggi:
 
 Il comportamento che si osserva tipicamente con il metodo di Newton è un certo numero di iterazioni iniziali in cui l'errore non scende per nulla o quasi, e poi una convergenza molto veloce; appena $x_k$ si avvicina a $\alpha$ e l'errore $e_k$ va sotto una certa soglia, esso comincia ad andare a zero molto velocemente.
 
+\paragraph{Esempi}
+
+Esempio: metodo di Newton su una funzione lineare $f(x) = a x + b$: ha convergenza in un passo.
+
+Esempio: metodo di Newton su $f(x) = x^2-a$: è anche un metodo per calcolare radici quadrate a mano. Per esempio, calcolando $\sqrt{17}$ con $x_0 = 4$, già $x_2$ ha 5 cifre significative esatte.
+
 \paragraph{Ordine di convergenza}
 
 Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{k \to \infty }\frac{e_{k+1}}{e_k}$ è uguale a zero: questo vuol dire che la successione degli errori $e_k$ va a zero più velocemente di una serie geometrica, qualunque sia il suo tasso $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{k+1} - \log e_k$ tende a $-\infty$. Questo significa che un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
@@ -1140,9 +1148,9 @@ Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton]\label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_k = \abs{x_k - \alpha}$ soddisfa
 \[
-\lim_{k\to \infty} \frac{e_{k+1}}{e_k^2} = s \in [0,\infty).
+\lim_{k\to \infty} \frac{e_{k+1}}{e_k^2} = s \in [0,\infty),
 \]
-(cioè questo limite esiste ed è finito.)
+cioè la convergenza è di ordine almeno 2. Se inoltre $f''(\alpha)\neq 0$, allora $s\neq 0$, cioè l'ordine di convergenza è \emph{esattamente} 2.
 \end{theorem}
 
 \begin{proof}
@@ -1162,15 +1170,16 @@ Allora
 \]
 Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\xi_k$). Vogliamo ora passare al limite per $k \to \infty$. Come già detto sopra, sappiamo che $0 \leq \abs{\xi_k - \alpha} \leq \abs{x_k - \alpha}$, da cui per il teorema dei carabinieri concludiamo che $\abs{\xi_k - \alpha} \to 0$ e quindi $\xi_k \to \alpha$. Allora, per la continuità di queste funzioni, $f''(\xi_k) \to f''(\alpha)$ e $f'(x_k) \to f'(\alpha)$ (che è diverso da zero); quindi
 \[
-\lim_{k\to\infty} \frac{x_{k+1} - \alpha}{(x_k-\alpha)^2} = \lim \frac{f''(\xi_k)}{2f'(x_k)} = \frac{f''(\alpha)}{2f'(\alpha)} = s \in [0,\infty).
+\lim_{k\to\infty} \abs*{\frac{x_{k+1} - \alpha}{(x_k-\alpha)^2}} = \lim \abs*{\frac{f''(\xi_k)}{2f'(x_k)}} = \abs*{\frac{f''(\alpha)}{2f'(\alpha)}} = s \in [0,\infty).
 \]
+In particolare, $s\neq 0$ se e solo se $f''(\alpha)\neq 0$.
 \end{proof}
 
 \paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_k)}{f'(x_k)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_k - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_k - x_{k+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è il criterio di arresto che avevamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
 
 \begin{conditional}[inf]
 \paragraph{Convergenza su intervalli}
-C'è un risultato che ci permette di concludere la convergenza del metodo di Newton su un intero intervallo, senza la condizione scomoda da verificare che il punto iniziale sia ``abbastanza vicino''. Questa volta per applicare il teorema dobbiamo usare un intervallo in cui lo zero $\alpha$ sia un estremo della funzione.
+Il seguente risultato che ci permette di concludere la convergenza del metodo di Newton su un intero intervallo, senza la condizione scomoda da verificare che il punto iniziale sia ``abbastanza vicino''. Questa volta per applicare il teorema dobbiamo usare un intervallo in cui lo zero $\alpha$ sia un estremo dell'intervallo.
 \begin{theorem}[Convergenza su intervalli del metodo di Newton] \label{thm:convergenza Newton su intervalli}
     Sia $f$ una funzione di classe $\mathcal{C}^2$ su un intervallo $I = [a,b]$. Supponiamo che:
     \begin{itemize}
@@ -1242,8 +1251,8 @@ Soluzione: \begin{enumerate}
 
 \end{conditional}
 
-
-\paragraph{Zeri di molteplicità superiore a 1} Cosa succede al metodo di Newton se la funzione a cui lo applichiamo ha $f'(\alpha) = 0$? Introduciamo innanzitutto una definizione: data una funzione $f\in\mathcal{C}^m$, diciamo che \emph{$f$ ha uno zero di molteplicità $m$ in $\alpha$} se vale
+\section{Zeri di molteplicità superiore a 1}
+Cosa succede al metodo di Newton se la funzione a cui lo applichiamo ha $f'(\alpha) = 0$? Introduciamo innanzitutto una definizione: data una funzione $f\in\mathcal{C}^m$, diciamo che \emph{$f$ ha uno zero di molteplicità $m$ in $\alpha$} se vale
 \[
 f(\alpha) = f'(\alpha) = f''(\alpha) = \dots = f^{(m-1)}(\alpha) = 0, \quad \text{ ma } f^{(m)}(\alpha) \neq 0.
 \]
@@ -1363,12 +1372,7 @@ Quindi se il valore della molteplicità $m$ è noto a priori possiamo utilizzare
 \end{equation}
 Si può dimostrare, con passaggi simili a quelli precedenti, che questo metodo converge (localmente) con ordine almeno 2, quando viene applicato a una funzione che ha uno zero di molteplicità $m$.
 
-\paragraph{Esercizi}
-
-Esempio: metodo di Newton su una funzione lineare $f(x) = a x + b$: ha convergenza in un passo.
-
-Esempio: metodo di Newton su $f(x) = x^2-a$: è anche un metodo per calcolare radici quadrate a mano. Per esempio, calcolando $\sqrt{17}$ con $x_0 = 4$, già $x_2$ ha 5 cifre significative esatte.
-
+\paragraph{Esempi}
 Esempio: metodo di Newton su $f(x) = x^2$: lo zero è di ordine 2, e la convergenza diventa lineare con ragione $\frac12$.
 
 Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza quadratica (converge di nuovo in un passo).
@@ -1672,9 +1676,9 @@ x = - 10^2 (7\cdot 10^{0} + 6\cdot 10^{-1} + 4\cdot 10^{-2} + 8 \cdot 10^{-3} + 
 \]
 Questo è un modo più prolisso di scrivere la notazione scientifica che già conosciamo: $x= -7.6488888\ldots \cdot 10^{2}$.
 
-Terminologia: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
+Introduciamo un paio di definizioni: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
 
-Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria, e più si va verso fatti base e più bisogna essere puntigliosi e formali nelle dimostrazioni. Però ci soffermiamo un attimo sulle condizioni di unicità.
+Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria. Però ci soffermiamo un attimo sulle condizioni di unicità.
 
 La prima condizione $c_0 \neq 0$ serve a escludere scritture alternative con zeri iniziali, per esempio
 \[
@@ -1682,7 +1686,7 @@ La prima condizione $c_0 \neq 0$ serve a escludere scritture alternative con zer
 \]
 La rappresentazione senza zeri iniziali si chiama \emph{normalizzata}.
 
-La seconda condizione esclude scritture come $0.999999\dots$ (periodico): se vi ricordate come si sommano le serie, $9\cdot 10^{-1}+9\cdot 10^{-2} + 9\cdot 10^{-3}+\dots$ è uguale a 1; quindi $0.999999\dots$ è un modo diverso di scrivere il numero 1 che vogliamo escludere.
+La seconda condizione esclude scritture come $0.999999\dots$ (periodico): come avrete sicuramente già visto, la somma della serie $9\cdot 10^{-1}+9\cdot 10^{-2} + 9\cdot 10^{-3}+\dots$ è uguale a 1; quindi $0.999999\dots$ è un modo diverso di scrivere il numero 1, e vogliamo escluderlo.
 
 \paragraph{Numeri di macchina}
 Su un computer, possiamo rappresentare solo una quantità finita di numeri.
@@ -7545,7 +7549,7 @@ float Q_rsqrt( float number )
     \end{center}
     I rimanenti 52 bit sono le cifre $c_1,\dots,c_{52}$ della mantissa, escludendo la cifra iniziale $c_0$ che è sempre uguale a $1$. 
 
-    Se leggiamo gli stessi bit come la rappresentazione di un intero con segno, $e$ e $c$ letti consecutivamente formano le 63 cifre in base-2 dell'intero $i$:
+    Se leggiamo gli stessi bit come la rappresentazione di un intero con segno, $e$ e $c$ letti consecutivamente formano le 63 cifre in base-2 dell'intero (con segno) $i$:
     \[
     i = \begin{tabular}{|c|c|}
         \hline
@@ -7606,10 +7610,10 @@ float Q_rsqrt( float number )
     Questa trasformazione è quello che fanno le righe 9--11 del codice:
     \begin{lstlisting}[language=C++, basicstyle=\footnotesize\ttfamily, firstnumber=9]
   i  = * ( long * ) &y; //interpreta y come intero ottenendo i
-  i  = 0x5f3759df - ( i >> 1 ); //calcola j = d - i/2 con il bit shifting operator >>
+  i  = 0x5f3759df - ( i >> 1 ); //calcola j = L - i/2 con il bit shifting operator >>
   y  = * ( float * ) &i; //interpreta j come float ottenendo z
     \end{lstlisting}
-    La costante $L = {}$\lstinline{0x5f3759df} che compare in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
+    La costante $L = {}$\lstinline{0x5f3759df} usata in questo codice codice è vicina a quella che dà l'approssimazione migliore, ma non esattamente uguale; si congettura che sia stata trovata per prove ed errori. Per approfondire, \url{https://en.wikipedia.org/wiki/Fast_inverse_square_root}.
 
     Riassumendo, il metodo particolare con cui è rappresentato tramite bit un numero a virgola mobile nello standard dei numeri di macchina (IEEE 754) permette di ottenere un'approssimazione di $\log_2(y)$ semplicemente reinterpretando i bit della sua rappresentazione come un intero. Questa proprietà non è un caso, ma è il motivo per cui nello standard è stato scelto di rappresentare gli esponenti in questo modo $e = p + 1023$, anziché memorizzare direttamente $p$ come intero con segno in quegli 11 bit.
 \end{conditional}
