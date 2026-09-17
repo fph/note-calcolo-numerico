@@ -1,5 +1,3 @@
-% 
-
 \documentclass[a4paper]{report}
 
 \usepackage{amsmath,amsthm,amssymb,mathtools}
@@ -216,15 +214,15 @@ Per calcolare il determinante di una matrice $11\times 11$ ci vogliono più di 1
     %%%
     % Pannocchia dice che è più comune un'altra variante, la formula di Peng--Robinson; usare quella invece
     %%%
-    \paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di van der Waals}
+    \paragraph{Un esempio pratico} In termodinamica, esistono diverse formule che modificano l'equazione di stato dei gas perfetti e forniscono leggi che legano temperatura, pressione e volume. Una delle più famose è la \emph{formula di Peng--Robinson}
     \[
-        P = \frac{RT}{V-B} - \frac{A}{V^2}.
+        P = \frac{RT}{V-b} - \frac{a}{V^2+2bV-b^2}.
     \]
-    Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume molare'', cioè il volume occupato da una mole del gas, e $R,A,B$ sono costanti (con $A,B$ che dipendono dal gas in questione). Supponiamo di sapere la pressione $P$ e la temperatura $T$, e voler calcolare il volume occupato da un gas. Questo è equivalente a trovare il valore $x$ che risolve
+    Qui $P$ è la pressione, $T$ è la temperatura, $V$ è il cosiddetto ``volume molare'', cioè il volume occupato da una mole del gas, e $R,a,b$ sono costanti (con $a,b$ che dipendono dal gas in questione). Supponiamo di sapere la pressione $P$ e la temperatura $T$, e voler calcolare il volume occupato da un gas. Questo è equivalente a trovare il valore $x$ che risolve
     \[
-        \frac{RT}{x-B} - \frac{A}{x^2} - P = 0.
+        \frac{RT}{x-b} - \frac{a}{x^2+2bx-b^2} - P = 0.
     \]
-    Lavorando con applicazioni dell'ingegneria è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio quando si riconduce a un'equazione di secondo grado); ma in generale è utile avere a disposizione un metodo per calcolare approssimatamente la soluzione di equazioni anche più complicate.
+    Lavorando con applicazioni dell'ingegneria è normale incontrare problemi come questi; in qualche caso siamo in grado di espandere i calcoli e risolvere esattamente l'equazione (per esempio quando si riconduce a un'equazione di secondo grado); ma in generale è utile avere a disposizione un metodo per calcolare un'approssimazione numerica della soluzione di equazioni anche più complicate.
 \end{conditional}
 
 \begin{conditional}[inf]
@@ -447,7 +445,7 @@ Ci manca ancora un ingrediente per completare questo criterio di arresto. Il val
 \[
 f'(c_k) \approx \frac{f(b_k) - f(a_k)}{b_k - a_k}.
 \]
-Difatti questo è un rapporto incrementale fatto tra due punti sufficientemente vicini a $c_k$ (IMMAGINE). Ricordiamo anche un altro teorema di analisi, il teorema di Lagrange:
+Difatti questo è un rapporto incrementale fatto tra due punti sufficientemente vicini a $c_k$. Ricordiamo anche un altro teorema di analisi, il teorema di Lagrange:
 \begin{theorem}
     Se $f: [a,b] \to \mathbb{R}$ è una funzione di classe $\mathcal{C}^1$, allora esiste un punto $\xi \in (a,b)$ tale che
     \[
