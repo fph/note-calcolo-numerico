@@ -620,8 +620,7 @@ Svolgimento: una soluzione corrisponde a uno zero di $f(x) = x - \cos x$. Questa
 
 \section{Convergenza lineare}
 
-In questa sezione vediamo un modo di definire quanto velocemente converge un metodo numerico come quelli che abbiamo visto; 
-questo è importante in modo da poter confrontare metodi diversi. Abbiamo una successione di approssimazioni $x_k$, e vogliamo misurare la velocità a cui converge a un limite $\alpha$; per questo definiamo l'errore $e_k := \abs{x_k - \alpha}$. Partiamo con un esempio che mostra cosa succede in un caso reale; in Figura~\ref{fig:iterativi} abbiamo considerato diversi metodi iterativi per risolvere l'equazione $x^3-2 = 0$, e abbiamo tracciato per ognuno di essi un grafico dell'errore $e_k$ rispetto a $k$.
+In questa sezione vediamo un modo di definire quanto velocemente converge un metodo numerico come quelli che abbiamo visto; questo ci aiuta a confrontare metodi diversi. Abbiamo una successione di approssimazioni $x_k$ che converge a un limite $\lim_{k\to \infty} x_k=\alpha$, e vogliamo misurare la velocità a cui esso converge; per questo definiamo l'errore $e_k := \abs{x_k - \alpha}$. Partiamo con un esempio che mostra cosa succede in un caso reale; in Figura~\ref{fig:iterativi} abbiamo considerato diversi metodi iterativi per risolvere l'equazione $x^3-2 = 0$, e abbiamo tracciato per ognuno di essi un grafico dell'errore $e_k$ rispetto a $k$.
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
@@ -903,21 +902,21 @@ La prima osservazione importante è che è utile usare una \emph{scala logaritmi
 
 La seconda osservazione che possiamo fare è che nel secondo grafico i punti sono approssimativamente allineati secondo una retta. Vediamo perché questo succede.
 
-\paragraph{Convergenza lineare} L'esempio più semplice che possiamo fare è quello in cui $e_k$ è una successione geometrica:
+\paragraph{Convergenza lineare} Il modello più semplice che utilizziamo per studiare la velocità di convergenza è quello in cui $e_k$ è una successione geometrica:
 \[
 e_0 = a,\, e_1 = ar,\, e_2 = ar^2,\, e_3 = ar^3, \dots
 \]
-Ad ogni passo, l'errore precedente viene moltiplicato per $r$. Ovviamente dobbiamo richiedere che $r < 1$, altrimenti $e_k$ non converge a $0$. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{k+1} - \log e_k = \log r < 0$.
+In questo caso, il rapporto tra due errori successivi $\frac{e_{k+1}}{e_k}$ è sempre uguale a $r$. Ovviamente dobbiamo supporre che $r < 1$, altrimenti $e_k$ non converge a $0$. In un grafico con scala logaritmica sulle $y$ (come quello della Figura~\ref{fig:iterativi}), la successione $e_k$ corrisponde a punti allineati lungo una retta di coefficiente angolare $\log r$ (che è negativo se $r<1$): difatti la differenza tra le ordinate di due punti successivi è il valore costante $\log e_{k+1} - \log e_k = \log r < 0$.
 
-Molti metodi hanno un comportamento simile a questo al limite, quindi introduciamo una definizione che formalizza questo comportamento. Diciamo che un metodo iterativo \emph{converge linearmente} (o ha \emph{ordine di convergenza $1$}) quando
+Molti metodi, al limite, hanno un comportamento dell'errore che ricorda quello di una serie geometrica; quindi introduciamo una definizione che formalizza questo concetto. Diciamo che un metodo iterativo \emph{converge linearmente} (o anche che ha \emph{ordine di convergenza $1$}) quando esiste una costante $r\in (0,1)$ tale che
 \begin{equation} \label{tassoconv}
-    \lim_{k \to \infty }\frac{e_{k+1}}{e_k} = r \in (0,1).    
+    \lim_{k \to \infty }\frac{e_{k+1}}{e_k} = r.
 \end{equation}
 Questo vuol dire che per $k$ sufficientemente grande (la~\eqref{tassoconv} contiene un simbolo di limite!) la successione degli errori si comporta come una successione geometrica. Questo corrisponde al comportamento che vediamo nel grafico per alcune delle successioni nella figura~\ref{fig:iterativi}: a parte i primissimi, i punti tendono ad essere allineati.
 
-La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
+La convergenza è più veloce quanto più piccolo $r$, che si chiama \emph{tasso di convergenza}; in inglese \emph{convergence rate}. Più informalmente, spesso si parla di \emph{velocità di convergenza} maggiore o minore.
 
-\marginpar{\dbend} Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che la successione converge a zero molto lentamente (ad esempio, $e_k = 1/k$), o che non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
+\marginpar{\dbend} Attenzione: se la~\eqref{tassoconv} vale con $r>1$, allora vuol dire che gli errori si comportano come una successione geometrica di ragione $>1$; quindi in particolare non convergono a zero. Se il limite nella~\eqref{tassoconv} vale $r=1$, può voler dire o che l'errore converge a zero molto lentamente (ad esempio, questo si verifica per la successione $x_k = 1/k$), o che esso non converge proprio a zero. Questo può succedere perché abbiamo identificato erroneamente la radice $\alpha$ a cui si ha convergenza, come in questo esempio.
 \begin{esempio}
     Per calcolare $\alpha = \sqrt{2}$, consideriamo il metodo di punto fisso $x_{k+1} = x_k + \frac{1}{2} (x_k^2-2)$, con $x_0 = -2$. Se calcoliamo con Matlab gli errori $e_k = \abs{x_k - \alpha}$ prodotti dal metodo, otteniamo
     \begin{lstlisting}
@@ -931,21 +930,20 @@ La convergenza è più veloce quanto più piccolo è $r$, che si chiama \emph{ta
 0.9973    1.0011    0.9995    1.0002    0.9999    1.0000
 1.0000    1.0000    1.0000    1.0000    ...
 \end{lstlisting}
-In particolare questi risultati numerici mostrano che $\frac{e_{k+1}}{e_k}$ converge a $r=1$, nella pratica. Questo succede perché in realtà la successione $x_k$ converge non a $\alpha = \sqrt{2}$, ma all'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
+In particolare questi risultati numerici mostrano che $\frac{e_{k+1}}{e_k}$ converge a $r=1$. Questo succede perché in realtà la successione $x_k$ che abbiamo definito converge non a $\alpha = \sqrt{2}$, ma all'altra soluzione dell'equazione $x^2-2=0$, che è $-\sqrt{2}$.
 \end{esempio}
 
-\paragraph{Tasso di convergenza del metodo di punto fisso} 
-Riprendendo il calcolo fatto nell'equazione~\eqref{fpindu2}, abbiamo
+\paragraph{Tasso di convergenza del metodo di punto fisso} Supponiamo che il metodo del punto fisso generi una successione $x_k$ che converge ad $\alpha$. Allora, usando l'equazione~\eqref{riduzione errore punto fisso}, abbiamo
 \[
-\lim_{k \to \infty} \frac{\abs{x_{k+1} - \alpha}}{\abs{x_k - \alpha}} = \lim_{k\to\infty} \abs{\Phi'(\xi_k)} = \abs{\Phi'(\alpha)} \in [0,1).
+\lim_{k \to \infty} \frac{\abs{x_{k+1} - \alpha}}{\abs{x_k - \alpha}} = \lim_{k\to\infty} \abs{\Phi'(\xi_k)} = \abs{\Phi'(\alpha)}.
 \]
 L'ultima uguaglianza vale perché abbiamo $0 \leq \abs{\xi_k - \alpha} \leq \abs{x_k - \alpha}$, e quindi $\xi_k \to \alpha$ per il teorema dei carabinieri. Inoltre usiamo il fatto che $x \mapsto \abs{\Phi'(x)}$ è una funzione continua, per dire che se $\xi_k\to\alpha$ allora $\abs{\Phi'(\xi_k)} \to \abs{\Phi'(\alpha)}$. Questa formula ci dice che il metodo del punto fisso ha tasso di convergenza $r = \abs{\Phi'(\alpha)}$.
 
-Quindi quando $\abs{\Phi'(\alpha)}<1$ il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$. In questo caso, si ha quindi anche
+Quando $\abs{\Phi'(\alpha)}<1$, il metodo del punto fisso ha convergenza \emph{almeno lineare}. Diciamo ``almeno'', perché può succedere che $\abs{\Phi'(\alpha)} = 0$, cioè
 \[
     \lim_{k\to\infty} \frac{e_{k+1}}{e_k} = 0.
 \]
-In questo caso, nel grafico dell'errore in scala logaritmica la distanza tra le ordinate di due punti successivi tende a $\log 0 = -\infty$, cioè, diventa sempre più grande. La successione degli errori allora tende a zero più velocemente di una qualunque retta; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva la cui derivata tende a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{k+1}}{e_k} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo questo metodo nel dettaglio più avanti.
+In questo caso, nel grafico dell'errore in scala logaritmica la distanza tra le ordinate di due punti successivi $\log e_{k+1} - \log e_k$ tende a $\log 0 = -\infty$, cioè, diventa sempre più grande. La successione degli errori allora tende a zero più velocemente di una qualunque retta; per esempio, i punti potrebbero formare una parabola con la concavità verso il basso, o un'altra curva che ha derivata tendente a $-\infty$. Quando una successione soddisfa $\lim \frac{e_{k+1}}{e_k} = 0$, si dice che ha convergenza \emph{superlineare}. Un esempio è la quarta successione in Figura~\ref{fig:iterativi}, che difatti converge più velocemente degli altri metodi. Studieremo tra poco questo metodo e la sua velocità di convergenza.
 
 \begin{esercizio}
     Consideriamo il metodo del punto fisso applicato a una funzione lineare $\Phi(x) = mx + q$. Quanto vale il tasso di convergenza $r$?
@@ -955,13 +953,13 @@ In questo caso, nel grafico dell'errore in scala logaritmica la distanza tra le 
 \end{esercizio}
 
 \paragraph{Tasso di convergenza del metodo di bisezione}
-Nel caso del metodo di bisezione, non riusciamo a dimostrare una convergenza secondo la definizione~\eqref{tassoconv}. Difatti può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono dell'errore si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
+Nel caso del metodo di bisezione, non riusciamo a dimostrare l'esistenza di un tasso di convergenza secondo la definizione~\eqref{tassoconv}. Per esempio, può anche succedere che l'errore $e_k$ cresca da un passo all'altro: è facile costruire una situazione in cui lo zero $\alpha$ è più vicino a $c_k$ che a $c_{k+1}$. Ne abbiamo visto un esempio proprio quando abbiamo visto il nostro primo esempio per calcolare $\alpha=\sqrt{2}$: applicando il metodo di bisezione a quel problema, $\alpha=\sqrt{2}$ è più vicino a $c_2=1.5$ che a $c_3=1.25$. Il comportamento non monotono dell'errore si vede chiaramente anche nella Figura~\ref{fig:iterativi}.
 
 Riusciamo però a dimostrare che $e_k \leq \varepsilon_k$, dove $\varepsilon_k$ è una successione che converge linearmente: difatti abbiamo visto che
 \[
-e_k \leq \underbrace{\frac{b_0 - a_0}{2^{k+1}}}_{=\varepsilon_k},
+e_k \leq \underbrace{\frac{b_0 - a_0}{2^{k+1}}}_{:=\varepsilon_k},
 \]
-e
+e con questa definizione di $\varepsilon_k$ abbiamo
 \[
 \lim_{k\to\infty} \frac{\varepsilon_{k+1}}{\varepsilon_k} = \lim_{k\to\infty} \frac{1}{2} = \frac{1}{2}.
 \]
@@ -969,7 +967,7 @@ Il termine che si usa per descrivere un caso come questo è che il metodo di bis
 
 \paragraph{Criteri di arresto per il metodo del punto fisso}
 
-Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{k} - x_{k-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_k - \alpha} < \varepsilon$, quando $r$ è vicino a $1$ e la convergenza è lenta. Vediamo un esempio nella figura qui sotto.
+Per un metodo come quello del punto fisso, il criterio di arresto più usato è quello di fermarsi quando due iterate successive sono vicine, cioè $\abs{x_{k} - x_{k-1}} < \varepsilon$. È importante però osservare che questo non garantisce che $\abs{x_k - \alpha} < \varepsilon$: in particolare, quando $r \approx 1$ la convergenza è lenta. Vediamo un esempio nella figura qui sotto.
 
 \begin{figure}[H]
 \centering
@@ -1004,13 +1002,13 @@ Per un metodo come quello del punto fisso, il criterio di arresto più usato è 
 
 Svantaggi:
 \begin{itemize}
-    \item Convergenza non garantita se non in un intorno della soluzione. È difficile calcolare quanto è grande questo intorno: i teoremi non ci danno una formula facile da calcolare.
-    \item Il criterio di arresto non garantisce un errore $\leq \varepsilon$.
+    \item Convergenza non garantita se non in un intorno della soluzione. È difficile calcolare quanto è grande questo intorno: i teoremi che abbiamo visto non ci danno una formula generale facile da calcolare.
+    \item Non c'è un criterio di arresto che garantisca un errore $\leq \varepsilon$.
 \end{itemize}
 Vantaggi del metodo:
 \begin{itemize}
     \item A seconda della scelta della $\Phi$ (e quindi del valore di $r$), questo metodo può essere anche molto più veloce del metodo di bisezione.
-    \item La convergenza è più regolare del metodo di bisezione, nel senso che la distanza da $\alpha$ scende sempre da un certo punto in poi. 
+    \item La convergenza è più regolare del metodo di bisezione: la distanza da $\alpha$ scende sempre da un certo punto in poi. 
 \end{itemize}
 
 
@@ -1122,13 +1120,13 @@ Esempio: metodo di Newton su $f(x) = x^2-a$: è anche un metodo per calcolare ra
 
 Abbiamo visto che il metodo di Newton ha convergenza superlineare, cioè, il limite $\lim_{k \to \infty }\frac{e_{k+1}}{e_k}$ è uguale a zero: questo vuol dire che la successione degli errori $e_k$ va a zero più velocemente di una serie geometrica, qualunque sia il suo tasso $r$. In un grafico in scala logaritmica, la differenza di ordinata tra due punti successivi $\log e_{k+1} - \log e_k$ tende a $-\infty$. Questo significa che un metodo con convergenza superlineare converge sempre (al limite) più velocemente di un metodo lineare.
 
-Per valutare la velocità di convergenza di metodi superlineari in modo più preciso, introduciamo un'altra definizione. Sia data, di nuovo, una successione $x_k$, e usiamo l'errore $e_k = \abs{x_k - \alpha}$ per valutarne la velocità di convergenza ad $\alpha$. Dato un $p > 1$, diciamo che la successione ha \emph{ordine di convergenza $p$} se vale
-\[
-\lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} = s \in (0,\infty).
-\]
+Per valutare la velocità di convergenza dei metodi superlineari in modo più preciso, introduciamo un'altra definizione. Sia data, di nuovo, una successione $x_k$ che converge al limite $\alpha$, e usiamo l'errore $e_k = \abs{x_k - \alpha}$ per valutarne la velocità di convergenza ad $\alpha$. Dato un $p > 1$, diciamo che la successione ha \emph{ordine di convergenza $p$} se esiste una costante $s\in (0,\infty)$ tale che
+\begin{equation} \label{convergenza di ordine p}
+    \lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} = s.    
+\end{equation}
 Cioè, l'errore al passo $k+1$ non è più (al limite) proporzionale ad $e_k$, ma a una sua potenza $e_k^p$. (E ricordiamo che se $e_k<1$, allora $e_k^p$ è più piccolo di $e_k$.)
 
-In questa definizione non richiediamo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, per ottenere convergenza superlineare. Difatti, se una successione ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
+In questa definizione non richiediamo che $s<1$, a differenza della convergenza lineare: basta che $s$ sia un limite finito, perché si abbia convergenza superlineare. Difatti, se una successione ha ordine di convergenza $p>1$ allora per qualunque $s<\infty$ vale
 \begin{equation} \label{almeno}
 \lim_{k \to \infty }\frac{e_{k+1}}{e_k} = \lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} \cdot \lim_{k \to \infty } e_k^{p-1} = s \cdot 0 = 0.
 \end{equation}
@@ -1139,11 +1137,7 @@ In questa definizione non richiediamo che $s<1$, a differenza della convergenza 
 \]
 I primi elementi della successione sono $x_0 = 3\cdot 10^{-1}$, $x_1 = 3\cdot 10^{-2}$, $x_2 = 3\cdot 10^{-4}$, $x_3 = 3\cdot 10^{-8}$, $x_4 = 3\cdot 10^{-16}$, cioè $x_k = 0{,}00\dots03$, dove prima del $3$ ci sono $2^k$ zeri in totale (incluso quello prima della virgola). Il numero di zeri raddoppia ad ogni passo, e questo fa sì che la successione converga molto velocemente. Si può verificare che in un grafico in scala logaritmica, gli errori stanno sul grafico di un'esponenziale, e la distanza (in verticale) tra due punti successivi $\log e_{k+1} - \log e_k$ raddoppia ad ogni passo.
 
-In una variante di questa definizione, diciamo che una successione converge con ordine \emph{almeno $p$} se vale
-\[
-\lim_{k \to \infty }\frac{e_{k+1}}{e_k^p} = s \in [0,\infty).
-\]
-Questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $p$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $p$, allora converge anche di ordine almeno $q$, per ogni $q\leq p$. (La dimostrazione di questo fatto, che non vediamo, si basa su un calcolo simile a quello in~\eqref{almeno}.)
+In una variante di questa definizione, diciamo che una successione converge con ordine \emph{almeno $p$} se esiste $s\in [0,+\infty]$ tale che valga la~\eqref{convergenza di ordine p}: la differenza rispetto alla definizione precedente è che questa volta abbiamo incluso lo zero tra i possibili valori ammessi per $s$. Si può mostrare che questo concetto di ``convergenza di ordine almeno $p$'' si comporta come ci aspettiamo dall'uso della parola ``almeno'': se un metodo converge con ordine $p$, allora converge anche di ordine almeno $q$, per ogni $q\leq p$. (La dimostrazione di questo fatto, che non vediamo, si basa su un calcolo simile a quello in~\eqref{almeno}.)
 
 \paragraph{Convergenza quadratica} \begin{theorem}[Convergenza almeno quadratica del metodo di Newton]\label{thm:convnewton}
 Supponiamo $f \in \mathcal{C}^2([a,b])$. Se il metodo di Newton converge a $\alpha \in (a,b)$ e se $f'(\alpha) \neq 0$ (cioè se $\alpha$ è uno \emph{zero semplice}), allora l'errore $e_k = \abs{x_k - \alpha}$ soddisfa
@@ -1158,7 +1152,7 @@ Usiamo uno sviluppo di Taylor (con resto di Lagrange) in $x_k$ per scrivere l'ug
 \begin{equation} \label{sviluppo Taylor per dimostrazione conv. quadratica Newton}
     0 = f(\alpha) = f(x_k) + f'(x_k)(\alpha-x_k) + \frac{f''(\xi_k)}{2}(\alpha-x_k)^2    
 \end{equation}
-che vale per uno $\xi_k$ compreso tra $\alpha$ e $x_k$.
+che vale per un valore $\xi_k$ compreso tra $\alpha$ e $x_k$.
 
 Dividiamo per $f'(x_k)$ per ottenere
 \[
@@ -1175,7 +1169,7 @@ Questa uguaglianza può essere scritta per ogni $n$ (con un valore diverso di $\
 In particolare, $s\neq 0$ se e solo se $f''(\alpha)\neq 0$.
 \end{proof}
 
-\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_k)}{f'(x_k)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_k - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_k - x_{k+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è il criterio di arresto che avevamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
+\paragraph{Criterio di arresto} Come per il metodo di bisezione, un criterio di arresto euristico per il metodo di Newton è: fermiamoci quando $\abs*{\frac{f(x_k)}{f'(x_k)}} \leq \varepsilon$; ci aspettiamo (senza garanzie!) che questo avvenga quando $\abs{x_k - \alpha} \leq \varepsilon$. Per come è definito il metodo, questo equivale a $\abs{x_k - x_{k+1}} \leq \varepsilon$, cioè, ci fermiamo quando due iterate successive sono abbastanza vicine: questo è lo stesso criterio di arresto che abbiamo visto anche per il metodo del punto fisso. Avevamo visto che questo criterio funziona male se $r\approx 1$, ma nel caso del metodo di Newton $r=0$, quindi non abbiamo questo problema.
 
 \begin{conditional}[inf]
 \paragraph{Convergenza su intervalli}
@@ -1361,12 +1355,12 @@ Questo suggerisce di fare una modifica al metodo: se definiamo
 \[
     \Phi_m(x) = x - m \frac{f(x)}{f'(x)}
 \]
-allora avremo
+allora ripetendo la stessa dimostrazione otterremo
 \[
     \Phi_m'(\alpha) = 1 - m\frac{1}{m} = 0.
 \]
 
-Quindi se il valore della molteplicità $m$ è noto a priori possiamo utilizzare il seguente (\emph{metodo di Newton modificato}):
+Quindi, quando conosciamo il valore della molteplicità $m$ a priori, possiamo utilizzare il seguente \emph{metodo di Newton modificato}:
 \begin{equation} \label{newtonmod}
     x_{k+1} = \underbrace{x_k - m\frac{f(x_k)}{f'(x_k)}}_{:=\Phi_m(x_k)} \quad k = 0,1,2,\dots    
 \end{equation}
@@ -1402,9 +1396,8 @@ Esempio: metodo di Newton modificato su $f(x) = x^2$ per recuperare convergenza 
         x_{k+1} = x_k - \frac{f(x_k) (x_k - x_{k-1})}{f(x_k) - f(x_{k-1})}, \quad k=1,2,\dots.
     \end{cases}
     \]
-    Anche questo metodo converge localmente, e il suo ordine di convergenza (sotto opportune ipotesi sulla funzione) è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$. Non dimostriamo quest'ultimo risultato, che è più complesso: difatti questo non è un metodo del tipo $x_{k+1} = \Phi(x_k)$, perché ogni valore dipende dalle \emph{due} iterate precedenti. 
+    Anche questo metodo converge localmente, e il suo ordine di convergenza (sotto opportune ipotesi sulla funzione) è $p = \frac{1+\sqrt{5}}{2} \approx 1.618$. Non dimostriamo quest'ultimo risultato, che è più complesso: difatti questo non è un metodo del tipo $x_{k+1} = \Phi(x_k)$, perché questa volta ogni elemento della successione dipende dai \emph{due} precedenti, $x_k$ e~$x_{k-1}$. 
     
-
 \end{description}
 
 % [Note per lezione Matlab:
@@ -1674,11 +1667,7 @@ Per esempio, $x = -764.88888\dots$ (periodico) si scrive in base $\beta=10$ come
 \[
 x = - 10^2 (7\cdot 10^{0} + 6\cdot 10^{-1} + 4\cdot 10^{-2} + 8 \cdot 10^{-3} + 8 \cdot 10^{-4} + 8 \cdot 10^{-5} + \dots)
 \]
-Questo è un modo più prolisso di scrivere la notazione scientifica che già conosciamo: $x= -7.6488888\ldots \cdot 10^{2}$.
-
-Introduciamo un paio di definizioni: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
-
-Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria. Però ci soffermiamo un attimo sulle condizioni di unicità.
+Questa rappresentazione è un modo di scrivere la notazione scientifica che già conosciamo e usiamo: $x= -7.6488888\ldots \cdot 10^{2}$. Non ci interessa qui dimostrare questo teorema: ``sappiamo che è vero'' fin dalla scuola primaria. Però ci soffermiamo un attimo sulle condizioni di unicità.
 
 La prima condizione $c_0 \neq 0$ serve a escludere scritture alternative con zeri iniziali, per esempio
 \[
@@ -1687,6 +1676,8 @@ La prima condizione $c_0 \neq 0$ serve a escludere scritture alternative con zer
 La rappresentazione senza zeri iniziali si chiama \emph{normalizzata}.
 
 La seconda condizione esclude scritture come $0.999999\dots$ (periodico): come avrete sicuramente già visto, la somma della serie $9\cdot 10^{-1}+9\cdot 10^{-2} + 9\cdot 10^{-3}+\dots$ è uguale a 1; quindi $0.999999\dots$ è un modo diverso di scrivere il numero 1, e vogliamo escluderlo.
+
+Introduciamo anche un paio di definizioni: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
 
 \paragraph{Numeri di macchina}
 Su un computer, possiamo rappresentare solo una quantità finita di numeri.
@@ -1720,7 +1711,7 @@ Notiamo che i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal succe
 Quindi i numeri di macchina non sono equispaziati: i numeri più vicini allo zero (con $p$ piccolo) hanno una spaziatura minore tra l'uno e l'altro. Vedremo che queste spaziature variabili sono proprio quello che consente un'approssimazione con un errore \emph{relativo} basso.
 
 \paragraph{Numero di macchina più piccolo, più grande, successivo}  
-Il numero positivo più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte cifre $\beta-1$.
+Il numero positivo più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1.000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte le cifre uguali a $\beta-1$.
 
 Dato un numero di macchina normalizzato positivo 
 \[
@@ -1732,13 +1723,13 @@ il numero di macchina immediatamente successivo è quello che si ottiene aggiung
 
 \begin{theorem} \label{th:precmacchina} Dato un numero reale $x \in [-\Omega, -\omega] \cup [\omega, \Omega]$, esiste un numero di macchina $\tilde{x}$ tale che
 \begin{equation} \label{roundingerror}
-    \abs*{\frac{\tilde{x}-x}{x}} < \beta^{1-t}.    
+    \abs*{\frac{\tilde{x}-x}{x}} < \frac{1}{\beta^{t-1}}.
 \end{equation}
 \end{theorem}
 \begin{proof}
-Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Allora $x$ è compreso tra due numeri di macchina successivi, chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t-1$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} 7.64$.
+Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Il numero $x$ avrà una rappresentazione della forma~\eqref{rapprbase}. Inoltre, visto che $x$ è compreso tra il numero di macchina più piccolo e quello più grande, esisterà per forza un numero di macchina immediatamente minore e uno immediatamente superiore; chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t-1$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} \cdot 7.64$. Invece, $\overline{x}$ è il numero di macchina successivo a $\underline{x}$, che abbiamo visto essere uguale a $\underline{x} + \beta^{p - (t-1)}$.
 
-Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x$ e $\tilde{x}$ sono entrambi compresi nell'intervallo $(\underline{x}, \overline{x})$, si ha 
+Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x$ e $\tilde{x}$ sono entrambi compresi nell'intervallo $[\underline{x}, \overline{x}]$, si ha 
 \begin{equation}
     \abs{\tilde{x}-x} < \overline{x} - \underline{x} = \beta^{p-(t-1)}.
 \end{equation}
@@ -1762,7 +1753,7 @@ Con qualche passaggio algebrico, possiamo riscrivere la~\eqref{relerr} come
 \end{equation}
 Questo è un formato utile, che ci dice che possiamo pensare $\tilde{x}$ come ottenuto moltiplicando $x$ per un numero molto vicino a $1$.
 
-Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \beta^{1-t}$. La quantità $\mathsf{u} = \beta^{1-t}$ (detta \emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
+Quindi la~\eqref{roundingerror} dice che per ogni $x$ in quegli intervalli esiste un numero di macchina $\tilde{x} = x(1+\varepsilon)$ che lo approssima con un errore relativo che soddisfa $\abs{\varepsilon} \leq \frac{1}{\beta^{t-1}}$. La quantità $\mathsf{u} = \frac{1}{\beta^{t-1}}$ (detta \emph{precisione di macchina}) non dipende da $x$, ma solo dall'insieme di numeri di macchina scelto.
 
 \paragraph{Valori non normalizzati}
 Per ottenere un sistema di numeri più completo, estendiamo l'insieme dei numeri di macchina normalizzati aggiungendo alcuni valori speciali:
@@ -1788,7 +1779,7 @@ Il primo bit codifica il segno, i successivi 11 bit l'esponente, e i successivi 
 \end{conditional}
 
 
-Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di macchina $\mathsf{u} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
+Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di macchina $\mathsf{u} = 2^{-52} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
 C'è anche un altro formato nello standard, chiamato \texttt{single} o \texttt{float32}, che può rappresentare numeri compresi tra $\omega \approx 10^{-38}$ e $\Omega \approx 10^{38}$ e ha precisione di macchina $\mathsf{u}\approx 10^{-7}$. Con questo formato gli errori sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno). I formati di numeri reali a disposizione nei vari linguaggi di programmazione tipicamente sono questi due (con vari nomi a seconda del linguaggio).
 
@@ -1798,7 +1789,7 @@ Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non vie
     &= 2^{-2} \cdot \underbrace{1.0011001100110011001100110011001100110011001100110011}_{\text{53 cifre binarie nella mantissa}}
 \end{align*}
 
-cioè, in base 10,
+cioè, riconvertendo in base 10,
 \[
 \tilde{x} = 0.2\underbrace{999999999999999}_{\text{15 volte 9}}88897769753748434595763683319091796875,
 \]
