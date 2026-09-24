@@ -1924,54 +1924,55 @@ Qual è il loro effetto combinato?
 \section{Errore di macchina}
 Con questi strumenti a disposizione, possiamo andare a studiare più nel dettaglio l'impatto degli errori che facciamo quando calcoliamo una quantità sul computer utilizzando i numeri \emph{floating point}; questi sono detti \emph{errori di macchina}. Vedremo che l'errore commesso non è sempre dell'ordine di $10^{-16}$ purtroppo, ma in certi casi può venire amplificato e diventare molto più grande.
 
-\paragraph{Approssimazione al primo ordine dell'errore di macchina} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora sulle \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo due quantità intermedie.
+\paragraph{Approssimazione al primo ordine dell'errore di macchina} Supponiamo di voler calcolare su un computer una quantità che dipende da certi valori di ingresso; ci concentriamo ora sulle \emph{funzioni razionali}, cioè funzioni che possiamo calcolare usando (un numero finito di volte) le quattro operazioni. Prendiamo un esempio semplice in cui possiamo studiare la situazione: la funzione $z = f(x,y) = x^2 - y^2$. Questa è una funzione di due argomenti $x,y$, che possono essere due numeri reali qualunque; non necessariamente dei numeri di macchina: per esempio $x=0.1$ e $y=0.2$. Per calcolare $z$, faremo tre operazioni, che scriviamo in questo modo introducendo alcune quantità intermedie.
 \[
-A = x \cdot x, \quad B = y \cdot y, \quad z = A - B.
+t_1 = x \cdot x, \quad t_2 = y \cdot y, \quad t_3 = t_1 - t_2.
 \]
 
 Il primo errore che commettiamo è quello che facciamo approssimando $x$ e $y$ con dei numeri di macchina: otteniamo $\tilde{x} = x(1+\varepsilon_x)$, $\tilde{y} = y(1+\varepsilon_y)$, con $\abs{\varepsilon_x},\abs{\varepsilon_y} \leq \mathsf{u}$. Successivamente, effettuiamo le tre operazioni (due moltiplicazioni e una sottrazione) con i numeri di macchina:
 \[
-\tilde{A} = \tilde{x} \odot \tilde{x}, \quad \tilde{B} = \tilde{y} \odot \tilde{y}, \quad \tilde{\gamma} = \tilde{A} \ominus \tilde{B}.
+\tilde{t}_1 = \tilde{x} \odot \tilde{x}, \quad \tilde{t}_2 = \tilde{y} \odot \tilde{y}, \quad \tilde{t}_3 = \tilde{t}_1 \ominus \tilde{t}_2.
 \]
-Nel calcolare $\tilde{A}$, si combinano un nuovo errore di macchina $\varepsilon_1$, ottenuto quando approssimiamo il risultato esatto $\tilde{x}^2$ con un numero di macchina, e gli errori precedenti che hanno modificato $x$ in $\tilde{x}$:
+Nel calcolare $\tilde{t}_1$, si combinano un nuovo errore di macchina $\varepsilon_1$, ottenuto quando approssimiamo il risultato esatto dell'operazione $\tilde{x}^2$ con un numero di macchina, e gli errori precedenti che hanno modificato $x$ in $\tilde{x}$:
 \begin{align*}
-    \tilde{A} &= \tilde{x} \odot \tilde{x} = \tilde{x}^2 (1+\varepsilon_1) = x^2(1+\varepsilon_x)^2 (1+\varepsilon_1)\\
+    \tilde{t}_1 &= \tilde{x} \odot \tilde{x} = \tilde{x}^2 (1+\varepsilon_1) = x^2(1+\varepsilon_x)^2 (1+\varepsilon_1)\\
     &= x^2 (1+2\varepsilon_x + \underbrace{\varepsilon_x^2}_{\mathcal{O}(\mathsf{u}^2)})(1+\varepsilon_1)\\
     &\doteq x^2(1+2\varepsilon_x + \varepsilon_1 + \underbrace{2\varepsilon_x\varepsilon_1}_{\mathcal{O}(\mathsf{u}^2)})\\
-    &\doteq A(1+2\varepsilon_x + \varepsilon_1)
+    &\doteq t_1(1+2\varepsilon_x + \varepsilon_1)
 \end{align*}
 Possiamo evitare di calcolare nel dettaglio i termini che contengono il prodotto di due o più errori; ci basta dire che sono dell'ordine di $\mathcal{O}(\mathsf{u}^2)$ per avere una stima dell'errore al primo ordine. Questo ci dice che l'errore relativo su $A$ è
 \[
-\varepsilon_A \doteq \frac{\tilde{A}-A}{A} = 2\varepsilon_x + \varepsilon_1.
+\delta_1 \doteq \frac{\tilde{t}_1-t_1}{t_1} = 2\varepsilon_x + \varepsilon_1.
 \]
+(Useremo la lettera $\delta$ per indicare gli errori ``totali'' ottenuti tenendo conto anche degli errori commessi ai passi precedenti.)
 
 In modo analogo si ha
 \[
-\tilde{B} = \tilde{y} \odot \tilde{y} = B(1+\varepsilon_B), \quad \varepsilon_B \doteq 2\varepsilon_y + \varepsilon_2,
+\tilde{t}_2 = \tilde{y} \odot \tilde{y} = t_2(1+\delta_2), \quad \delta_2 \doteq 2\varepsilon_y + \varepsilon_2,
 \]
-dove abbiamo chiamato $\varepsilon_2$ l'errore che facciamo rimpiazzando il risultato del secondo prodotto $\tilde{y} \odot \tilde{y}$ con un numero di macchina. Già questi errori $\varepsilon_A$ e $\varepsilon_B$ possono essere leggermente più grandi della precisione di macchina, fino a $3\mathsf{u}$. Ma l'errore maggiore si verifica quando consideriamo anche la sottrazione finale. Abbiamo
+dove abbiamo chiamato $\varepsilon_2$ l'errore che facciamo rimpiazzando il risultato del secondo prodotto $\tilde{y} \odot \tilde{y}$ con un numero di macchina. Già questi errori $\delta_1$ e $\delta_2$ possono essere leggermente più grandi della precisione di macchina, fino a $3\mathsf{u}$. Ma l'errore maggiore si verifica quando consideriamo anche la sottrazione finale. Abbiamo
 \[
-\tilde{\gamma} = \tilde{A} \ominus \tilde{B} = (\tilde{A}-\tilde{B})(1+\varepsilon_3).
+\tilde{t}_3 = \tilde{t}_1 \ominus \tilde{t}_2 = (\tilde{t}_1-\tilde{t}_2)(1+\varepsilon_3).
 \]
-Con un po' di manipolazioni, possiamo scrivere anche questo risultato in una forma simile a quella sopra: il risultato esatto $z=x^2-y^2$, moltiplicato per un fattore $(1+\varepsilon_z)$:
+Con un po' di manipolazioni, possiamo scrivere anche questo risultato in una forma simile a quella sopra: il risultato esatto $t_3=x^2-y^2$, moltiplicato per un fattore $(1+\delta_3)$:
 \begin{align*}
-    \tilde{z}&= (\tilde{A}-\tilde{B})(1+\varepsilon_3)\\
-    &= \frac{z}{x^2-y^2}\biggl(x^2(1+\varepsilon_A) - y^2(1+\varepsilon_B)\biggr)(1+\varepsilon_3)\\
-    &= z \biggl(\underbrace{\frac{x^2-y^2}{x^2-y^2}}_{=1} + \frac{x^2}{x^2-y^2}\varepsilon_A - \frac{y^2}{x^2-y^2}\varepsilon_B\biggr)(1+\varepsilon_3)\\
-    &\doteq z \biggl(1 + \frac{x^2}{x^2-y^2}\varepsilon_A - \frac{y^2}{x^2-y^2}\varepsilon_B +\varepsilon_3\biggr)\\
-    &\doteq z \biggl(1 + \frac{x^2}{x^2-y^2}(2\varepsilon_x + \varepsilon_1) - \frac{y^2}{x^2-y^2}(2\varepsilon_y + \varepsilon_2) +\varepsilon_3\biggr)\\
-    &= z \biggl(1 + \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{2x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3\biggr).
+    \tilde{t}_3&= (\tilde{t}_1-\tilde{t}_2)(1+\varepsilon_3)\\
+    &= \frac{t_3}{x^2-y^2}\biggl(x^2(1+\delta_1) - y^2(1+\delta_2)\biggr)(1+\varepsilon_3)\\
+    &= t_3 \biggl(\underbrace{\frac{x^2-y^2}{x^2-y^2}}_{=1} + \frac{x^2}{x^2-y^2}\delta_1 - \frac{y^2}{x^2-y^2}\delta_2\biggr)(1+\varepsilon_3)\\
+    &\doteq t_3 \biggl(1 + \frac{x^2}{x^2-y^2}\delta_1 - \frac{y^2}{x^2-y^2}\delta_2 +\varepsilon_3\biggr)\\
+    &\doteq t_3 \biggl(1 + \frac{x^2}{x^2-y^2}(2\varepsilon_x + \varepsilon_1) - \frac{y^2}{x^2-y^2}(2\varepsilon_y + \varepsilon_2) +\varepsilon_3\biggr)\\
+    &= t_3 \biggl(1 + \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{2x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3\biggr).
 \end{align*}
-Questo ci dice che l'errore di macchina su $z$ è
+Questo ci dice che l'errore di macchina su $t_3$ è
 \[
-\varepsilon_z = \frac{\tilde{z} - z}{z} \doteq \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3.
+\varepsilon_{mac} = \delta_3 = \frac{\tilde{z} - z}{z} \doteq \frac{2x^2}{x^2-y^2}\varepsilon_x + \frac{x^2}{x^2-y^2}\varepsilon_1 - \frac{2y^2}{x^2-y^2}\varepsilon_y - \frac{y^2}{x^2-y^2}\varepsilon_2 +\varepsilon_3.
 \]
 Usando solo il fatto che $\abs{\varepsilon_i} \leq \mathsf{u}$ per $i=x,y,1,2,3$, la stima migliore che possiamo dare è quella che otteniamo usando la disuguaglianza triangolare:
 \begin{align}
-    \varepsilon_z &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
+    \abs{\varepsilon_{mac}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} + \frac{x^2}{\abs{x^2-y^2}}\abs{\varepsilon_1} + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y} + \frac{y^2}{\abs{x^2-y^2}} \abs{\varepsilon_2} + \abs{\varepsilon_3} \nonumber\\
     &\leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{y^2}{\abs{x^2-y^2}} \mathsf{u} + \mathsf{u}. \label{esempiox2y2}
 \end{align}
-Questo calcolo ci permette di individuare per quali valori di $x$ e $y$ l'errore di macchina diventa molto grande: in particolare, quando $x^2$ e $y^2$ sono molto vicini tra loro, il denominatore $x^2-y^2$ è molto più piccolo del numeratore, e quindi $\varepsilon_z$ diventa molto grande. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando facciamo sottrazioni tra due numeri molto vicini tra loro.
+Questo calcolo ci permette di individuare per quali valori di $x$ e $y$ l'errore di macchina diventa molto grande: in particolare, quando $x^2$ e $y^2$ sono molto vicini tra loro, il denominatore $x^2-y^2$ è molto più piccolo del numeratore, e quindi $\delta_3$ diventa molto grande. Questo è un fenomeno comune: l'errore di macchina tipicamente diventa molto alto quando facciamo sottrazioni tra due numeri molto vicini tra loro.
 
 \paragraph{Errore inerente ed errore algoritmico} Questo calcolo è stato lungo e macchinoso anche per un'espressione semplice come $x^2-y^2$; potete immaginare come le cose si complichino ancora di più quando eseguiamo sequenze più lunghe di operazioni. C'è però almeno una parte di questo calcolo che possiamo effettuare facilmente: quella dei coefficienti di fronte a $\varepsilon_x$ e $\varepsilon_y$. Concentriamoci sull'errore $\varepsilon_x$, e supponiamo per un attimo di ignorare gli errori $\varepsilon_y, \varepsilon_1,\varepsilon_2,\varepsilon_3$, ponendoli uguali a zero. Allora, possiamo notare che quello che stiamo calcolando è $\tilde{z} = f(\tilde{x},y)$: l'unico errore che commettiamo è quello dovuto a rimpiazzare il valore iniziale $x$ con $\tilde{x}$, e tutte le altre operazioni sono esatte. Abbiamo visto come si calcola questo errore: esso è uguale (al prim'ordine) a $\varepsilon_x$ moltiplicato per il coefficiente di amplificazione
 \[
@@ -1988,19 +1989,21 @@ I coefficienti di amplificazione di fronte a $\varepsilon_1,\varepsilon_2,\varep
 \[
 z = f(x,y) = x^2 - y^2 = (x+y)(x-y).
 \]
-Matematicamente, questa è un'uguaglianza: $x^2-y^2$ e $(x+y)(x-y)$ sono uguali, e definiscono la stessa funzione $f(x,y)$. Però, la seconda forma porta a un algoritmo diverso per calcolare la stessa quantità:
+Matematicamente, questa è un'uguaglianza: $x^2-y^2$ e $(x+y)(x-y)$ sono uguali, e definiscono la stessa funzione $f(x,y)$. Però, la seconda forma porta a un algoritmo (cioè, una sequenza di operazioni) diverso per calcolare la stessa quantità:
+\begin{equation}
+    t_1 = x+y, \quad t_2 = x-y, \quad t_3 = t_1 \cdot t_2.    
+\end{equation}
+Le quantità intermedie sono diverse nei due casi; in particolare, sono affette da errori di macchina diversi, visto che le operazioni che svolgiamo sul computer sono diverse. Nel nostro caso, entrambi gli algoritmi utilizzano tre operazioni, ma a priori per calcolare una stessa quantità potremmo anche avere algoritmi diversi che usano un numero diverso di operazioni. 
+
+Possiamo analizzare l'algoritmo
 \[
-C = x+y, \quad D = x-y, \quad z = C \cdot D.
+\tilde{t}_1 = \tilde{x} \oplus \tilde{y}, \quad \tilde{t}_2 = \tilde{x} \ominus \tilde{y}, \quad \tilde{t}_3 = \tilde{t}_1 \odot \tilde{t}_2.
 \]
-Le due quantità intermedie sono diverse; in particolare, sono affette da errori di macchina diversi, visto che le operazioni che svolgiamo sul computer sono diverse. Se definiamo
-\[
-\tilde{C} = \tilde{x} \oplus \tilde{y}, \quad \tilde{D} = \tilde{x} \ominus \tilde{y}, \quad \tilde{z} = \tilde{C} \odot \tilde{D}.
-\]
-La quantità $\tilde{z}$ ottenuta al termine di questi calcoli è, in generale, \emph{diversa} da quella ottenuta al paragrafo precedente con un algoritmo diverso. Lavorando nello stesso modo di sopra per stimare l'errore (esercizio per voi!), possiamo ottenere la disuguaglianza
+La quantità $\tilde{t}_3$ ottenuta al termine di questi calcoli è, in generale, \emph{diversa} da quella ottenuta al paragrafo precedente con un algoritmo diverso. Lavorando nello stesso modo di sopra per stimare l'errore (esercizio per voi!), possiamo ottenere la disuguaglianza
 \begin{align}
-    \frac{\abs{\tilde{z}-z}}{\abs{z}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} 
+    \frac{\abs{\tilde{t}_3-t_3}}{\abs{t_3}} &\stackrel{.}{\leq} \frac{2x^2}{\abs{x^2-y^2}} \abs{\varepsilon_x} 
     + \frac{2y^2}{\abs{x^2-y^2}} \abs{\varepsilon_y}
-    + \abs{\varepsilon_4}+\abs{\varepsilon_5}+\abs{\varepsilon_6} \nonumber\\
+    + \abs{\varepsilon_1}+\abs{\varepsilon_2}+\abs{\varepsilon_3} \nonumber\\
     &\leq \frac{2x^2}{\abs{x^2-y^2}} \mathsf{u} + \frac{2y^2}{\abs{x^2-y^2}} \mathsf{u} + 3\mathsf{u}. \label{esempiox2y2bis}
 \end{align}
 I coefficienti davanti a $\varepsilon_x$ e $\varepsilon_y$ sono necessariamente gli stessi, perché abbiamo visto che possiamo scriverli solo in termine della funzione matematica $f(x,y)$, che è la stessa in entrambi i casi. Però gli altri errori, che abbiamo chiamato $\varepsilon_4,\varepsilon_5,\varepsilon_6$, sono ottenuti su operazioni diverse; non c'è motivo che siano uguali né loro né i loro coefficienti di amplificazione.
@@ -2044,36 +2047,36 @@ Consideriamo la funzione $f(x) = 2x+x^2 = (1+x)^2-1$. Queste due espressioni equ
 \[
 \tilde{f}_A(\tilde{x}) = 2\odot \tilde{x} \oplus \tilde{x}\odot \tilde{x}, \quad \tilde{f}_B(\tilde{x}) = (1\oplus \tilde{x}) \odot (1\oplus \tilde{x}) \ominus 1.
 \]
-Studiamo l'errore di macchina del secondo algoritmo, che scriviamo per comodità con delle quantità intermedie:\
+Studiamo qui l'errore di macchina del secondo algoritmo, che scriviamo usando le quantità intermedie
 \[
-A = 1+x \quad B = A \cdot A, \quad \gamma = B-1.
+t_1 = 1+x, \quad t_2 = t_1 \cdot t_1, \quad \gamma = t_2-1.
 \]
 Abbiamo innanzitutto
 \begin{align*}
-    \tilde{A} &= 1\oplus\tilde{x} = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
+    \tilde{t}_1 &= 1\oplus\tilde{x} = (1+x(1+\varepsilon_x))(1+\varepsilon_1)\\
     &= (1+x) \left(1+\frac{x}{1+x}\varepsilon_x \right)(1+\varepsilon_1)\\
-    &\doteq (1+x) \left(1+\underbrace{\frac{x}{1+x}\varepsilon_x +\varepsilon_1}_{=\varepsilon_A}\right)
+    &\doteq (1+x) \left(1+\underbrace{\frac{x}{1+x}\varepsilon_x +\varepsilon_1}_{=\delta_1}\right),
 \end{align*}
-poiché il termine $x\varepsilon_x\varepsilon_1$ contiene due fattori minori di $\mathsf{u}$.
+dove abbiamo ignorato il termine $x\varepsilon_x\varepsilon_1$, che contiene due fattori minori di $\mathsf{u}$.
 Poi continuiamo con
 \begin{align*}
-    \tilde{B} &= \tilde{A} \odot \tilde{A} = A^2(1+\varepsilon_A)^2 (1+\varepsilon_2)\\
-        &\doteq B(1+2\varepsilon_A+\varepsilon_2)\\
-        &\doteq B\left(1+ \underbrace{2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2}_{\varepsilon_B}\right).
+    \tilde{t}_2 &= \tilde{t}_1 \odot \tilde{t}_1 = t_1^2(1+\varepsilon_1)^2 (1+\varepsilon_2)\\
+        &\doteq t_2(1+2\delta_1+\varepsilon_2)\\
+        &\doteq t_2\left(1+ \underbrace{2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2}_{\delta_2}\right).
 \end{align*}
 Per la sottrazione finale, notiamo che il termine $1$ si rappresenta esattamente con un numero di macchina, quindi non commettiamo nessun errore nel rappresentarlo. Consideriamo quindi
 \begin{align*}
-    \tilde{z} &= \tilde{B} \ominus 1 \\
-    &= (B(1+\varepsilon_B) - 1)(1+\varepsilon_3)\\
-    &= (B-1)\left(1+\frac{B}{B-1}\varepsilon_B\right)(1+\varepsilon_3)\\
-    &\doteq (B-1)\left(1+\frac{B}{B-1}\varepsilon_B +\varepsilon_3\right)\\
-    &\doteq z\left(1+ \frac{(1+x)^2}{2x+x^2}\left(2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2\right) +\varepsilon_3 \right)\\
-    &\doteq z\left(1+ \frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3  \right)
+    \tilde{t}_3 &= \tilde{t}_2 \ominus 1 \\
+    &= (t_2(1+\delta_2) - 1)(1+\varepsilon_3)\\
+    &= (t_2-1)\left(1+\frac{t_2}{t_2-1}\delta_2\right)(1+\varepsilon_3)\\
+    &\doteq t_3\left(1+\frac{t_2}{t_2-1}\delta_B +\varepsilon_3\right)\\
+    &\doteq t_3\left(1+ \frac{(1+x)^2}{2x+x^2}\left(2\frac{x}{1+x}\varepsilon_x + 2\varepsilon_1 + \varepsilon_2\right) +\varepsilon_3 \right)\\
+    &\doteq t_3\left(1+ \frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3  \right)
 \end{align*}
 Quindi
 \begin{align*}
-    \varepsilon_{mac} &= \abs*{\frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3 + \mathcal{O}(\mathsf{u}^2)} \\
-    &\leq \abs*{\frac{2(1+x)}{2+x}}\mathsf{u} + \abs*{3\frac{(1+x)^2}{2x+x^2}}\mathsf{u} + \mathsf{u} + \mathcal{O}(\mathsf{u}^2)
+    \varepsilon_{mac} &\doteq \abs*{\frac{2(1+x)}{2+x}\varepsilon_x + \frac{(1+x)^2}{2x+x^2}(2\varepsilon_1+\varepsilon_2) +\varepsilon_3} \\
+    &\leq \abs*{\frac{2(1+x)}{2+x}}\mathsf{u} + \abs*{3\frac{(1+x)^2}{2x+x^2}}\mathsf{u} + \mathsf{u}
 \end{align*}
 Come già sappiamo, il coefficiente davanti a $\varepsilon_x$ è uguale al numero di condizionamento della funzione:
 \[
@@ -2451,7 +2454,7 @@ Un \emph{sistema lineare} è il problema inverso del prodotto: data $A\in\mathbb
 
 Partiamo studiando sistemi quadrati, cioè $A \in \mathbb{R}^{n\times n}$ (o $\mathbb{C}^{n\times n}$). Un sistema ha \emph{una e una sola} soluzione quando le righe/colonne di $A$ formano una base di $\mathbb{R}^n$ (in particolare, quando sono linearmente indipendenti). Ci concentriamo su sistemi che soddisfano questa ipotesi. Dall'algebra lineare, sappiamo che se $A$ è invertibile esiste una matrice $A^{-1}\in\mathbb{R}^{n\times n}$ tale che la soluzione si scrive come prodotto $\mathbf{x} = A^{-1}\mathbf{b}$. Questa matrice è unica e soddisfa $A^{-1}A=AA^{-1}= I$, la matrice con uni sulla diagonale e zeri altrove.
 
-\emph{Non} possiamo scrivere $\mathbf{x} = \mathbf{b}A^{-1}$ (dimensioni non compatibili per il prodotto; l'ordine dei fattori conta!), né $\mathbf{x} = \frac{\mathbf{b}}{A}$ (non vuol dire nulla, e non specifica l'ordine!).
+\marginpar{\dbend}\emph{Non} possiamo scrivere $\mathbf{x} = \mathbf{b}A^{-1}$ (dimensioni non compatibili per il prodotto; l'ordine dei fattori conta!), né $\mathbf{x} = \frac{\mathbf{b}}{A}$ (non vuol dire nulla, e non specifica l'ordine!).
 
 In Matlab, esiste una funzione \lstinline{inv(A)} che calcola la matrice inversa, quindi potremmo scrivere \lstinline{inv(A) * b}; però questo metodo di risolvere un sistema lineare è più costoso (e spesso anche più inaccurato) di altri algoritmi. C'è una notazione diversa per risolvere un sistema, \lstinline{x = A \ b}. Occhio: la barra è la ``backslash'' \lstinline!\!, non \lstinline{/}. Per non confondere le barre, pensate a questa operazione come a una sorta di ``divisione da un lato'': c'è una barra di frazione, e la \lstinline{A} sta al di sotto.
 
