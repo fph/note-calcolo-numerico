@@ -6,6 +6,7 @@
 
 % Needed for \comment
 \usepackage{verbatim}
+\usepackage{fix-cm}
 
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -142,7 +143,7 @@
 
 Queste note sono nate per fare da `scaletta' per me mentre tengo le lezioni; sono anche a vostra disposizione per essere usate come dispense per lo studio.
 
-Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini, e il testo è stato in parte migliorato e corretto in discussioni con Gianna Del Corso. Dei Large Language Model (GPT 4.1, GPT 5, Claude Opus 4.8) sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini, e per il proofreading.
+Scelta degli argomenti, dimostrazioni ed esempi sono in parte presi dalle dispense di Luca Gemignani, Paolo Ghelardoni, Cecilia Magherini, e il testo è stato in parte migliorato e corretto in discussioni con Gianna Del Corso. Dei Large Language Model sono stati utilizzati per scrivere il codice Latex che genera alcune delle immagini, e per il proofreading.
 
 \bigskip
 
@@ -1680,7 +1681,7 @@ La seconda condizione esclude scritture come $0.999999\dots$ (periodico): come a
 Introduciamo anche un paio di definizioni: $p$ si chiama \emph{esponente} di $x$, la quantità nella sommatoria in~\eqref{rapprbase} si chiama \emph{mantissa}.
 
 \paragraph{Numeri di macchina}
-Su un computer, possiamo rappresentare solo una quantità finita di numeri.
+Su un computer, possiamo rappresentare solo una quantità finita di numeri. Quindi introduciamo un insieme finito di numeri, introducendo delle limitazioni per le varie quantità che compaiono nella~\eqref{rapprbase}.
 \begin{definition}
     L'insieme dei \emph{numeri di macchina (o floating-point) normalizzati}, $\mathbb{F}(\beta, t, m, M)$ è l'insieme dei numeri della forma
     \[
@@ -1702,38 +1703,113 @@ Il numero di macchina positivo più piccolo è $10^{-2}(1 \cdot 10^{0} + 0 \cdot
 \end{align*}
 L'elenco che abbiamo fatto qui sopra contiene tutti i numeri di macchina normalizzati positivi dell'insieme $\mathbb{F}(10, 3, -2, 3)$. A questi vanno aggiunti quelli negativi, che sono gli stessi ma con un segno meno davanti.
 
-Notiamo che i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal successivo; i numeri con esponente $-1$ hanno distanza $10^{-3}$ l'uno dal successivo, fino ai numeri con esponente $3$ che hanno distanza $10$.
+Notiamo che questi numeri non sono equispaziati: i numeri con esponente $-2$ hanno distanza $10^{-4}$ l'uno dal successivo; i numeri con esponente $-1$ hanno distanza $10^{-3}$ l'uno dal successivo, fino ai numeri con esponente $3$ che hanno distanza $10$. Vedremo che queste spaziature variabili sono proprio quello che consente un'approssimazione con un errore \emph{relativo} basso.
 
 \begin{esercizio}
     Qual è il più piccolo intero positivo che \emph{non} appartiene all'insieme $\mathbb{F}(10, 3, -2, 3)$ riportato qui sopra?
 \end{esercizio}
 
-Quindi i numeri di macchina non sono equispaziati: i numeri più vicini allo zero (con $p$ piccolo) hanno una spaziatura minore tra l'uno e l'altro. Vedremo che queste spaziature variabili sono proprio quello che consente un'approssimazione con un errore \emph{relativo} basso.
-
-\paragraph{Numero di macchina più piccolo, più grande, successivo}  
-Il numero positivo più piccolo rappresentabile, che chiamiamo $\omega$, si ottiene scegliendo $p=m$ e mantissa $1.000\dots 0$. Il numero più grande rappresentabile, $\Omega$, si ottiene scegliendo $p=M$ e mantissa con tutte le cifre uguali a $\beta-1$.
-
-Dato un numero di macchina normalizzato positivo 
-\[
-x = \beta^p \left(c_0 \beta^0 + c_1 \beta^{-1} + \ldots + c_{t-1} \beta^{-(t-1)} \right),
-\]
-il numero di macchina immediatamente successivo è quello che si ottiene aggiungendo $1$ all'ultima cifra $c_{t-1}$, cioè $x + \beta^{p-(t-1)}$. Questo è chiaro se l'ultima cifra è diversa da $\beta-1$; se l'ultima cifra è $\beta-1$, aggiungendo 1 all'ultima cifra ci sono dei riporti: ad esempio, aggiungendo $0.0001$ a $0.0999$ otteniamo $0.1000$. Quando si hanno questi riporti, però, l'ultima cifra è sempre $0$, quindi siamo sempre in grado di scrivere questo numero $x + \beta^{p-(t-1)}$ come un numero di macchina, eventualmente cambiando esponente.
+\paragraph{Numeri di macchina sulla retta reale}
+Come dicevamo, i numeri di macchina sono un insieme \emph{finito} di numeri. In particolare, c'è un numero più grande di tutti, che chiamiamo $\Omega$: è quello con esponente uguale a $M$ e tutte le cifre della mantissa uguali a $\beta-1$. C'è anche un numero di macchina positivo più piccolo, che è quello con esponente uguale a $m$ e mantissa $1.000\dots0$. I numeri di macchina quindi sono interamente contenuti nei due intervalli $[-\Omega,-\omega] \cup [\omega,\Omega]$. Quando disegnati su una retta reale, hanno un aspetto simile a quello della figura~\ref{fig:floatingpoint}: notiamo in particolare la spaziatura variabile.
+\begin{figure}
+    % ---- The number system ------------------------------------------------
+% A toy binary floating-point format with \fracbits stored fraction bits
+% and exponents \emin..\emax. The defaults give omega = 0.25 and
+% Omega = 15.5, with 16 numbers per binade.
+\newcommand\fracbits{4}
+\newcommand\emin{-2}
+\newcommand\emax{3}
+ 
+% ---- Drawing parameters -----------------------------------------------
+\newcommand\unit{5mm}     % length of 1.0 on the axis
+\newcommand\overhang{1}   % how far the line runs past -Omega and Omega
+\newcommand\tick{3mm}     % half-height of a tick
+\newcommand\lwfrac{0.05}  % tick width as a fraction of the local spacing
+\newcommand\maxfont{12}   % label size (pt) in the top two binades
+\newcommand\shrink{0.6}   % label size factor per binade below that
+ 
+\begin{tikzpicture}[x=\unit,
+    num/.style={anchor=north, inner sep=0pt,
+                font=\fontsize{#1}{#1}\selectfont}]
+ 
+  \pgfmathtruncatemacro\nlast{2^\fracbits - 1}
+  \pgfmathtruncatemacro\efirst{max(\emin + 1, 0)}
+  \pgfmathsetmacro\vmax{2^(\emax+1) - 2^(\emax-\fracbits)}
+  \pgfmathsetmacro\vmin{2^\emin}
+ 
+  % The real line
+  \draw[line width=0.1pt] (-\vmax-\overhang,0) -- (\vmax+\overhang,0);
+ 
+  % Ticks are thin filled rectangles rather than strokes: viewers draw
+  % strokes at least one device pixel wide, which would turn the dense
+  % middle solid black, while fills get shaded by coverage.
+  %
+  % Binade e covers [2^e, 2^(e+1)) with 2^\fracbits evenly spaced
+  % numbers, so the spacing doubles from one binade to the next.
+  \foreach \e in {\emin,...,\emax} {
+    \pgfmathsetmacro\step{2^(\e - \fracbits)}
+    \pgfmathsetlengthmacro\lw{\lwfrac*\step*\unit}
+    \foreach \k in {0,...,\nlast} {
+      \pgfmathsetmacro\v{2^\e + \k*\step}
+      \fill ( \v,-\tick) ++(-\lw/2,0) rectangle ++(\lw,2*\tick)
+            (-\v,-\tick) ++(-\lw/2,0) rectangle ++(\lw,2*\tick);
+    }
+  }
+  % Zero, drawn like the ticks of the lowest binade
+  \pgfmathsetlengthmacro\lw{\lwfrac*2^(\emin-\fracbits)*\unit}
+  \fill (0,-\tick) ++(-\lw/2,0) rectangle ++(\lw,2*\tick);
+ 
+  % Labels at 1, 2, 4, ..., shrinking toward zero
+  \foreach \e in {\efirst,...,\emax} {
+    \pgfmathsetmacro\x{2^\e}
+    \pgfmathsetmacro\fs{\maxfont*\shrink^max(0, \emax-1-\e)}
+    \node[num=\fs] at ( \x,-\tick-1mm) {$\fpeval{2^\e}$};
+    \node[num=\fs] at (-\x,-\tick-1mm) {$-\fpeval{2^\e}$};
+  }
+  \pgfmathsetmacro\fs{\maxfont*\shrink^(\emax-1)}
+  \node[num=\fs] at (0,-\tick-1mm) {$0$};
+ 
+  % Largest numbers
+  \node[num=\maxfont] at ( \vmax,-\tick-1mm) {$\Omega$};
+  \node[num=\maxfont] at (-\vmax,-\tick-1mm) {$-\Omega$};
+ 
+  % Smallest numbers, above the ticks where there is room. The minus
+  % sign hangs to the left so both omegas sit over their ticks.
+  \pgfmathsetmacro\fs{\maxfont*\shrink^(\emax-1)}
+  \node[num=\fs, anchor=south] at ( \vmin,\tick+0.5mm) {$\omega$};
+  \node[num=\fs, anchor=south] at (-\vmin,\tick+0.5mm) {\llap{$-$}$\omega$};
+\end{tikzpicture}
+\caption{I numeri del sistema di numeri di macchina $F(2,5,-2,3)$, con base $\beta=2$, rappresentati sulla retta reale.} \label{fig:floatingpoint}
+\end{figure}
 
 \paragraph{Approssimazione con numeri di macchina}
-
 \begin{theorem} \label{th:precmacchina} Dato un numero reale $x \in [-\Omega, -\omega] \cup [\omega, \Omega]$, esiste un numero di macchina $\tilde{x}$ tale che
 \begin{equation} \label{roundingerror}
     \abs*{\frac{\tilde{x}-x}{x}} < \frac{1}{\beta^{t-1}}.
 \end{equation}
 \end{theorem}
 \begin{proof}
-Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Il numero $x$ avrà una rappresentazione della forma~\eqref{rapprbase}. Inoltre, visto che $x$ è compreso tra il numero di macchina più piccolo e quello più grande, esisterà per forza un numero di macchina immediatamente minore e uno immediatamente superiore; chiamiamoli $\underline{x}$ e $\overline{x}$. In particolare, $\underline{x}$ si ottiene troncando la rappresentazione~\eqref{rapprbase}, cioè arrestando la sommatoria a $t-1$ anziché a $\infty$, e ha lo stesso esponente $p$ del numero $x$: per esempio, il troncamento di $10^{-1} \cdot 7.648888\dots$ è $10^{-1} \cdot 7.64$. Invece, $\overline{x}$ è il numero di macchina successivo a $\underline{x}$, che abbiamo visto essere uguale a $\underline{x} + \beta^{p - (t-1)}$.
-
-Possiamo scegliere se prendere $\tilde{x} = \underline{x}$ (troncamento o arrotondamento verso $0$), $\tilde{x} = \overline{x}$ (arrotondamento verso infinito), o quello dei due che ha un errore minore (arrotondamento al più vicino); tutti questi forniscono arrotondamenti che soddisfano la~\eqref{roundingerror}. In ogni caso, visto che $x$ e $\tilde{x}$ sono entrambi compresi nell'intervallo $[\underline{x}, \overline{x}]$, si ha 
-\begin{equation}
-    \abs{\tilde{x}-x} < \overline{x} - \underline{x} = \beta^{p-(t-1)}.
+Possiamo assumere che $x$ sia positivo (il caso negativo è analogo), e che non sia esso stesso un numero di macchina (altrimenti il risultato è ovvio, basta prendere $\tilde{x}=x$). Il numero $x$ avrà una rappresentazione della forma~\eqref{rapprbase}
+\[
+x = \beta^p (c_0 \beta^0 + c_1 \beta^1 + c_2 \beta^2 + \dots).
+\]
+Possiamo costruire un'approssimazione per difetto di $x$ eliminando tutte le cifre a parte le prime $t$; questo è detto \emph{troncamento}.
+\begin{equation} \label{troncamento}
+    \underline{x} = \beta^p (c_0 \beta^0 + c_1 \beta^1 + \dots + c_{t-1} \beta^{-(t-1)}).
 \end{equation}
-Inoltre, visto che la prima cifra di $x$ è almeno $1$ e le altre sono positive o nulle,
+Possiamo costruire un'approssimazione per eccesso se invece sommiamo $1$ all'ultima cifra:
+\begin{equation} \label{eccesso}
+    \overline{x} = \beta^p (c_0 \beta^0 + c_1 \beta^1 + \dots + (c_{t-1}+1) \beta^{-(t-1)}).
+\end{equation}
+Per rappresentare questo numero potremmo dover fare qualche riporto, se $c_{t-1}=\beta-1$, ma il numero risultante si scrive comunque usando al più $t$ cifre significative (eventualmente potrebbe essere necessario aumentare l'esponente da $p$ a $p+1$). Per esempio, nel sistema di numeri introdotto nell'esempio più sopra, il troncamento di $x = 10^{-1} \cdot 7.998888\dots$ è $\underline{x} = 10^{-1} \cdot 7.99$, e l'approssimazione per eccesso è $\overline{x} = 10^{-1} \cdot 8.00$.
+
+Abbiamo quindi $\underline{x} < x < \overline{x}$; non possono valere le uguaglianze perché abbiamo supposto che $x$ non fosse un numero di macchina. In particolare, sia scegliendo $\tilde{x} = \underline{x}$ che $\tilde{x} = \overline{x}$, abbiamo
+\[
+\abs{\tilde{x}-x} < \overline{x}-\underline{x} = \beta^p \beta^{-(t-1)},
+\]
+dove l'ultima uguaglianza segue sottraendo la~\eqref{troncamento} dalla~\eqref{eccesso}. 
+
+Inoltre, visto che la prima cifra di $x$ è almeno $1$ e le altre sono positive o nulle, abbiamo la disuguaglianza
 \begin{equation}
     x \geq \beta^{p}.
 \end{equation}
@@ -1745,7 +1821,7 @@ Data un'approssimazione $\tilde{x}$ di un numero reale $x \neq 0$, il suo \emph{
 \begin{equation} \label{relerr}
     \varepsilon = \frac{\tilde{x}-x}{x}.    
 \end{equation}
-È un tipo di errore naturale da considerare, perché misura la grandezza dell'errore rispetto alla grandezza della variabile $x$ stessa. L'errore \emph{assoluto} $\tilde{x}-x$ spesso da solo non dice nulla: per esempio, aver misurato una lunghezza con un errore di $0.5 \text{ cm}$ da solo non è molto significativo: è molto diverso se questa lunghezza è la distanza dalla terra alla luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
+È un tipo di errore naturale da considerare, perché misura la grandezza dell'errore rispetto alla grandezza della variabile $x$ stessa. L'errore \emph{assoluto} $\tilde{x}-x$ spesso da solo non dice nulla: per esempio, sapere che una lunghezza ha un errore di $0.5 \text{ cm}$ da solo non è molto significativo: è molto diverso se questa lunghezza è la distanza dalla Terra alla Luna, o una tolleranza di fabbricazione sulla cover del vostro cellulare.
 
 Con qualche passaggio algebrico, possiamo riscrivere la~\eqref{relerr} come
 \begin{equation}\label{errore relativo in due forme}
@@ -1781,7 +1857,7 @@ Il primo bit codifica il segno, i successivi 11 bit l'esponente, e i successivi 
 
 Con questi valori, il Teorema~\ref{th:precmacchina} ci dice che ogni numero con valore assoluto compreso tra $\omega \approx 2.2 \cdot 10^{-308}$ e $\Omega \approx 1.8 \cdot 10^{308}$ può venire approssimato con precisione di macchina $\mathsf{u} = 2^{-52} \approx 2.2 \cdot 10^{-16}$. Matlab (che useremo per programmare in questo corso) usa questo formato.
 
-C'è anche un altro formato nello standard, chiamato \texttt{single} o \texttt{float32}, che può rappresentare numeri compresi tra $\omega \approx 10^{-38}$ e $\Omega \approx 10^{38}$ e ha precisione di macchina $\mathsf{u}\approx 10^{-7}$. Con questo formato gli errori sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno). I formati di numeri reali a disposizione nei vari linguaggi di programmazione tipicamente sono questi due (con vari nomi a seconda del linguaggio).
+C'è anche un altro formato standard, chiamato \texttt{single} o \texttt{float32}, che può rappresentare numeri compresi tra $\omega \approx 10^{-38}$ e $\Omega \approx 10^{38}$ e ha precisione di macchina $\mathsf{u}\approx 10^{-7}$. Con questo formato gli errori sono maggiori, ma è possibile memorizzare più numeri nello stesso spazio di memoria (32 bit l'uno). I formati di numeri reali a disposizione nei vari linguaggi di programmazione tipicamente sono questi due (con vari nomi a seconda del linguaggio).
 
 Quando scriviamo (per esempio) \texttt{x = 0.3} in Matlab, questo numero non viene memorizzato esattamente: non appartiene a $\mathbb{F}(2, 53, -1022, 1023)$, ma anzi in base 2 è il numero periodico $0.0\overline{1001}$. Questo numero periodico viene troncato a $t=53$ cifre binarie. Quindi il numero con cui il computer lavora non è \emph{esattamente} $0.3$, bensì il numero in base 2
 \begin{align*}
